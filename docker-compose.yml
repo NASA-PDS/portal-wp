@@ -1,0 +1,90 @@
+version: "3.9"
+
+services:
+
+  wpcli:
+    command: tail -f /dev/null
+    container_name: pds-portal-wpcli
+    depends_on:
+      - wordpress
+    environment:
+      - WORDPRESS_DB_HOST=db:3306
+      - WORDPRESS_DB_NAME_FILE=/run/secrets/WORDPRESS_DB_NAME
+      - WORDPRESS_DB_USER_FILE=/run/secrets/WORDPRESS_DB_USER
+      - WORDPRESS_DB_PASSWORD_FILE=/run/secrets/WORDPRESS_DB_PASSWORD
+    image: wordpress:cli-php8.2
+    secrets:
+      - WORDPRESS_DB_NAME
+      - WORDPRESS_DB_USER
+      - WORDPRESS_DB_PASSWORD
+    user: 1000:1000
+    volumes:
+      - ./wordpress/data:/var/www/html
+
+  wordpress:
+    container_name: 'pds-portal-wordpress'
+    build:
+      dockerfile: Dockerfile
+      context: ./wordpress
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_NAME_FILE=/run/secrets/WORDPRESS_DB_NAME
+      - WORDPRESS_DB_USER_FILE=/run/secrets/WORDPRESS_DB_USER
+      - WORDPRESS_DB_PASSWORD_FILE=/run/secrets/WORDPRESS_DB_PASSWORD
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost"]
+    image: 'pds-portal-wordpress'
+    ports:
+      - '8080:80'
+    restart: always
+    secrets:
+      - WORDPRESS_DB_NAME
+      - WORDPRESS_DB_USER
+      - WORDPRESS_DB_PASSWORD
+    user: 1000:1000
+    volumes:
+      - "./wordpress/data:/var/www/html"
+
+  db:
+    container_name: 'pds-portal-db'
+    build:
+      dockerfile: Dockerfile
+      context: ./db
+    environment:
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/MYSQL_ROOT_PASSWORD
+      - MYSQL_DATABASE_FILE=/run/secrets/MYSQL_DATABASE
+      - MYSQL_USER_FILE=/run/secrets/MYSQL_USER
+      - MYSQL_PASSWORD_FILE=/run/secrets/MYSQL_PASSWORD
+    healthcheck:
+        test: "exit 0"
+    image: 'pds-portal-db'
+    ports:
+      - '3306:3306'
+    restart: always
+    secrets:
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_DATABASE
+      - MYSQL_USER
+      - MYSQL_PASSWORD
+    volumes:
+      - "./db/init/:/docker-entrypoint-initdb.d/"
+      - "./db/data:/var/lib/mysql"
+
+secrets:
+  MYSQL_ROOT_PASSWORD:
+    file: ./db/secrets/MYSQL_ROOT_PASSWORD.txt
+  MYSQL_DATABASE:
+    file: ./db/secrets/MYSQL_DATABASE.txt
+  MYSQL_USER:
+    file: ./db/secrets/MYSQL_USER.txt
+  MYSQL_PASSWORD:
+    file: ./db/secrets/MYSQL_PASSWORD.txt
+  WORDPRESS_DB_NAME:
+    file: ./wordpress/secrets/WORDPRESS_DB_NAME.txt
+  WORDPRESS_DB_USER:
+    file: ./wordpress/secrets/WORDPRESS_DB_USER.txt
+  WORDPRESS_DB_PASSWORD:
+    file: ./wordpress/secrets/WORDPRESS_DB_PASSWORD.txt
