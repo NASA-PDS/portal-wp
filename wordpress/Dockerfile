@@ -1,4 +1,4 @@
-FROM wordpress:6.3.0-php8.2-apache
+FROM wordpress:6.3.1-php8.2-apache
 LABEL maintainer="anil.natha@jpl.nasa.gov"
 LABEL version="0.0.1"
 
