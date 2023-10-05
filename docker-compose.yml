@@ -21,6 +21,24 @@ services:
     volumes:
       - ./wordpress/data:/var/www/html
 
+#  frontend:
+#    build:
+#      dockerfile: Dockerfile
+#      context: ./frontend
+#    container_name: "pds-portal-frontend"
+#    depends_on:
+#      - wordpress
+#    expose:
+#      - '5173'
+#    image: 'pds-portal-frontend'
+#    ports:
+#      - '5173:5173'
+#    user: node
+#    volumes:
+#      - "./frontend:/app"
+#      - "/app/node_modules/"
+#      - ./node_modules/@nasapds/pds-wds-react:/app/node_modules/@nasapds/pds-wds-react
+
   wordpress:
     container_name: 'pds-portal-wordpress'
     build:
@@ -29,6 +47,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    expose:
+      - '80'
     environment:
       - WORDPRESS_DB_HOST=db
       - WORDPRESS_DB_NAME_FILE=/run/secrets/WORDPRESS_DB_NAME
