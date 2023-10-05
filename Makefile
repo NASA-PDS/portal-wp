@@ -1,6 +1,6 @@
 export NAME_PREFIX = pds-portal
 export DB_CONTAINER_NAME = $(NAME_PREFIX)-db
-export WWW_CONTAINER_NAME = $(NAME_PREFIX)-www
+export FRONTEND_CONTAINER_NAME = $(NAME_PREFIX)-frontend
 export WORDPRESS_CONTAINER_NAME = ${NAME_PREFIX}-wordpress
 export WPCLI_CONTAINER_NAME = ${NAME_PREFIX}-wpcli
 export RUN_OPTIONS = 
@@ -17,11 +17,11 @@ build-db:		## Builds db service image
 build-db-no-cache:	## Builds db service image without the cache
 	docker-compose build db --no-cache
 
-build-www:	## Builds www service image
-	docker-compose build www
+build-frontend:	## Builds frontend service image
+	docker-compose build frontend
 
-build-www-no-cache:	## Builds www service image without the cache
-	docker-compose build www --no-cache
+build-frontend-no-cache:	## Builds frontend service image without the cache
+	docker-compose build frontend --no-cache
 
 build-wordpress:	## Builds wordpress service image
 	docker-compose build wordpress
@@ -44,8 +44,8 @@ list-images: ## List images related to this project
 login-db: ## Open terminal window using db container
 	docker exec -it $(DB_CONTAINER_NAME) /bin/bash
 
-login-www: ## Open terminal window using www container
-	docker exec -it $(WWW_CONTAINER_NAME) /bin/bash
+login-frontend: ## Open terminal window using frontend container
+	docker exec -it $(FRONTEND_CONTAINER_NAME) /bin/bash
 
 login-wpcli: ## Open terminal window using frontend container
 	docker exec -it pds-portal-wpcli /bin/bash
@@ -68,8 +68,8 @@ restart:	## Restarts all services, does not reload environment variables
 restart-db:	## Restarts the db service
 	docker-compose restart db
 
-restart-www:	## Restarts the www service
-	docker-compose restart www
+restart-frontend:	## Restarts the frontend service
+	docker-compose restart frontend
 
 start:	## Starts up all services using Docker Compose
 	docker-compose up $(RUN_OPTIONS)
@@ -83,11 +83,11 @@ start-db:	## Starts up the db service using Docker Compose
 start-db-detached: RUN_OPTIONS = "-d" ## Starts up db service with Docker Compose in detached mode
 start-db-detached: start-db
 
-start-www:	## Starts up the www service using Docker Compose
-	docker-compose up $(RUN_OPTIONS) www
+start-frontend:	## Starts up the frontend service using Docker Compose
+	docker-compose up $(RUN_OPTIONS) frontend
 
-start-www-detached: RUN_OPTIONS = "-d" ## Starts up the application with Docker Compose in detached mode
-start-www-detached: start-www
+start-frontend-detached: RUN_OPTIONS = "-d" ## Starts up frontend service with Docker Compose in detached mode
+start-frontend-detached: start-frontend
 
 start-wordpress:	## Stars up the wordpress service using Docker Compose
 	docker-compose up ${RUN_OPTIONS} wordpress
@@ -107,8 +107,8 @@ stop:	## Stops all running services
 stop-db:	## Stops running db service
 	docker-compose stop db
 
-stop-www:	## Stops running www service
-	docker-compose stop www
+stop-frontend:	## Stops running frontend service
+	docker-compose stop frontend
 
 stop-wordpress	## Stops running wordpress service
 	docker-compose stop wordpress
