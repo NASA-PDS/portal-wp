@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 // Layouts
 import AboutLayout from '../src/layouts/AboutLayout';
@@ -17,8 +17,8 @@ import Tools from './pages/tools';
 
 import NotFound from './pages/error-pages/not-found';
 
-import Header from './components/header/header';
-import Footer from './components/footer/footer';
+import Header from './components/Header/Header';
+import Footer from './components/Footer/Footer';
 
 //import SearchApp from './components/SearchApp/SearchApp';
 import './App.css';
