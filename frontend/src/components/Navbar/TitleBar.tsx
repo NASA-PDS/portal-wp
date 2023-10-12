@@ -48,7 +48,7 @@ export default function TitleBar() {
 
    const SearchIconWrapper = styled('div')(({ theme }) => ({
       color: '#B9B9BB',
-      padding: '8px 12px 8px 12px',
+      padding: '2px 12px 2px 12px',
       height: '100%',
       position: 'absolute',
       pointerEvents: 'none',
@@ -173,7 +173,7 @@ export default function TitleBar() {
                   <Divider variant="middle" orientation="vertical" sx={{ bgcolor: '#58585B', mr: "16px" }}flexItem/>
                   <Search>
                      <SearchIconWrapper>
-                     <SearchIcon />
+                        <SearchIcon />
                      </SearchIconWrapper>
                      <StyledInputBase
                         placeholder="Search…"
@@ -184,7 +184,7 @@ export default function TitleBar() {
                <Box sx={{ justifyContent: "flex-end", flexGrow: 1, display: { xs: 'none', md: 'flex', lg: 'none' } }}>
                   <Search>
                      <SearchIconWrapper>
-                     <SearchIcon />
+                        <SearchIcon />
                      </SearchIconWrapper>
                      <StyledInputBase
                         placeholder="Search…"
