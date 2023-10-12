@@ -116,12 +116,12 @@ export default function Navbar() {
                   <Box sx={{ display: { xs: 'none', md: 'block' } }}>
                      {navItems.map((item) => {
                         return ( item.items ?
-                           <Button key={item.id} sx={{ color: '#fff', mr: '32px', textTransform: 'none', }} endIcon={<ExpandCircleDownOutlinedIcon />}>
+                           <Button key={item.id} sx={{ fontSize: '0.875rem', fontWeight: 400, lineHeight: '1.1875rem', letterSpacing: '-0.25px', color: '#fff', mr: '32px', textTransform: 'none', }} endIcon={<ExpandCircleDownOutlinedIcon />}>
                               {item.label}
                            </Button>
                            : 
                            <Link to={item.href}>
-                              <Button key={item.id} sx={{ color: '#fff', mr: '32px', textTransform: 'none', }}>
+                              <Button key={item.id} sx={{ fontSize: '0.875rem', fontWeight: 400, lineHeight: '1.1875rem', letterSpacing: '-0.25px', color: '#fff', mr: '32px', textTransform: 'none', }}>
                                  {item.label}
                               </Button>
                            </Link>

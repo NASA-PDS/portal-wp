@@ -126,7 +126,7 @@ export default function TitleBar() {
                      fontSize: '1.125rem',
                      fontFamily: 'Inter',
                      fontWeight: 700,
-                     letterSpacing: '-0.03125rem',
+                     letterSpacing: '-0.5px',
                      lineHeight: "23px",
                      color: 'inherit',
                      textDecoration: 'none',
@@ -154,7 +154,7 @@ export default function TitleBar() {
                      flexGrow: 1,
                      fontFamily: 'Inter',
                      fontWeight: 700,
-                     letterSpacing: '-0.03125rem',
+                     letterSpacing: '-0.5px',
                      lineHeight: '20px',
                      color: 'inherit',
                      textDecoration: 'none',
@@ -163,11 +163,11 @@ export default function TitleBar() {
                   Planetary Data System
                </Typography>
                <Box sx={{ justifyContent: "flex-end", flexGrow: 1, display: { xs: 'none', lg: 'flex' } }}>
-                  <Button sx={{ color: '#fff', mr: '16px', textTransform: 'none', }} endIcon={<ExpandCircleDownOutlinedIcon />}>
+                  <Button sx={{ fontSize: '0.875rem', fontWeight: 400, lineHeight: '1.1875rem', letterSpacing: '-0.25px', color: '#fff', mr: '16px', textTransform: 'none', }} endIcon={<ExpandCircleDownOutlinedIcon />}>
                      Explore PDS
                   </Button>
                   <Divider variant="middle" orientation="vertical" sx={{ bgcolor: '#58585B', mr: "16px" }}flexItem/>
-                  <Button sx={{ color: '#fff', mr: '16px', textTransform: 'none', }} endIcon={<ExpandCircleDownOutlinedIcon />}>
+                  <Button sx={{ fontSize: '0.875rem', fontWeight: 400, lineHeight: '1.1875rem', letterSpacing: '-0.25px', color: '#fff', mr: '16px', textTransform: 'none', }} endIcon={<ExpandCircleDownOutlinedIcon />}>
                      PDS Nodes
                   </Button>
                   <Divider variant="middle" orientation="vertical" sx={{ bgcolor: '#58585B', mr: "16px" }}flexItem/>
