@@ -20,7 +20,7 @@ import { Link } from "react-router-dom";
 
 const pages = ['PDS Nodes', 'Explore PDS', ];
 
-function MaterialTitleBar() {
+export default function TitleBar() {
 
    const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 
@@ -278,6 +278,4 @@ function MaterialTitleBar() {
       </AppBar>
    );
 }
-
-export default MaterialTitleBar;
 

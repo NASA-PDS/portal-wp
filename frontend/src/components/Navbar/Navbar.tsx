@@ -91,7 +91,7 @@ const navItems = [
    },
 ];
 
-export default function MaterialNavbar() {
+export default function Navbar() {
 
    const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 
