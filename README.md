@@ -52,6 +52,14 @@ And then start the containers:
 docker-compose up
 ```
 
+### Notes:
+
+#### Invoking Docker Compose
+
+Depending on the version of docker compose you have installed, it can be invoked differently. Docker Compose V1 uses `docker-compose`; whereas the newer V2 uses `docker compose`, note the missing dash. Reference: https://docs.docker.com/compose/migrate/#docker-compose-vs-docker-compose
+
+#### Common commands
+
 Many of the commands often used for local development are captured in the [`Makefile`](Makefile.sh). Review this file for other helpful recipes to delete images, restart services, etc. For example:
 
 ```
