@@ -34,6 +34,29 @@ The goal is create a set of components that are built for React and neatly organ
 git clone https://github.com/NASA-PDS/wds-react.git
 ```
 
+### Setup Docker Secrets
+
+To store and retrieve values needed by the `db` and `wordpress` services, we rely on docker secrets. The files you are about to create, should never be committed to the repository. Our `.gitignore` is already configured to ignore these secret files, but if new services are added, the `.gitignore` will need to be updated to ignore new folders containing docker secrets. 
+
+Here are instructions to configure the docker secrets:
+
+#### Database Service
+
+1. Within the `db/secrets` folder, create new files for each of the files ending in `.example` by copying the `.example` file and renaming it so it doesn't end with `.example`.
+2. Update the seceret file contents: 
+   * `MYSQL_DATABASE.txt`: store the name of the database you wish to use for the Wordpress Service, this will be needed later.
+   * `MYSQL_PASSWORD.txt`: create a unique password and store it in this file, this will be needed later.
+   * `MYSQL_ROOT_PASSWORD.txt`: This password is for root access to your local database, create a unique password and store it in this file.
+   * `MYSQL_USER.txt`: select the name of the database user account that the wordpress service will use when connecting to the database, this will be needed later.
+
+#### Wordpress service
+
+1. Within the `wordpress/secrets` folder, create new files for each of the files ending in `.example` by copying the `.example` file and renaming it so it doesn't end with `.example`.
+2. Update the seceret file contents: 
+   * `WORDPRESS_DB_NAME.txt`: reuse the value stored in `db/secrets/MYSQL_DATABASE.txt`.
+   * `WORDPRESS_DB_PASSWORD.txt`: reuse the value stored in `db/secrets/MYSQL_PASSWORD.txt`.
+   * `WORDPRESS_DB_USER.txt`: reuse the value stored in `db/secrets/MYSQL_USER.txt`.
+
 ## Development Instructions
 
 All of the services needed for the platform are specified in the [`docker-compose.yml`](docker-compose.yml) file except for the [frontend service](#frontend-service-workaround). 
