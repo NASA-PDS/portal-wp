@@ -3,10 +3,12 @@
 db/data
 db/secrets/*
 !db/secrets/.gitkeep
+!db/secrets/*.example
 db/init/*
 !db/init/.gitkeep
 
 # www ignore settings
-www/data
-www/secrets/*
-!www/secrets/.gitkeep
+wordpress/data
+wordpress/secrets/*
+!wordpress/secrets/.gitkeep
+!wordpress/secrets/*.example
