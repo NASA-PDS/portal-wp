@@ -6,7 +6,7 @@ services:
     command: tail -f /dev/null
     container_name: pds-portal-wpcli
     depends_on:
-      - wordpress
+      - backend
     environment:
       - WORDPRESS_DB_HOST=db:3306
       - WORDPRESS_DB_NAME_FILE=/run/secrets/WORDPRESS_DB_NAME
@@ -19,7 +19,7 @@ services:
       - WORDPRESS_DB_PASSWORD
     user: 1000:1000
     volumes:
-      - ./wordpress/data:/var/www/html
+      - ./backend/nasa-pds-wp/data:/var/www/html
 
 #  frontend:
 #    build:
@@ -27,7 +27,7 @@ services:
 #      context: ./frontend
 #    container_name: "pds-portal-frontend"
 #    depends_on:
-#      - wordpress
+#      - backend
 #    expose:
 #      - '5173'
 #    image: 'pds-portal-frontend'
@@ -39,11 +39,11 @@ services:
 #      - "/app/node_modules/"
 #      - ./node_modules/@nasapds/pds-wds-react:/app/node_modules/@nasapds/pds-wds-react
 
-  wordpress:
-    container_name: 'pds-portal-wordpress'
+  backend:
+    container_name: 'pds-portal-backend'
     build:
       dockerfile: Dockerfile
-      context: ./wordpress
+      context: ./backend/nasa-pds-wp
     depends_on:
       db:
         condition: service_healthy
@@ -56,7 +56,7 @@ services:
       - WORDPRESS_DB_PASSWORD_FILE=/run/secrets/WORDPRESS_DB_PASSWORD
     healthcheck:
         test: ["CMD", "curl", "-f", "http://localhost"]
-    image: 'pds-portal-wordpress'
+    image: 'pds-portal-backend'
     ports:
       - '8080:80'
     restart: always
@@ -66,7 +66,9 @@ services:
       - WORDPRESS_DB_PASSWORD
     user: 1000:1000
     volumes:
-      - "./wordpress/data:/var/www/html"
+      - "./backend/nasa-pds-wp/data:/var/www/html"
+      - "./backend/nasa-pds-wp/plugins:/var/www/html/wp-content/plugins"
+      - "./backend/nasa-pds-wp/themes:/var/www/html/wp-content/themes"
 
   db:
     container_name: 'pds-portal-db'
@@ -103,8 +105,8 @@ secrets:
   MYSQL_PASSWORD:
     file: ./db/secrets/MYSQL_PASSWORD.txt
   WORDPRESS_DB_NAME:
-    file: ./wordpress/secrets/WORDPRESS_DB_NAME.txt
+    file: ./backend/nasa-pds-wp/secrets/WORDPRESS_DB_NAME.txt
   WORDPRESS_DB_USER:
-    file: ./wordpress/secrets/WORDPRESS_DB_USER.txt
+    file: ./backend/nasa-pds-wp/secrets/WORDPRESS_DB_USER.txt
   WORDPRESS_DB_PASSWORD:
-    file: ./wordpress/secrets/WORDPRESS_DB_PASSWORD.txt
+    file: ./backend/nasa-pds-wp/secrets/WORDPRESS_DB_PASSWORD.txt
