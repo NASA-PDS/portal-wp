@@ -11,3 +11,6 @@ apps/backend/nasa-pds-wp/data
 apps/backend/nasa-pds-wp/secrets/*
 !apps/backend/nasa-pds-wp/secrets/.gitkeep
 !apps/backend/nasa-pds-wp/secrets/*.example
+
+# frontend ignore settings
+apps/frontend/.vite
