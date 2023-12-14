@@ -120,7 +120,7 @@ export default function Navbar() {
                               {item.label}
                            </Button>
                            : 
-                           <Link to={item.href}>
+                           <Link to={item.href} key={item.id}>
                               <Button key={item.id} sx={{ fontSize: '0.875rem', fontWeight: 400, lineHeight: '1.1875rem', letterSpacing: '-0.25px', color: '#fff', mr: '32px', textTransform: 'none', }}>
                                  {item.label}
                               </Button>
