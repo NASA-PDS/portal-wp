@@ -11,7 +11,8 @@ import ToolsLayout from '../src/layouts/ToolsLayout';
 // Pages
 import About from './pages/about';
 import Home from './pages/home';
-import Investigations from './pages/investigations';
+import InvestigationsDirectoryPage from './pages/investigations';
+import InvestigationsDetailPage from './pages/investigations/detail';
 import Search from './pages/search';
 import Tools from './pages/tools';
 
@@ -31,7 +32,8 @@ function App() {
         <Route path="/" element={<HomeLayout />}>
           <Route index element={<Home />} />
           <Route path="investigations" element={<InvestigationsLayout />}>
-            <Route index element={<Investigations />} />
+            <Route index element={<InvestigationsDirectoryPage />} />
+            <Route path=':investigationId' element={<InvestigationsDetailPage />} />
           </Route>
           <Route path="tools" element={<ToolsLayout />}>
             <Route index element={<Tools />} />
