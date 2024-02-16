@@ -46,19 +46,6 @@ const parseID = (lid:string) => {
 
 };
 
-const investigations_versions = {
-   "apollo_12": [
-      {
-         "version": "1.0",
-      }
-   ],
-   "apollo_14": [
-      {
-         "version": "1.0",
-      }
-   ],
-}
-
 // Get all the investigations from the PDS OpenSearch API
 export const getInvestigations = createAsyncThunk(
    INVESTIGATION_ACTIONS.GET_INVESTIGATIONS,
