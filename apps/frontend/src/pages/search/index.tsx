@@ -1,7 +1,7 @@
 import React from 'react';
 
-const Search = () => {
-  return <div>Planetary Data System Search Page</div>;
+const SearchPage = () => {
+  return <h1>Search Page</h1>;
 };
 
-export default Search;
+export default SearchPage;

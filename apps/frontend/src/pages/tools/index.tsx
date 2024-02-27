@@ -1,7 +1,7 @@
 import React from 'react';
 
-const Tools = () => {
-  return <div>Planetary Data System Tools Directory Page</div>;
+const ToolsDirectoryPage = () => {
+  return <h1>Tools Directory Page</h1>;
 };
 
-export default Tools;
+export default ToolsDirectoryPage;

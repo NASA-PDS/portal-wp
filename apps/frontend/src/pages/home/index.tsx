@@ -1,7 +1,7 @@
 import React from 'react';
 
-const Home = () => {
-  return <div>Planetary Data System Homepage</div>;
+const HomePage = () => {
+  return <h1>Homepage</h1>;
 };
 
-export default Home;
+export default HomePage;

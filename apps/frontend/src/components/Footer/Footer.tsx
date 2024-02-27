@@ -1,7 +1,6 @@
 function Footer() {
    return (
-      <footer>
-        <hr />
+      <footer style={{backgroundColor: "#000000", padding: '40px 40px', }}>
         FOOTER
       </footer>
    )

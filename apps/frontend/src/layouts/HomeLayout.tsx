@@ -1,8 +1,8 @@
-import { Link, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
 function HomeLayout() {
   return (
-    <div>
+    <div style={{ backgroundColor: 'white', padding: '0px', color: 'black', }}>
       {/* A "layout route" is a good place to put markup you want to
           share across all the pages on your site, like navigation. */}
 

@@ -1,7 +1,7 @@
 import React from 'react';
 
-const About = () => {
-  return <div>Planetary Data System About Page</div>;
+const AboutPage = () => {
+  return <h1>About Page</h1>;
 };
 
-export default About;
+export default AboutPage;

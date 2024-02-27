@@ -1,55 +1,96 @@
 import React from 'react';
-import { Routes, Route } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 // Layouts
 import AboutLayout from '../src/layouts/AboutLayout';
 import HomeLayout from '../src/layouts/HomeLayout';
 import InvestigationsLayout from './layouts/InvestigationsLayout';
 import SearchLayout from './layouts/SearchLayout';
+import RootLayout from './layouts/RootLayout';
 import ToolsLayout from '../src/layouts/ToolsLayout';
 
 // Pages
-import About from './pages/about';
-import Home from './pages/home';
+import AboutPage from './pages/about';
+import HomePage from './pages/home';
 import InvestigationsDirectoryPage from './pages/investigations';
 import InvestigationsDetailPage from './pages/investigations/detail';
-import Search from './pages/search';
-import Tools from './pages/tools';
+import SearchPage from './pages/search';
+import ToolsDirectoryPage from './pages/tools';
 
-import NotFound from './pages/error-pages/not-found';
-
-import Header from './components/Header/Header';
-import Footer from './components/Footer/Footer';
+// ErrorBoundaries
+import RootErrorBoundary from './pages/errors/RootErrorBoundary'
 
 //import SearchApp from './components/SearchApp/SearchApp';
 import './App.css';
 
+const router = createBrowserRouter([
+  {
+    id: "root",
+    path: "/",
+    Component: RootLayout,
+    ErrorBoundary: RootErrorBoundary,
+    children: [
+      {
+        Component: HomeLayout,
+        children: [
+          {
+            index: true,
+            element: <HomePage />
+          }
+        ]
+      },
+      {
+        path: "about",
+        Component: AboutLayout,
+        children: [
+          {
+            index: true,
+            element: <AboutPage />
+          }
+        ]
+      },
+      {
+        path: "investigations",
+        Component: InvestigationsLayout,
+        children: [
+          {
+            index: true,
+            element: <InvestigationsDirectoryPage />,
+          },
+          {
+            path: ":investigationLID",
+            element: <InvestigationsDetailPage />,
+          }
+        ]
+      },
+      {
+        path: "search",
+        Component: SearchLayout,
+        children: [
+          {
+            index: true,
+            element: <SearchPage />
+          }
+        ]
+      },
+      {
+        path: "tools",
+        Component: ToolsLayout,
+        children: [
+          {
+            index: true,
+            element: <ToolsDirectoryPage />
+          }
+        ]
+      }
+    ]
+  }
+])
+
 function App() {
   return (
-    <>
-      <Header />
-      <Routes>
-        <Route path="/" element={<HomeLayout />}>
-          <Route index element={<Home />} />
-          <Route path="investigations" element={<InvestigationsLayout />}>
-            <Route index element={<InvestigationsDirectoryPage />} />
-            <Route path=':investigationId' element={<InvestigationsDetailPage />} />
-          </Route>
-          <Route path="tools" element={<ToolsLayout />}>
-            <Route index element={<Tools />} />
-          </Route>
-          <Route path="about" element={<AboutLayout />}>
-            <Route index element={<About />} />
-          </Route>
-          <Route path="search" element={<SearchLayout />}>
-            <Route index element={<Search />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
-      <Footer />
-    </>
-  );
+    <RouterProvider router={router} />
+  )
 }
 
 export default App
