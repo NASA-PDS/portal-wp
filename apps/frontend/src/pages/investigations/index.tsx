@@ -1,10 +1,15 @@
 import React, { useEffect } from "react";
-import { Box, Breadcrumbs, Container, Grid, Link, Typography } from "@mui/material";
-import { FeaturedLinkListItem } from "@nasapds/wds-react";
+import { Box, Breadcrumbs, Container, Grid, InputAdornment, Link, Stack, Typography } from "@mui/material";
+//import { FeaturedLinkListItem } from "@nasapds/wds-react";
+import { FeaturedInvestigationLinkListItem } from "src/components/FeaturedListItems/FeaturedInvestigationLinkListItem";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../hooks";
-import { getInvestigations } from "../../features/investigations/investigationsSlice";
-import { Investigation } from "../../types/investigation.d";
+import { useAppDispatch, useAppSelector } from "src/hooks";
+import { getInvestigations } from "src/features/investigations/investigationsSlice";
+import { Investigation } from "src/types/investigation.d";
+import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
+import { Loader } from "@nasapds/wds-react";
+import { TextField } from "@mui/material";
+import SearchIcon from '@mui/icons-material/Search';
 
 const InvestigationsDirectoryPage = () => {
 
@@ -27,6 +32,7 @@ const InvestigationsDirectoryPage = () => {
       } else if ( investigations.status === "succeeded" ) {
          // Do something to handle the successful fetching of data
          console.log("Loading Investigations data from API succeeded!");
+         console.log("Investigations retrived from OpenSearch API:", investigations.investigationItems)
       } else if ( investigations.error != null || investigations.error != undefined ) {
          // Do something to handle the error
          console.log(investigations.error);
@@ -50,10 +56,9 @@ const InvestigationsDirectoryPage = () => {
 
    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
-   const getItemsByIndex = (arr:Investigation[], key:string, index:string):Investigation[] => {
+   const getItemsByIndex = (arr:Investigation[], index:string):Investigation[] => {
       return arr.filter( (item) => {
-         //console.log("item:", item)
-         return item.shortName[0].toUpperCase().startsWith(index.toUpperCase())
+        return item[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toUpperCase().startsWith(index.toUpperCase());
       })
    };
 
@@ -113,18 +118,51 @@ const InvestigationsDirectoryPage = () => {
             </Container>
          </Container>
          {/* Main Content */}
-         <Container
+         { investigations.status == "succeeded" ? <Container
             maxWidth={"xl"}
             sx={{
-               paddingY: "80px",
+               paddingTop: "80px",
+               paddingBottom: "25px",
                paddingLeft: "140px",
                paddingRight: "140px",
                textAlign: "center",
             }}>
+            <Box sx={{paddingBottom: "25px"}}>
+              <Grid container sx={{height: "100%"}} alignItems="center">
+                <Grid item xs={2}>
+                  <Typography sx={{
+                    fontFamily: "Inter",
+                    fontSize: "14px",
+                    fontWeight: "600",
+                    color: "#17171B"
+                  }}>
+                    Search for Investigations
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField 
+                    id="outlined-basic"
+                    placeholder="Search based on Name, Instruments, or Targets" 
+                    variant="outlined"
+                    InputProps={{
+                      sx: {
+                        borderRadius: "2px"
+                      },
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                    fullWidth 
+                  />
+                </Grid>
+              </Grid>
+            </Box>
             <Box>
                {
                   investigations.investigationItems.length > 0 && alphabet.map((letter) => {
-                     const filteredInvestigations = getItemsByIndex(investigations.investigationItems, "shortName", letter);
+                     const filteredInvestigations = getItemsByIndex(investigations.investigationItems, letter);
                      const filteredInvestigationsCount = Object.keys(filteredInvestigations).length;
                      const anchorName = filteredInvestigationsCount > 0 ? "#" + letter : undefined;
                      const anchorColor = filteredInvestigationsCount > 0 ? "#1976d2" : "#959599";
@@ -167,18 +205,18 @@ const InvestigationsDirectoryPage = () => {
                         paddingLeft: "10px",
                         backgroundColor: "#F6F6F6",
                      }}>
-                     <Grid xs={7}>
-                        <Typography variant="body1" display="block" color='#58585B' style={{ textTransform: "uppercase", fontWeight: "bold"}}>
+                     <Grid item xs={7}>
+                        <Typography variant="body1" display="block" color='#58585B' style={{ fontSize: "11px", textTransform: "uppercase", fontWeight: "bold"}}>
                            Investigation Name
                         </Typography>
                      </Grid>
-                     <Grid xs={2}>
-                        <Typography variant="body1" display="block" color='#58585B' style={{ textTransform: "uppercase", fontWeight: "bold"}}>
+                     <Grid item xs={2}>
+                        <Typography variant="body1" display="block" color='#58585B' style={{ fontSize: "11px", textTransform: "uppercase", fontWeight: "bold"}}>
                            Investigation Type
                         </Typography>
                      </Grid>
-                     <Grid xs={2}>
-                        <Typography variant="body1" display="block" color='#58585B' style={{ textTransform: "uppercase", fontWeight: "bold"}}>
+                     <Grid item xs={2}>
+                        <Typography variant="body1" display="block" color='#58585B' style={{ fontSize: "11px", textTransform: "uppercase", fontWeight: "bold"}}>
                            Affiliated Spacecraft
                         </Typography>
                      </Grid>
@@ -188,9 +226,9 @@ const InvestigationsDirectoryPage = () => {
                   {
                      investigations.investigationItems.length > 0 && alphabet.map((letter) => {
                         
-                        const filteredInvestigations = getItemsByIndex(investigations.investigationItems, "shortName", letter);
+                        const filteredInvestigations = getItemsByIndex(investigations.investigationItems, letter);
                         const filteredInvestigationsCount = Object.keys(filteredInvestigations).length;
-                        console.log(filteredInvestigations)
+                        
                         return (
                            <React.Fragment
                               key={"investigations_" + letter}
@@ -203,7 +241,7 @@ const InvestigationsDirectoryPage = () => {
                                     fontWeight: "700",
                                     lineHeight: "29px",
                                     paddingRight: "10px",
-                                    paddingY: "15px",
+                                    paddingTop: "15px",
                                     color: filteredInvestigationsCount ? "#000000" : "#959599"
                                  }}
                               >
@@ -212,13 +250,14 @@ const InvestigationsDirectoryPage = () => {
                               {
                                  filteredInvestigations.map((investigation:Investigation) => {
                                     return (
-                                       <FeaturedLinkListItem
-                                          key={investigation.id}
-                                          description={investigation.description}
-                                          primaryButtonAction={() => investigationListItemPrimaryAction("/investigations/" + investigation.id)}
-                                          variant={investigation.type}
-                                          affiliated_spacecraft="Affiliated Spacecraft"
-                                          title={investigation.longName}
+                                       <FeaturedInvestigationLinkListItem
+                                          affiliated_spacecraft={investigation[PDS4_INFO_MODEL.ALIAS.ALTERNATE_TITLE]}
+                                          description={investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION]}
+                                          investigation_type={investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE]}
+                                          primaryAction={() => investigationListItemPrimaryAction("/investigations/investigationLID:" + encodeURIComponent(investigation.lid))}
+                                          key={investigation[PDS4_INFO_MODEL.LID]}
+                                          lid={investigation[PDS4_INFO_MODEL.LID]}
+                                          title={investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE] }
                                        />
                                     );
                                  })
@@ -230,6 +269,11 @@ const InvestigationsDirectoryPage = () => {
                </Box>
             </Container>
          </Container>
+         :
+         <Box sx={{padding: "40px"}}>
+            <Loader />
+          </Box>
+      }
       </Container>
    )
 };

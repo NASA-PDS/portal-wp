@@ -1,10 +1,13 @@
+
+import { PDS4_INFO_MODEL } from "./pds4-info-model";
+
 export type Investigation = {
-   description:string;
-   id:string;
-   lid:string;
-   longName:string;
-   shortName:string;
-   startDate:string;
-   stopDate:string;
-   type:string;
+   [PDS4_INFO_MODEL.ALIAS.ALTERNATE_TITLE]:string;
+   [PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION]:string;
+   [PDS4_INFO_MODEL.LID]:string;
+   [PDS4_INFO_MODEL.INVESTIGATION.START_DATE]:string;
+   [PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE]:string;
+   [PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]:string;
+   [PDS4_INFO_MODEL.INVESTIGATION.TYPE]:string;
+   [PDS4_INFO_MODEL.IDENTIFICATION_AREA.VERSION_ID]:string;
 }
