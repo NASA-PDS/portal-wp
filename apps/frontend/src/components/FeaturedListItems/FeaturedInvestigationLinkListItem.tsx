@@ -47,7 +47,7 @@ export const FeaturedInvestigationLinkListItem = ({
           <Stack alignItems="left" gap={1} sx={{
             paddingLeft: "15px"
           }}>
-            <Link component="button" onClick={ () => primaryAction()}
+            <Link component="button" onClick={() => primaryAction()}
               sx={{
                 textAlign: "left",
                 color: "#000000",

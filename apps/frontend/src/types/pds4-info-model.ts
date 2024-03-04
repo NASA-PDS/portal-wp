@@ -1,10 +1,10 @@
 /** The PDS4 Information Model for components of the Planetary Data System (PDS) */
 export namespace PDS4_INFO_MODEL {
 
-  /** An identifier which identifies the set of all versions of an object */
+  /** An identifier for the set of all versions of an object */
   export const LID = "lid";
 
-  /** An identifier which identifies the version of something else  */
+  /** An identifier for the version of something else  */
   export const VID = "vid";
 
   /** The concatenation of a logical identifier (LID) with a version identifier (VID) */
