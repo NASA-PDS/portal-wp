@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Breadcrumbs, Button, Container, Link, Tab, Tabs, Typography } from '@mui/material';
 import { FeaturedLinkListItem } from "@nasapds/wds-react";
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../hooks';
+import { useAppDispatch, useAppSelector } from "src/hooks";
 
 import "./detail.scss";
 import { getInvestigation } from '../../utils.tsx/investigations';
