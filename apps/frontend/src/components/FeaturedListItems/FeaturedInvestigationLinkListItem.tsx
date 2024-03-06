@@ -76,11 +76,11 @@ export const FeaturedInvestigationLinkListItem = ({
               width: "36px",
               padding: "18px"
            }}
-           aria-label="arrow">
+           aria-label="arrow"
+           onClick={() => {primaryAction()}}>
             <ArrowForward sx={{
               color: "#FFFFFF"
             }}
-            onClick={() => {primaryAction()}}
           />
           </IconButton>
         </Grid>
