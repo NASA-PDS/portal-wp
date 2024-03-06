@@ -100,7 +100,7 @@ const investigationsSlice = createSlice({
       state.status = "pending";
     });
     
-    builder .addCase(getInvestigations.fulfilled, (state, action) => {
+    builder.addCase(getInvestigations.fulfilled, (state, action) => {
       // When data is fetched successfully
       state.status = "succeeded";
       
@@ -157,17 +157,8 @@ const investigationsSlice = createSlice({
  * @param {InvestigationsState} state The invesigations redux state of type InvestigationsState
  * @returns {Investigation[]} An array containing the list of the latest versions of all investigations
  */
-const selectLatestVersionInvestigations = (state:InvestigationsState):Investigation[] => {
-
-  let investigations:Investigation[] = [];
-
-  Object.keys(state.items).forEach( (lid) => {
-    const latestVersion = Object.keys(state.items[lid]).sort().reverse()[0];
-    investigations.push( state.items[lid][latestVersion] );
-  });
-
-  return investigations;
-
+const selectLatestVersionInvestigations = (state:InvestigationsState): InvestigationItems => {
+  return state.items;
 };
 
 /**
@@ -175,7 +166,7 @@ const selectLatestVersionInvestigations = (state:InvestigationsState):Investigat
  * @param {InvestigationsState} state The invesigations redux state of type InvestigationsState
  * @returns {string} The search filter currently being applied
  */
-const selectFilter = (state:InvestigationsState):string => {
+const selectSearchFilter = (state:InvestigationsState):string => {
   return state.searchFilter;
 };
 
@@ -183,8 +174,15 @@ const selectFilter = (state:InvestigationsState):string => {
  * A memoized redux selector that efficiently returns the latest, and filtered list of investigations.
  * @returns {Investigation[]} An filtered, and latest list of investigations
  */
-export const selectFilteredInvestigations = createSelector([selectLatestVersionInvestigations, selectFilter], (latestInvestigations:Investigation[], searchFilter:string) => {
+export const selectFilteredInvestigations = createSelector([selectLatestVersionInvestigations, selectSearchFilter], (investigations:InvestigationItems, searchFilter:string) => {
 
+  let latestInvestigations:Investigation[] = [];
+  
+  Object.keys(investigations).forEach( (lid) => {
+    const latestVersion = Object.keys(investigations[lid]).sort().reverse()[0];
+    latestInvestigations.push( investigations[lid][latestVersion] );
+  });
+  
   if( searchFilter === "" ) {
     return latestInvestigations;
   }
