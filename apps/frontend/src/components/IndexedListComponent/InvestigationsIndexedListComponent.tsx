@@ -3,7 +3,7 @@ import {Box, Container, Grid, Link, Typography } from "@mui/material";
 import { generatePath, useNavigate } from "react-router-dom";
 import { Investigation } from "src/types/investigation.d";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
-import FeaturedInvestigationLinkListItem from "../FeaturedListItems/FeaturedInvestigationLinkListItem";
+import FeaturedInvestigationLinkListItem from "src/components/FeaturedListItems/FeaturedInvestigationLinkListItem";
 
 type InvestigationsIndexedListComponentProps = {
   /** Style to use when rendering */
@@ -171,29 +171,13 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                     (investigation: Investigation) => {
                       return (
                         <FeaturedInvestigationLinkListItem
-                          affiliated_spacecraft={
-                            investigation[
-                              PDS4_INFO_MODEL.ALIAS.ALTERNATE_TITLE
-                            ]
-                          }
-                          description={
-                            investigation[
-                              PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION
-                            ]
-                          }
-                          investigation_type={
-                            investigation[
-                              PDS4_INFO_MODEL.INVESTIGATION.TYPE
-                            ]
-                          }
+                          affiliated_spacecraft={ investigation[PDS4_INFO_MODEL.ALIAS.ALTERNATE_TITLE]?.join(",") }
+                          description={ investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION] }
+                          investigation_type={ investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE] }
                           primaryAction={ () => investigationListItemPrimaryAction({ lid: investigation.lid, version: investigation.vid }) }
                           key={investigation[PDS4_INFO_MODEL.LID]}
                           lid={investigation[PDS4_INFO_MODEL.LID]}
-                          title={
-                            investigation[
-                              PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE
-                            ]
-                          }
+                          title={ investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE] }
                         />
                       );
                     }
