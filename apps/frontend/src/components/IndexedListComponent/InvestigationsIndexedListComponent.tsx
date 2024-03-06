@@ -176,7 +176,6 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                           investigation_type={ investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE] }
                           primaryAction={ () => investigationListItemPrimaryAction({ lid: investigation.lid, version: investigation.vid }) }
                           key={investigation[PDS4_INFO_MODEL.LID]}
-                          lid={investigation[PDS4_INFO_MODEL.LID]}
                           title={ investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE] }
                         />
                       );
