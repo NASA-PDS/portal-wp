@@ -178,11 +178,14 @@ export const selectFilteredInvestigations = createSelector([selectLatestVersionI
 
   let latestInvestigations:Investigation[] = [];
   
+  // Find the latest version of each investigation and store it in an array
+  let latestVersion:string = "";
   Object.keys(investigations).forEach( (lid) => {
-    const latestVersion = Object.keys(investigations[lid]).sort().reverse()[0];
+    latestVersion = Object.keys(investigations[lid]).sort().reverse()[0];
     latestInvestigations.push( investigations[lid][latestVersion] );
   });
   
+  // Sort investigations alphabetically by title
   latestInvestigations.sort( (a:Investigation,b:Investigation) => {
     if( a[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase() < b[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase() ) {
       return -1
