@@ -1,13 +1,11 @@
-import { useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
-import StarsIcon from '@mui/icons-material/Stars';
 import ArrowForward from '@mui/icons-material/ArrowForward';
-import { Button, Link } from '@mui/material';
+import { Link } from '@mui/material';
 
 export type FeaturedInvestigationLinkListItemProps = {
   affiliated_spacecraft: string,
@@ -24,22 +22,10 @@ export const FeaturedInvestigationLinkListItem = ({
   affiliated_spacecraft = '',
   description = '',
   investigation_type = 'data',
-  lid = '',
   primaryAction,
-  startDateTime = '',
-  stopDateTime = '',
   title = '',
 }: FeaturedInvestigationLinkListItemProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const handleResultDetailsClick = () => {
-    setIsOpen(!isOpen);
-  }
-
-  const linkstyles = {
-    "&hover": "#B60109"
-  }
-
+  
   return (
     <Box>
       <Grid container spacing={8} alignItems="center">
@@ -94,7 +80,7 @@ export const FeaturedInvestigationLinkListItem = ({
             <ArrowForward sx={{
               color: "#FFFFFF"
             }}
-            onClick={primaryAction}
+            onClick={() => {primaryAction()}}
           />
           </IconButton>
         </Grid>
