@@ -183,6 +183,15 @@ export const selectFilteredInvestigations = createSelector([selectLatestVersionI
     latestInvestigations.push( investigations[lid][latestVersion] );
   });
   
+  latestInvestigations.sort( (a:Investigation,b:Investigation) => {
+    if( a[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase() < b[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase() ) {
+      return -1
+    } else if( a[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase() > b[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase() ) {
+      return 1
+    }
+    return 0;
+  });
+
   if( searchFilter === "" ) {
     return latestInvestigations;
   }
