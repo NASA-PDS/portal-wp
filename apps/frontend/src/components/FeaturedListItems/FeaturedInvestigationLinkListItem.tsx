@@ -9,13 +9,10 @@ import { Link } from '@mui/material';
 
 export type FeaturedInvestigationLinkListItemProps = {
   affiliated_spacecraft: string,
-  investigation_type: string,
-  title: string,
   description: string,
-  primaryAction:Function
-  startDateTime?: string,
-  stopDateTime?: string,
-  lid: string,
+  investigation_type: string,
+  primaryAction:Function,
+  title: string,
 }
 
 export const FeaturedInvestigationLinkListItem = ({
