@@ -19,3 +19,12 @@ export type Investigation = {
   [PDS4_INFO_MODEL.INVESTIGATION.TYPE]:string;
 
 }
+
+export enum INVESTIGATION_TYPE {
+  ALL = "ALL",
+  FIELD_CAMPAIGN = "Field Campaign",
+  INDIVIDUAL_INVESTIGATION = "Individual Investigation",
+  MISSION = "Mission",
+  OBSERVING_CAMPAIGN = "Observing Campaign",
+  OTHER_INVESTIGATION = "Other Investigation"
+}

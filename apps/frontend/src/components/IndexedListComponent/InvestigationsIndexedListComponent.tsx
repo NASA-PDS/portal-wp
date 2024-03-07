@@ -39,7 +39,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
 
   return (
     <>
-      <Box>
+      <Box sx={{textAlign:"center"}}>
         {investigations.length > 0 &&
           ALPHABET.map((letter) => {
 

@@ -3,26 +3,35 @@ import {
   Box,
   Breadcrumbs,
   Container,
+  FormControl,
   Grid,
   InputAdornment,
+  InputLabel,
   Link,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
   Typography,
 } from "@mui/material";
+import { getInvestigations, selectFilteredInvestigations, setFreeTextSearchFilter, setInvestigationTypeSearchFilter } from "src/features/investigations/investigationsSlice";
 import { useAppDispatch } from "src/hooks";
-import { getInvestigations, selectFilteredInvestigations, setSearchFilter } from "src/features/investigations/investigationsSlice";
+import { connect } from "react-redux";
+import { RootState } from "src/store";
 import { Loader } from "@nasapds/wds-react";
 import { TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
+import { Investigation, INVESTIGATION_TYPE } from "src/types/investigation.d";
 import InvestigationsIndexedListComponent from "src/components/IndexedListComponent/InvestigationsIndexedListComponent";
-import { connect } from "react-redux";
-import { RootState } from "src/store";
-import { Investigation } from "src/types/investigation.d";
+import { ExpandMore } from "@mui/icons-material";
 
 type InvestigationsDirectoryPageProps = {
   error: string | null | undefined,
   latestInvestigations: Investigation[];
-  searchFilter: string;
+  searchFilters: {
+    freeText:string,
+    type:INVESTIGATION_TYPE,
+  };
   status: string;
 };
 
@@ -30,7 +39,7 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
 
   const dispatch = useAppDispatch();
 
-  const {error, latestInvestigations, searchFilter, status} = props;
+  const {error, latestInvestigations, searchFilters, status} = props;
   
   useEffect(() => {
     let isMounted = true;
@@ -67,12 +76,16 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
     paddingY: "4px",
   };
 
-  const handleFilterChange = (event:React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(setSearchFilter(event.currentTarget.value))
+  const handleFreeTextSearchFilterChange = (event:React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(setFreeTextSearchFilter(event.currentTarget.value))
   };
 
-  const handleFilterReset = () => {
-    dispatch(setSearchFilter(""));
+  const handleFreeTextSearchFilterReset = () => {
+    dispatch(setFreeTextSearchFilter(""));
+  }
+
+  const handleInvestigationTypeFilterChange = (event:SelectChangeEvent) => {
+    dispatch(setInvestigationTypeSearchFilter(event.target.value as INVESTIGATION_TYPE));
   }
 
   return (
@@ -136,11 +149,11 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
             paddingBottom: "25px",
             paddingLeft: "140px",
             paddingRight: "140px",
-            textAlign: "center",
+            textAlign: "left",
           }}
         >
           <Box sx={{ paddingBottom: "25px" }}>
-            <Grid container sx={{ height: "100%" }} alignItems="center">
+            <Grid container spacing={4} sx={{ height: "100%" }} alignItems="center">
               <Grid item xs={2}>
                 <Typography
                   sx={{
@@ -159,7 +172,7 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
                   placeholder="Search based on Name, Instruments, or Targets"
                   variant="outlined"
                   type="search"
-                  value={searchFilter}
+                  value={searchFilters.freeText}
                   InputProps={{
                     sx: {
                       borderRadius: "2px",
@@ -169,8 +182,8 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
                         <SearchIcon />
                       </InputAdornment>
                     ),
-                    endAdornment: searchFilter && (
-                      <InputAdornment position="end" onClick={ () => { handleFilterReset()}}
+                    endAdornment: searchFilters.freeText && (
+                      <InputAdornment position="end" onClick={handleFreeTextSearchFilterReset}
                         sx={{
                           cursor: "pointer"
                         }}
@@ -180,8 +193,52 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
                     )
                   }}
                   fullWidth
-                  onChange={ (event) => { handleFilterChange(event) } }
+                  onChange={handleFreeTextSearchFilterChange}
                 />
+              </Grid>
+              <Grid item xs={2}>
+              
+                <Typography
+                  sx={{
+                    color: 'black',
+                    fontSize: '14px',
+                    fontFamily: 'Inter',
+                    fontWeight: '600',
+                    lineHeight: '19px',
+                    wordWrap: 'break-word',
+                    mb: '4px'
+                  }}>Investigation Type</Typography>
+                <Select
+                  value={searchFilters.type}
+                  onChange={handleInvestigationTypeFilterChange}
+                  fullWidth
+                  IconComponent={ExpandMore}
+                  sx={{
+                    borderRadius: '5px',
+                    borderWidth: '2px',
+                    borderColor: '#D1D1D1',
+                    '.MuiSelect-select': {
+                      py: '10px',
+                      px: '16px',
+                    },
+                    '.MuiSelect-nativeInput': {
+                      color: '#2E2E32',
+                      fontSize: '14px',
+                      fontFamily: 'Public Sans',
+                      fontWeight: '400',
+                      lineHeight: '20px',
+                      wordWrap: 'break-word'
+                    }
+                  }}
+                >
+                  <MenuItem value={"ALL"}>All</MenuItem>
+                  <MenuItem value={INVESTIGATION_TYPE.FIELD_CAMPAIGN}>{INVESTIGATION_TYPE.FIELD_CAMPAIGN}</MenuItem>
+                  <MenuItem value={INVESTIGATION_TYPE.INDIVIDUAL_INVESTIGATION}>{INVESTIGATION_TYPE.INDIVIDUAL_INVESTIGATION}</MenuItem>
+                  <MenuItem value={INVESTIGATION_TYPE.MISSION}>{INVESTIGATION_TYPE.MISSION}</MenuItem>
+                  <MenuItem value={INVESTIGATION_TYPE.OBSERVING_CAMPAIGN}>{INVESTIGATION_TYPE.OBSERVING_CAMPAIGN}</MenuItem>
+                  <MenuItem value={INVESTIGATION_TYPE.OTHER_INVESTIGATION}>{INVESTIGATION_TYPE.OTHER_INVESTIGATION}</MenuItem>
+                </Select>
+              
               </Grid>
             </Grid>
           </Box>
@@ -196,11 +253,14 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
   );
 };
 
+/**
+ * Use mapStateToProps so that changes to our state trigger a rerender of the UI.
+ */ 
 const mapStateToProps = (state:RootState) => {
   return { 
     error: state.investigations.error,
     latestInvestigations: selectFilteredInvestigations(state.investigations),
-    searchFilter: state.investigations.searchFilter,
+    searchFilters: state.investigations.searchFilters,
     status: state.investigations.status,
   }
 };

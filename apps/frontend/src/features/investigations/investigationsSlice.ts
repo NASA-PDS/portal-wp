@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { createSlice, createAsyncThunk, createSelector, PayloadAction } from "@reduxjs/toolkit";
 
-import { Investigation } from "src/types/investigation.d";
+import { Investigation, INVESTIGATION_TYPE } from "src/types/investigation.d";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 
 enum INVESTIGATION_ACTIONS {
@@ -19,14 +19,20 @@ type InvestigationItems = {
 type InvestigationsState = {
   error: string | null | undefined
   items: InvestigationItems
-  searchFilter:string
+  searchFilters:{
+    freeText:string,
+    type:INVESTIGATION_TYPE,
+  }
   status: 'idle' | 'pending' | 'succeeded' | 'failed'
 };
 
 const initialState:InvestigationsState = {
   error: null,
   items: {},
-  searchFilter: "",
+  searchFilters: { 
+    freeText: "",
+    type: INVESTIGATION_TYPE.ALL,
+  },
   status: 'idle',
 };
 
@@ -89,8 +95,11 @@ const investigationsSlice = createSlice({
   name: "investigations",
   initialState,
   reducers: {
-    setSearchFilter: (state, action:PayloadAction<string>) => {
-      state.searchFilter = action.payload;
+    setFreeTextSearchFilter: (state, action:PayloadAction<string>) => {
+      state.searchFilters.freeText = action.payload;
+    },
+    setInvestigationTypeSearchFilter: (state, action:PayloadAction<INVESTIGATION_TYPE>) => {
+      state.searchFilters.type = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -166,15 +175,15 @@ const selectLatestVersionInvestigations = (state:InvestigationsState): Investiga
  * @param {InvestigationsState} state The invesigations redux state of type InvestigationsState
  * @returns {string} The search filter currently being applied
  */
-const selectSearchFilter = (state:InvestigationsState):string => {
-  return state.searchFilter;
+const selectSearchFilters = (state:InvestigationsState) => {
+  return state.searchFilters;
 };
 
 /**
  * A memoized redux selector that efficiently returns the latest, and filtered list of investigations.
  * @returns {Investigation[]} An filtered, and latest list of investigations
  */
-export const selectFilteredInvestigations = createSelector([selectLatestVersionInvestigations, selectSearchFilter], (investigations:InvestigationItems, searchFilter:string) => {
+export const selectFilteredInvestigations = createSelector([selectLatestVersionInvestigations, selectSearchFilters], (investigations:InvestigationItems, searchFilters) => {
 
   let latestInvestigations:Investigation[] = [];
   
@@ -195,17 +204,21 @@ export const selectFilteredInvestigations = createSelector([selectLatestVersionI
     return 0;
   });
 
-  if( searchFilter === "" ) {
+  if( searchFilters.freeText === "" && searchFilters.type === INVESTIGATION_TYPE.ALL ) {
     return latestInvestigations;
   }
 
   return latestInvestigations.filter(
-    (item) => { 
-      return item[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase().includes(searchFilter)
+    (item) => {
+      return (
+        item[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase().includes(searchFilters.freeText)
+        &&
+        ( searchFilters.type === INVESTIGATION_TYPE.ALL || item[PDS4_INFO_MODEL.INVESTIGATION.TYPE] === searchFilters.type )
+      )
     }
   );
 
 });
 
-export const { setSearchFilter } = investigationsSlice.actions;
+export const { setFreeTextSearchFilter, setInvestigationTypeSearchFilter } = investigationsSlice.actions;
 export default investigationsSlice.reducer;
