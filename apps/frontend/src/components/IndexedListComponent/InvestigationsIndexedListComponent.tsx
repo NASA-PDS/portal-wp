@@ -6,7 +6,6 @@ import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import FeaturedInvestigationLinkListItem from "src/components/FeaturedListItems/FeaturedInvestigationLinkListItem";
 
 type InvestigationsIndexedListComponentProps = {
-  /** Style to use when rendering */
   investigations: Investigation[];
 };
 
@@ -95,6 +94,9 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
               paddingY: "10px",
               paddingLeft: "10px",
               backgroundColor: "#F6F6F6",
+              '& .MuiGrid-item': {
+                paddingTop: "0px",
+              }
             }}
           >
             <Grid item xs={7}>
