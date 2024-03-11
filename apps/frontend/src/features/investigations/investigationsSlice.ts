@@ -16,23 +16,22 @@ type InvestigationItems = {
   } 
 };
 
+export type InvestigationDirectorySearchFilterState = {
+  freeText:string,
+  type:INVESTIGATION_TYPE,
+}
+
 type InvestigationsState = {
   error: string | null | undefined
   items: InvestigationItems
-  searchFilters:{
-    freeText:string,
-    type:INVESTIGATION_TYPE,
-  }
+  searchFilters: InvestigationDirectorySearchFilterState | undefined
   status: 'idle' | 'pending' | 'succeeded' | 'failed'
 };
 
 const initialState:InvestigationsState = {
   error: null,
   items: {},
-  searchFilters: { 
-    freeText: "",
-    type: INVESTIGATION_TYPE.ALL,
-  },
+  searchFilters: undefined,
   status: 'idle',
 };
 
@@ -96,9 +95,15 @@ const investigationsSlice = createSlice({
   initialState,
   reducers: {
     setFreeTextSearchFilter: (state, action:PayloadAction<string>) => {
+      if( state.searchFilters === undefined ) {
+        state.searchFilters = <InvestigationDirectorySearchFilterState>{}
+      }
       state.searchFilters.freeText = action.payload;
     },
     setInvestigationTypeSearchFilter: (state, action:PayloadAction<INVESTIGATION_TYPE>) => {
+      if( state.searchFilters === undefined ) {
+        state.searchFilters = <InvestigationDirectorySearchFilterState>{}
+      }
       state.searchFilters.type = action.payload;
     },
   },
@@ -204,16 +209,16 @@ export const selectFilteredInvestigations = createSelector([selectLatestVersionI
     return 0;
   });
 
-  if( searchFilters.freeText === "" && searchFilters.type === INVESTIGATION_TYPE.ALL ) {
+  if( searchFilters === undefined ) {
     return latestInvestigations;
   }
 
   return latestInvestigations.filter(
     (item) => {
       return (
-        item[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase().includes(searchFilters.freeText)
+        item[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase().includes(searchFilters?.freeText || "")
         &&
-        ( searchFilters.type === INVESTIGATION_TYPE.ALL || item[PDS4_INFO_MODEL.INVESTIGATION.TYPE] === searchFilters.type )
+        ( searchFilters.type === undefined || searchFilters.type === INVESTIGATION_TYPE.ALL || item[PDS4_INFO_MODEL.INVESTIGATION.TYPE] === searchFilters.type )
       )
     }
   );

@@ -11,7 +11,13 @@ import {
   SelectChangeEvent,
   Typography,
 } from "@mui/material";
-import { getInvestigations, selectFilteredInvestigations, setFreeTextSearchFilter, setInvestigationTypeSearchFilter } from "src/features/investigations/investigationsSlice";
+import {
+  getInvestigations,
+  InvestigationDirectorySearchFilterState,
+  selectFilteredInvestigations,
+  setFreeTextSearchFilter,
+  setInvestigationTypeSearchFilter
+} from "src/features/investigations/investigationsSlice";
 import { useAppDispatch } from "src/hooks";
 import { connect } from "react-redux";
 import { RootState } from "src/store";
@@ -26,10 +32,7 @@ import { ExpandMore } from "@mui/icons-material";
 type InvestigationsDirectoryPageProps = {
   error: string | null | undefined,
   latestInvestigations: Investigation[];
-  searchFilters: {
-    freeText:string,
-    type:INVESTIGATION_TYPE,
-  };
+  searchFilters: InvestigationDirectorySearchFilterState | undefined;
   status: string;
 };
 
@@ -170,7 +173,7 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
                   placeholder="Search based on Name, Instruments, or Targets"
                   variant="outlined"
                   type="search"
-                  value={searchFilters.freeText}
+                  value={searchFilters?.freeText || ""}
                   InputProps={{
                     sx: {
                       borderRadius: "2px",
@@ -180,7 +183,7 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
                         <SearchIcon />
                       </InputAdornment>
                     ),
-                    endAdornment: searchFilters.freeText && (
+                    endAdornment: searchFilters?.freeText && (
                       <InputAdornment position="end" onClick={handleFreeTextSearchFilterReset}
                         sx={{
                           cursor: "pointer"
@@ -195,7 +198,6 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
                 />
               </Grid>
               <Grid item xs={2}>
-              
                 <Typography
                   sx={{
                     color: 'black',
@@ -207,7 +209,7 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
                     mb: '4px'
                   }}>Investigation Type</Typography>
                 <Select
-                  value={searchFilters.type}
+                  value={searchFilters?.type || INVESTIGATION_TYPE.ALL}
                   onChange={handleInvestigationTypeFilterChange}
                   fullWidth
                   IconComponent={ExpandMore}
