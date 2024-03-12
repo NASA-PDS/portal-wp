@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 
-import investigationsReducer from "src/features/investigations/investigationsSlice";
+import investigationsReducer from "src/state/slices/investigationsSlice";
 
 export const store = configureStore({
   reducer: {
