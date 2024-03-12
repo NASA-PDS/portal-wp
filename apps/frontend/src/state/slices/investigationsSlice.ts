@@ -5,9 +5,8 @@ import { Investigation, INVESTIGATION_TYPE } from "src/types/investigation.d";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 
 enum INVESTIGATION_ACTIONS {
-  GET_INVESTIGATION = "investigations/getInvestigation",
   GET_INVESTIGATIONS = "investigations/getInvestigations",
-  SET_INVESTIGATIONS_FILTER = "investigations/setFilter",
+  SET_INVESTIGATIONS_SEARCH_FILTERS = "investigations/setSearchFilters",
 }
 
 type InvestigationItems = { 
