@@ -10,6 +10,8 @@ export namespace PDS4_INFO_MODEL {
   /** The concatenation of a logical identifier (LID) with a version identifier (VID) */
   export const LIDVID = "lidvid";
 
+  /** An identifier for the set of related instrument logical identifiers (LID) */
+  export const REF_LID_INSTRUMENT = "ref_lid_instrument";
 
   /** The Alias class provides a single alternate name and identification for this product in this or some other archive or data system. */
   export enum ALIAS {

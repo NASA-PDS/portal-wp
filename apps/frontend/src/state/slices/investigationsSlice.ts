@@ -65,6 +65,7 @@ export const getInvestigations = createAsyncThunk(
         "includes": [
           PDS4_INFO_MODEL.LID,
           PDS4_INFO_MODEL.LIDVID,
+          PDS4_INFO_MODEL.REF_LID_TARGET,
           PDS4_INFO_MODEL.VID,
           PDS4_INFO_MODEL.ALIAS.ALTERNATE_ID,
           PDS4_INFO_MODEL.ALIAS.ALTERNATE_TITLE,
@@ -131,6 +132,7 @@ const investigationsSlice = createSlice({
         let investigationItem:Investigation = <Investigation>{};
         investigationItem[PDS4_INFO_MODEL.LID] = source[PDS4_INFO_MODEL.LID];
         investigationItem[PDS4_INFO_MODEL.LIDVID] = source[PDS4_INFO_MODEL.LIDVID];
+        investigationItem[PDS4_INFO_MODEL.REF_LID_TARGET] = source[PDS4_INFO_MODEL.REF_LID_TARGET];
         investigationItem[PDS4_INFO_MODEL.VID] = source[PDS4_INFO_MODEL.VID];
         investigationItem[PDS4_INFO_MODEL.ALIAS.ALTERNATE_ID] = source[PDS4_INFO_MODEL.ALIAS.ALTERNATE_ID];
         investigationItem[PDS4_INFO_MODEL.ALIAS.ALTERNATE_TITLE] = source[PDS4_INFO_MODEL.ALIAS.ALTERNATE_TITLE];
