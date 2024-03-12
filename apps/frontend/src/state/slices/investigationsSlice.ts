@@ -180,7 +180,7 @@ const investigationsSlice = createSlice({
   },
   extraReducers: (builder) => {
     
-    builder.addCase(getInvestigations.pending, (state, action) => {
+    builder.addCase(getInvestigations.pending, (state, _action) => {
       // When data is being fetched
       state.status = "pending";
     });
@@ -234,7 +234,7 @@ const investigationsSlice = createSlice({
       state.error = action.error.message;
     });
 
-    builder.addCase(getEverything.pending, (state, action) => {
+    builder.addCase(getEverything.pending, (state, _action) => {
       // When data is being fetched
       state.status = "pending";
     });
