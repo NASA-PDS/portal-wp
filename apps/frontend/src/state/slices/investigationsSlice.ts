@@ -56,8 +56,8 @@ export const getInvestigations = createAsyncThunk(
       "size": 9999, // we must provide a size otherwise we only receive a limited number of results
       "query": {
         "wildcard": {
-          [PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION]: {
-            "value": "*"
+          [PDS4_INFO_MODEL.LID]: {
+            "value": "urn:*:investigation:*"
           }
         }
       },
