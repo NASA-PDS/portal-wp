@@ -1,12 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
 
 import investigationsReducer from "src/state/slices/investigationsSlice";
+import targetsReducer from "src/state/slices/targetsSlice";
 import dataManagerSlice from './slices/dataManagerSlice';
 
 export const store = configureStore({
   reducer: {
     dataManager: dataManagerSlice,
     investigations: investigationsReducer,
+    targets: targetsReducer
   }
 });
 

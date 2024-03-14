@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getInvestigations } from './investigationsSlice';
+import { getTargets } from './targetsSlice';
 
 type DataManagerState = {
   lastUpdated:number | undefined
@@ -17,7 +18,8 @@ export const getData = createAsyncThunk(
   async (_, api) => {
 
     const response = await Promise.all([
-      api.dispatch(getInvestigations())
+      api.dispatch(getInvestigations()),
+      api.dispatch(getTargets())
     ]);
 
     if( response.find( (item:any) => item.error) ) {
@@ -25,7 +27,8 @@ export const getData = createAsyncThunk(
       return api.rejectWithValue(errors);
     } else {
       return {
-        investigations: response[0].payload.hits
+        investigations: response[0].payload.hits,
+        targets: response[1].payload.hits,
       }
     }
 
