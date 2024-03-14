@@ -58,6 +58,7 @@ export const getTargets = createAsyncThunk(
         "includes": [
           PDS4_INFO_MODEL.LID,
           PDS4_INFO_MODEL.LIDVID,
+          PDS4_INFO_MODEL.TITLE,
           PDS4_INFO_MODEL.VID,
         ]
       }
@@ -102,8 +103,8 @@ const targetsSlice = createSlice({
         let target:Target = <Target>{};
         target[PDS4_INFO_MODEL.LID] = source[PDS4_INFO_MODEL.LID];
         target[PDS4_INFO_MODEL.LIDVID] = source[PDS4_INFO_MODEL.LIDVID];
-        target[PDS4_INFO_MODEL.VID] = source[PDS4_INFO_MODEL.VID];
         target[PDS4_INFO_MODEL.TITLE] = source[PDS4_INFO_MODEL.TITLE];
+        target[PDS4_INFO_MODEL.VID] = source[PDS4_INFO_MODEL.VID];
 
         if( compiledItems[lid] === undefined ) {
           compiledItems[lid] = {};

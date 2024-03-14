@@ -58,6 +58,7 @@ export const getInstruments = createAsyncThunk(
         "includes": [
           PDS4_INFO_MODEL.LID,
           PDS4_INFO_MODEL.LIDVID,
+          PDS4_INFO_MODEL.TITLE,
           PDS4_INFO_MODEL.VID,
         ]
       }
