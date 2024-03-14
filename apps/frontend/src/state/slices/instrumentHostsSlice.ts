@@ -3,7 +3,6 @@ import { createSlice, createAsyncThunk, createSelector } from "@reduxjs/toolkit"
 
 import { InstrumentHost } from "src/types/instrumentHost.d";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
-import { RootState } from '../store';
 
 enum INSTRUMENT_HOST_ACTIONS {
   GET_INSTRUMENT_HOSTS = "instrumentHosts/getInstrumentHosts",
@@ -134,8 +133,8 @@ const instrumentHostsSlice = createSlice({
  * @param {InstrumentHostsState} state The instrument hosts redux state of type InstrumentHostsState
  * @returns {InstrumentHost[]} An array containing the list of the latest versions of all instrument hosts
  */
-export const selectLatestVersionInstrumentHosts = (state:RootState): InstrumentHostItems => {
-  return state.instrumentHosts.items;
+export const selectLatestVersionInstrumentHosts = (state:InstrumentHostsState): InstrumentHostItems => {
+  return state.items;
 };
 
 /**

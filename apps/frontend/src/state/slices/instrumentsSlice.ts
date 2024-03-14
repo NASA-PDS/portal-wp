@@ -3,7 +3,8 @@ import { createSlice, createAsyncThunk, createSelector } from "@reduxjs/toolkit"
 
 import { Instrument } from "src/types/instrument.d";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
-import { RootState } from '../store';
+import { TargetItems, selectFilteredTargets, selectLatestVersionTargets } from './targetsSlice';
+import { Target } from 'src/types/target.d';
 
 enum INSTRUMENT_ACTIONS {
   GET_INSTRUMENTS = "instruments/getInstruments",
@@ -134,8 +135,8 @@ const instrumentsSlice = createSlice({
  * @param {InstrumentsState} state The instruments redux state of type InstrumentsState
  * @returns {Instrument[]} An array containing the list of the latest versions of all instruments
  */
-export const selectLatestVersionInstruments = (state:RootState): InstrumentItems => {
-  return state.instruments.items;
+export const selectLatestVersionInstruments = (state:InstrumentsState): InstrumentItems => {
+  return state.items;
 };
 
 /**

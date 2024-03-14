@@ -3,7 +3,6 @@ import { createSlice, createAsyncThunk, createSelector } from "@reduxjs/toolkit"
 
 import { Target } from "src/types/target.d";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
-import { RootState } from '../store';
 
 enum TARGET_ACTIONS {
   GET_TARGETS = "targets/getTargets",
@@ -134,8 +133,8 @@ const targetsSlice = createSlice({
  * @param {TargetsState} state The targets redux state of type TargetsState
  * @returns {Target[]} An array containing the list of the latest versions of all targets
  */
-export const selectLatestVersionTargets = (state:RootState): TargetItems => {
-  return state.targets.items;
+export const selectLatestVersionTargets = (state:TargetsState): TargetItems => {
+  return state.items;
 };
 
 /**
