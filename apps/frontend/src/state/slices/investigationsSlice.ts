@@ -29,7 +29,7 @@ type InvestigationsState = {
 
 const initialState:InvestigationsState = {
   error: null,
-  items: {},
+  items: <InvestigationItems>{},
   searchFilters: undefined,
   status: 'idle',
 };
@@ -172,8 +172,8 @@ const investigationsSlice = createSlice({
  * @param {InvestigationsState} state The invesigations redux state of type InvestigationsState
  * @returns {Investigation[]} An array containing the list of the latest versions of all investigations
  */
-const selectLatestVersionInvestigations = (state:RootState): InvestigationItems => {
-  return state.investigations.items;
+const selectLatestVersionInvestigations = (state:InvestigationsState): InvestigationItems => {
+  return state.items;
 };
 
 /**

@@ -12,15 +12,15 @@ import {
   Typography,
 } from "@mui/material";
 import {
-  getInvestigations,
   InvestigationDirectorySearchFilterState,
   selectFilteredInvestigations,
   setFreeTextSearchFilter,
   setInvestigationTypeSearchFilter
-} from "src/features/investigations/investigationsSlice";
-import { useAppDispatch } from "src/hooks";
+} from "src/state/slices/investigationsSlice";
+import { getData, dataRequiresFetchOrUpdate } from "src/state/slices/dataManagerSlice";
+import { useAppDispatch, useAppSelector } from "src/state/hooks";
 import { connect } from "react-redux";
-import { RootState } from "src/store";
+import { RootState } from "src/state/store";
 import { Loader } from "@nasapds/wds-react";
 import { TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -41,13 +41,14 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
   const dispatch = useAppDispatch();
 
   const {error, latestInvestigations, searchFilters, status} = props;
+  const dataManagerState = useAppSelector( (state) => { return state.dataManager } );
   
   useEffect(() => {
     let isMounted = true;
 
-    // If status is 'idle', then fetch the investigations data from the API
-    if (status === "idle") {
-      dispatch(getInvestigations());
+    // Check if data manager status is 'idle', then fetch the investigations data from the API
+    if( dataRequiresFetchOrUpdate(dataManagerState) ) {
+      dispatch(getData());
     }
 
     if (status === "pending") {
