@@ -15,6 +15,10 @@ export namespace PDS4_INFO_MODEL {
 
   /** An identifier for the set of related instrument logical identifiers (LID) */
   export const REF_LID_INSTRUMENT = "ref_lid_instrument";
+  
+  /** An identifier for the set of related instrument host logical identifiers (LID) */
+  export const REF_LID_INSTRUMENT_HOST = "ref_lid_instrument_host";
+  
   /** The title attribute provides a short, descriptive text string suitable for use as a title or brief description in a display or listing of products. */
   export const TITLE = "title";
   
