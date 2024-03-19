@@ -3,6 +3,7 @@ import { RootState } from "../store";
 import { InvestigationItems } from "../slices/investigationsSlice";
 import { INVESTIGATION_TYPE, Investigation } from "src/types/investigation.d";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
+import investigations from "src/pages/investigations";
 
 /**
  * A redux selector to retrieve investigation data stored in our redux state.
@@ -20,6 +21,10 @@ const selectInvestigations = (state:RootState): InvestigationItems => {
  */
 const selectSearchFilters = (state:RootState) => {
   return state.investigations.searchFilters;
+};
+
+export const selectInvestigationVersion = (state:RootState, lid:string, version:string) => {
+  return state.investigations.items[lid][version]
 };
 
 /**

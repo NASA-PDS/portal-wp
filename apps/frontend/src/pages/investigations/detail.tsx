@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useEffect } from "react";
 import { Box, Breadcrumbs, Button, Container, Link, Tab, Tabs, Typography } from '@mui/material';
-import { FeaturedLinkListItem } from "@nasapds/wds-react";
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from "src/hooks";
+import { connect } from "react-redux";
+import { useAppDispatch, useAppSelector } from "src/state/hooks";
+
+import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
+import { selectInvestigationVersion } from "src/state/selectors/investigations";
+import { dataRequiresFetchOrUpdate, getData } from "src/state/slices/dataManagerSlice";
+import { RootState } from "src/state/store";
 
 import "./detail.scss";
-import { getInvestigation } from '../../utils.tsx/investigations';
+import { Investigation } from "src/types/investigation.d";
 
 interface TabPanelProps {
    children?: React.ReactNode;
@@ -40,12 +45,52 @@ function a11yProps(index: number) {
    };
 }
 
-const InvestigationDetailPage = () => {
+type InvestigationDetailPageProps = {
+  error: string | null | undefined,
+  investigation:Investigation;
+  status: string;
+};
 
-   const { investigationId } = useParams();
-   const [value, setValue] = React.useState(0);
+export const InvestigationDetailPage = (props:InvestigationDetailPageProps) => {
+
    const navigate = useNavigate();
+   const dispatch = useAppDispatch();
+   const {error, investigation, status} = props;
+   const dataManagerState = useAppSelector( (state) => { return state.dataManager } );
+   const { lid, version } = useParams();
+   const [value, setValue] = React.useState(0);
+   
+   console.log("Investigation LID:", lid);
+   console.log("Investigation Version:", version)
 
+   useEffect(() => {
+    let isMounted = true;
+
+    // Check if data manager status is 'idle', then fetch the investigations data from the API
+    if( dataRequiresFetchOrUpdate(dataManagerState) ) {
+      dispatch(getData());
+    }
+
+    if (status === "pending") {
+      // Do something to inform user that investigation data is being fetched
+    } else if (status === "succeeded") {
+      
+      // Do something to handle the successful fetching of data
+      
+      console.log("investigation:", investigation);
+      
+    } else if ( error != null || error != undefined ) {
+      // Do something to handle the error
+      console.log(error);
+    }
+
+    // Cleanup function
+    return () => {
+      isMounted = false;
+    };
+  }, [status, dispatch]);
+
+   
    const linkStyles = {
       color: "white",
       fontFamily: "Inter",
@@ -77,13 +122,9 @@ const InvestigationDetailPage = () => {
       setValue(newValue);
     };
 
-   const investigation:Investigation = getInvestigation(investigationId);
-   console.log(investigation["instruments"]);
-
    const investigationListItemPrimaryAction = (path:string) => {
       navigate(path);
    };
-   
 
    return (
       <Container
@@ -95,7 +136,7 @@ const InvestigationDetailPage = () => {
             maxWidth={false} 
             disableGutters
             sx={{
-               backgroundImage: "url(/assets/images/headers/" + investigationId + ".png)",
+               backgroundImage: "url(/assets/images/headers/investigations/" + lid + ".png)",
                backgroundSize: "cover",
                backgroundRepeat: "no-repeat",
                height: "280px",
@@ -132,7 +173,7 @@ const InvestigationDetailPage = () => {
                   >
                      Investigations
                   </Link>
-                  <Typography style={{color: "white"}}>{investigationId?.toUpperCase()}</Typography>
+                  <Typography style={{color: "white"}}>{investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]}</Typography>
                </Breadcrumbs>
                <Box
                   component="img"
@@ -141,7 +182,7 @@ const InvestigationDetailPage = () => {
                      paddingTop: "24px",
                   }}
                   alt=""
-                  src={"/assets/images/logos/" + investigationId + ".png"}
+                  src={"/assets/images/logos/" + investigation[PDS4_INFO_MODEL.LID] + ".png"}
                />
                <Typography variant="h1" style={{
                      color: "white",
@@ -149,7 +190,7 @@ const InvestigationDetailPage = () => {
                      paddingTop: "0px",
                      fontSize: "72px",
                      fontWeight: "700",
-                  }}>{investigationId?.toUpperCase()}</Typography>
+                  }}>{investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]}</Typography>
                <Typography variant="subtitle1" sx={{
                   color: "white",
                }}>The Mars Science Laboratory</Typography>
@@ -194,7 +235,7 @@ const InvestigationDetailPage = () => {
                paddingY: "24px",
                paddingLeft: "217px",
             }}>
-               <CustomTabPanel value={value} index={0}>
+               {/*<CustomTabPanel value={value} index={0}>
                   <Typography variant='h4'>Cameras</Typography>
                   {
                      investigation["instruments"]["cameras"].map((instrument) => {
@@ -252,13 +293,13 @@ const InvestigationDetailPage = () => {
                         )
                      })
                   }
-               </CustomTabPanel>
+               </CustomTabPanel>*/}
                <CustomTabPanel value={value} index={1}>
                   <Typography variant='h4'>Summary</Typography>
-                  <Typography variant='body1' style={{paddingBottom: "24px"}}>Development of the Mars Science Laboratory project began in 2003. On November 26 2011, the Mars Science Laboratory mission launched a spacecraft on a trajectory to Mars, and on August 6, 2012 (UTC), it landed a mobile science vehicle named Curiosity at a landing site in Gale Crater. During the trip to Mars, instrument health checks were performed and the Radiation Assessment Detector (RAD) instrument collected science data. For the primary mission on the surface of Mars (ending September 28, 2014), the rover explored the landing site and gathered imaging, spectroscopy, composition data, and othermeasurements for selected Martian soils, rocks, and the atmosphere.</Typography>
-                  <Typography variant='body1'>These data will allow the science team to quantitatively assess the habitability and environmental history. The prime mission's science objectives were to assess the biological potential of the landing site, characterize the geology of the landing region, investigate planetary processes that influence habitability, and characterize the broad spectrum of surface radiation. The first extended mission retains all of the prime mission's objectives and will also strive to: identify and quantitatively assess the subset of habitable environments that are also capable of preserving organic compounds, and explore and characterize major environmental transitions recorded in the geology ofthe foothills of Mt. Sharp and adjacent plains. For more detailed information regarding the MSL mission, visit the NASA mission page.</Typography>
+                  <Typography variant='body1' style={{paddingBottom: "24px"}}>{investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION]}</Typography>
+                  
                </CustomTabPanel>
-               <CustomTabPanel value={value} index={2}>
+               {/*<CustomTabPanel value={value} index={2}>
                   <Typography variant='h4'>Targets</Typography>
                   {
                      investigation["targets"].map((target) => {
@@ -274,8 +315,8 @@ const InvestigationDetailPage = () => {
                         )
                      })
                   }
-               </CustomTabPanel>
-               <CustomTabPanel value={value} index={3}>
+                </CustomTabPanel>*/}
+               {/*<CustomTabPanel value={value} index={3}>
                   <Typography variant='h4'>Tools</Typography>
                   {
                      investigation["tools"].map((tool) => {
@@ -290,7 +331,7 @@ const InvestigationDetailPage = () => {
                         )
                      })
                   }
-               </CustomTabPanel>
+               </CustomTabPanel>*/}
                <CustomTabPanel value={value} index={4}>
                   <Typography variant='h4'>Resources</Typography>
                </CustomTabPanel>
@@ -300,4 +341,17 @@ const InvestigationDetailPage = () => {
    );
 };
 
-export default InvestigationDetailPage;
+/**
+ * Use mapStateToProps so that changes to our state trigger a rerender of the UI.
+ */ 
+const mapStateToProps = (state:RootState) => {
+  const { lid, version } = useParams();
+
+  return { 
+    error: state.dataManager.error,
+    investigation: selectInvestigationVersion(state, lid, version ),
+    status: state.dataManager.status,
+  }
+};
+
+export default connect(mapStateToProps)(InvestigationDetailPage);
