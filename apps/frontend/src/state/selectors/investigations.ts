@@ -3,7 +3,6 @@ import { RootState } from "../store";
 import { InvestigationItems } from "../slices/investigationsSlice";
 import { INVESTIGATION_TYPE, Investigation } from "src/types/investigation.d";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
-import investigations from "src/pages/investigations";
 
 /**
  * A redux selector to retrieve investigation data stored in our redux state.
