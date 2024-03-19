@@ -30,7 +30,7 @@ export const selectInvestigationVersion = (state:RootState, lid:string, version:
  * A memoized redux selector that efficiently returns the latest list of investigations.
  * @returns {Investigation[]} A list of the latest investigations.
  */
-const selectLatestVersionInvestigations = createSelector([selectInvestigations], (investigations) => {
+export const selectLatestVersionInvestigations = createSelector([selectInvestigations], (investigations) => {
 
   let latestInvestigations:Investigation[] = [];
   

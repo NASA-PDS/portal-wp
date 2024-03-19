@@ -17,7 +17,7 @@ const selectInstruments = (state:RootState): InstrumentItems => {
  * A memoized redux selector that efficiently returns the latest list of instruments.
  * @returns {Instrument[]} A list of the latest instruments.
  */
-const selectLatestVersionInstruments = createSelector([selectInstruments], (instruments) => {
+export const selectLatestVersionInstruments = createSelector([selectInstruments], (instruments) => {
 
   let latestInstruments:Instrument[] = [];
   

@@ -6,6 +6,7 @@ export type Investigation = {
   [PDS4_INFO_MODEL.LID]:string;
   [PDS4_INFO_MODEL.LIDVID]:string;
   [PDS4_INFO_MODEL.REF_LID_TARGET]:string[];
+  [PDS4_INFO_MODEL.REF_LID_INSTRUMENT]:string[];
   [PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST]:string[];
   [PDS4_INFO_MODEL.VID]:string;
   [PDS4_INFO_MODEL.ALIAS.ALTERNATE_ID]:string[];

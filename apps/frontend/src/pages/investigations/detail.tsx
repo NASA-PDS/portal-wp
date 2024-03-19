@@ -6,11 +6,13 @@ import { useAppDispatch, useAppSelector } from "src/state/hooks";
 
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { selectInvestigationVersion } from "src/state/selectors/investigations";
+import { selectLatestInstrumentHostsByLid } from "src/state/selectors/instrumentHost";
 import { dataRequiresFetchOrUpdate, getData } from "src/state/slices/dataManagerSlice";
 import { RootState } from "src/state/store";
 
 import "./detail.scss";
 import { Investigation } from "src/types/investigation.d";
+import { InstrumentHost } from "src/types/instrumentHost.d";
 
 interface TabPanelProps {
    children?: React.ReactNode;
@@ -47,6 +49,7 @@ function a11yProps(index: number) {
 
 type InvestigationDetailPageProps = {
   error: string | null | undefined,
+  instrumentHosts:InstrumentHost[],
   investigation:Investigation;
   status: string;
 };
@@ -55,7 +58,7 @@ export const InvestigationDetailPage = (props:InvestigationDetailPageProps) => {
 
    const navigate = useNavigate();
    const dispatch = useAppDispatch();
-   const {error, investigation, status} = props;
+   const {error, instrumentHosts, investigation, status} = props;
    const dataManagerState = useAppSelector( (state) => { return state.dataManager } );
    const [value, setValue] = React.useState(0);
    
@@ -74,6 +77,7 @@ export const InvestigationDetailPage = (props:InvestigationDetailPageProps) => {
       // Do something to handle the successful fetching of data
       
       console.log("investigation:", investigation);
+      console.log("instrumentHosts:", instrumentHosts);
       
     } else if ( error != null || error != undefined ) {
       // Do something to handle the error
@@ -343,10 +347,13 @@ export const InvestigationDetailPage = (props:InvestigationDetailPageProps) => {
 const mapStateToProps = (state:RootState) => {
 
   const { investigationLid, investigationVersion } = useParams();
+  const investigation = selectInvestigationVersion(state, investigationLid, investigationVersion );
+  const instrumentHosts = selectLatestInstrumentHostsByLid(state, investigation[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST]);
 
   return { 
     error: state.dataManager.error,
-    investigation: selectInvestigationVersion(state, investigationLid, investigationVersion ),
+    instrumentHosts: instrumentHosts,
+    investigation: investigation,
     status: state.dataManager.status,
   }
 };

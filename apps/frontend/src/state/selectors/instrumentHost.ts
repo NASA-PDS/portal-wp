@@ -18,7 +18,7 @@ const selectInstrumentHosts = (state:RootState): InstrumentHostItems => {
  * A memoized redux selector that efficiently returns the latest list of instrument hosts.
  * @returns {InstrumentHost[]} A list of the latest instrument hosts.
  */
-const selectLatestVersionInstrumentHosts = createSelector([selectInstrumentHosts], (instrumentHosts) => {
+export const selectLatestVersionInstrumentHosts = createSelector([selectInstrumentHosts], (instrumentHosts) => {
 
   let latestInstrumentHost:InstrumentHost[] = [];
   
@@ -50,3 +50,19 @@ export const selectFilteredInstrumentHosts = createSelector([selectLatestVersion
   });
 
 });
+
+export const selectLatestInstrumentHostsByLid = createSelector(
+  [
+    selectLatestVersionInstrumentHosts,
+    (_, instrumentHostLids) => instrumentHostLids
+  ],
+  (latestInstrumentHosts, instrumentHostLids) => {
+
+    return latestInstrumentHosts.filter(
+      (instrumentHost) => {
+        return instrumentHostLids.includes(instrumentHost[PDS4_INFO_MODEL.LID])
+      }
+    );
+
+  }
+);
