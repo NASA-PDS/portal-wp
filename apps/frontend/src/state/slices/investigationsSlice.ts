@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { createSlice, createAsyncThunk, createSelector, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
 import { Investigation, INVESTIGATION_TYPE } from "src/types/investigation.d";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
