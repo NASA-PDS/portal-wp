@@ -129,19 +129,19 @@ const targetsSlice = createSlice({
 });
 
 /**
- * A redux selector to efficiently retrieve a list of the latest targets.
- * @param {TargetsState} state The targets redux state of type TargetsState
- * @returns {Target[]} An array containing the list of the latest versions of all targets
+ * A redux selector to retrieve target data stored in our redux state.
+ * @param {TargetsState} state The redux state of type RootState
+ * @returns {TargetItems} An data structure containing the current state of versioned targets
  */
-export const selectLatestVersionTargets = (state:TargetsState): TargetItems => {
+const selectTargets = (state:TargetsState): TargetItems => {
   return state.items;
 };
 
 /**
- * A memoized redux selector that efficiently returns the latest, and filtered list of targets.
+ * A memoized redux selector that efficiently returns the latest list of targets.
  * @returns {Target[]} An filtered, and latest list of targets
  */
-export const selectFilteredTargets = createSelector([selectLatestVersionTargets], (targets:TargetItems) => {
+export const selectLatestVersionTargets = createSelector([selectTargets], (targets) => {
 
   let latestTargets:Target[] = [];
   
@@ -151,6 +151,16 @@ export const selectFilteredTargets = createSelector([selectLatestVersionTargets]
     latestVersion = Object.keys(targets[lid]).sort().reverse()[0];
     latestTargets.push( targets[lid][latestVersion] );
   });
+
+  return latestTargets;
+
+});
+
+/**
+ * A memoized redux selector that efficiently returns the latest, and filtered list of targets.
+ * @returns {Target[]} An filtered, and latest list of targets
+ */
+export const selectFilteredTargets = createSelector([selectLatestVersionTargets], (latestTargets:Target[]) => {
   
   // Sort targets alphabetically by title
   latestTargets.sort( (a:Target,b:Target) => {
