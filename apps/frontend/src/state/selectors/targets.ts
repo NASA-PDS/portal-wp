@@ -15,7 +15,7 @@ const selectTargets = (state:RootState): TargetItems => {
 
 /**
  * A memoized redux selector that efficiently returns the latest list of targets.
- * @returns {Target[]} An filtered, and latest list of targets
+ * @returns {Target[]} A list of the latest targets.
  */
 export const selectLatestVersionTargets = createSelector([selectTargets], (targets) => {
 
@@ -34,7 +34,7 @@ export const selectLatestVersionTargets = createSelector([selectTargets], (targe
 
 /**
  * A memoized redux selector that efficiently returns the latest, and filtered list of targets.
- * @returns {Target[]} An filtered, and latest list of targets
+ * @returns {Target[]} A filtered, latest list of targets.
  */
 export const selectFilteredTargets = createSelector([selectLatestVersionTargets], (latestTargets:Target[]) => {
   

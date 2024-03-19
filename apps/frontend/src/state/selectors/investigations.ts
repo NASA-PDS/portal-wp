@@ -28,7 +28,7 @@ export const selectInvestigationVersion = (state:RootState, lid:string, version:
 
 /**
  * A memoized redux selector that efficiently returns the latest list of investigations.
- * @returns {Investigation[]} An filtered, and latest list of investigations
+ * @returns {Investigation[]} A list of the latest investigations.
  */
 const selectLatestVersionInvestigations = createSelector([selectInvestigations], (investigations) => {
 
@@ -47,7 +47,7 @@ const selectLatestVersionInvestigations = createSelector([selectInvestigations],
 
 /**
  * A memoized redux selector that efficiently returns the latest, and filtered list of investigations.
- * @returns {Investigation[]} An filtered, and latest list of investigations
+ * @returns {Investigation[]} A filtered, latest list of investigations
  */
 export const selectFilteredInvestigations = createSelector([selectLatestVersionInvestigations, selectSearchFilters], (latestInvestigations:Investigation[], searchFilters) => {
 
