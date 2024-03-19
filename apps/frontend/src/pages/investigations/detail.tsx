@@ -132,7 +132,7 @@ export const InvestigationDetailPage = (props:InvestigationDetailPageProps) => {
             maxWidth={false} 
             disableGutters
             sx={{
-               backgroundImage: "url(/assets/images/headers/investigations/" + lid + ".png)",
+               backgroundImage: "url(/assets/images/headers/investigations/" + investigation[PDS4_INFO_MODEL.LID] + ".png)",
                backgroundSize: "cover",
                backgroundRepeat: "no-repeat",
                height: "280px",
