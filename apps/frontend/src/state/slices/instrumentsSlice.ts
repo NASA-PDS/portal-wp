@@ -3,8 +3,6 @@ import { createSlice, createAsyncThunk, createSelector } from "@reduxjs/toolkit"
 
 import { Instrument } from "src/types/instrument.d";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
-import { TargetItems, selectFilteredTargets, selectLatestVersionTargets } from './targetsSlice';
-import { Target } from 'src/types/target.d';
 
 enum INSTRUMENT_ACTIONS {
   GET_INSTRUMENTS = "instruments/getInstruments",
