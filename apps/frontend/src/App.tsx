@@ -58,7 +58,7 @@ const router = createBrowserRouter([
             element: <InvestigationsDirectoryPage />,
           },
           {
-            path: ":lid/:version",
+            path: ":investigationLid/:investigationVersion",
             element: <InvestigationsDetailPage />,
           }
         ]

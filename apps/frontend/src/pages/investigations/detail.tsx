@@ -57,12 +57,8 @@ export const InvestigationDetailPage = (props:InvestigationDetailPageProps) => {
    const dispatch = useAppDispatch();
    const {error, investigation, status} = props;
    const dataManagerState = useAppSelector( (state) => { return state.dataManager } );
-   const { lid, version } = useParams();
    const [value, setValue] = React.useState(0);
    
-   console.log("Investigation LID:", lid);
-   console.log("Investigation Version:", version)
-
    useEffect(() => {
     let isMounted = true;
 
@@ -345,11 +341,12 @@ export const InvestigationDetailPage = (props:InvestigationDetailPageProps) => {
  * Use mapStateToProps so that changes to our state trigger a rerender of the UI.
  */ 
 const mapStateToProps = (state:RootState) => {
-  const { lid, version } = useParams();
+
+  const { investigationLid, investigationVersion } = useParams();
 
   return { 
     error: state.dataManager.error,
-    investigation: selectInvestigationVersion(state, lid, version ),
+    investigation: selectInvestigationVersion(state, investigationLid, investigationVersion ),
     status: state.dataManager.status,
   }
 };
