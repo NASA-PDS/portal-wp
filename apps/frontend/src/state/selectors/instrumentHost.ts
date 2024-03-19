@@ -4,30 +4,41 @@ import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { RootState } from "src/state/store";
 import { InstrumentHostItems } from "src/state/slices/instrumentHostsSlice";
 
+
 /**
- * A redux selector to efficiently retrieve a list of the latest instrument hosts.
- * @param {RootState} state The instrument hosts redux state of type InstrumentHostsState
- * @returns {InstrumentHost[]} An array containing the list of the latest versions of all instrument hosts
+ * A redux selector to retrieve instrument host data stored in our redux state.
+ * @param {RootState} state The redux state of type RootState
+ * @returns {InstrumentHostItems} A data structure containing the current state of versioned instrument hosts
  */
-export const selectLatestVersionInstrumentHosts = (state:RootState): InstrumentHostItems => {
+const selectInstrumentHosts = (state:RootState): InstrumentHostItems => {
   return state.instrumentHosts.items;
 };
 
 /**
- * A memoized redux selector that efficiently returns the latest, and filtered list of instrument hosts.
- * @returns {InstrumentHost[]} An filtered, and latest list of instrument hosts
+ * A memoized redux selector that efficiently returns the latest list of instrument hosts.
+ * @returns {InstrumentHost[]} A list of the latest instrument hosts.
  */
-export const selectFilteredInstrumentHosts = createSelector([selectLatestVersionInstrumentHosts], (instrumentHosts:InstrumentHostItems) => {
+const selectLatestVersionInstrumentHosts = createSelector([selectInstrumentHosts], (instrumentHosts) => {
 
-  let latestInstrumentHosts:InstrumentHost[] = [];
+  let latestInstrumentHost:InstrumentHost[] = [];
   
-  // Find the latest version of each instrument host and store it in an array
+  // Find the latest version of each instrument and store it in an array
   let latestVersion:string = "";
   Object.keys(instrumentHosts).forEach( (lid) => {
     latestVersion = Object.keys(instrumentHosts[lid]).sort().reverse()[0];
-    latestInstrumentHosts.push( instrumentHosts[lid][latestVersion] );
+    latestInstrumentHost.push( instrumentHosts[lid][latestVersion] );
   });
-  
+
+  return latestInstrumentHost;
+
+});
+
+/**
+ * A memoized redux selector that efficiently returns the latest, and filtered list of instrument hosts.
+ * @returns {InstrumentHost[]} A filtered, latest list of instrument hosts
+ */
+export const selectFilteredInstrumentHosts = createSelector([selectLatestVersionInstrumentHosts], (latestInstrumentHosts:InstrumentHost[]) => {
+ 
   // Sort instrument hosts alphabetically by title
   latestInstrumentHosts.sort( (a:InstrumentHost,b:InstrumentHost) => {
     if( a[PDS4_INFO_MODEL.TITLE].toLowerCase() < b[PDS4_INFO_MODEL.TITLE].toLowerCase() ) {
