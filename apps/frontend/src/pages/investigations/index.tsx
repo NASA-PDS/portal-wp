@@ -13,10 +13,10 @@ import {
 } from "@mui/material";
 import {
   InvestigationDirectorySearchFilterState,
-  selectFilteredInvestigations,
   setFreeTextSearchFilter,
   setInvestigationTypeSearchFilter
 } from "src/state/slices/investigationsSlice";
+import { selectFilteredInvestigations } from "src/state/selectors/investigations";
 import { getData, dataRequiresFetchOrUpdate } from "src/state/slices/dataManagerSlice";
 import { useAppDispatch, useAppSelector } from "src/state/hooks";
 import { connect } from "react-redux";
@@ -278,7 +278,7 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
 const mapStateToProps = (state:RootState) => {
   return { 
     error: state.investigations.error,
-    latestInvestigations: selectFilteredInvestigations(state.investigations),
+    latestInvestigations: selectFilteredInvestigations(state),
     searchFilters: state.investigations.searchFilters,
     status: state.investigations.status,
   }

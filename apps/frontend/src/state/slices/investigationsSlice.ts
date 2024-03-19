@@ -9,10 +9,10 @@ enum INVESTIGATION_ACTIONS {
   SET_INVESTIGATIONS_SEARCH_FILTERS = "investigations/setSearchFilters",
 }
 
-type InvestigationItems = { 
+export type InvestigationItems = {
   [index:string]: { 
     [index:string]: Investigation 
-  } 
+  }
 };
 
 export type InvestigationDirectorySearchFilterState = {
@@ -20,7 +20,7 @@ export type InvestigationDirectorySearchFilterState = {
   type:INVESTIGATION_TYPE,
 }
 
-type InvestigationsState = {
+export type InvestigationsState = {
   error: string | null | undefined
   items: InvestigationItems
   searchFilters: InvestigationDirectorySearchFilterState | undefined
@@ -165,65 +165,6 @@ const investigationsSlice = createSlice({
     });
 
   }
-});
-
-/**
- * A redux selector to efficiently retrieve a list of the latest investigation.
- * @param {InvestigationsState} state The invesigations redux state of type InvestigationsState
- * @returns {Investigation[]} An array containing the list of the latest versions of all investigations
- */
-const selectLatestVersionInvestigations = (state:InvestigationsState): InvestigationItems => {
-  return state.items;
-};
-
-/**
- * The search filter that should be applied to the list of investigations.
- * @param {InvestigationsState} state The invesigations redux state of type InvestigationsState
- * @returns {string} The search filter currently being applied
- */
-const selectSearchFilters = (state:InvestigationsState) => {
-  return state.searchFilters;
-};
-
-/**
- * A memoized redux selector that efficiently returns the latest, and filtered list of investigations.
- * @returns {Investigation[]} An filtered, and latest list of investigations
- */
-export const selectFilteredInvestigations = createSelector([selectLatestVersionInvestigations, selectSearchFilters], (investigations:InvestigationItems, searchFilters) => {
-
-  let latestInvestigations:Investigation[] = [];
-  
-  // Find the latest version of each investigation and store it in an array
-  let latestVersion:string = "";
-  Object.keys(investigations).forEach( (lid) => {
-    latestVersion = Object.keys(investigations[lid]).sort().reverse()[0];
-    latestInvestigations.push( investigations[lid][latestVersion] );
-  });
-  
-  // Sort investigations alphabetically by title
-  latestInvestigations.sort( (a:Investigation,b:Investigation) => {
-    if( a[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase() < b[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase() ) {
-      return -1
-    } else if( a[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase() > b[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase() ) {
-      return 1
-    }
-    return 0;
-  });
-
-  if( searchFilters === undefined ) {
-    return latestInvestigations;
-  }
-
-  return latestInvestigations.filter(
-    (item) => {
-      return (
-        item[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase().includes(searchFilters?.freeText || "")
-        &&
-        ( searchFilters.type === undefined || searchFilters.type === INVESTIGATION_TYPE.ALL || item[PDS4_INFO_MODEL.INVESTIGATION.TYPE] === searchFilters.type )
-      )
-    }
-  );
-
 });
 
 export const { setFreeTextSearchFilter, setInvestigationTypeSearchFilter } = investigationsSlice.actions;
