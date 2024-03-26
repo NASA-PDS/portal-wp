@@ -59,6 +59,10 @@ export const getInstruments = createAsyncThunk(
           PDS4_INFO_MODEL.LIDVID,
           PDS4_INFO_MODEL.TITLE,
           PDS4_INFO_MODEL.VID,
+          PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE,
+          PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION,
+          PDS4_INFO_MODEL.INSTRUMENT.NAME,
+          PDS4_INFO_MODEL.INSTRUMENT.TYPE
         ]
       }
     };
@@ -104,6 +108,10 @@ const instrumentsSlice = createSlice({
         instrument[PDS4_INFO_MODEL.LIDVID] = source[PDS4_INFO_MODEL.LIDVID];
         instrument[PDS4_INFO_MODEL.VID] = source[PDS4_INFO_MODEL.VID];
         instrument[PDS4_INFO_MODEL.TITLE] = source[PDS4_INFO_MODEL.TITLE];
+        instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE] = source[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE];
+        instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION] = source[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION];
+        instrument[PDS4_INFO_MODEL.INSTRUMENT.NAME] = source[PDS4_INFO_MODEL.INSTRUMENT.NAME];
+        instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE] = source[PDS4_INFO_MODEL.INSTRUMENT.TYPE];
 
         if( compiledItems[lid] === undefined ) {
           compiledItems[lid] = {};

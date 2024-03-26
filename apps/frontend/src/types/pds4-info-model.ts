@@ -64,4 +64,19 @@ export namespace PDS4_INFO_MODEL {
   
   }
 
+  export enum INSTRUMENT {
+    DESCRIPTION = "pds:Instrument/pds:description",
+    NAME = "pds:Instrument/pds:name",
+    TYPE = "pds:Instrument/pds:type"
+  }
+
+  export enum TARGET {
+    DESCRIPTION = "pds:Target/pds:description",
+    NAME = "pds:Target/pds:name",
+  }
+
+  export enum CTLI_TYPE_LIST {
+    TYPE = "ctli:Type_List/ctli:type"
+  }
+
 }

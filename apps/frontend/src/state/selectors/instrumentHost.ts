@@ -54,18 +54,16 @@ export const selectFilteredInstrumentHosts = createSelector([selectLatestVersion
 
 });
 
-export const selectLatestInstrumentHostsByLid = createSelector(
+export const selectLatestInstrumentHostsForInvestigation = createSelector(
   [
     selectLatestVersionInstrumentHosts,
     (_, instrumentHostLids) => instrumentHostLids
   ],
   (latestInstrumentHosts, instrumentHostLids) => {
-
     return latestInstrumentHosts.filter(
       (instrumentHost) => {
         return instrumentHostLids.includes(instrumentHost[PDS4_INFO_MODEL.LID])
       }
     );
-
   }
 );

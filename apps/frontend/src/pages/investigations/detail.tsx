@@ -1,85 +1,149 @@
 import React, { useEffect } from "react";
-import { Box, Breadcrumbs, Button, Container, Link, Tab, Tabs, Typography } from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
+import {
+  Box,
+  Breadcrumbs,
+  Button,
+  Container,
+  Link,
+  Stack,
+  Tab,
+  Tabs,
+  Typography,
+} from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
 import { connect } from "react-redux";
 import { useAppDispatch, useAppSelector } from "src/state/hooks";
 
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { selectInvestigationVersion } from "src/state/selectors/investigations";
-import { selectLatestInstrumentHostsByLid } from "src/state/selectors/instrumentHost";
-import { dataRequiresFetchOrUpdate, getData } from "src/state/slices/dataManagerSlice";
-import { RootState } from "src/state/store";
+import { selectLatestInstrumentHostsForInvestigation } from "src/state/selectors/instrumentHost";
+import {
+  dataRequiresFetchOrUpdate,
+  getData,
+} from "src/state/slices/dataManagerSlice";
+import { RootState, store } from "src/state/store";
 
 import "./detail.scss";
 import { Investigation } from "src/types/investigation.d";
 import { InstrumentHost } from "src/types/instrumentHost.d";
+import { selectLatestTargetsForInstrumentHost } from "src/state/selectors/targets";
+import { selectLatestInstrumentsForInstrumentHost } from "src/state/selectors/instruments";
+import { Target } from "src/types/target.d";
+import { Instrument } from "src/types/instrument.d";
+import FeaturedInstrumentLinkListItem from "src/components/FeaturedListItems/FeaturedInstrumentLinkListItem";
+import FeaturedTargetLinkListItem from "src/components/FeaturedListItems/FeaturedTargetLinkListItem";
 
 interface TabPanelProps {
-   children?: React.ReactNode;
-   index: number;
-   value: number;
+  children?: React.ReactNode;
+  index: number;
+  value: number;
 }
 
 function CustomTabPanel(props: TabPanelProps) {
-   const { children, value, index, ...other } = props;
- 
-   return (
-     <div
-       role="tabpanel"
-       hidden={value !== index}
-       id={`simple-tabpanel-${index}`}
-       aria-labelledby={`simple-tab-${index}`}
-       {...other}
-     >
-       {value === index && (
-         <Box sx={{ p: 3 }}>
-           <Typography>{children}</Typography>
-         </Box>
-       )}
-     </div>
-   );
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
 }
 
 function a11yProps(index: number) {
-   return {
-     id: `simple-tab-${index}`,
-     'aria-controls': `simple-tabpanel-${index}`,
-   };
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
 }
 
 type InvestigationDetailPageProps = {
-  error: string | null | undefined,
-  instrumentHosts:InstrumentHost[],
-  investigation:Investigation;
+  error: string | null | undefined;
+  instruments: [];
+  instrumentHosts: InstrumentHost[];
+  investigation: Investigation;
   status: string;
+  targets: [];
 };
 
-export const InvestigationDetailPage = (props:InvestigationDetailPageProps) => {
+export const InvestigationDetailPage = (
+  props: InvestigationDetailPageProps
+) => {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  //const { error, instruments, instrumentHosts, investigation, status, targets } = props;
+  const { error, instruments, instrumentHosts, investigation, status, targets } = props;
+  const dataManagerState = useAppSelector((state) => {
+    return state.dataManager;
+  });
+  const [value, setValue] = React.useState(0);
+  const [selectedInstrumentHost, setSelectedInstrumentHost] = React.useState<number>(0);
+  const [instrumentTypes, setInstrumentTypes] = React.useState<string[]>([]);
 
-   const navigate = useNavigate();
-   const dispatch = useAppDispatch();
-   const {error, instrumentHosts, investigation, status} = props;
-   const dataManagerState = useAppSelector( (state) => { return state.dataManager } );
-   const [value, setValue] = React.useState(0);
-   
-   useEffect(() => {
+  const initInstrumentTypes = () => {
+
+    let instrumentTypesArr:string[] = [];
+    instruments[selectedInstrumentHost].forEach( (instrument) => {
+
+      if( instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE] !== undefined ) {
+
+        instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE].forEach( (instrumentType) => {
+          if( !instrumentTypesArr.includes(instrumentType) ) {
+            instrumentTypesArr.push(instrumentType);
+          }
+        });
+
+      } else if( instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE] !== undefined ) {
+
+        instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE].forEach( (instrumentType) => {
+          if( !instrumentTypesArr.includes(instrumentType) ) {
+            instrumentTypesArr.push(instrumentType);
+          }
+        });
+
+      } else {
+        instrumentTypesArr.push("other");
+      }
+        
+      instrumentTypesArr.sort( (a:string, b:string) => {
+        if( a.toLowerCase() < b.toLowerCase() ) {
+          return -1
+        } else if( a.toLowerCase() > b.toLowerCase() ) {
+          return 1
+        }
+        return 0;
+      });
+    
+      
+    });
+    
+    setInstrumentTypes(instrumentTypesArr);
+    
+  };
+
+  useEffect(() => {
     let isMounted = true;
 
     // Check if data manager status is 'idle', then fetch the investigations data from the API
-    if( dataRequiresFetchOrUpdate(dataManagerState) ) {
+    if (dataRequiresFetchOrUpdate(dataManagerState)) {
       dispatch(getData());
     }
 
     if (status === "pending") {
       // Do something to inform user that investigation data is being fetched
     } else if (status === "succeeded") {
-      
       // Do something to handle the successful fetching of data
-      
-      console.log("investigation:", investigation);
-      console.log("instrumentHosts:", instrumentHosts);
-      
-    } else if ( error != null || error != undefined ) {
+      initInstrumentTypes();
+    } else if (error != null || error != undefined) {
       // Do something to handle the error
       console.log(error);
     }
@@ -90,233 +154,384 @@ export const InvestigationDetailPage = (props:InvestigationDetailPageProps) => {
     };
   }, [status, dispatch]);
 
-   
-   const linkStyles = {
-      color: "white",
+  useEffect( () => {
+    initInstrumentTypes();
+  }, [selectedInstrumentHost])
+
+  const linkStyles = {
+    color: "white",
+    fontFamily: "Inter",
+    fontSize: "14px",
+    fontWeight: "300",
+    lineHeight: "19px",
+    paddingY: "4px",
+  };
+
+  const styles = {
+    button: {
+      color: "#288BFF",
+      backgroundColor: "#FFFFFF",
+      borderRadius: "10px",
+      border: "1px solid #288BFF",
       fontFamily: "Inter",
-      fontSize: "14px",
-      fontWeight: "300",
-      lineHeight: "19px",
-      paddingY: "4px",
-   };
+      fontWeight: 600,
+      fontSize: "1.125em",
+      lineHeight: "143%",
+      paddingX: "20px",
+      paddingY: "8px",
+      textTransform: "capitalize",
+      wordWrap: "break-word",
+      "&:hover": {
+        color: "#FFFFFF",
+        backgroundColor: "#288BFF",
+        border: "1px solid #288BFF",
+      },
+      "&:disabled": {
+        color: "#FFFFFF",
+        backgroundColor: "#288BFF",
+        border: "1px solid #288BFF"
+      },
+    },
+  };
 
-   const styles = {
-      button: {
-          color: '#FFFFFF',
-          backgroundColor: "#288BFF",
-          fontFamily: "Inter",
-          fontWeight: 600,
-          fontSize: "1.125em",
-          textTransform: "capitalize",
-          "&:hover": {
-              backgroundColor: "#B60109",
-          },
-          "&:disabled": {
-            color: "#FFFFFF",
-            backgroundColor: "#288BFF",
-          }
-      }
-    }
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
 
-    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-      setValue(newValue);
-    };
+  const handleInstrumentHostChange = (event) => {
+    event.preventDefault();
+    const instrumentHostIndex = event.target.getAttribute("data-instrument-host-index");
 
-   const investigationListItemPrimaryAction = (path:string) => {
-      navigate(path);
-   };
+    setSelectedInstrumentHost(instrumentHostIndex);
+  };
 
-   return (
+  const investigationListItemPrimaryAction = (path: string) => {
+    navigate(path);
+  };
+
+  return (
+    <Container maxWidth={false} disableGutters>
+      {/* Page Intro */}
       <Container
-         maxWidth={false}
-         disableGutters
+        maxWidth={false}
+        disableGutters
+        sx={{
+          backgroundImage:
+            "url(/assets/images/headers/investigations/" +
+            investigation[PDS4_INFO_MODEL.LID] +
+            ".png)",
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          height: "280px",
+          textAlign: "left",
+        }}
       >
-         {/* Page Intro */}
-         <Container
-            maxWidth={false} 
-            disableGutters
+        <Container
+          maxWidth={"xl"}
+          sx={{
+            paddingY: "24px",
+            paddingLeft: "148px",
+            paddingRight: "148px",
+          }}
+        >
+          <Breadcrumbs
+            aria-label="breadcrumb"
+            maxItems={3}
             sx={{
-               backgroundImage: "url(/assets/images/headers/investigations/" + investigation[PDS4_INFO_MODEL.LID] + ".png)",
-               backgroundSize: "cover",
-               backgroundRepeat: "no-repeat",
-               height: "280px",
-               textAlign: "left",
+              backgroundColor: "rgba(23,23,27,0.17)",
+              paddingY: "3px",
+              paddingX: "5px",
+              borderRadius: "3px",
             }}
-         >
-            <Container
-               maxWidth={"xl"}
-               sx={{
-                  paddingY: "24px",
-                  paddingLeft: "148px",
-                  paddingRight: "148px",
-               }}
+          >
+            <Link underline="hover" color="inherit" href="/" style={linkStyles}>
+              Home
+            </Link>
+            <Link
+              underline="hover"
+              color="inherit"
+              href="/investigations/"
+              style={linkStyles}
             >
-               <Breadcrumbs
-                  aria-label='breadcrumb'
-                  maxItems={3}
-                  sx={{
-                     backgroundColor: "rgba(23,23,27,0.17)",
-                     paddingY: "3px",
-                     paddingX: "5px",
-                     borderRadius: "3px",
-                  }}
-               >
-                  <Link underline="hover" color="inherit" href="/"
-                     style={linkStyles}>
-                     Home
-                  </Link>
-                  <Link
-                     underline="hover"
-                     color="inherit"
-                     href="/investigations/"
-                     style={linkStyles}
+              Investigations
+            </Link>
+            <Typography style={{ color: "white" }}>
+              {investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]}
+            </Typography>
+          </Breadcrumbs>
+          <Box
+            component="img"
+            sx={{
+              width: 60,
+              paddingTop: "24px",
+            }}
+            alt=""
+            src={
+              "/assets/images/logos/" +
+              investigation[PDS4_INFO_MODEL.LID] +
+              ".png"
+            }
+          />
+          <Typography
+            variant="h1"
+            style={{
+              color: "white",
+              padding: "0px",
+              paddingTop: "0px",
+              fontSize: "72px",
+              fontWeight: "700",
+            }}
+          >
+            {investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]}
+          </Typography>
+          <Typography
+            variant="subtitle1"
+            sx={{
+              color: "white",
+            }}
+          >
+            {investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]}
+          </Typography>
+        </Container>
+      </Container>
+      <Container
+        maxWidth={false}
+        disableGutters
+        sx={{
+          textAlign: "left",
+          backgroundColor: "#F6F6F6",
+          paddingX: "24px"
+        }}
+      >
+        <Container
+          maxWidth={"xl"}
+          disableGutters
+          sx={{
+            paddingY: "24px",
+          }}
+        >
+          <Box>
+            <Box sx={{paddingBottom: "8px"}}>
+              <Typography variant="overline" style={{ 
+                color: "#000000",
+                fontSize: "0.875em",
+                fontWeight: 500,
+                lineHeight: "131%",
+                letterSpacing: "0.265rem",
+                textTransform: "uppercase",
+                wordWrap: "break-word",
+              }}>
+                Spacecraft
+              </Typography>
+            </Box>
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={{ xs: 1, sm: 2 }}
+            >
+              {instrumentHosts.map((host: InstrumentHost, index) => {
+                return (
+                  <Button
+                    key={"button_" + host[PDS4_INFO_MODEL.LID]}
+                    sx={styles.button}
+                    disabled={instrumentHosts.length === 1 || selectedInstrumentHost == index}
+                    onClick={ handleInstrumentHostChange }
+                    data-instrument-host-index={index}
                   >
-                     Investigations
-                  </Link>
-                  <Typography style={{color: "white"}}>{investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]}</Typography>
-               </Breadcrumbs>
-               <Box
-                  component="img"
-                  sx={{
-                     width: 60,
-                     paddingTop: "24px",
-                  }}
-                  alt=""
-                  src={"/assets/images/logos/" + investigation[PDS4_INFO_MODEL.LID] + ".png"}
-               />
-               <Typography variant="h1" style={{
-                     color: "white",
-                     padding: "0px",
-                     paddingTop: "0px",
-                     fontSize: "72px",
-                     fontWeight: "700",
-                  }}>{investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]}</Typography>
-               <Typography variant="subtitle1" sx={{
-                  color: "white",
-               }}>The Mars Science Laboratory</Typography>
-            </Container>
-         </Container>
-         <Container
-            maxWidth={false}
-            disableGutters
-            sx={{ 
-               textAlign: "left",
-               backgroundColor: "#F6F6F6"
-            }}>
-            <Container maxWidth={"xl"} disableGutters sx={{
-               paddingY: "24px",
-            }}>
-               <Box>
-                  <Box><Typography variant="overline" style={{fontSize: "0.875em"}}>Spacecraft</Typography></Box>
-                  <Button sx={styles.button} disabled>Curiosity</Button>
-               </Box>
-            </Container>
-         </Container>
-         <Container
-            maxWidth={false}
-            disableGutters
-            sx={{ 
-               textAlign: "left",
-            }}>
-            <Container maxWidth={"xl"} disableGutters sx={{
-               paddingY: "24px",
-            }}>
-               <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                  <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                     <Tab label="Instruments" {...a11yProps(0)} />
-                     <Tab label="Overview" {...a11yProps(1)} />
-                     <Tab label="Targets" {...a11yProps(2)} />
-                     <Tab label="Tools" {...a11yProps(3)} />
-                     <Tab label="Resources" {...a11yProps(4)} />
-                  </Tabs>
-               </Box>
-            </Container>
-            <Container maxWidth={"xl"} disableGutters sx={{
-               paddingY: "24px",
-               paddingLeft: "217px",
-            }}>
-               {/*<CustomTabPanel value={value} index={0}>
-                  <Typography variant='h4'>Cameras</Typography>
-                  {
-                     investigation["instruments"]["cameras"].map((instrument) => {
-                        return (
-                           <FeaturedLinkListItem
-                           key={instrument.id}
-                           description={instrument.description}
-                           primaryButtonAction={() => instrumentListItemPrimaryAction("instruments/" + instrument.id)}
-                           variant="instrument"
-                           title={instrument.name}
-                        />
-                        )
-                     })
-                  }
-                  <Typography variant='h4'>Spectrometers</Typography>
-                  {
-                     investigation["instruments"]["spectrometers"].map((instrument) => {
-                        return (
-                           <FeaturedLinkListItem
-                           key={instrument.id}
-                           description={instrument.description}
-                           primaryButtonAction={() => instrumentListItemPrimaryAction("instruments/" + instrument.id)}
-                           variant="instrument"
-                           title={instrument.name}
-                        />
-                        )
-                     })
-                  }
-                  <Typography variant='h4'>Radiation Detectors</Typography>
-                  {
-                     investigation["instruments"]["radiation-detectors"].map((instrument) => {
-                        return (
-                           <FeaturedLinkListItem
-                           key={instrument.id}
-                           description={instrument.description}
-                           primaryButtonAction={() => instrumentListItemPrimaryAction("instruments/" + instrument.id)}
-                           variant="instrument"
-                           title={instrument.name}
-                        />
-                        )
-                     })
-                  }
-                  <Typography variant='h4'>Environmental Sensors</Typography>
-                  {
-                     investigation["instruments"]["environmental-sensors"].map((instrument) => {
-                        return (
-                           <FeaturedLinkListItem
-                           key={instrument.id}
-                           description={instrument.description}
-                           primaryButtonAction={() => instrumentListItemPrimaryAction("instruments/" + instrument.id)}
-                           variant="instrument"
-                           affiliated_spacecraft="Affiliated Spacecraft"
-                           title={instrument.name}
-                        />
-                        )
-                     })
-                  }
-               </CustomTabPanel>*/}
-               <CustomTabPanel value={value} index={1}>
-                  <Typography variant='h4'>Summary</Typography>
-                  <Typography variant='body1' style={{paddingBottom: "24px"}}>{investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION]}</Typography>
-                  
-               </CustomTabPanel>
-               {/*<CustomTabPanel value={value} index={2}>
-                  <Typography variant='h4'>Targets</Typography>
-                  {
-                     investigation["targets"].map((target) => {
-                        return (
-                           <FeaturedLinkListItem
-                           key={target.id}
-                           description={target.description}
-                           primaryButtonAction={() => instrumentListItemPrimaryAction("target/" + target.id)}
-                           variant="target"
-                           expansion={true}
-                           title={target.name}
-                        />
-                        )
-                     })
-                  }
-                </CustomTabPanel>*/}
-               {/*<CustomTabPanel value={value} index={3}>
+                    {host[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]
+                      .toString()
+                      .toLowerCase()}
+                  </Button>
+                );
+              })}
+            </Stack>
+          </Box>
+        </Container>
+      </Container>
+      <Container
+        maxWidth={false}
+        disableGutters
+        sx={{
+          textAlign: "left",
+          padding: "24px"
+        }}
+      >
+        <Container
+          maxWidth={"xl"}
+          disableGutters
+          sx={{
+            paddingY: "24px",
+          }}
+        >
+          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              aria-label="basic tabs example"
+            >
+              <Tab label="Instruments" {...a11yProps(0)} />
+              <Tab label="Overview" {...a11yProps(1)} />
+              <Tab label="Targets" {...a11yProps(2)} />
+              <Tab label="Tools" {...a11yProps(3)} />
+              <Tab label="Resources" {...a11yProps(4)} />
+            </Tabs>
+          </Box>
+        </Container>
+        <Container
+          maxWidth={"xl"}
+          disableGutters
+          sx={{
+            paddingY: "24px",
+            paddingLeft: "217px",
+          }}
+        >
+          <CustomTabPanel value={value} index={0}>
+            {
+              instrumentTypes.map( (instrumentType, index) => {
+                return (
+                  <>
+                    <Typography sx={{
+                      textTransform: "capitalize",
+                      fontFamily: "Inter",
+                      fontSize: "1.375em",
+                      fontWeight: 700,
+                      lineHeight: "26px",
+                      wordWrap: "break-word",
+                      paddingBottom: "10px",
+                      ":not(:first-of-type)": {
+                        paddingTop: "50px"
+                      }
+                    }} key={"instrumentType_" + index}>
+                      {instrumentType}
+                    </Typography>
+                    {
+                      instruments[selectedInstrumentHost].map( (instrument:Instrument, index:number) => {
+
+                        if( instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE]?.includes(instrumentType)
+                              || instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]?.includes(instrumentType) ) {
+                          //return <div key={"instrument_" + index}>{instrument[PDS4_INFO_MODEL.TITLE]}</div>
+                          return <FeaturedInstrumentLinkListItem
+                            key={instrument[PDS4_INFO_MODEL.LID]}
+                            description={instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION].toString()}
+                            primaryAction={ () => {} }
+                            title={instrument[PDS4_INFO_MODEL.INSTRUMENT.NAME]}
+                          />
+                        }
+
+                        {/*instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE]?.forEach( (type:string) => {
+                          if( type.toLowerCase() === instrumentType.toLowerCase() ) {
+                            return <div key={"instrument_" + index}>{instrument[PDS4_INFO_MODEL.TITLE]}</div>
+                          }
+                        })
+                        
+                        instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]?.forEach( (type:string) => {
+                          if( type.toLowerCase() === instrumentType.toLowerCase() ) {
+                            return <div key={"instrument_" + index}>{instrument[PDS4_INFO_MODEL.TITLE]}</div>
+                          }
+                        })*/}
+
+                      })
+                    }
+                  </>
+                  )
+                })
+            }
+            {/*<Typography variant='h4'>Cameras</Typography>
+            {
+                investigation["instruments"]["cameras"].map((instrument) => {
+                  return (
+                      <FeaturedLinkListItem
+                      key={instrument.id}
+                      description={instrument.description}
+                      primaryButtonAction={() => instrumentListItemPrimaryAction("instruments/" + instrument.id)}
+                      variant="instrument"
+                      title={instrument.name}
+                  />
+                  )
+                })
+            }
+            <Typography variant='h4'>Spectrometers</Typography>
+            {
+                investigation["instruments"]["spectrometers"].map((instrument) => {
+                  return (
+                      <FeaturedLinkListItem
+                      key={instrument.id}
+                      description={instrument.description}
+                      primaryButtonAction={() => instrumentListItemPrimaryAction("instruments/" + instrument.id)}
+                      variant="instrument"
+                      title={instrument.name}
+                  />
+                  )
+                })
+            }
+            <Typography variant='h4'>Radiation Detectors</Typography>
+            {
+                investigation["instruments"]["radiation-detectors"].map((instrument) => {
+                  return (
+                      <FeaturedLinkListItem
+                      key={instrument.id}
+                      description={instrument.description}
+                      primaryButtonAction={() => instrumentListItemPrimaryAction("instruments/" + instrument.id)}
+                      variant="instrument"
+                      title={instrument.name}
+                  />
+                  )
+                })
+            }
+            <Typography variant='h4'>Environmental Sensors</Typography>
+            {
+                investigation["instruments"]["environmental-sensors"].map((instrument) => {
+                  return (
+                      <FeaturedLinkListItem
+                      key={instrument.id}
+                      description={instrument.description}
+                      primaryButtonAction={() => instrumentListItemPrimaryAction("instruments/" + instrument.id)}
+                      variant="instrument"
+                      affiliated_spacecraft="Affiliated Spacecraft"
+                      title={instrument.name}
+                  />
+                  )
+                })
+            }*/}
+          </CustomTabPanel>
+          <CustomTabPanel value={value} index={1}>
+            <Typography variant="h4">Summary</Typography>
+            <Typography variant="body1" style={{ paddingBottom: "24px" }}>
+              {investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION]}
+            </Typography>
+          </CustomTabPanel>
+          <CustomTabPanel value={value} index={2}>
+            {
+              targets[selectedInstrumentHost].length > 0 ? (
+                targets[selectedInstrumentHost].map( (target:Target, index:number) => {
+                  //let keyProp = target[PDS4_INFO_MODEL.LID].replaceAll(/[:.]/g, '_');
+                  //return <div key={keyProp}>{target[PDS4_INFO_MODEL.TITLE]}</div>
+                  return <FeaturedTargetLinkListItem
+                            key={"target_" + index}
+                            description={target[PDS4_INFO_MODEL.TARGET.DESCRIPTION].toString()}
+                            primaryAction={ () => {} }
+                            title={target[PDS4_INFO_MODEL.TARGET.NAME]}
+                          />
+                })
+              ) : (
+                <Box sx={{ paddingBottom: "25px", textAlign: "center"}}>
+                  <Typography>There are no targets related to this investigation.</Typography>
+                </Box>
+              )
+              
+              /*investigation["targets"].map((target) => {
+                  return (
+                      <FeaturedLinkListItem
+                      description={target.description}
+                      primaryButtonAction={() => instrumentListItemPrimaryAction("target/" + target.id)}
+                      variant="target"
+                      expansion={true}
+                      title={target.name}
+                  />
+                  )
+                })*/
+            }
+          </CustomTabPanel>
+          {/*<CustomTabPanel value={value} index={3}>
                   <Typography variant='h4'>Tools</Typography>
                   {
                      investigation["tools"].map((tool) => {
@@ -332,30 +547,54 @@ export const InvestigationDetailPage = (props:InvestigationDetailPageProps) => {
                      })
                   }
                </CustomTabPanel>*/}
-               <CustomTabPanel value={value} index={4}>
-                  <Typography variant='h4'>Resources</Typography>
-               </CustomTabPanel>
-            </Container>
-         </Container>
+          <CustomTabPanel value={value} index={4}>
+            <Typography variant="h4">Resources</Typography>
+          </CustomTabPanel>
+        </Container>
       </Container>
-   );
+    </Container>
+  );
 };
 
 /**
- * Use mapStateToProps so that changes to our state trigger a rerender of the UI.
- */ 
-const mapStateToProps = (state:RootState) => {
+ * Use mapStateToProps so that data from our state can be injected into the UI.
+ */
+const mapStateToProps = (state: RootState) => {
 
   const { investigationLid, investigationVersion } = useParams();
-  const investigation = selectInvestigationVersion(state, investigationLid, investigationVersion );
-  const instrumentHosts = selectLatestInstrumentHostsByLid(state, investigation[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST]);
+  const investigation:Investigation = selectInvestigationVersion(state, investigationLid, investigationVersion);
+  const instrumentHosts:InstrumentHost[] = selectLatestInstrumentHostsForInvestigation(state, investigation[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST]);
+  let instruments = new Array( instrumentHosts.length );
+  let targets = new Array( instrumentHosts.length );
 
-  return { 
+  // Get data for each instrument host
+  instrumentHosts.map( (instrumentHost:InstrumentHost, index:number) => {
+
+    // Get instruments
+    instruments[index] = selectLatestInstrumentsForInstrumentHost(state, instrumentHost[PDS4_INFO_MODEL.REF_LID_INSTRUMENT])
+
+    // get targets
+    targets[index] = selectLatestTargetsForInstrumentHost(state, instrumentHost[PDS4_INFO_MODEL.REF_LID_TARGET])
+                      .sort( (a:Target, b:Target) => {
+                        if( a[PDS4_INFO_MODEL.TITLE].toLowerCase() < b[PDS4_INFO_MODEL.TITLE].toLowerCase() ) {
+                          return -1
+                        } else if( a[PDS4_INFO_MODEL.TITLE].toLowerCase() > b[PDS4_INFO_MODEL.TITLE].toLowerCase() ) {
+                          return 1
+                        }
+                        return 0;
+                      })
+
+  });
+
+  return {
     error: state.dataManager.error,
+    instruments: instruments,
     instrumentHosts: instrumentHosts,
-    investigation: investigation,
+    investigation: investigation, 
     status: state.dataManager.status,
-  }
+    targets: targets,
+  };
+
 };
 
 export default connect(mapStateToProps)(InvestigationDetailPage);

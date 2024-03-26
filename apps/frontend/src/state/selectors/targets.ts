@@ -53,3 +53,19 @@ export const selectFilteredTargets = createSelector([selectLatestVersionTargets]
   });
 
 });
+
+export const selectLatestTargetsForInstrumentHost = createSelector(
+  [
+    selectLatestVersionTargets,
+    (_, targetLids) => targetLids
+  ],
+  (latestTargets, targetLids) => {
+
+    return latestTargets.filter(
+      (target) => {
+        return targetLids.includes(target[PDS4_INFO_MODEL.LID])
+      }
+    );
+
+  }
+);

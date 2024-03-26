@@ -53,3 +53,19 @@ export const selectFilteredInstruments = createSelector([selectLatestVersionInst
   });
 
 });
+
+export const selectLatestInstrumentsForInstrumentHost = createSelector(
+  [
+    selectLatestVersionInstruments,
+    (_, instrumentLids) => instrumentLids
+  ],
+  (latestInstruments, instrumentLids) => {
+
+    return latestInstruments.filter(
+      (instrument) => {
+        return instrumentLids.includes(instrument[PDS4_INFO_MODEL.LID])
+      }
+    );
+
+  }
+);
