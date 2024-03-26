@@ -88,6 +88,12 @@ export const InvestigationDetailPage = (
   const [value, setValue] = React.useState(0);
   const [selectedInstrumentHost, setSelectedInstrumentHost] = React.useState<number>(0);
   const [instrumentTypes, setInstrumentTypes] = React.useState<string[]>([]);
+  
+  const toolTags = [
+    {label:'Tag Label 1'},
+    {label:'Tag Label 2'},
+    {label:'Tag Label With a Really Long Title'}
+  ];
 
   const initInstrumentTypes = () => {
 
@@ -538,22 +544,30 @@ export const InvestigationDetailPage = (
                 })*/
             }
           </CustomTabPanel>
-          {/*<CustomTabPanel value={value} index={3}>
-                  <Typography variant='h4'>Tools</Typography>
-                  {
-                     investigation["tools"].map((tool) => {
-                        return (
-                           <FeaturedLinkListItem
-                           key={tool.id}
-                           description={tool.description}
-                           primaryButtonAction={() => instrumentListItemPrimaryAction("tools/" + tool.id)}
-                           variant="tool"
-                           title={tool.name}
-                        />
-                        )
-                     })
-                  }
-               </CustomTabPanel>*/}
+          <CustomTabPanel value={value} index={3}>
+            <Typography variant='body1'>The PDS maintains many tools enabling users to work with the data in our archive. Listed below are tools that can assist you when exploring the data holding for this investigation.</Typography>
+            <FeaturedToolLinkListItem
+                key={1}
+                description={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus porttitor lorem ac velit laoreet, eu dapibus ante pellentesque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla blandit elit vel libero porttitor, ut ultrices sem facilisis. Maecenas egestas dignissim lacus vitae blandit. Ut in nulla nec lorem tempus elementum sed a nisl. Nunc nisl lacus, faucibus at vulputate id, viverra vitae nibh. Nam quis tortor enim. Phasellus ultrices sit amet felis sit amet consequat. Etiam a cursus ex. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Maecenas id commodo turpis.".substring(0,275).concat("...")}
+                primaryAction={ () => {} }
+                tags={toolTags}
+                title={"Tool Name"}
+            />
+            <FeaturedToolLinkListItem
+                key={1}
+                description={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus porttitor lorem ac velit laoreet, eu dapibus ante pellentesque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla blandit elit vel libero porttitor, ut ultrices sem facilisis. Maecenas egestas dignissim lacus vitae blandit. Ut in nulla nec lorem tempus elementum sed a nisl. Nunc nisl lacus, faucibus at vulputate id, viverra vitae nibh. Nam quis tortor enim. Phasellus ultrices sit amet felis sit amet consequat. Etiam a cursus ex. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Maecenas id commodo turpis.".substring(0,275).concat("...")}
+                primaryAction={ () => {} }
+                tags={toolTags}
+                title={"Tool Name"}
+            />
+            <FeaturedToolLinkListItem
+                key={1}
+                description={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus porttitor lorem ac velit laoreet, eu dapibus ante pellentesque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla blandit elit vel libero porttitor, ut ultrices sem facilisis. Maecenas egestas dignissim lacus vitae blandit. Ut in nulla nec lorem tempus elementum sed a nisl. Nunc nisl lacus, faucibus at vulputate id, viverra vitae nibh. Nam quis tortor enim. Phasellus ultrices sit amet felis sit amet consequat. Etiam a cursus ex. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Maecenas id commodo turpis.".substring(0,275).concat("...")}
+                primaryAction={ () => {} }
+                tags={toolTags}
+                title={"Tool Name"}
+            />
+          </CustomTabPanel>
           <CustomTabPanel value={value} index={4}>
             <Typography variant="h4">Resources</Typography>
           </CustomTabPanel>
