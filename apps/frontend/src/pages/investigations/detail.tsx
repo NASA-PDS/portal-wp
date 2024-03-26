@@ -241,6 +241,7 @@ export const InvestigationDetailPage = (
               paddingY: "3px",
               paddingX: "5px",
               borderRadius: "3px",
+              width: "fit-content"
             }}
           >
             <Link underline="hover" color="inherit" href="/" style={linkStyles}>
