@@ -17,7 +17,7 @@ import {
   setInvestigationTypeSearchFilter
 } from "src/state/slices/investigationsSlice";
 import { selectFilteredInvestigations } from "src/state/selectors/investigations";
-import { getData, dataRequiresFetchOrUpdate } from "src/state/slices/dataManagerSlice";
+import { getData, dataRequiresFetchOrUpdate, dataReady } from "src/state/slices/dataManagerSlice";
 import { useAppDispatch, useAppSelector } from "src/state/hooks";
 import { connect } from "react-redux";
 import { RootState } from "src/state/store";
@@ -30,6 +30,7 @@ import InvestigationsIndexedListComponent from "src/components/IndexedListCompon
 import { ExpandMore } from "@mui/icons-material";
 
 type InvestigationsDirectoryPageProps = {
+  dataFetched: boolean;
   error: string | null | undefined,
   latestInvestigations: Investigation[];
   searchFilters: InvestigationDirectorySearchFilterState | undefined;
@@ -40,10 +41,11 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
 
   const dispatch = useAppDispatch();
 
-  const {error, latestInvestigations, searchFilters, status} = props;
+  const {dataFetched, error, latestInvestigations, searchFilters, status} = props;
   const dataManagerState = useAppSelector( (state) => { return state.dataManager } );
   
   useEffect(() => {
+
     let isMounted = true;
 
     // Check if data manager status is 'idle', then fetch the investigations data from the API
@@ -54,10 +56,7 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
     if (status === "pending") {
       // Do something to inform user that investigation data is being fetched
     } else if (status === "succeeded") {
-      
       // Do something to handle the successful fetching of data
-      //console.log("investigations.investigationItems", investigations.investigationItems)
-      
     } else if ( error != null || error != undefined ) {
       // Do something to handle the error
       console.log(error);
@@ -67,6 +66,7 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
     return () => {
       isMounted = false;
     };
+
   }, [status, dispatch]);
 
   const linkStyles = {
@@ -143,7 +143,7 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
         </Container>
       </Container>
       {/* Main Content */}
-      {status == "succeeded" ? (
+      { dataFetched ? (
         <Container
           maxWidth={"xl"}
           sx={{
@@ -277,10 +277,11 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
  */ 
 const mapStateToProps = (state:RootState) => {
   return { 
+    dataFetched: dataReady(state),
     error: state.investigations.error,
     latestInvestigations: selectFilteredInvestigations(state),
     searchFilters: state.investigations.searchFilters,
-    status: state.investigations.status,
+    status: state.dataManager.status,
   }
 };
 

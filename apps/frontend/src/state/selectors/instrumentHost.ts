@@ -4,6 +4,9 @@ import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { RootState } from "src/state/store";
 import { InstrumentHostItems } from "src/state/slices/instrumentHostsSlice";
 
+export const instrumentHostDataReady = (state:RootState):boolean => {
+  return state.instrumentHosts.status === 'succeeded';
+};
 
 /**
  * A redux selector to retrieve instrument host data stored in our redux state.

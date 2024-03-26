@@ -4,6 +4,10 @@ import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { RootState } from "src/state/store";
 import { InstrumentItems } from "src/state/slices/instrumentsSlice";
 
+export const instrumentDataReady = (state:RootState):boolean => {
+  return state.instruments.status === 'succeeded';
+};
+
 /**
  * A redux selector to retrieve instrument data stored in our redux state.
  * @param {RootState} state The redux state of type RootState

@@ -4,6 +4,10 @@ import { RootState } from "src/state/store";
 import { Target } from "src/types/target.d";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 
+export const targetDataReady = (state:RootState):boolean => {
+  return state.targets.status === 'succeeded';
+};
+
 /**
  * A redux selector to retrieve target data stored in our redux state.
  * @param {RootState} state The redux state of type RootState

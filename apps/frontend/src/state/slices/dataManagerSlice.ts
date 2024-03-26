@@ -1,8 +1,12 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
 import { getInvestigations } from './investigationsSlice';
 import { getTargets } from './targetsSlice';
 import { getInstrumentHosts } from './instrumentHostsSlice';
 import { getInstruments } from './instrumentsSlice';
+import { investigationDataReady } from '../selectors/investigations';
+import { targetDataReady } from '../selectors/targets';
+import { instrumentHostDataReady } from '../selectors/instrumentHost';
+import { instrumentDataReady } from '../selectors/instruments';
 
 type DataManagerState = {
   lastUpdated:number | undefined
@@ -39,6 +43,23 @@ export const getData = createAsyncThunk(
 export const dataRequiresFetchOrUpdate = (state:DataManagerState):boolean => {
   return state.status === 'failed' || state.lastUpdated === undefined || state.lastUpdated <= (Date.now() - 14400000)
 };
+
+export const dataReady = createSelector(
+  [
+    investigationDataReady,
+    targetDataReady,
+    instrumentHostDataReady,
+    instrumentDataReady
+  ],
+  (
+    investigationDataReady,
+    targetDataReady,
+    instrumentHostDataReady,
+    instrumentDataReady
+  ):boolean => {
+    return investigationDataReady && targetDataReady && instrumentHostDataReady && instrumentDataReady
+  }
+);
 
 export const dataManagerSlice = createSlice({
   name: "dataManager",

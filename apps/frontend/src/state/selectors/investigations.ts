@@ -4,6 +4,10 @@ import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { RootState } from "src/state/store";
 import { InvestigationItems } from "src/state/slices/investigationsSlice";
 
+export const investigationDataReady = (state:RootState):boolean => {
+  return state.investigations.status === 'succeeded';
+};
+
 /**
  * A redux selector to retrieve investigation data stored in our redux state.
  * @param {RootState} state The redux state of type RootState
