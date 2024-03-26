@@ -171,8 +171,8 @@ export const InvestigationDetailPage = (
     button: {
       color: "#288BFF",
       backgroundColor: "#FFFFFF",
+      border: "1px solid #FFFFFF",
       borderRadius: "10px",
-      border: "1px solid #288BFF",
       fontFamily: "Inter",
       fontWeight: 600,
       fontSize: "1.125em",
@@ -182,8 +182,7 @@ export const InvestigationDetailPage = (
       textTransform: "capitalize",
       wordWrap: "break-word",
       "&:hover": {
-        color: "#FFFFFF",
-        backgroundColor: "#288BFF",
+        backgroundColor: "#FFFFFF",
         border: "1px solid #288BFF",
       },
       "&:disabled": {
@@ -326,7 +325,14 @@ export const InvestigationDetailPage = (
             </Box>
             <Stack
               direction={{ xs: 'column', sm: 'row' }}
-              spacing={{ xs: 1, sm: 2 }}
+              spacing={{ xs: 1, sm: 1 }}
+              sx={{
+                backgroundColor: "#FFFFFF",
+                border: "1px solid #288BFF",
+                borderRadius: "10px",
+                padding: "5px",
+                width: "fit-content"
+              }}
             >
               {instrumentHosts.map((host: InstrumentHost, index) => {
                 return (
