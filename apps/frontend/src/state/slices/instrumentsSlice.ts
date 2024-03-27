@@ -57,6 +57,7 @@ export const getInstruments = createAsyncThunk(
         "includes": [
           PDS4_INFO_MODEL.LID,
           PDS4_INFO_MODEL.LIDVID,
+          PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST,
           PDS4_INFO_MODEL.TITLE,
           PDS4_INFO_MODEL.VID,
           PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE,
@@ -106,8 +107,9 @@ const instrumentsSlice = createSlice({
         let instrument:Instrument = <Instrument>{};
         instrument[PDS4_INFO_MODEL.LID] = source[PDS4_INFO_MODEL.LID];
         instrument[PDS4_INFO_MODEL.LIDVID] = source[PDS4_INFO_MODEL.LIDVID];
-        instrument[PDS4_INFO_MODEL.VID] = source[PDS4_INFO_MODEL.VID];
+        instrument[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST] = source[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST];
         instrument[PDS4_INFO_MODEL.TITLE] = source[PDS4_INFO_MODEL.TITLE];
+        instrument[PDS4_INFO_MODEL.VID] = source[PDS4_INFO_MODEL.VID];
         instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE] = source[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE];
         instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION] = source[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION];
         instrument[PDS4_INFO_MODEL.INSTRUMENT.NAME] = source[PDS4_INFO_MODEL.INSTRUMENT.NAME];
