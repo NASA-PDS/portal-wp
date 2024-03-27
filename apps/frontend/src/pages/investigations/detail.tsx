@@ -164,16 +164,17 @@ export const InvestigationDetailPage = (
     initInstrumentTypes();
   }, [selectedInstrumentHost])
 
-  const linkStyles = {
-    color: "white",
-    fontFamily: "Inter",
-    fontSize: "14px",
-    fontWeight: "300",
-    lineHeight: "19px",
-    paddingY: "4px",
-  };
-
   const styles = {
+    breadcrumbs:{
+      links: {
+        color: "#FFFFFF",
+        fontFamily: "Inter",
+        fontSize: "14px",
+        fontWeight: "300",
+        lineHeight: "19px",
+        paddingY: "4px",
+      }
+    },
     button: {
       color: "#288BFF",
       backgroundColor: "#FFFFFF",
@@ -269,15 +270,10 @@ export const InvestigationDetailPage = (
               width: "fit-content"
             }}
           >
-            <Link underline="hover" color="inherit" href="/" style={linkStyles}>
+            <Link underline="hover" color="inherit" href="/" style={styles.breadcrumbs.links}>
               Home
             </Link>
-            <Link
-              underline="hover"
-              color="inherit"
-              href="/investigations/"
-              style={linkStyles}
-            >
+            <Link underline="hover" color="inherit" href="/investigations/" style={styles.breadcrumbs.links}>
               Investigations
             </Link>
             <Typography style={{ color: "white" }}>
