@@ -412,113 +412,44 @@ export const InvestigationDetailPage = (
           }}
         >
           <CustomTabPanel value={value} index={0}>
-            {
-              instrumentTypes.map( (instrumentType, index) => {
-                return (
-                  <>
-                    <Typography sx={{
-                      textTransform: "capitalize",
-                      fontFamily: "Inter",
-                      fontSize: "1.375em",
-                      fontWeight: 700,
-                      lineHeight: "26px",
-                      wordWrap: "break-word",
-                      paddingBottom: "10px",
-                      ":not(:first-of-type)": {
-                        paddingTop: "50px"
-                      }
-                    }} key={"instrumentType_" + index}>
-                      {instrumentType}
-                    </Typography>
-                    {
-                      instruments[selectedInstrumentHost].map( (instrument:Instrument, index:number) => {
-
-                        if( instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE]?.includes(instrumentType)
-                              || instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]?.includes(instrumentType) ) {
-                          //return <div key={"instrument_" + index}>{instrument[PDS4_INFO_MODEL.TITLE]}</div>
-                          return <FeaturedInstrumentLinkListItem
-                            key={instrument[PDS4_INFO_MODEL.LID]}
-                            description={instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION].toString()}
-                            primaryAction={ () => {} }
-                            title={instrument[PDS4_INFO_MODEL.INSTRUMENT.NAME]}
-                          />
+            <Stack>
+              {
+                instrumentTypes.map( (instrumentType, index) => {
+                  return (
+                    <>
+                      <Typography sx={{
+                        textTransform: "capitalize",
+                        fontFamily: "Inter",
+                        fontSize: "1.375em",
+                        fontWeight: 700,
+                        lineHeight: "26px",
+                        wordWrap: "break-word",
+                        paddingBottom: "10px",
+                        ":not(:first-of-type)": {
+                          paddingTop: "50px"
                         }
-
-                        {/*instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE]?.forEach( (type:string) => {
-                          if( type.toLowerCase() === instrumentType.toLowerCase() ) {
-                            return <div key={"instrument_" + index}>{instrument[PDS4_INFO_MODEL.TITLE]}</div>
+                      }} key={"instrumentType_" + index}>
+                        {instrumentType}
+                      </Typography>
+                      {
+                        instruments[selectedInstrumentHost].map( (instrument:Instrument, index:number) => {
+                          if( instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE]?.includes(instrumentType)
+                                || instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]?.includes(instrumentType) ) {
+                            //return <div key={"instrument_" + index}>{instrument[PDS4_INFO_MODEL.TITLE]}</div>
+                            return <FeaturedInstrumentLinkListItem
+                              key={instrument[PDS4_INFO_MODEL.LID]}
+                              description={instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION].toString()}
+                              primaryAction={ () => {} }
+                              title={instrument[PDS4_INFO_MODEL.INSTRUMENT.NAME]}
+                            />
                           }
                         })
-                        
-                        instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]?.forEach( (type:string) => {
-                          if( type.toLowerCase() === instrumentType.toLowerCase() ) {
-                            return <div key={"instrument_" + index}>{instrument[PDS4_INFO_MODEL.TITLE]}</div>
-                          }
-                        })*/}
-
-                      })
-                    }
-                  </>
-                  )
-                })
-            }
-            {/*<Typography variant='h4'>Cameras</Typography>
-            {
-                investigation["instruments"]["cameras"].map((instrument) => {
-                  return (
-                      <FeaturedLinkListItem
-                      key={instrument.id}
-                      description={instrument.description}
-                      primaryButtonAction={() => instrumentListItemPrimaryAction("instruments/" + instrument.id)}
-                      variant="instrument"
-                      title={instrument.name}
-                  />
-                  )
-                })
-            }
-            <Typography variant='h4'>Spectrometers</Typography>
-            {
-                investigation["instruments"]["spectrometers"].map((instrument) => {
-                  return (
-                      <FeaturedLinkListItem
-                      key={instrument.id}
-                      description={instrument.description}
-                      primaryButtonAction={() => instrumentListItemPrimaryAction("instruments/" + instrument.id)}
-                      variant="instrument"
-                      title={instrument.name}
-                  />
-                  )
-                })
-            }
-            <Typography variant='h4'>Radiation Detectors</Typography>
-            {
-                investigation["instruments"]["radiation-detectors"].map((instrument) => {
-                  return (
-                      <FeaturedLinkListItem
-                      key={instrument.id}
-                      description={instrument.description}
-                      primaryButtonAction={() => instrumentListItemPrimaryAction("instruments/" + instrument.id)}
-                      variant="instrument"
-                      title={instrument.name}
-                  />
-                  )
-                })
-            }
-            <Typography variant='h4'>Environmental Sensors</Typography>
-            {
-                investigation["instruments"]["environmental-sensors"].map((instrument) => {
-                  return (
-                      <FeaturedLinkListItem
-                      key={instrument.id}
-                      description={instrument.description}
-                      primaryButtonAction={() => instrumentListItemPrimaryAction("instruments/" + instrument.id)}
-                      variant="instrument"
-                      affiliated_spacecraft="Affiliated Spacecraft"
-                      title={instrument.name}
-                  />
-                  )
-                })
-            }*/}
+                      }
+                    </>
+                    )
+                  })
+              }
+            </Stack>
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>
             <Typography variant="h4" sx={{
