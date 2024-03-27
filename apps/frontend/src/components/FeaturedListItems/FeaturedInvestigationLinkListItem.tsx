@@ -53,7 +53,7 @@ export const FeaturedInvestigationLinkListItem = ({
           </Stack>
         </Grid>
         <Grid item xs={2}>
-          <Typography variant="body1" display="block" color='#58585B'>
+          <Typography variant="body1" display="block" color='#58585B' sx={{ wordBreak: "break-word", textAlign: "center" }}>
             {investigation_type}
           </Typography>
         </Grid>

@@ -132,6 +132,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                   fontSize: "11px",
                   textTransform: "uppercase",
                   fontWeight: "bold",
+                  textAlign: "center",
                 }}
               >
                 Investigation Type
@@ -146,6 +147,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                   fontSize: "11px",
                   textTransform: "uppercase",
                   fontWeight: "bold",
+                  textAlign: "center",
                 }}
               >
                 Affiliated Spacecraft
