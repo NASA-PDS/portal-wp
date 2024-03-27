@@ -4,6 +4,9 @@ import { generatePath, useNavigate } from "react-router-dom";
 import { Investigation } from "src/types/investigation.d";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import FeaturedInvestigationLinkListItem from "src/components/FeaturedListItems/FeaturedInvestigationLinkListItem";
+import { selectLatestInstrumentHostsForInvestigation } from "src/state/selectors/instrumentHost";
+import { RootState, store } from "src/state/store";
+import { InstrumentHost } from "src/types/instrumentHost.d";
 
 type InvestigationsIndexedListComponentProps = {
   investigations: Investigation[];
@@ -27,10 +30,17 @@ const getItemsByIndex = (
   });
 };
 
+function getAffiliatedSpacecraft(state:RootState, investigation:Investigation):string {
+  return selectLatestInstrumentHostsForInvestigation(state, investigation[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST])?.reduce(
+    (accumulator, item:InstrumentHost) => { return accumulator === "" ? accumulator += item[PDS4_INFO_MODEL.TITLE] : accumulator += ", ".concat(item[PDS4_INFO_MODEL.TITLE]) }, ''
+  )
+}
+
 function InvestigationsIndexedListComponent(props:InvestigationsIndexedListComponentProps) {
 
   const investigations = props.investigations;
   const navigate = useNavigate();
+  const state = store.getState();
 
   const investigationListItemPrimaryAction = (params:InvestigationDetailPathParams) => {
     navigate( generatePath("/investigations/:lid/:version", params) );
@@ -173,7 +183,8 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                     (investigation: Investigation) => {
                       return (
                         <FeaturedInvestigationLinkListItem
-                          affiliated_spacecraft={ investigation[PDS4_INFO_MODEL.ALIAS.ALTERNATE_TITLE]?.join(",") }
+                          /*affiliated_spacecraft={ investigation[PDS4_INFO_MODEL.ALIAS.ALTERNATE_TITLE]?.join(",") }*/
+                          affiliated_spacecraft={ getAffiliatedSpacecraft(state, investigation)}
                           description={ investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION] }
                           investigation_type={ investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE] }
                           primaryAction={ () => investigationListItemPrimaryAction({ lid: investigation.lid, version: investigation.vid }) }
