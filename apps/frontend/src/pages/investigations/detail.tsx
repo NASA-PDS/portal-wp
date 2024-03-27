@@ -205,11 +205,13 @@ export const InvestigationDetailPage = (
           color: "#000000"
         },
         "&:hover": {
-          borderBottom: "1px solid #58585B",
-          boxSizing: "border-box"
+          borderBottom: "2px solid #58585B",
+          boxSizing: "border-box",
+          top: "1px"
         },
         "&:focus": {
           border: '1px #58585B dotted',
+          top: "1px"
         },
       },
       ".MuiTabs-indicator": {
@@ -265,7 +267,8 @@ export const InvestigationDetailPage = (
               paddingY: "3px",
               paddingX: "5px",
               borderRadius: "3px",
-              width: "fit-content"
+              width: "fit-content",
+              alignItems: "center"
             }}
           >
             <Link underline="hover" color="inherit" href="/" style={styles.breadcrumbs.links}>
