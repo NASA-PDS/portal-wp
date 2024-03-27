@@ -247,7 +247,8 @@ export const InvestigationDetailPage = (
             ".png)",
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
-          height: "280px",
+          minHeight: "280px",
+          height: "fit-content",
           textAlign: "left",
         }}
       >
