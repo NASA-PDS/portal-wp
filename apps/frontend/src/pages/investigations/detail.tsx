@@ -241,10 +241,7 @@ export const InvestigationDetailPage = (
         maxWidth={false}
         disableGutters
         sx={{
-          backgroundImage:
-            "url(/assets/images/headers/investigations/" +
-            investigation[PDS4_INFO_MODEL.LID] +
-            ".png)",
+          backgroundImage: "url(/assets/images/headers/investigations/".concat(investigation[PDS4_INFO_MODEL.LID]).concat(".png)"),
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
           minHeight: "280px",
@@ -288,11 +285,7 @@ export const InvestigationDetailPage = (
               paddingTop: "24px",
             }}
             alt=""
-            src={
-              "/assets/images/logos/" +
-              investigation[PDS4_INFO_MODEL.LID] +
-              ".png"
-            }
+            src={"/assets/images/logos/".concat(investigation[PDS4_INFO_MODEL.LID]).concat(".png")}
           />
           <Typography
             variant="h1"
