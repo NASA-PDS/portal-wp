@@ -105,18 +105,18 @@ export const selectFilteredInvestigations = createSelector(
     // Get LIDS for targets that match free-text search filter
     const foundTargetLids = latestTargets.filter( (target) => {
       return (
-        target[PDS4_INFO_MODEL.TITLE]?.toLowerCase().includes(searchFilters?.freeText || "")
+        target[PDS4_INFO_MODEL.TITLE]?.toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
         ||
-        target[PDS4_INFO_MODEL.LID]?.toLowerCase().includes(searchFilters?.freeText || "")
+        target[PDS4_INFO_MODEL.LID]?.toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
       )
     }).map( (target) => { return target[PDS4_INFO_MODEL.LID]});
     
     // Get LIDS for instruments that match free-text search filter
     const foundInstrumentLids = latestInstruments.filter( (instrument) => {
       return (
-        instrument[PDS4_INFO_MODEL.TITLE]?.toLowerCase().includes(searchFilters?.freeText || "")
+        instrument[PDS4_INFO_MODEL.TITLE]?.toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
         ||
-        instrument[PDS4_INFO_MODEL.LID]?.toLowerCase().includes(searchFilters?.freeText || "")
+        instrument[PDS4_INFO_MODEL.LID]?.toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
       )
     });
     // Get LIDS for instruments hosts of those that matched free-text search filter
@@ -145,7 +145,7 @@ export const selectFilteredInvestigations = createSelector(
       (investigation) => {
         return (
           (
-            investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase().includes(searchFilters?.freeText || "")
+            investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
             ||
             targetInvestigationLids.includes(investigation[PDS4_INFO_MODEL.LID])
             ||
