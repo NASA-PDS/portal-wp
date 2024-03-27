@@ -197,6 +197,25 @@ export const InvestigationDetailPage = (
         border: "1px solid #288BFF"
       },
     },
+    tabs: {
+      ".MuiTab-root": {
+        color: "#000000",
+        "&.Mui-selected": {
+          color: "#000000"
+        },
+        "&:hover": {
+          borderBottom: "1px solid #58585B",
+          boxSizing: "border-box"
+        },
+        "&:focus": {
+          border: '1px #58585B dotted',
+        },
+      },
+      ".MuiTabs-indicator": {
+        backgroundColor: "#000000",
+        height: "4px",
+      },
+    }
   };
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -380,12 +399,13 @@ export const InvestigationDetailPage = (
               value={value}
               onChange={handleChange}
               aria-label="basic tabs example"
+              sx={styles.tabs}
             >
-              <Tab label="Instruments" {...a11yProps(0)} />
-              <Tab label="Overview" {...a11yProps(1)} />
-              <Tab label="Targets" {...a11yProps(2)} />
-              <Tab label="Tools" {...a11yProps(3)} />
-              <Tab label="Resources" {...a11yProps(4)} />
+              <Tab label="Instruments" {...a11yProps(0)} disableRipple disableTouchRipple />
+              <Tab label="Overview" {...a11yProps(1)} disableRipple disableTouchRipple />
+              <Tab label="Targets" {...a11yProps(2)} disableRipple disableTouchRipple />
+              <Tab label="Tools" {...a11yProps(3)} disableRipple disableTouchRipple />
+              <Tab label="Resources" {...a11yProps(4)} disableRipple disableTouchRipple />
             </Tabs>
           </Box>
         </Container>
