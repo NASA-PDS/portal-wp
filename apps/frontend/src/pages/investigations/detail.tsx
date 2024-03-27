@@ -482,18 +482,6 @@ export const InvestigationDetailPage = (
                   <Typography>There are no targets related to this investigation.</Typography>
                 </Box>
               )
-              
-              /*investigation["targets"].map((target) => {
-                  return (
-                      <FeaturedLinkListItem
-                      description={target.description}
-                      primaryButtonAction={() => instrumentListItemPrimaryAction("target/" + target.id)}
-                      variant="target"
-                      expansion={true}
-                      title={target.name}
-                  />
-                  )
-                })*/
             }
           </CustomTabPanel>
           <CustomTabPanel value={value} index={3}>
