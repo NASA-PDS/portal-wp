@@ -3,6 +3,9 @@ import { INVESTIGATION_TYPE, Investigation } from "src/types/investigation.d";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { RootState } from "src/state/store";
 import { InvestigationItems } from "src/state/slices/investigationsSlice";
+import { selectLatestVersionTargets } from "./targets";
+import { selectLatestVersionInstruments } from "./instruments";
+import { Instrument } from "src/types/instrument.d";
 
 export const investigationDataReady = (state:RootState):boolean => {
   return state.investigations.status === 'succeeded';
@@ -53,7 +56,7 @@ export const selectLatestVersionInvestigations = createSelector([selectInvestiga
  * A memoized redux selector that efficiently returns the latest, and filtered list of investigations.
  * @returns {Investigation[]} A filtered, latest list of investigations
  */
-export const selectFilteredInvestigations = createSelector([selectLatestVersionInvestigations, selectSearchFilters], (latestInvestigations:Investigation[], searchFilters) => {
+/*export const selectFilteredInvestigations = createSelector([selectLatestVersionInvestigations, selectSearchFilters], (latestInvestigations:Investigation[], searchFilters) => {
 
   // Sort investigations alphabetically by title
   latestInvestigations.sort( (a:Investigation,b:Investigation) => {
@@ -79,4 +82,80 @@ export const selectFilteredInvestigations = createSelector([selectLatestVersionI
     }
   );
 
-});
+});*/
+
+export const selectFilteredInvestigations = createSelector(
+  [ selectLatestVersionInvestigations, selectLatestVersionTargets, selectLatestVersionInstruments, selectSearchFilters ],
+  ( latestInvestigations, latestTargets, latestInstruments, searchFilters ) => {
+
+    // Sort investigations alphabetically by title
+    latestInvestigations.sort( (a:Investigation,b:Investigation) => {
+      if( a[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase() < b[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase() ) {
+        return -1
+      } else if( a[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase() > b[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase() ) {
+        return 1
+      }
+      return 0;
+    });
+
+    if( searchFilters === undefined ) {
+      return latestInvestigations;
+    }
+
+    // Get LIDS for targets that match free-text search filter
+    const foundTargetLids = latestTargets.filter( (target) => {
+      return (
+        target[PDS4_INFO_MODEL.TITLE]?.toLowerCase().includes(searchFilters?.freeText || "")
+        ||
+        target[PDS4_INFO_MODEL.LID]?.toLowerCase().includes(searchFilters?.freeText || "")
+      )
+    }).map( (target) => { return target[PDS4_INFO_MODEL.LID]});
+    
+    // Get LIDS for instruments that match free-text search filter
+    const foundInstrumentLids = latestInstruments.filter( (instrument) => {
+      return (
+        instrument[PDS4_INFO_MODEL.TITLE]?.toLowerCase().includes(searchFilters?.freeText || "")
+        ||
+        instrument[PDS4_INFO_MODEL.LID]?.toLowerCase().includes(searchFilters?.freeText || "")
+      )
+    });
+    // Get LIDS for instruments hosts of those that matched free-text search filter
+    let foundInstrumentHostLids:string[] = [];
+    foundInstrumentLids.forEach( (instrument:Instrument) => {
+      instrument[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST]?.forEach( (instrumentHost) => {
+        if( !foundInstrumentHostLids.includes(instrumentHost) ) {
+          foundInstrumentHostLids.push(instrumentHost);
+        }
+      })
+    });
+
+    const targetInvestigationLids = latestInvestigations.filter( (investigation:Investigation) => {
+      return investigation[PDS4_INFO_MODEL.REF_LID_TARGET]?.filter( (investigationTarget) => {
+        return foundTargetLids.includes(investigationTarget);
+      }).length > 0
+    }).map( (investigation:Investigation) => { return investigation[PDS4_INFO_MODEL.LID]});
+
+    const instrumentHostInvestigationLids = latestInvestigations.filter( (investigation:Investigation) => {
+      return investigation[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST]?.filter( (investigationInstrumentHost) => {
+        return foundInstrumentHostLids.includes(investigationInstrumentHost);
+      }).length > 0
+    }).map( (investigation:Investigation) => { return investigation[PDS4_INFO_MODEL.LID]});
+
+    return latestInvestigations.filter(
+      (investigation) => {
+        return (
+          (
+            investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase().includes(searchFilters?.freeText || "")
+            ||
+            targetInvestigationLids.includes(investigation[PDS4_INFO_MODEL.LID])
+            ||
+            instrumentHostInvestigationLids.includes(investigation[PDS4_INFO_MODEL.LID])
+          )
+          &&
+          ( searchFilters.type === undefined || searchFilters.type === INVESTIGATION_TYPE.ALL || investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE] === searchFilters.type )
+        )
+      }
+    );
+
+  }
+)
