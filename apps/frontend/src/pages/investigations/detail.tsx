@@ -507,7 +507,14 @@ export const InvestigationDetailPage = (
             }*/}
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>
-            <Typography variant="h4">Summary</Typography>
+            <Typography variant="h4" sx={{
+              color: 'black',
+              fontSize: "22px",
+              fontFamily: 'Inter',
+              fontWeight: '700',
+              lineHeight: "26px",
+              wordWrap: 'break-word'
+            }}>Summary</Typography>
             <Typography variant="body1" style={{ paddingBottom: "24px" }}>
               {investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION]}
             </Typography>
