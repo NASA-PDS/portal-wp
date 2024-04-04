@@ -70,35 +70,40 @@ export const FeaturedTargetLinkListItem = ({
               {description.substring(0, 275) + "..."}
           </Typography>
         </Grid>
-        <Grid item xs={2}>
-          <Stack direction="row">
-            <Typography sx={{
-              color: 'black',
-              fontSize: 16,
-              fontFamily: 'Inter',
-              fontWeight: '600',
-              lineHeight: '20px',
-              wordWrap: "break-word"
-            }}
-            >View Targets and Data</Typography>
-            <IconButton 
-              sx={{
-                "&:hover": {
-                  backgroundColor: "#B60109"
-                },
-                backgroundColor: "#F64137",
-                height: "36px",
-                width: "36px",
-                padding: "18px"
+        <Grid item xs={2} sx={{textAlign:"right"}}>
+          <Grid container spacing={1} sx={{alignItems: "center", width: "fit-content"}}>
+            <Grid item>
+              <Typography sx={{
+                color: 'black',
+                fontSize: 16,
+                fontFamily: 'Inter',
+                fontWeight: '600',
+                lineHeight: '20px',
+                textAlign: "left",
+                wordWrap: "break-word"
               }}
-              aria-label="arrow"
-              onClick={() => {primaryAction()}}>
-                <ArrowForward sx={{
-                  color: "#FFFFFF"
+              >View Targets<br />and Data</Typography>
+            </Grid>
+            <Grid item>
+              <IconButton
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "#B60109"
+                  },
+                  backgroundColor: "#F64137",
+                  height: "36px",
+                  width: "36px",
+                  padding: "18px"
                 }}
-              />
-            </IconButton>
-          </Stack>
+                aria-label="arrow"
+                onClick={() => {primaryAction()}}>
+                  <ArrowForward sx={{
+                    color: "#FFFFFF"
+                  }}
+                />
+              </IconButton>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
       <Divider sx={{
