@@ -81,7 +81,7 @@ export const InvestigationDetailPage = (
 
   const initInstrumentTypes = () => {
 
-    let instrumentTypesArr:string[] = [];
+    const instrumentTypesArr:string[] = [];
     instruments[selectedInstrumentHost].forEach( (instrument) => {
 
       if( instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE] !== undefined ) {
@@ -509,8 +509,8 @@ const mapStateToProps = (state: RootState) => {
   const { investigationLid, investigationVersion } = useParams();
   const investigation:Investigation = selectInvestigationVersion(state, investigationLid, investigationVersion);
   const instrumentHosts:InstrumentHost[] = selectLatestInstrumentHostsForInvestigation(state, investigation[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST]);
-  let instruments = new Array( instrumentHosts.length );
-  let targets = new Array( instrumentHosts.length );
+  const instruments = new Array( instrumentHosts.length );
+  const targets = new Array( instrumentHosts.length );
 
   // Get data for each instrument host
   instrumentHosts.map( (instrumentHost:InstrumentHost, index:number) => {
