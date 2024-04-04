@@ -58,8 +58,8 @@ export const FeaturedInvestigationLinkListItem = ({
           </Typography>
         </Grid>
         <Grid item xs={2}>
-          <Typography variant="body1" display="block" color='#58585B' sx={{ wordBreak: "break-word" }}>
-            {affiliated_spacecraft}
+          <Typography variant="body1" display="block" color='#58585B' sx={{ textTransform: "capitalize", wordWrap: "break-word" }}>
+            {affiliated_spacecraft.toLowerCase()}
           </Typography>
         </Grid>
         <Grid item xs={1}>
