@@ -1,37 +1,21 @@
-import React, { useEffect } from "react";
-import {
-  Box,
-  Breadcrumbs,
-  Button,
-  Container,
-  Link,
-  Stack,
-  Tab,
-  Tabs,
-  Typography,
-} from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
-import { connect } from "react-redux";
+import { Box, Breadcrumbs, Button, Container, Grid, Stack, Tab, Tabs, Typography } from "@mui/material";
+import { dataRequiresFetchOrUpdate, getData } from "src/state/slices/dataManagerSlice";
+import { generatePath, Link, useNavigate, useParams } from "react-router-dom";
+import { Instrument, InstrumentHost, Investigation, Target } from "src/types";
+import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "src/state/hooks";
-
-import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
-import { selectInvestigationVersion } from "src/state/selectors/investigations";
-import { selectLatestInstrumentHostsForInvestigation } from "src/state/selectors/instrumentHost";
-import {
-  dataRequiresFetchOrUpdate,
-  getData,
-} from "src/state/slices/dataManagerSlice";
-import { RootState, store } from "src/state/store";
-
-import "./detail.scss";
-import { Investigation } from "src/types/investigation.d";
-import { InstrumentHost } from "src/types/instrumentHost.d";
-import { selectLatestTargetsForInstrumentHost } from "src/state/selectors/targets";
-import { selectLatestInstrumentsForInstrumentHost } from "src/state/selectors/instruments";
-import { Target } from "src/types/target.d";
-import { Instrument } from "src/types/instrument.d";
+import { connect } from "react-redux";
 import FeaturedInstrumentLinkListItem from "src/components/FeaturedListItems/FeaturedInstrumentLinkListItem";
 import FeaturedTargetLinkListItem from "src/components/FeaturedListItems/FeaturedTargetLinkListItem";
+import FeaturedToolLinkListItem from "src/components/FeaturedListItems/FeaturedToolLinkListItem";
+import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
+import { RootState } from "src/state/store";
+import { selectInvestigationVersion } from "src/state/selectors/investigations";
+import { selectLatestInstrumentHostsForInvestigation } from "src/state/selectors/instrumentHost";
+import { selectLatestInstrumentsForInstrumentHost } from "src/state/selectors/instruments";
+import { selectLatestTargetsForInstrumentHost } from "src/state/selectors/targets";
+
+import "./detail.scss";
 
 interface TabPanelProps {
   children?: React.ReactNode;
