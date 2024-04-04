@@ -147,6 +147,8 @@ export const selectFilteredInvestigations = createSelector(
           (
             investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
             ||
+            investigation[PDS4_INFO_MODEL.LID].toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
+            ||
             targetInvestigationLids.includes(investigation[PDS4_INFO_MODEL.LID])
             ||
             instrumentHostInvestigationLids.includes(investigation[PDS4_INFO_MODEL.LID])
