@@ -343,7 +343,7 @@ export const InvestigationDetailPage = (
               sx={{
                 backgroundColor: "#FFFFFF",
                 border: "1px solid #288BFF",
-                borderRadius: "10px",
+                borderRadius: "15px",
                 padding: "5px",
                 width: "fit-content"
               }}
