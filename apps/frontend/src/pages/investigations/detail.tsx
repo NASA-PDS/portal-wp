@@ -216,10 +216,6 @@ export const InvestigationDetailPage = (
     setSelectedInstrumentHost(instrumentHostIndex);
   };
 
-  const investigationListItemPrimaryAction = (path: string) => {
-    navigate(path);
-  };
-
   return (
     <Container maxWidth={false} disableGutters>
       {/* Page Intro */}
