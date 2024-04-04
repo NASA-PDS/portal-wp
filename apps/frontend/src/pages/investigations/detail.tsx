@@ -504,6 +504,100 @@ export const InvestigationDetailPage = (
           </CustomTabPanel>
           <CustomTabPanel value={value} index={4}>
             <Typography variant="h4">Resources</Typography>
+            <Container
+              maxWidth={"xl"}
+              sx={{
+                paddingTop: "48px",
+                textAlign: "left",
+              }}
+            >
+              <Box>
+                <Grid
+                  container
+                  spacing={2}
+                  alignItems="left"
+                  sx={{
+                    paddingY: "10px",
+                    paddingLeft: "10px",
+                    backgroundColor: "#F6F6F6",
+                    '& .MuiGrid-item': {
+                      paddingTop: "0px",
+                    }
+                  }}
+                >
+                  <Grid item xs={7}>
+                    <Typography
+                      variant="body1"
+                      display="block"
+                      color="#58585B"
+                      style={{
+                        fontSize: "11px",
+                        textTransform: "uppercase",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Name
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={1}>
+                    <Typography
+                      variant="body1"
+                      display="block"
+                      color="#58585B"
+                      style={{
+                        fontSize: "11px",
+                        textTransform: "uppercase",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Version
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={1}>
+                    <Typography
+                      variant="body1"
+                      display="block"
+                      color="#58585B"
+                      style={{
+                        fontSize: "11px",
+                        textTransform: "uppercase",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Year
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={1}>
+                    <Typography
+                      variant="body1"
+                      display="block"
+                      color="#58585B"
+                      style={{
+                        fontSize: "11px",
+                        textTransform: "uppercase",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Size
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={1}>
+                    <Typography
+                      variant="body1"
+                      display="block"
+                      color="#58585B"
+                      style={{
+                        fontSize: "11px",
+                        textTransform: "uppercase",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Format
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </Box>
+            </Container>
           </CustomTabPanel>
         </Container>
       </Container>
