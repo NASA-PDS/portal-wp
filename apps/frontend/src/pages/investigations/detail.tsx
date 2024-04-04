@@ -426,7 +426,7 @@ export const InvestigationDetailPage = (
                         {instrumentType}
                       </Typography>
                       {
-                        instruments[selectedInstrumentHost].map( (instrument:Instrument, index:number) => {
+                        instruments[selectedInstrumentHost].map( (instrument:Instrument) => {
                           if( instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE]?.includes(instrumentType)
                                 || instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]?.includes(instrumentType) ) {
                             //return <div key={"instrument_" + index}>{instrument[PDS4_INFO_MODEL.TITLE]}</div>
