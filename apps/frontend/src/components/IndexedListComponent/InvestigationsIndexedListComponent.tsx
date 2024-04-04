@@ -43,7 +43,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
   const state = store.getState();
 
   const investigationListItemPrimaryAction = (params:InvestigationDetailPathParams) => {
-    navigate( generatePath("/investigations/:lid/:version", params) );
+    navigate( generatePath("/investigations/:lid/:version/instruments", params) );
   };
 
   return (

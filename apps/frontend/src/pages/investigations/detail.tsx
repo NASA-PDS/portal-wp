@@ -69,15 +69,28 @@ export const InvestigationDetailPage = (
   const dataManagerState = useAppSelector((state) => {
     return state.dataManager;
   });
-  const [value, setValue] = React.useState(0);
-  const [selectedInstrumentHost, setSelectedInstrumentHost] = React.useState<number>(0);
-  const [instrumentTypes, setInstrumentTypes] = React.useState<string[]>([]);
+  const [selectedInstrumentHost, setSelectedInstrumentHost] = useState<number>(0);
+  const [instrumentTypes, setInstrumentTypes] = useState<string[]>([]);
+  const { investigationLid, investigationVersion, tabLabel } = useParams();
   
+  const tabs = [
+    'instruments',
+    'overview',
+    'targets',
+    'tools',
+    'resources'
+  ];
+  
+  const [value, setValue] = useState(tabs.findIndex( (tab) => tab == tabLabel?.toLowerCase()));
   const toolTags = [
     {label:'Tag Label 1'},
     {label:'Tag Label 2'},
     {label:'Tag Label With a Really Long Title'}
   ];
+
+  useEffect( () => {
+    setValue(tabs.findIndex( (tab) => tab == tabLabel?.toLowerCase()));
+  })
 
   const initInstrumentTypes = () => {
 
@@ -205,9 +218,10 @@ export const InvestigationDetailPage = (
     }
   };
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
-  };
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    event.preventDefault();
+    navigate( generatePath("/investigations/:lid/:version/:tabLabel", {lid: investigationLid, version: investigationVersion, tabLabel: tabs[newValue].toLowerCase()}) );
+  }
 
   const handleInstrumentHostChange = (event) => {
     event.preventDefault();
@@ -371,8 +385,8 @@ export const InvestigationDetailPage = (
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
             <Tabs
               value={value}
-              onChange={handleChange}
-              aria-label="basic tabs example"
+              onChange={handleTabChange}
+              aria-label="Investigation Host Tabs"
               sx={styles.tabs}
             >
               <Tab label="Instruments" {...a11yProps(0)} disableRipple disableTouchRipple />
@@ -474,14 +488,14 @@ export const InvestigationDetailPage = (
                 title={"Tool Name"}
             />
             <FeaturedToolLinkListItem
-                key={1}
+                key={2}
                 description={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus porttitor lorem ac velit laoreet, eu dapibus ante pellentesque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla blandit elit vel libero porttitor, ut ultrices sem facilisis. Maecenas egestas dignissim lacus vitae blandit. Ut in nulla nec lorem tempus elementum sed a nisl. Nunc nisl lacus, faucibus at vulputate id, viverra vitae nibh. Nam quis tortor enim. Phasellus ultrices sit amet felis sit amet consequat. Etiam a cursus ex. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Maecenas id commodo turpis.".substring(0,275).concat("...")}
                 primaryAction={ () => {} }
                 tags={toolTags}
                 title={"Tool Name"}
             />
             <FeaturedToolLinkListItem
-                key={1}
+                key={3}
                 description={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus porttitor lorem ac velit laoreet, eu dapibus ante pellentesque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla blandit elit vel libero porttitor, ut ultrices sem facilisis. Maecenas egestas dignissim lacus vitae blandit. Ut in nulla nec lorem tempus elementum sed a nisl. Nunc nisl lacus, faucibus at vulputate id, viverra vitae nibh. Nam quis tortor enim. Phasellus ultrices sit amet felis sit amet consequat. Etiam a cursus ex. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Maecenas id commodo turpis.".substring(0,275).concat("...")}
                 primaryAction={ () => {} }
                 tags={toolTags}
