@@ -61,7 +61,9 @@ export const getInstrumentHosts = createAsyncThunk(
           PDS4_INFO_MODEL.REF_LID_TARGET,
           PDS4_INFO_MODEL.TITLE,
           PDS4_INFO_MODEL.VID,
-          PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE
+          PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE,
+          PDS4_INFO_MODEL.INSTRUMENT_HOST.DESCRIPTION,
+          PDS4_INFO_MODEL.INSTRUMENT_HOST.TYPE
         ]
       }
     };
@@ -109,7 +111,9 @@ const instrumentHostsSlice = createSlice({
         instrumentHost[PDS4_INFO_MODEL.REF_LID_TARGET] = source[PDS4_INFO_MODEL.REF_LID_TARGET];
         instrumentHost[PDS4_INFO_MODEL.VID] = source[PDS4_INFO_MODEL.VID];
         instrumentHost[PDS4_INFO_MODEL.TITLE] = source[PDS4_INFO_MODEL.TITLE];
-        instrumentHost[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE] = source[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]
+        instrumentHost[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE] = source[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toString();
+        instrumentHost[PDS4_INFO_MODEL.INSTRUMENT_HOST.DESCRIPTION] = source[PDS4_INFO_MODEL.INSTRUMENT_HOST.DESCRIPTION].toString();
+        instrumentHost[PDS4_INFO_MODEL.INSTRUMENT_HOST.TYPE] = source[PDS4_INFO_MODEL.INSTRUMENT_HOST.TYPE].toString();
 
         if( compiledItems[lid] === undefined ) {
           compiledItems[lid] = {};
