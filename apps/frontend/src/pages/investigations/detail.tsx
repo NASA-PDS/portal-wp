@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs, Button, Container, Grid, Stack, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Breadcrumbs, Button, Container, Link as AnchorLink, Grid, Stack, Tab, Tabs, Typography, Divider } from "@mui/material";
 import { dataRequiresFetchOrUpdate, getData } from "src/state/slices/dataManagerSlice";
 import { generatePath, Link, useNavigate, useParams } from "react-router-dom";
 import { Instrument, InstrumentHost, Investigation, Target } from "src/types";
@@ -153,6 +153,56 @@ export const InvestigationDetailPage = (
     
   };
 
+  const getInvestigationSummary = () => {
+    return instrumentHosts[selectedInstrumentHost][PDS4_INFO_MODEL.INSTRUMENT_HOST.DESCRIPTION]
+            .replace("Instrument Host Overview ========================", "<h3>Instrument Host Overview</h3>")
+            .replace("Instrument Host Overview - Spacecraft =====================================", "<h4>Instrument Host Overview - Spacecraft</h4>")
+            .replace("Spacecraft Coordinate System ----------------------------", "<h4>Spacecraft Coordinate System</h4>")
+            .replace("Telecommunications Subsystem ----------------------------", "<h4>Telecommunications Subsystem</h4>")
+            .replace("Attitude and Articulation Control Subsystem -------------------------------------------", "<h4>Attitude and Articulation Control Subsystem</h4>")
+            .replace("Propulsion Subsystem --------------------", "<h4>Propulsion Subsystem</h4>")
+            .replace("Power Subsystem ---------------", "<h4>Power Subsystem</h4>")
+            .replace("Mission Overview ================","<h3>Mission Overview</h3>")
+            .replace("Mission Phases ==============","<h3>Mission Phases</h3>")
+            .replace("VOYAGER 1 LAUNCH ----------------", "<h4>VOYAGER 1 LAUNCH</h4>")
+            .replace("VOYAGER 1 EARTH-JUPITER CRUISE ------------------------------", "<h4>VOYAGER 1 EARTH-JUPITER CRUISE</h4>")
+            .replace("VOYAGER 1 JUPITER ENCOUNTER ---------------------------", "<h4>VOYAGER 1 JUPITER ENCOUNTER</h4>")
+            .replace("VOYAGER 1 JUPITER-SATURN CRUISE -------------------------------", "<h4>VOYAGER 1 JUPITER-SATURN CRUISE</h4>")
+            .replace("VOYAGER 1 SATURN ENCOUNTER --------------------------", "<h4>VOYAGER 1 SATURN ENCOUNTER</h4>")
+            .replace("VOYAGER 1 INTERSTELLAR MISSION ------------------------------", "<h4>VOYAGER 1 INTERSTELLAR MISSION</h4>")
+            .replace("VOYAGER 2 LAUNCH ----------------", "<h4>VOYAGER 2 LAUNCH</h4>")
+            .replace("VOYAGER 2 EARTH-JUPITER CRUISE ------------------------------", "<h4>VOYAGER 2 EARTH-JUPITER CRUISE</h4>")
+            .replace("VOYAGER 2 JUPITER ENCOUNTER ---------------------------", "<h4>VOYAGER 2 JUPITER ENCOUNTER</h4>")
+            .replace("VOYAGER 2 JUPITER-SATURN CRUISE -------------------------------", "<h4>VOYAGER 2 JUPITER-SATURN CRUISE</h4>")
+            .replace("VOYAGER 2 SATURN ENCOUNTER --------------------------", "<h4>VOYAGER 2 SATURN ENCOUNTER</h4>")
+            .replace("VOYAGER 2 SATURN-URANUS CRUISE ------------------------------", "<h4>VOYAGER 2 SATURN-URANUS CRUISE</h4>")
+            .replace("VOYAGER 2 URANUS ENCOUNTER --------------------------", "<h4>VOYAGER 2 URANUS ENCOUNTER</h4>")
+            .replace("VOYAGER 2 URANUS-NEPTUNE CRUISE -------------------------------", "<h4>VOYAGER 2 URANUS-NEPTUNE CRUISE</h4>")
+            .replace("VOYAGER 2 NEPTUNE ENCOUNTER ---------------------------", "<h4>VOYAGER 2 NEPTUNE ENCOUNTER</h4>")
+            .replace("VOYAGER 2 INTERSTELLAR MISSION ------------------------------ ", "<h4>VOYAGER 2 INTERSTELLAR MISSION</h4>")
+            .replace("PI ------------------------------------------------- --------------------", "<h4>PI</h4>")
+            .replace("DEVELOPMENT -----------", "<h4>DEVELOPMENT</h4>")
+            .replace("ROVER LAUNCH ------", "<h4>ROVER LAUNCH</h4>")
+            .replace("ROVER CRUISE AND APPROACH -------------------", "<h4>ROVER CRUISE AND APPROACH</H4>")
+            .replace("ENTRY, DESCENT, AND LANDING ---------------------------", "<h4>ENTRY, DESCENT, AND LANDING</h4>")
+            .replace("PRIMARY SURFACE MISSION -----------------------", "<h4>PRIMARY SURFACE MISSION</h4>")
+            .replace("EXTENDED SURFACE MISSION ------------------------", "<h4>EXTENDED SURFACE MISSION</h4>")
+            .replace("LAUNCH ------", "<h4>LAUNCH</h4>")
+            .replace("CRUISE ------ ", "<h4>CRUISE</h4>")
+            .replace("APPROACH --------", "<h4>APPROACH</h4>")
+            .replace("POST-LANDING THROUGH EGRESS --------------------------- ", "<h4>POST-LANDING THROUGH EGRESS</h4>")
+            .replace("PRIMARY MISSION ---------------", "<h4>PRIMARY MISSION</h4>")
+            .replace(/EXTENDED MISSION ([0-9]) ------------------/g,"<h4>EXTENDED MISSION $1</h4>")
+            .replace("Cruise Objectives. -----------------", "<h4>Cruise Objectives.</h4>")
+            .replace("Saturn (Planet) Objectives. --------------------------", "<h4>Saturn (Planet) Objectives</h4>")
+            .replace(" Titan Objectives. ----------------", "<h4> Titan Objectives </h4>")
+            .replace("Icy Satellite Objectives. ------------------------ ", "<h4>Icy Satellite Objectives</h4>")
+            .replace("Ring Objectives. ---------------", "<h4>Ring Objectives</h4>")
+            .replace("Magnetosphere Objectives ------------------------", "<h4>Magnetosphere Objectives</h4>")
+            .replace("Data Storage Subsystem ----------------------", "<h4>Data Storage Subsystem</h4>")
+            .replace(/(b|c|d|e|f)\)/g, "<br />$1)")
+  }
+
   useEffect(() => {
     let isMounted = true;
 
@@ -190,6 +240,7 @@ export const InvestigationDetailPage = (
         fontWeight: "300",
         lineHeight: "19px",
         paddingY: "4px",
+        textDecoration: "none",
       }
     },
     button: {
@@ -282,14 +333,21 @@ export const InvestigationDetailPage = (
               paddingY: "3px",
               paddingX: "5px",
               borderRadius: "3px",
-              width: "fit-content",
-              alignItems: "center"
+              width: "fit-content"
             }}
+            separator={<Typography sx={{
+              color: 'white',
+              fontSize: '0.875rem',
+              fontFamily: 'Inter',
+              fontWeight: '400',
+              lineHeight: '19px',
+              wordWrap: 'break-word'
+            }}>/</Typography>}
           >
-            <Link underline="hover" color="inherit" href="/" style={styles.breadcrumbs.links}>
+            <Link color="inherit" to="/" style={styles.breadcrumbs.links}>
               Home
             </Link>
-            <Link underline="hover" color="inherit" href="/investigations/" style={styles.breadcrumbs.links}>
+            <Link color="inherit" to="/investigations/" style={styles.breadcrumbs.links}>
               Investigations
             </Link>
             <Typography style={{ color: "white" }}>
@@ -430,105 +488,343 @@ export const InvestigationDetailPage = (
           disableGutters
           sx={{
             paddingY: "24px",
-            paddingLeft: "217px",
           }}
         >
           <CustomTabPanel value={value} index={0}>
-            <Stack>
-              {
-                instrumentTypes.map( (instrumentType, index) => {
-                  return (
-                    <>
-                      <Typography sx={{
-                        textTransform: "capitalize",
-                        fontFamily: "Inter",
-                        fontSize: "1.375em",
-                        fontWeight: 700,
-                        lineHeight: "26px",
-                        wordWrap: "break-word",
-                        paddingBottom: "10px",
-                        ":not(:first-of-type)": {
-                          paddingTop: "50px"
-                        }
-                      }} key={"instrumentType_" + index}>
-                        {instrumentType}
-                      </Typography>
-                      {
-                        instruments[selectedInstrumentHost].map( (instrument:Instrument) => {
-                          if( instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE]?.includes(instrumentType)
-                                || instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]?.includes(instrumentType) ) {
-                            //return <div key={"instrument_" + index}>{instrument[PDS4_INFO_MODEL.TITLE]}</div>
-                            return <FeaturedInstrumentLinkListItem
-                              key={instrument[PDS4_INFO_MODEL.LID]}
-                              description={instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION].toString()}
-                              primaryAction={ () => {} }
-                              title={instrument[PDS4_INFO_MODEL.INSTRUMENT.NAME]}
-                            />
+            <Grid container>
+              <Grid item md={2} display={{ xs: "none", sm: "none", md: "block"}}>
+                <Box sx={{
+                  borderLeft: "1px solid #D1D1D1",
+                  position: "sticky",
+                  top: "20px"
+                }}>
+                  <Typography sx={{
+                    marginLeft: "10px",
+                    marginBottom: "12px",
+                    color: '#17171B',
+                    fontSize: "11px",
+                    fontFamily: 'Inter',
+                    fontWeight: '700',
+                    textTransform: 'uppercase',
+                    lineHeight: "19px",
+                    letterSpacing: "0.25px",
+                    wordWrap: 'break-word'
+                  }}>Instruments</Typography>
+                  {
+                    instrumentTypes.map(instrumentType => {
+                      return (
+                        <AnchorLink href={"#title_" + instrumentType.toLowerCase()} sx={{
+                          textDecoration: "none",
+                          "&:hover .MuiDivider-root": {
+                            backgroundColor: "#1C67E3",
+                            opacity: 1
                           }
-                        })
-                      }
-                    </>
-                    )
-                  })
-              }
-            </Stack>
+                        }}>
+                          <Box sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            minHeight: '24px',
+                            marginBottom: "12px",
+                          }}>
+                            <Divider flexItem orientation="vertical" sx={{
+                              opacity: 0,
+                              borderRightWidth: "2px",
+                            }} />
+                            <Typography sx={{
+                              marginLeft: "10px",
+                              color: '#17171B',
+                              fontSize: "12px",
+                              fontFamily: 'Inter',
+                              fontWeight: '400',
+                              lineHeight: "12px",
+                              letterSpacing: "0.25px",
+                              wordWrap: 'break-word',
+                            }}>{instrumentType}</Typography>
+                          </Box>
+                        </AnchorLink>
+                      )
+                    })
+                  }
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={10}>
+                <Stack>
+                  {
+                    instrumentTypes.map( (instrumentType, index) => {
+                      return (
+                        <>
+                          <Typography sx={{
+                            textTransform: "capitalize",
+                            fontFamily: "Inter",
+                            fontSize: "1.375em",
+                            fontWeight: 700,
+                            lineHeight: "26px",
+                            wordWrap: "break-word",
+                            paddingBottom: "10px",
+                            ":not(:first-of-type)": {
+                              paddingTop: "50px"
+                            }
+                          }} key={"instrumentType_" + index}>
+                            <a name={"title_" + instrumentType.toLowerCase()}>{instrumentType}</a>
+                          </Typography>
+                          {
+                            instruments[selectedInstrumentHost].map( (instrument:Instrument) => {
+                              if( instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE]?.includes(instrumentType)
+                                    || instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]?.includes(instrumentType) ) {
+                                //return <div key={"instrument_" + index}>{instrument[PDS4_INFO_MODEL.TITLE]}</div>
+                                return <FeaturedInstrumentLinkListItem
+                                  key={instrument[PDS4_INFO_MODEL.LID]}
+                                  description={instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION].toString()}
+                                  primaryAction={ () => {} }
+                                  title={instrument[PDS4_INFO_MODEL.INSTRUMENT.NAME]}
+                                />
+                              }
+                            })
+                          }
+                        </>
+                        )
+                      })
+                  }
+                </Stack>
+              </Grid>
+            </Grid>
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>
-            <Typography variant="h4" sx={{
-              color: 'black',
-              fontSize: "22px",
-              fontFamily: 'Inter',
-              fontWeight: '700',
-              lineHeight: "26px",
-              wordWrap: 'break-word'
-            }}>Summary</Typography>
-            <Typography variant="body1" style={{ paddingBottom: "24px" }}>
-              {investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION]}
-            </Typography>
+            <Grid container>
+              <Grid item md={2}>
+                <Box sx={{
+                  borderLeft: "1px solid #D1D1D1",
+                  position: "sticky",
+                  top: "20px"
+                }}>
+                  <Typography sx={{
+                    marginLeft: "10px",
+                    marginBottom: "12px",
+                    color: '#17171B',
+                    fontSize: "11px",
+                    fontFamily: 'Inter',
+                    fontWeight: '700',
+                    textTransform: 'uppercase',
+                    lineHeight: "19px",
+                    letterSpacing: "0.25px",
+                    wordWrap: 'break-word'
+                  }}>Overview</Typography>
+                  {
+                    ["Heading", "Heading", "Heading"].map(heading => {
+                      return (
+                        <AnchorLink href={"#title_" + heading.toLowerCase()} sx={{
+                          textDecoration: "none",
+                          "&:hover .MuiDivider-root": {
+                            backgroundColor: "#1C67E3",
+                            opacity: 1
+                          }
+                        }}>
+                          <Box sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            minHeight: '24px',
+                            marginBottom: "12px",
+                          }}>
+                            <Divider flexItem orientation="vertical" sx={{
+                              opacity: 0,
+                              borderRightWidth: "2px",
+                            }} />
+                            <Typography sx={{
+                              marginLeft: "10px",
+                              color: '#17171B',
+                              fontSize: "12px",
+                              fontFamily: 'Inter',
+                              fontWeight: '400',
+                              lineHeight: "12px",
+                              letterSpacing: "0.25px",
+                              wordWrap: 'break-word',
+                            }}>{heading}</Typography>
+                          </Box>
+                        </AnchorLink>
+                      )
+                    })
+                  }
+                </Box>
+              </Grid>
+              <Grid item md={10}>
+                <Typography variant="h4" sx={{
+                  color: 'black',
+                  fontSize: "22px",
+                  fontFamily: 'Inter',
+                  fontWeight: '700',
+                  lineHeight: "26px",
+                  wordWrap: 'break-word'
+                }}>Summary</Typography>
+                <Typography variant="body1" style={{ paddingBottom: "24px" }}
+                  dangerouslySetInnerHTML={{
+                    __html: getInvestigationSummary()
+                  }}>
+                </Typography>
+              </Grid>
+            </Grid>
           </CustomTabPanel>
           <CustomTabPanel value={value} index={2}>
-            {
-              targets[selectedInstrumentHost].length > 0 ? (
-                targets[selectedInstrumentHost].map( (target:Target, index:number) => {
-                  //let keyProp = target[PDS4_INFO_MODEL.LID].replaceAll(/[:.]/g, '_');
-                  //return <div key={keyProp}>{target[PDS4_INFO_MODEL.TITLE]}</div>
-                  return <FeaturedTargetLinkListItem
-                            key={"target_" + index}
-                            description={target[PDS4_INFO_MODEL.TARGET.DESCRIPTION].toString()}
-                            primaryAction={ () => {} }
-                            title={target[PDS4_INFO_MODEL.TARGET.NAME]}
-                          />
-                })
-              ) : (
-                <Box sx={{ paddingBottom: "25px", textAlign: "center"}}>
-                  <Typography>There are no targets related to this investigation.</Typography>
+          <Grid container>
+            <Grid item md={2}>
+              <Box sx={{
+                  borderLeft: "1px solid #D1D1D1",
+                  position: "sticky",
+                  top: "20px"
+                }}>
+                  <Typography sx={{
+                    marginLeft: "10px",
+                    marginBottom: "12px",
+                    color: '#17171B',
+                    fontSize: "11px",
+                    fontFamily: 'Inter',
+                    fontWeight: '700',
+                    textTransform: 'uppercase',
+                    lineHeight: "19px",
+                    letterSpacing: "0.25px",
+                    wordWrap: 'break-word'
+                  }}>Targets</Typography>
+                  {
+                    targets[selectedInstrumentHost].map( target => {
+                      return (
+                        <AnchorLink href={"#title_" + target[PDS4_INFO_MODEL.TARGET.NAME].toString().replace(" ","_").toLowerCase()} sx={{
+                          textDecoration: "none",
+                          "&:hover .MuiDivider-root": {
+                            backgroundColor: "#1C67E3",
+                            opacity: 1
+                          }
+                        }}>
+                          <Box sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            minHeight: '24px',
+                            marginBottom: "12px",
+                          }}>
+                            <Divider flexItem orientation="vertical" sx={{
+                              opacity: 0,
+                              borderRightWidth: "2px",
+                            }} />
+                            <Typography sx={{
+                                marginLeft: "10px",
+                                color: '#17171B',
+                                fontSize: "12px",
+                                fontFamily: 'Inter',
+                                fontWeight: '400',
+                                lineHeight: "12px",
+                                letterSpacing: "0.25px",
+                                wordWrap: 'break-word',
+                              }}>{target[PDS4_INFO_MODEL.TARGET.NAME]}</Typography>
+                          </Box>
+                        </AnchorLink>
+                      )
+                    })
+                  }
                 </Box>
-              )
-            }
+              </Grid>
+              <Grid item md={10}>
+                {
+                  targets[selectedInstrumentHost].length > 0 ? (
+                    targets[selectedInstrumentHost].map( (target:Target, index:number) => {
+                      //let keyProp = target[PDS4_INFO_MODEL.LID].replaceAll(/[:.]/g, '_');
+                      //return <div key={keyProp}>{target[PDS4_INFO_MODEL.TITLE]}</div>
+                      return <FeaturedTargetLinkListItem
+                                key={"target_" + index}
+                                description={target[PDS4_INFO_MODEL.TARGET.DESCRIPTION].toString()}
+                                primaryAction={ () => {} }
+                                title={target[PDS4_INFO_MODEL.TARGET.NAME]}
+                              />
+                    })
+                  ) : (
+                    <Box sx={{ paddingBottom: "25px", textAlign: "center"}}>
+                      <Typography>There are no targets related to this investigation.</Typography>
+                    </Box>
+                  )
+                }
+              </Grid>
+            </Grid>
           </CustomTabPanel>
           <CustomTabPanel value={value} index={3}>
-            <Typography variant='body1' sx={{paddingBottom: "32px"}}>The PDS maintains many tools enabling users to work with the data in our archive. Listed below are tools that can assist you when exploring the data holding for this investigation.</Typography>
-            <FeaturedToolLinkListItem
-                key={1}
-                description={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus porttitor lorem ac velit laoreet, eu dapibus ante pellentesque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla blandit elit vel libero porttitor, ut ultrices sem facilisis. Maecenas egestas dignissim lacus vitae blandit. Ut in nulla nec lorem tempus elementum sed a nisl. Nunc nisl lacus, faucibus at vulputate id, viverra vitae nibh. Nam quis tortor enim. Phasellus ultrices sit amet felis sit amet consequat. Etiam a cursus ex. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Maecenas id commodo turpis.".substring(0,275).concat("...")}
-                primaryAction={ () => {} }
-                tags={toolTags}
-                title={"Tool Name"}
-            />
-            <FeaturedToolLinkListItem
-                key={2}
-                description={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus porttitor lorem ac velit laoreet, eu dapibus ante pellentesque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla blandit elit vel libero porttitor, ut ultrices sem facilisis. Maecenas egestas dignissim lacus vitae blandit. Ut in nulla nec lorem tempus elementum sed a nisl. Nunc nisl lacus, faucibus at vulputate id, viverra vitae nibh. Nam quis tortor enim. Phasellus ultrices sit amet felis sit amet consequat. Etiam a cursus ex. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Maecenas id commodo turpis.".substring(0,275).concat("...")}
-                primaryAction={ () => {} }
-                tags={toolTags}
-                title={"Tool Name"}
-            />
-            <FeaturedToolLinkListItem
-                key={3}
-                description={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus porttitor lorem ac velit laoreet, eu dapibus ante pellentesque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla blandit elit vel libero porttitor, ut ultrices sem facilisis. Maecenas egestas dignissim lacus vitae blandit. Ut in nulla nec lorem tempus elementum sed a nisl. Nunc nisl lacus, faucibus at vulputate id, viverra vitae nibh. Nam quis tortor enim. Phasellus ultrices sit amet felis sit amet consequat. Etiam a cursus ex. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Maecenas id commodo turpis.".substring(0,275).concat("...")}
-                primaryAction={ () => {} }
-                tags={toolTags}
-                title={"Tool Name"}
-            />
+            <Grid container>
+              <Grid item md={2}>
+              <Box sx={{
+                  borderLeft: "1px solid #D1D1D1",
+                  position: "sticky",
+                  top: "20px"
+                }}>
+                  <Typography sx={{
+                    marginLeft: "10px",
+                    marginBottom: "12px",
+                    color: '#17171B',
+                    fontSize: "11px",
+                    fontFamily: 'Inter',
+                    fontWeight: '700',
+                    textTransform: 'uppercase',
+                    lineHeight: "19px",
+                    letterSpacing: "0.25px",
+                    wordWrap: 'break-word'
+                  }}>Tools</Typography>
+                  {
+                    
+                    ["Tool Name", "Tool Name", "Tool Name"].map(tool => {
+                      return (
+                        <AnchorLink href={"#title_" + tool.replace(" ","_").toLowerCase()} sx={{
+                          textDecoration: "none",
+                          "&:hover .MuiDivider-root": {
+                            backgroundColor: "#1C67E3",
+                            opacity: 1
+                          }
+                        }}>
+                          <Box sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            minHeight: '24px',
+                            marginBottom: "12px",
+                          }}>
+                            <Divider flexItem orientation="vertical" sx={{
+                              opacity: 0,
+                              borderRightWidth: "2px",
+                            }} />
+                            <Typography sx={{
+                              marginLeft: "10px",
+                              color: '#17171B',
+                              fontSize: "12px",
+                              fontFamily: 'Inter',
+                              fontWeight: '400',
+                              lineHeight: "12px",
+                              letterSpacing: "0.25px",
+                              wordWrap: 'break-word',
+                            }}>{tool}</Typography>
+                          </Box>
+                        </AnchorLink>
+                      )
+                    })
+                  }
+                </Box>
+              </Grid>
+              <Grid item md={10}>
+                <Typography variant='body1' sx={{paddingBottom: "32px"}}>The PDS maintains many tools enabling users to work with the data in our archive. Listed below are tools that can assist you when exploring the data holding for this investigation.</Typography>
+                <FeaturedToolLinkListItem
+                    key={1}
+                    description={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus porttitor lorem ac velit laoreet, eu dapibus ante pellentesque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla blandit elit vel libero porttitor, ut ultrices sem facilisis. Maecenas egestas dignissim lacus vitae blandit. Ut in nulla nec lorem tempus elementum sed a nisl. Nunc nisl lacus, faucibus at vulputate id, viverra vitae nibh. Nam quis tortor enim. Phasellus ultrices sit amet felis sit amet consequat. Etiam a cursus ex. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Maecenas id commodo turpis.".substring(0,275).concat("...")}
+                    primaryAction={ () => {} }
+                    tags={toolTags}
+                    title={"Tool Name"}
+                />
+                <FeaturedToolLinkListItem
+                    key={2}
+                    description={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus porttitor lorem ac velit laoreet, eu dapibus ante pellentesque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla blandit elit vel libero porttitor, ut ultrices sem facilisis. Maecenas egestas dignissim lacus vitae blandit. Ut in nulla nec lorem tempus elementum sed a nisl. Nunc nisl lacus, faucibus at vulputate id, viverra vitae nibh. Nam quis tortor enim. Phasellus ultrices sit amet felis sit amet consequat. Etiam a cursus ex. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Maecenas id commodo turpis.".substring(0,275).concat("...")}
+                    primaryAction={ () => {} }
+                    tags={toolTags}
+                    title={"Tool Name"}
+                />
+                <FeaturedToolLinkListItem
+                    key={3}
+                    description={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus porttitor lorem ac velit laoreet, eu dapibus ante pellentesque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla blandit elit vel libero porttitor, ut ultrices sem facilisis. Maecenas egestas dignissim lacus vitae blandit. Ut in nulla nec lorem tempus elementum sed a nisl. Nunc nisl lacus, faucibus at vulputate id, viverra vitae nibh. Nam quis tortor enim. Phasellus ultrices sit amet felis sit amet consequat. Etiam a cursus ex. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Maecenas id commodo turpis.".substring(0,275).concat("...")}
+                    primaryAction={ () => {} }
+                    tags={toolTags}
+                    title={"Tool Name"}
+                />
+              </Grid>
+            </Grid>
           </CustomTabPanel>
           <CustomTabPanel value={value} index={4}>
             <Typography variant="h4">Resources</Typography>
