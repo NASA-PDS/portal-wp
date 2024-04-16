@@ -16,6 +16,7 @@ import { selectLatestInstrumentsForInstrumentHost } from "src/state/selectors/in
 import { selectLatestTargetsForInstrumentHost } from "src/state/selectors/targets";
 
 import "./detail.scss";
+import { StatsList } from "src/components/Stats/Stats";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -72,6 +73,25 @@ export const InvestigationDetailPage = (
   const [selectedInstrumentHost, setSelectedInstrumentHost] = useState<number>(0);
   const [instrumentTypes, setInstrumentTypes] = useState<string[]>([]);
   const { investigationLid, investigationVersion, tabLabel } = useParams();
+
+  const stats:Stats[] = [
+    {
+      label: "Mission Type",
+      value: investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE]
+    },
+    {
+      label: "Mission Phase",
+      value: "Lorem Ipsum"
+    },
+    {
+      label: "Version",
+      value: investigation.vid
+    },
+    {
+      label: "Logical Identifier",
+      value: investigation.lid
+    },
+  ]
   
   const tabs = [
     'instruments',
@@ -276,35 +296,43 @@ export const InvestigationDetailPage = (
               {investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]}
             </Typography>
           </Breadcrumbs>
-          <Box
-            component="img"
-            sx={{
-              width: 60,
-              paddingTop: "24px",
-            }}
-            alt=""
-            src={"/assets/images/logos/".concat(investigation[PDS4_INFO_MODEL.LID]).concat(".png")}
-          />
-          <Typography
-            variant="h1"
-            style={{
-              color: "white",
-              padding: "0px",
-              paddingTop: "0px",
-              fontSize: "72px",
-              fontWeight: "700",
-            }}
-          >
-            {investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]}
-          </Typography>
-          <Typography
-            variant="subtitle1"
-            sx={{
-              color: "white",
-            }}
-          >
-            {investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]}
-          </Typography>
+          <Grid container>
+            <Grid item md={7}>
+              <Box
+                component="img"
+                sx={{
+                  width: 60,
+                  paddingTop: "24px",
+                }}
+                alt=""
+                src={"/assets/images/logos/".concat(investigation[PDS4_INFO_MODEL.LID]).concat(".png")}
+              />
+              <Typography
+                variant="h1"
+                style={{
+                  color: "white",
+                  padding: "0px",
+                  paddingTop: "0px",
+                  fontSize: "72px",
+                  fontWeight: "700",
+                }}
+              >
+                {investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]}
+              </Typography>
+              <Typography
+                variant="subtitle1"
+                sx={{
+                  color: "white",
+                }}
+              >
+                {investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]}
+              </Typography>
+            </Grid>
+            <Grid item md={1}></Grid>
+            <Grid item md={4}>
+              <StatsList stats={stats} />
+            </Grid>
+          </Grid>
         </Container>
       </Container>
       <Container
