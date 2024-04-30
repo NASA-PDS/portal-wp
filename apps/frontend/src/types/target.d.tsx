@@ -9,5 +9,6 @@ export type Target = {
   [PDS4_INFO_MODEL.VID]:string;
   [PDS4_INFO_MODEL.TARGET.DESCRIPTION]:string;
   [PDS4_INFO_MODEL.TARGET.NAME]:string;
+  [PDS4_INFO_MODEL.TARGET.TYPE]:string;
 
 }
