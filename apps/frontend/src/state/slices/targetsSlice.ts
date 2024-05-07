@@ -69,8 +69,10 @@ export const getTargets = createAsyncThunk(
     try {
       const response = await axios.post(url, query, {headers: headers})
       return response.data
-    } catch (err:any) {
-      return thunkAPI.rejectWithValue({ error: err.message });
+    } catch (err:unknown) {
+      if( err instanceof Error ) {
+        return thunkAPI.rejectWithValue({ error: err.message });
+      }
     }
     
   }
@@ -94,7 +96,7 @@ const targetsSlice = createSlice({
       // Store the fetched data into the state after parsing
       const data = action.payload.hits.hits;
 
-      let compiledItems:TargetItems = {};
+      const compiledItems:TargetItems = {};
       data.forEach( (element:{_source:object}) => {
 
         const source:Target = <Target>element["_source"];
@@ -102,7 +104,7 @@ const targetsSlice = createSlice({
         const lid = source[PDS4_INFO_MODEL.LID];
         const vid = source[PDS4_INFO_MODEL.VID];
 
-        let target:Target = <Target>{};
+        const target:Target = <Target>{};
         target[PDS4_INFO_MODEL.LID] = source[PDS4_INFO_MODEL.LID];
         target[PDS4_INFO_MODEL.LIDVID] = source[PDS4_INFO_MODEL.LIDVID];
         target[PDS4_INFO_MODEL.TITLE] = source[PDS4_INFO_MODEL.TITLE];

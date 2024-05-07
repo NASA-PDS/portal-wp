@@ -71,8 +71,10 @@ export const getInstrumentHosts = createAsyncThunk(
     try {
       const response = await axios.post(url, query, {headers: headers})
       return response.data
-    } catch (err:any) {
-      return thunkAPI.rejectWithValue({ error: err.message });
+    } catch (err:unknown) {
+      if( err instanceof Error ) {
+        return thunkAPI.rejectWithValue({ error: err.message });
+      }
     }
     
   }
@@ -96,7 +98,7 @@ const instrumentHostsSlice = createSlice({
       // Store the fetched data into the state after parsing
       const data = action.payload.hits.hits;
 
-      let compiledItems:InstrumentHostItems = {};
+      const compiledItems:InstrumentHostItems = {};
       data.forEach( (element:{_source:object}) => {
 
         const source:InstrumentHost = <InstrumentHost>element["_source"];
@@ -104,7 +106,7 @@ const instrumentHostsSlice = createSlice({
         const lid = source[PDS4_INFO_MODEL.LID];
         const vid = source[PDS4_INFO_MODEL.VID];
 
-        let instrumentHost:InstrumentHost = <InstrumentHost>{};
+        const instrumentHost:InstrumentHost = <InstrumentHost>{};
         instrumentHost[PDS4_INFO_MODEL.LID] = source[PDS4_INFO_MODEL.LID];
         instrumentHost[PDS4_INFO_MODEL.LIDVID] = source[PDS4_INFO_MODEL.LIDVID];
         instrumentHost[PDS4_INFO_MODEL.REF_LID_INSTRUMENT] = source[PDS4_INFO_MODEL.REF_LID_INSTRUMENT];
