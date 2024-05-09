@@ -12,4 +12,12 @@ export default defineConfig({
       src: "/src",
     },
   },
+  server: {
+    proxy: {
+      "/api": {
+        target: "https://pds.nasa.gov/",
+        changeOrigin: true,
+      }
+    }
+  },
 })
