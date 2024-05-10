@@ -9,6 +9,7 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
+  Stack,
   Typography,
 } from "@mui/material";
 import {
@@ -43,7 +44,7 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
 
   const {dataFetched, error, latestInvestigations, searchFilters, status} = props;
   const dataManagerState = useAppSelector( (state) => { return state.dataManager } );
-  
+
   useEffect(() => {
 
     let isMounted = true;
@@ -157,47 +158,47 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
         >
           <Box sx={{ paddingBottom: "25px" }}>
             <Grid container spacing={4} sx={{ height: "100%" }} alignItems="center">
-              <Grid item xs={2}>
-                <Typography
-                  sx={{
-                    fontFamily: "Inter",
-                    fontSize: "14px",
-                    fontWeight: "600",
-                    color: "#17171B",
-                  }}
-                >
-                  Search for Investigations
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  id="outlined-basic"
-                  placeholder="Search based on Name, Instruments, or Targets"
-                  variant="outlined"
-                  type="search"
-                  value={searchFilters?.freeText || ""}
-                  InputProps={{
-                    sx: {
-                      borderRadius: "2px",
-                    },
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon />
-                      </InputAdornment>
-                    ),
-                    endAdornment: searchFilters?.freeText && (
-                      <InputAdornment position="end" onClick={handleFreeTextSearchFilterReset}
-                        sx={{
-                          cursor: "pointer"
-                        }}
-                      >
-                        <CloseIcon />
-                      </InputAdornment>
-                    )
-                  }}
-                  fullWidth
-                  onChange={handleFreeTextSearchFilterChange}
-                />
+              <Grid item xs={8}>
+                <Stack direction={"column"} spacing={0.5}>
+                  <Typography
+                    sx={{
+                      fontFamily: "Inter",
+                      fontSize: "14px",
+                      fontWeight: "600",
+                      color: "#17171B",
+                    }}
+                  >
+                    Search for Investigations
+                  </Typography>
+                  <TextField
+                    id="outlined-basic"
+                    placeholder="Search based on Name, Instruments, or Targets"
+                    variant="outlined"
+                    type="search"
+                    value={searchFilters?.freeText || ""}
+                    InputProps={{
+                      sx: {
+                        borderRadius: "2px",
+                      },
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                      endAdornment: searchFilters?.freeText && (
+                        <InputAdornment position="end" onClick={handleFreeTextSearchFilterReset}
+                          sx={{
+                            cursor: "pointer"
+                          }}
+                        >
+                          <CloseIcon />
+                        </InputAdornment>
+                      )
+                    }}
+                    fullWidth
+                    onChange={handleFreeTextSearchFilterChange}
+                  />
+                </Stack>
               </Grid>
               <Grid item xs={2}>
                 <Typography
