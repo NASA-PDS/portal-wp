@@ -30,7 +30,7 @@ const getItemsByIndex = (
   });
 };
 
-function getAffiliatedSpacecraft(state:RootState, investigation:Investigation):string {
+function getAffiliatedSpacecraft(state:RootState, investigation:Investigation) {
   return selectLatestInstrumentHostsForInvestigation(state, investigation[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST])?.reduce(
     (accumulator, item:InstrumentHost) => { return accumulator === "" ? accumulator += item[PDS4_INFO_MODEL.TITLE] : accumulator += ", ".concat(item[PDS4_INFO_MODEL.TITLE]) }, ''
   )
@@ -164,23 +164,27 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
 
               return (
                 <React.Fragment key={"investigations_" + letter}>
-                  <Typography
-                    variant="h3"
-                    sx={{
-                      fontFamily: "Inter",
-                      fontSize: "29px",
-                      fontWeight: "700",
-                      lineHeight: "29px",
-                      paddingRight: "10px",
-                      paddingTop: "15px",
-                      color: indexedInvestigationsCount
-                        ? "#000000"
-                        : "#959599",
-                    }}
-                  >
-                    <a id={letter}>{letter}</a>
-                  </Typography>
-                  <br />
+                  { indexedInvestigationsCount > 0 ? 
+                    <>
+                      <Typography
+                        variant="h3"
+                        sx={{
+                          fontFamily: "Inter",
+                          fontSize: "29px",
+                          fontWeight: "700",
+                          lineHeight: "29px",
+                          paddingRight: "10px",
+                          paddingTop: "15px",
+                          color: indexedInvestigationsCount
+                            ? "#000000"
+                            : "#959599",
+                        }}
+                      >
+                        <a id={letter}>{letter}</a>
+                      </Typography>
+                      <br />
+                    </> : <></>
+                  }
                   {indexedInvestigations.map(
                     (investigation: Investigation) => {
                       return (
