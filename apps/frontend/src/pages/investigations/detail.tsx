@@ -655,7 +655,14 @@ export const InvestigationDetailPage = (
                   lineHeight: "26px",
                   wordWrap: 'break-word'
                 }}>Summary</Typography>
-                <Typography variant="body1" style={{ paddingBottom: "24px" }}
+                <Typography sx={{
+                  color: 'black',
+                  fontSize: "18px",
+                  fontFamily: 'Public Sans',
+                  fontWeight: '400',
+                  lineHeight: "27px",
+                  wordWrap: 'break-word'
+                }} style={{ paddingBottom: "24px" }}
                   dangerouslySetInnerHTML={{
                     __html: getInvestigationSummary()
                   }}>
