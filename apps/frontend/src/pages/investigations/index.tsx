@@ -149,7 +149,7 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
         <Container
           maxWidth={"xl"}
           sx={{
-            paddingTop: "80px",
+            paddingTop: { xs: "0px", md: "80px" },
             paddingBottom: "25px",
             paddingLeft: "140px",
             paddingRight: "140px",
@@ -157,8 +157,9 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
           }}
         >
           <Box sx={{ paddingBottom: "25px" }}>
-            <Grid container spacing={4} sx={{ height: "100%" }} alignItems="center">
-              <Grid item xs={8}>
+            <Grid container spacing={4} sx={{ height: "100%" }} alignItems="center" direction="row">
+              <Grid item md={1}/>
+              <Grid item xs={12} md={8}>
                 <Stack direction={"column"} spacing={0.5}>
                   <Typography
                     sx={{
@@ -200,7 +201,7 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
                   />
                 </Stack>
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={12} md={2}>
                 <Typography
                   sx={{
                     color: 'black',
@@ -241,8 +242,19 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
                   <MenuItem value={INVESTIGATION_TYPE.OBSERVING_CAMPAIGN}>{INVESTIGATION_TYPE.OBSERVING_CAMPAIGN}</MenuItem>
                   <MenuItem value={INVESTIGATION_TYPE.OTHER_INVESTIGATION}>{INVESTIGATION_TYPE.OTHER_INVESTIGATION}</MenuItem>
                 </Select>
-              
               </Grid>
+              {/*<Grid item xs={2} md={1}>
+                <Typography
+                  sx={{
+                    color: 'black',
+                    fontSize: '14px',
+                    fontFamily: 'Inter',
+                    fontWeight: '600',
+                    lineHeight: '19px',
+                    wordWrap: 'break-word',
+                    mb: '4px'
+                  }}>View</Typography>
+                </Grid>*/}
             </Grid>
           </Box>
           { 
