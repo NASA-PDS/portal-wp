@@ -120,7 +120,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                   fontWeight: "bold",
                 }}
               >
-                Investigation Name
+                Name
               </Typography>
             </Grid>
             <Grid item xs={2}>
@@ -135,7 +135,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                   textAlign: "center",
                 }}
               >
-                Investigation Type
+                Type
               </Typography>
             </Grid>
             <Grid item xs={2}>
@@ -150,7 +150,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                   textAlign: "center",
                 }}
               >
-                Affiliated Spacecraft
+                Spacecraft
               </Typography>
             </Grid>
           </Grid>
