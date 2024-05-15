@@ -51,7 +51,7 @@ export const FeaturedTargetLinkListItem = ({
   
   return (
     <Stack sx={{
-      marginBottom: "15px"
+      marginTop: "15px",
     }}>
       <Box sx={{ width: "100%"}}>
         <Grid container spacing={2} sx={{
