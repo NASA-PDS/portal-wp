@@ -17,6 +17,7 @@ import { selectLatestTargetsForInstrumentHost } from "src/state/selectors/target
 
 import "./detail.scss";
 import { StatsList } from "src/components/StatsList/StatsList";
+import InvestigationStatus from "src/components/InvestigationStatus/InvestigationStatus";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -386,6 +387,7 @@ export const InvestigationDetailPage = (
               >
                 {investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]}
               </Typography>
+              <InvestigationStatus stopDate={investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE]} />
             </Grid>
             <Grid item md={1}></Grid>
             <Grid item xs={12} md={4}>
