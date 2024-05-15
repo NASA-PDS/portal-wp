@@ -7,12 +7,17 @@ import Stack from '@mui/material/Stack';
 import ArrowForward from '@mui/icons-material/ArrowForward';
 import { useState } from 'react';
 import { Link as AnchorLink } from '@mui/material';
-import { Link } from "react-router-dom";
+import { Tag } from '@nasapds/wds-react';
+
+type PrimaryActionFunction = () => void;
 
 export type FeaturedTargetLinkListItemProps = {
-  description: string,
-  primaryAction:Function,
-  title: string,
+  description:string,
+  lid:string,
+  primaryAction:PrimaryActionFunction,
+  tags:string[],
+  title:string,
+  type:string,
 }
 
 const styles = {
@@ -31,8 +36,11 @@ const styles = {
 
 export const FeaturedTargetLinkListItem = ({
   description = '',
+  lid,
   primaryAction,
-  title = '',
+  tags = [],
+  title,
+  type,
 }: FeaturedTargetLinkListItemProps) => {
 
   const [showDetails, setShowDetails] = useState<boolean>(false);
@@ -100,7 +108,7 @@ export const FeaturedTargetLinkListItem = ({
                 wordWrap: 'break-word'
               }}
               >
-                {description.substring(0, 275) + "..."}
+                { lid.toUpperCase().includes("MARS") ? "Mars is no place for the faint-hearted. It’s dry, rocky, and bitter cold. The fourth planet from the Sun, Mars, is one of Earth's two closest planetary neighbors (Venus is the other)." : description.substring(0, 275) + "..."}
             </Typography>
           </Grid>
           <Grid item xs={2} sx={{textAlign:"right"}}>
@@ -147,9 +155,68 @@ export const FeaturedTargetLinkListItem = ({
         <Box sx={{
           backgroundColor: "#F6F6F6",
           padding: "20px 20px 20px 80px",
-          minHeight: "200px"
         }}>
-
+          <Stack direction={"row"} alignItems={"center"} sx={{ marginBottom: "8px"}}>
+            <Typography sx={{
+              color: 'black',
+              fontSize: "14px",
+              fontFamily: 'Inter',
+              fontWeight: '600',
+              lineHeight: "19px",
+              minWidth: "140px",
+              maxWidth: "140px",
+              wordWrap: "break-word"
+            }}>Identifier</Typography>
+            <Typography sx={{
+              fontSize: "12px",
+              fontFamily: 'Inter',
+              fontWeight: '400',
+              textDecoration: 'underline',
+              lineHeight: "15.60px",
+              letterSpacing: "0.25px",
+              wordWrap: 'break-word'
+            }}>{lid}</Typography>
+          </Stack>
+          <Stack direction={"row"} alignItems={"center"} sx={{ marginBottom: "8px"}}>
+            <Typography sx={{
+              color: 'black',
+              fontSize: "14px",
+              fontFamily: 'Inter',
+              fontWeight: '600',
+              lineHeight: "19px",
+              minWidth: "140px",
+              maxWidth: "140px",
+              wordWrap: "break-word"
+            }}>Type</Typography>
+            <Typography sx={{
+              color: 'black',
+              fontSize: "12px",
+              fontFamily: 'Inter',
+              fontWeight: '400',
+              lineHeight: "15.60px",
+              letterSpacing: "0.25px",
+              wordWrap: 'break-word'
+            }}>{type}</Typography>
+          </Stack>
+          <Stack direction={"row"} alignItems={"center"} >
+            <Typography sx={{
+              color: 'black',
+              fontSize: "14px",
+              fontFamily: 'Inter',
+              fontWeight: '600',
+              lineHeight: "19px",
+              minWidth: "140px",
+              maxWidth: "140px",
+              wordWrap: "break-word"
+            }}>Tags</Typography>
+            <Stack direction={"row"} spacing={1}>
+              {
+                tags.map( (tag, index) => {
+                  return <Tag label={tag} key={index}></Tag>
+                })
+              }
+            </Stack>
+          </Stack>
         </Box>
         : ""
       }

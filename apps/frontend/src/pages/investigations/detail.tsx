@@ -671,12 +671,12 @@ export const InvestigationDetailPage = (
             </Grid>
           </CustomTabPanel>
           <CustomTabPanel value={value} index={2}>
-          <Grid container>
-            <Grid item md={2}>
-              <Box sx={{
-                  borderLeft: "1px solid #D1D1D1",
-                  position: "sticky",
-                  top: "20px"
+            <Grid container>
+              <Grid item md={2}>
+                <Box sx={{
+                    borderLeft: "1px solid #D1D1D1",
+                    position: "sticky",
+                    top: "20px"
                 }}>
                   <Typography sx={{
                     marginLeft: "10px",
@@ -691,53 +691,56 @@ export const InvestigationDetailPage = (
                     wordWrap: 'break-word'
                   }}>Targets</Typography>
                   {
-                    targets[selectedInstrumentHost].map( target => {
-                      return (
-                        <AnchorLink href={"#title_" + target[PDS4_INFO_MODEL.TARGET.NAME].toString().replace(" ","_").toLowerCase()} sx={{
-                          textDecoration: "none",
-                          "&:hover .MuiDivider-root": {
-                            backgroundColor: "#1C67E3",
-                            opacity: 1
-                          }
-                        }}>
-                          <Box sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            minHeight: '24px',
-                            marginBottom: "12px",
+                    instrumentHosts.length > 0 ? 
+                      targets[selectedInstrumentHost].map( target => {
+                        return (
+                          <AnchorLink href={"#title_" + target[PDS4_INFO_MODEL.TARGET.NAME].toString().replace(" ","_").toLowerCase()} sx={{
+                            textDecoration: "none",
+                            "&:hover .MuiDivider-root": {
+                              backgroundColor: "#1C67E3",
+                              opacity: 1
+                            }
                           }}>
-                            <Divider flexItem orientation="vertical" sx={{
-                              opacity: 0,
-                              borderRightWidth: "2px",
-                            }} />
-                            <Typography sx={{
-                                marginLeft: "10px",
-                                color: '#17171B',
-                                fontSize: "12px",
-                                fontFamily: 'Inter',
-                                fontWeight: '400',
-                                lineHeight: "12px",
-                                letterSpacing: "0.25px",
-                                wordWrap: 'break-word',
-                              }}>{target[PDS4_INFO_MODEL.TARGET.NAME]}</Typography>
-                          </Box>
-                        </AnchorLink>
-                      )
-                    })
-                  }
+                            <Box sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              minHeight: '24px',
+                              marginBottom: "12px",
+                            }}>
+                              <Divider flexItem orientation="vertical" sx={{
+                                opacity: 0,
+                                borderRightWidth: "2px",
+                              }} />
+                              <Typography sx={{
+                                  marginLeft: "10px",
+                                  color: '#17171B',
+                                  fontSize: "12px",
+                                  fontFamily: 'Inter',
+                                  fontWeight: '400',
+                                  lineHeight: "12px",
+                                  letterSpacing: "0.25px",
+                                  wordWrap: 'break-word',
+                                }}>{target[PDS4_INFO_MODEL.TARGET.NAME]}</Typography>
+                            </Box>
+                          </AnchorLink>
+                        )
+                      })
+                      : []
+                    }
                 </Box>
               </Grid>
               <Grid item md={10}>
                 {
-                  targets[selectedInstrumentHost].length > 0 ? (
+                  instrumentHosts.length > 0 && targets[selectedInstrumentHost].length > 0 ? (
                     targets[selectedInstrumentHost].map( (target:Target, index:number) => {
-                      //let keyProp = target[PDS4_INFO_MODEL.LID].replaceAll(/[:.]/g, '_');
-                      //return <div key={keyProp}>{target[PDS4_INFO_MODEL.TITLE]}</div>
                       return <FeaturedTargetLinkListItem
                                 key={"target_" + index}
                                 description={target[PDS4_INFO_MODEL.TARGET.DESCRIPTION].toString()}
+                                lid={target[PDS4_INFO_MODEL.LID]}
                                 primaryAction={ () => {} }
+                                tags={['Tag 1', 'Tag 2', 'Tag 3']}
                                 title={target[PDS4_INFO_MODEL.TARGET.NAME]}
+                                type={target[PDS4_INFO_MODEL.TARGET.TYPE]}
                               />
                     })
                   ) : (
