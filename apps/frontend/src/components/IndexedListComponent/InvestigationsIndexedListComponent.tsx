@@ -189,9 +189,8 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                     (investigation: Investigation) => {
                       return (
                         <FeaturedInvestigationLinkListItem
-                          /*affiliated_spacecraft={ investigation[PDS4_INFO_MODEL.ALIAS.ALTERNATE_TITLE]?.join(",") }*/
                           affiliated_spacecraft={ getAffiliatedSpacecraft(state, investigation)}
-                          description={ investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION] }
+                          description={ investigation[PDS4_INFO_MODEL.INVESTIGATION.TERSE_DESCRIPTION] ? investigation[PDS4_INFO_MODEL.INVESTIGATION.TERSE_DESCRIPTION] : investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION] }
                           investigation_type={ investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE] }
                           primaryAction={ () => investigationListItemPrimaryAction({ lid: investigation.lid, version: investigation.vid }) }
                           key={investigation[PDS4_INFO_MODEL.LID]}

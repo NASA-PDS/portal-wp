@@ -58,6 +58,8 @@ export namespace PDS4_INFO_MODEL {
   
     /** The stop_date attribute provides the date when an activity ended. */
     STOP_DATE = "pds:Investigation/pds:stop_date",
+
+    TERSE_DESCRIPTION = "pds:Investigation/pds:terse_description",
   
     /** The type attribute classifies the investigation according to its scope. */
     TYPE = "pds:Investigation/pds:type",

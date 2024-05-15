@@ -36,7 +36,7 @@ const initialState:InvestigationsState = {
 
 /**
  * Get all the investigations from the PDS OpenSearch API
- */ 
+ */
 export const getInvestigations = createAsyncThunk(
   INVESTIGATION_ACTIONS.GET_INVESTIGATIONS,
   async (_:void, thunkAPI) => {
@@ -74,6 +74,7 @@ export const getInvestigations = createAsyncThunk(
           PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE,
           PDS4_INFO_MODEL.IDENTIFICATION_AREA.VERSION_ID,
           PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION,
+          PDS4_INFO_MODEL.INVESTIGATION.TERSE_DESCRIPTION,
           PDS4_INFO_MODEL.INVESTIGATION.NAME,
           PDS4_INFO_MODEL.INVESTIGATION.START_DATE,
           PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE,
@@ -83,8 +84,8 @@ export const getInvestigations = createAsyncThunk(
     };
     
     try {
-      const response = await axios.post(url, query, {headers: headers})
-      return response.data
+      const response = await axios.post(url, query, {headers: headers});
+      return response.data;
     } catch (err:unknown) {
       if( err instanceof Error ) {
         return thunkAPI.rejectWithValue({ error: err.message });
@@ -148,6 +149,7 @@ const investigationsSlice = createSlice({
         investigationItem[PDS4_INFO_MODEL.INVESTIGATION.NAME] = source[PDS4_INFO_MODEL.INVESTIGATION.NAME] ? source[PDS4_INFO_MODEL.INVESTIGATION.NAME][0] : "";
         investigationItem[PDS4_INFO_MODEL.INVESTIGATION.START_DATE] = source[PDS4_INFO_MODEL.INVESTIGATION.START_DATE][0];
         investigationItem[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE] = source[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE][0];
+        investigationItem[PDS4_INFO_MODEL.INVESTIGATION.TERSE_DESCRIPTION] = source[PDS4_INFO_MODEL.INVESTIGATION.TERSE_DESCRIPTION] ? source[PDS4_INFO_MODEL.INVESTIGATION.TERSE_DESCRIPTION][0] : "";
         investigationItem[PDS4_INFO_MODEL.INVESTIGATION.TYPE] = source[PDS4_INFO_MODEL.INVESTIGATION.TYPE][0];
 
         if( compiledInvestigations[lid] === undefined ) {
