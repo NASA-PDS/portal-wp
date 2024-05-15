@@ -75,6 +75,7 @@ export const InvestigationDetailPage = (
   const [selectedInstrumentHost, setSelectedInstrumentHost] = useState<number>(0);
   const [instrumentTypes, setInstrumentTypes] = useState<string[]>([]);
   const { investigationLid, investigationVersion, tabLabel } = useParams();
+  const [bundles, setBundles] = useState<Array<unknown>>(new Array(instrumentHosts.length).fill([]));
 
   const stats:Stats[] = [
     {
@@ -110,6 +111,45 @@ export const InvestigationDetailPage = (
     {label:'Tag Label With a Really Long Title'}
   ];
 
+  const getRelatedInstrumentBundles = (lid:string) => {
+    return bundles[selectedInstrumentHost].filter( (bundleList) => {
+      const foundInstrument = bundleList.observing_system_components.some( component => component.id === lid );
+      //console.log("found instrument lid:", foundInstrument, lid, bundleList.observing_system_components)
+      return foundInstrument
+    })
+  };
+
+  const fetchBundles = async (abortController:AbortController) => {
+
+    return Promise.all(
+      instrumentHosts.map( async (instrumentHost:InstrumentHost, index:number) => {
+
+        const query = '/api/search/1/products?q=(pds:Internal_Reference.pds:lid_reference eq "' + instrumentHost[PDS4_INFO_MODEL.LID] + '" and product_class eq "Product_Bundle")';
+
+        const response = await fetch(query, {
+          signal: abortController.signal,
+        });
+
+        bundles[index] = (await response.json()).data;
+        const data = bundles[index];
+        const tempArray = bundles.map( (list, i) => {
+          if( i === index) {
+            return data
+          } else {
+            return list
+          }
+        });
+        setBundles(tempArray);
+        //console.log(tempArray);
+
+        return response;
+      })
+   )
+    
+    return () => abortController.abort();
+    
+  };
+
   useEffect( () => {
     setValue(tabs.findIndex( (tab) => tab == tabLabel?.toLowerCase()));
   })
@@ -117,6 +157,12 @@ export const InvestigationDetailPage = (
   const initInstrumentTypes = () => {
 
     const instrumentTypesArr:string[] = [];
+
+    if( instrumentHosts.length === 0 ) {
+      setInstrumentTypes([]);
+      return
+    }
+
     instruments[selectedInstrumentHost].forEach( (instrument) => {
 
       if( instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE] !== undefined ) {
@@ -218,6 +264,10 @@ export const InvestigationDetailPage = (
     } else if (status === "succeeded") {
       // Do something to handle the successful fetching of data
       initInstrumentTypes();
+
+      const abortController = new AbortController();
+      fetchBundles(abortController)
+
     } else if (error != null || error != undefined) {
       // Do something to handle the error
       console.log(error);
@@ -227,7 +277,15 @@ export const InvestigationDetailPage = (
     return () => {
       isMounted = false;
     };
-  }, [status, dispatch]);
+  }, [status, dispatch, dataManagerState, error]);
+
+  /*useEffect( () => {
+
+    const abortController = new AbortController();
+    fetchBundles(abortController)
+    return () => abortController.abort();
+
+  }, [selectedInstrumentHost])*/
 
   useEffect( () => {
     initInstrumentTypes();
@@ -582,6 +640,7 @@ export const InvestigationDetailPage = (
                                   description={instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION].toString()}
                                   primaryAction={ () => {} }
                                   title={instrument[PDS4_INFO_MODEL.INSTRUMENT.NAME]}
+                                  bundles={getRelatedInstrumentBundles(instrument[PDS4_INFO_MODEL.LID])}
                                 />
                               }
                             })

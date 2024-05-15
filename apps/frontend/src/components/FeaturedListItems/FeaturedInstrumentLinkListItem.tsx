@@ -10,9 +10,10 @@ import { useState } from 'react';
 import { Link } from "react-router-dom";
 
 export type FeaturedInstrumentLinkListItemProps = {
-  description: string,
+  description:string,
   primaryAction:Function,
-  title: string,
+  title:string,
+  bundles:[]
 }
 
 const styles = {
@@ -30,6 +31,7 @@ const styles = {
 }
 
 export const FeaturedInstrumentLinkListItem = ({
+  bundles = [],
   description = '',
   primaryAction,
   title = '',
@@ -141,8 +143,58 @@ export const FeaturedInstrumentLinkListItem = ({
       { showDetails ?
         <Box sx={{
           backgroundColor: "#F6F6F6",
-          padding: "20px 20px 20px 80px"
+          padding: "20px 20px 0px 80px"
         }}>
+          <Box sx={{
+            marginBottom: "20px"
+          }}>
+            {
+              bundles.length > 0 ? (
+                bundles.map( (bundle, index) => {
+                  return (
+                    <Box key={index} sx={{marginBottom: "20px"}}>
+                      <Stack direction={{ xs: "column", "md": "column" }} spacing={0.5}>
+                        <Typography sx={{
+                          color: '#1C67E3',
+                          fontSize: "11px",
+                          fontFamily: 'Inter',
+                          fontWeight: '700',
+                          textDecoration: 'underline',
+                          textTransform: 'uppercase',
+                          lineHeight: "19px",
+                          letterSpacing: "0.25px",
+                          wordWrap: 'break-word',
+                        }}>{bundle.title}</Typography>
+                        <Typography sx={{
+                          color: '#17171B',
+                          fontSize: "11px",
+                          fontFamily: 'Inter',
+                          fontWeight: '400',
+                          
+                          lineHeight: "19px",
+                          letterSpacing: "0.25px",
+                          paddingLeft: "24px",
+                          wordWrap: 'break-word'
+                        }}>{bundle.properties["pds:Bundle.pds:description"] !== undefined ? bundle.properties["pds:Bundle.pds:description"][0] : "No Description Available"}</Typography>
+                      </Stack>
+                    </Box>
+                  )
+                })
+              )
+              :
+              <Typography sx={{
+                color: '#17171B',
+                fontSize: "11px",
+                fontFamily: 'Inter',
+                fontWeight: '400',
+                lineHeight: "19px",
+                letterSpacing: "0.25px",
+                paddingLeft: "24px",
+                wordWrap: 'break-word'
+              }}>No Bundles Found.</Typography>
+            }
+          </Box>
+          {/*
           <Box sx={{
             marginBottom: "20px"
           }}>
@@ -158,7 +210,7 @@ export const FeaturedInstrumentLinkListItem = ({
             </Typography>
             {
               [
-                {title:"Lorem Ipsum", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc accumsan posuere dui non scelerisque."},
+                {title:"Lorem Ipsum", description: "Description lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc accumsan posuere dui non scelerisque."},
               ].map( item => {
                 return <Box sx={{
                   marginBottom: "5px"
@@ -194,9 +246,9 @@ export const FeaturedInstrumentLinkListItem = ({
             </Typography>
             {
               [
-                {title:"Lorem Ipsum", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc accumsan posuere dui non scelerisque."},
-                {title:"Lorem Ipsum", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc accumsan posuere dui non scelerisque."},
-                {title:"Lorem Ipsum", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc accumsan posuere dui non scelerisque."},
+                {title:"Lorem Ipsum", description: "Description lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc accumsan posuere dui non scelerisque."},
+                {title:"Lorem Ipsum", description: "Description lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc accumsan posuere dui non scelerisque."},
+                {title:"Lorem Ipsum", description: "Description lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc accumsan posuere dui non scelerisque."},
               ].map( item => {
                 return <Box sx={{
                   marginBottom: "5px"
@@ -232,8 +284,8 @@ export const FeaturedInstrumentLinkListItem = ({
             </Typography>
             {
               [
-                {title:"Lorem Ipsum", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc accumsan posuere dui non scelerisque."},
-                {title:"Lorem Ipsum", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc accumsan posuere dui non scelerisque."},
+                {title:"Lorem Ipsum", description: "Description lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc accumsan posuere dui non scelerisque."},
+                {title:"Lorem Ipsum", description: "Description lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc accumsan posuere dui non scelerisque."},
               ].map( item => {
                 return <Box sx={{
                   marginBottom: "5px"
@@ -253,7 +305,7 @@ export const FeaturedInstrumentLinkListItem = ({
                 </Box>
               })
             }
-          </Box>
+          </Box>*/}
         </Box>
         : <></>
       }
