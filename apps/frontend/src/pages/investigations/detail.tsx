@@ -698,45 +698,53 @@ export const InvestigationDetailPage = (
                     wordWrap: 'break-word'
                   }}>Targets</Typography>
                   {
-                    instrumentHosts.length > 0 ? 
-                      targets[selectedInstrumentHost].map( target => {
-                        return (
-                          <AnchorLink href={"#title_" + target[PDS4_INFO_MODEL.TARGET.NAME].toString().replace(" ","_").toLowerCase()} sx={{
-                            textDecoration: "none",
-                            "&:hover .MuiDivider-root": {
-                              backgroundColor: "#1C67E3",
-                              opacity: 1
-                            }
+                    [{id:"all-targets", label:"All Targets"}].map(anchor => {
+                      return (
+                        <AnchorLink href={"#" + anchor.id.toLowerCase()} sx={{
+                          textDecoration: "none",
+                          "&:hover .MuiDivider-root": {
+                            backgroundColor: "#1C67E3",
+                            opacity: 1
+                          }
+                        }}>
+                          <Box sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            minHeight: '24px',
+                            marginBottom: "12px",
                           }}>
-                            <Box sx={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              minHeight: '24px',
-                              marginBottom: "12px",
-                            }}>
-                              <Divider flexItem orientation="vertical" sx={{
-                                opacity: 0,
-                                borderRightWidth: "2px",
-                              }} />
-                              <Typography sx={{
-                                  marginLeft: "10px",
-                                  color: '#17171B',
-                                  fontSize: "12px",
-                                  fontFamily: 'Inter',
-                                  fontWeight: '400',
-                                  lineHeight: "12px",
-                                  letterSpacing: "0.25px",
-                                  wordWrap: 'break-word',
-                                }}>{target[PDS4_INFO_MODEL.TARGET.NAME]}</Typography>
-                            </Box>
-                          </AnchorLink>
-                        )
-                      })
-                      : []
-                    }
+                            <Divider flexItem orientation="vertical" sx={{
+                              opacity: 0,
+                              borderRightWidth: "2px",
+                            }} />
+                            <Typography sx={{
+                              marginLeft: "10px",
+                              color: '#17171B',
+                              fontSize: "12px",
+                              fontFamily: 'Inter',
+                              fontWeight: '400',
+                              lineHeight: "12px",
+                              letterSpacing: "0.25px",
+                              wordWrap: 'break-word',
+                            }}>{anchor.label}</Typography>
+                          </Box>
+                        </AnchorLink>
+                      )
+                    })
+                  }
                 </Box>
               </Grid>
               <Grid item md={10}>
+                <a id="all-targets">
+                  <Typography variant="h4" sx={{
+                    color: 'black',
+                    fontSize: "22px",
+                    fontFamily: 'Inter',
+                    fontWeight: '700',
+                    lineHeight: "26px",
+                    wordWrap: 'break-word'
+                  }}>All Targets</Typography>
+                </a>
                 {
                   instrumentHosts.length > 0 && targets[selectedInstrumentHost].length > 0 ? (
                     targets[selectedInstrumentHost].map( (target:Target, index:number) => {
