@@ -844,11 +844,10 @@ export const InvestigationDetailPage = (
             </Grid>
           </CustomTabPanel>
           <CustomTabPanel value={value} index={4}>
-            <Typography variant="h4">Resources</Typography>
             <Container
               maxWidth={"xl"}
               sx={{
-                paddingTop: "48px",
+                paddingTop: "0px",
                 textAlign: "left",
               }}
             >
