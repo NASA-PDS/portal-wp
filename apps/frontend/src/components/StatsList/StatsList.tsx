@@ -19,8 +19,16 @@ export const StatsList = ({
     <Grid container spacing={2}>
       {
         stats.map(item => {
-          return <Grid item xs={12} md={6}>
-            <StatsItem label={item.label} value={item.value}/>
+          return <Grid item xs={6} md={6} sx={{
+            /*"&:first-child": {
+              marginTop: { 
+                xs: "0px",
+                md: "0px"
+              }
+            },*/
+            marginTop: "24px"
+          }}>
+            <StatsItem label={item.label} value={item.value} />
           </Grid>
         })
       }

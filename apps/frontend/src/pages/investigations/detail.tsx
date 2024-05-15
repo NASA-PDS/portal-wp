@@ -16,7 +16,7 @@ import { selectLatestInstrumentsForInstrumentHost } from "src/state/selectors/in
 import { selectLatestTargetsForInstrumentHost } from "src/state/selectors/targets";
 
 import "./detail.scss";
-import { StatsList } from "src/components/Stats/Stats";
+import { StatsList } from "src/components/StatsList/StatsList";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -76,7 +76,7 @@ export const InvestigationDetailPage = (
 
   const stats:Stats[] = [
     {
-      label: "Mission Type",
+      label: "Investigation Type",
       value: investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE]
     },
     {
@@ -90,7 +90,7 @@ export const InvestigationDetailPage = (
     {
       label: "Logical Identifier",
       value: investigation.lid
-    },
+    }
   ]
   
   const tabs = [

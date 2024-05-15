@@ -12,8 +12,8 @@ export const StatsItem = ({
   
   return (
     <Box sx={{
-      minHeight: "77px",
-      marginBottom: "24px"
+      minHeight: { md: "77px" },
+      marginBottom: { xs: "0px", md: "24px"},
     }}>
       <Divider variant="fullWidth" orientation="horizontal" sx={{
         backgroundColor: "#D1D1D1"
