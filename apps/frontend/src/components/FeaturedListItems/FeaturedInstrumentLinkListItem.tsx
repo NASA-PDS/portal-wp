@@ -9,9 +9,11 @@ import { Link as AnchorLink } from '@mui/material';
 import { useState } from 'react';
 import { Link } from "react-router-dom";
 
+type PrimaryActionFunction = () => void;
+
 export type FeaturedInstrumentLinkListItemProps = {
   description:string,
-  primaryAction:Function,
+  primaryAction:PrimaryActionFunction,
   title:string,
   bundles:[]
 }
@@ -66,7 +68,7 @@ function stringCleanup(str:string):string {
   }
 
   console.log("cleanedString:", cleanedString)
-  return cleanedString
+  return cleanedString;
 }
 
 export const FeaturedInstrumentLinkListItem = ({
