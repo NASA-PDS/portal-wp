@@ -615,9 +615,9 @@ export const InvestigationDetailPage = (
                     wordWrap: 'break-word'
                   }}>Overview</Typography>
                   {
-                    ["Heading", "Heading", "Heading"].map(heading => {
+                    [{id:"overview-summary", label:"Summary"}].map(anchor => {
                       return (
-                        <AnchorLink href={"#title_" + heading.toLowerCase()} sx={{
+                        <AnchorLink href={"#" + anchor.id.toLowerCase()} sx={{
                           textDecoration: "none",
                           "&:hover .MuiDivider-root": {
                             backgroundColor: "#1C67E3",
@@ -643,7 +643,7 @@ export const InvestigationDetailPage = (
                               lineHeight: "12px",
                               letterSpacing: "0.25px",
                               wordWrap: 'break-word',
-                            }}>{heading}</Typography>
+                            }}>{anchor.label}</Typography>
                           </Box>
                         </AnchorLink>
                       )
@@ -652,14 +652,16 @@ export const InvestigationDetailPage = (
                 </Box>
               </Grid>
               <Grid item md={6}>
-                <Typography variant="h4" sx={{
-                  color: 'black',
-                  fontSize: "22px",
-                  fontFamily: 'Inter',
-                  fontWeight: '700',
-                  lineHeight: "26px",
-                  wordWrap: 'break-word'
-                }}>Summary</Typography>
+                <a id="overview-summary">
+                  <Typography variant="h4" sx={{
+                    color: 'black',
+                    fontSize: "22px",
+                    fontFamily: 'Inter',
+                    fontWeight: '700',
+                    lineHeight: "26px",
+                    wordWrap: 'break-word'
+                  }}>Summary</Typography>
+                </a>
                 <Typography sx={{
                   color: 'black',
                   fontSize: "18px",
@@ -945,6 +947,7 @@ export const InvestigationDetailPage = (
                       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In vulputate scelerisque ligula, sit amet molestie quam faucibus sed. Aenean mattis a sapien ut aliquet.",
                       format: "PDF",
                       size: "1.04MB",
+                      tags: ['Tag 1', 'Tag 2', 'Tag 3'],
                       title: "Resource Title 1",
                       version: "1.1",
                       year: "2022"
@@ -953,6 +956,7 @@ export const InvestigationDetailPage = (
                       description: "Etiam suscipit varius nulla, quis congue neque blandit quis. Donec convallis quam nulla, nec ultrices nunc congue eu. Quisque aliquam urna quis maximus ultrices. ",
                       format: "PDF",
                       size: "1.83MB",
+                      tags: ['Tag 1', 'Tag 2', 'Tag 3'],
                       title: "Resource Title 2",
                       version: "1.0",
                       year: "2019"
@@ -961,6 +965,7 @@ export const InvestigationDetailPage = (
                       description: "Sed rhoncus tortor posuere augue ultrices pretium. Phasellus blandit tortor leo, sed consequat lacus ultricies ut.",
                       format: "PDF",
                       size: "99 KB",
+                      tags: ['Tag 1', 'Tag 2', 'Tag 3'],
                       title: "Resource Title 3",
                       version: "1.2",
                       year: "2018"
@@ -969,6 +974,7 @@ export const InvestigationDetailPage = (
                       description: "Praesent mauris nisl, rutrum at mattis quis, condimentum non nulla. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
                       format: "PDF",
                       size: "2.23MB",
+                      tags: ['Tag 1', 'Tag 2', 'Tag 3'],
                       title: "Resource Title 4",
                       version: "1.0",
                       year: "2017"
@@ -980,6 +986,7 @@ export const InvestigationDetailPage = (
                       format={item.format}
                       primaryAction={ () => {} }
                       size={item.size}
+                      tags={item.tags}
                       title={item.title}
                       version={item.version}
                       year={item.year}
