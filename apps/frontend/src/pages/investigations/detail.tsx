@@ -354,8 +354,8 @@ export const InvestigationDetailPage = (
               {investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]}
             </Typography>
           </Breadcrumbs>
-          <Grid container>
-            <Grid item md={7}>
+          <Grid container alignItems={"flex-end"}>
+            <Grid item md={7} >
               <Box
                 component="img"
                 sx={{
@@ -381,13 +381,14 @@ export const InvestigationDetailPage = (
                 variant="subtitle1"
                 sx={{
                   color: "white",
+                  marginTop: "8px"
                 }}
               >
                 {investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]}
               </Typography>
             </Grid>
             <Grid item md={1}></Grid>
-            <Grid item md={4}>
+            <Grid item xs={12} md={4}>
               <StatsList stats={stats} />
             </Grid>
           </Grid>
@@ -399,7 +400,8 @@ export const InvestigationDetailPage = (
         sx={{
           textAlign: "left",
           backgroundColor: "#F6F6F6",
-          paddingX: "24px"
+          paddingX: "24px",
+          display: instrumentHosts.length > 0 ? "block" : "none"
         }}
       >
         <Container
@@ -496,7 +498,7 @@ export const InvestigationDetailPage = (
                 <Box sx={{
                   borderLeft: "1px solid #D1D1D1",
                   position: "sticky",
-                  top: "20px"
+                  top: "24px"
                 }}>
                   <Typography sx={{
                     marginLeft: "10px",
@@ -646,7 +648,7 @@ export const InvestigationDetailPage = (
                   }
                 </Box>
               </Grid>
-              <Grid item md={10}>
+              <Grid item md={6}>
                 <Typography variant="h4" sx={{
                   color: 'black',
                   fontSize: "22px",
@@ -755,7 +757,7 @@ export const InvestigationDetailPage = (
           <CustomTabPanel value={value} index={3}>
             <Grid container>
               <Grid item md={2}>
-              <Box sx={{
+                <Box sx={{
                   borderLeft: "1px solid #D1D1D1",
                   position: "sticky",
                   top: "20px"
@@ -845,7 +847,9 @@ export const InvestigationDetailPage = (
                 textAlign: "left",
               }}
             >
-              <Box>
+              <Box sx={{
+                marginBottom: "10px"
+              }}>
                 <Grid
                   container
                   spacing={2}

@@ -110,8 +110,6 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
           maxWidth={"xl"}
           sx={{
             paddingY: "24px",
-            paddingLeft: "140px",
-            paddingRight: "140px",
           }}
         >
           <Breadcrumbs
@@ -151,8 +149,6 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
           sx={{
             paddingTop: { xs: "0px", md: "80px" },
             paddingBottom: "25px",
-            paddingLeft: "140px",
-            paddingRight: "140px",
             textAlign: "left",
           }}
         >
