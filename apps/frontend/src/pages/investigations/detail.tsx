@@ -18,6 +18,7 @@ import { selectLatestTargetsForInstrumentHost } from "src/state/selectors/target
 import "./detail.scss";
 import { StatsList } from "src/components/StatsList/StatsList";
 import InvestigationStatus from "src/components/InvestigationStatus/InvestigationStatus";
+import FeaturedResourceLinkListItem from "src/components/FeaturedListItems/FeaturedResourcesLinkListItem";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -937,6 +938,55 @@ export const InvestigationDetailPage = (
                   </Grid>
                 </Grid>
               </Box>
+              <Stack>
+                {
+                  [
+                    {
+                      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In vulputate scelerisque ligula, sit amet molestie quam faucibus sed. Aenean mattis a sapien ut aliquet.",
+                      format: "PDF",
+                      size: "1.04MB",
+                      title: "Resource Title 1",
+                      version: "1.1",
+                      year: "2022"
+                    },
+                    {
+                      description: "Etiam suscipit varius nulla, quis congue neque blandit quis. Donec convallis quam nulla, nec ultrices nunc congue eu. Quisque aliquam urna quis maximus ultrices. ",
+                      format: "PDF",
+                      size: "1.83MB",
+                      title: "Resource Title 2",
+                      version: "1.0",
+                      year: "2019"
+                    },
+                    {
+                      description: "Sed rhoncus tortor posuere augue ultrices pretium. Phasellus blandit tortor leo, sed consequat lacus ultricies ut.",
+                      format: "PDF",
+                      size: "99 KB",
+                      title: "Resource Title 3",
+                      version: "1.2",
+                      year: "2018"
+                    },
+                    {
+                      description: "Praesent mauris nisl, rutrum at mattis quis, condimentum non nulla. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
+                      format: "PDF",
+                      size: "2.23MB",
+                      title: "Resource Title 4",
+                      version: "1.0",
+                      year: "2017"
+                    }
+                  ].map( (item, index) => {
+                    return <FeaturedResourceLinkListItem
+                      key={index}
+                      description={item.description}
+                      format={item.format}
+                      primaryAction={ () => {} }
+                      size={item.size}
+                      title={item.title}
+                      version={item.version}
+                      year={item.year}
+                    />
+                  })
+                }
+              </Stack>
             </Container>
           </CustomTabPanel>
         </Container>
