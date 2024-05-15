@@ -812,7 +812,7 @@ export const InvestigationDetailPage = (
                                 description={target[PDS4_INFO_MODEL.TARGET.DESCRIPTION].toString()}
                                 lid={target[PDS4_INFO_MODEL.LID]}
                                 primaryAction={ () => {} }
-                                tags={['Tag 1', 'Tag 2', 'Tag 3']}
+                                tags={['Tag Label 1', 'Tag Label 2', 'Tag label with a very long title']}
                                 title={target[PDS4_INFO_MODEL.TARGET.NAME]}
                                 type={target[PDS4_INFO_MODEL.TARGET.TYPE]}
                               />
@@ -848,7 +848,7 @@ export const InvestigationDetailPage = (
                   }}>Tools</Typography>
                   {
                     
-                    ["Tool Name", "Tool Name", "Tool Name"].map(tool => {
+                    ["Tool Title 1", "Tool Title 2", "Tool Title 3"].map(tool => {
                       return (
                         <AnchorLink href={"#title_" + tool.replace(" ","_").toLowerCase()} sx={{
                           textDecoration: "none",
@@ -886,27 +886,45 @@ export const InvestigationDetailPage = (
               </Grid>
               <Grid item md={10}>
                 <Typography variant='body1' sx={{paddingBottom: "32px"}}>The PDS maintains many tools enabling users to work with the data in our archive. Listed below are tools that can assist you when exploring the data holding for this investigation.</Typography>
-                <FeaturedToolLinkListItem
-                    key={1}
-                    description={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus porttitor lorem ac velit laoreet, eu dapibus ante pellentesque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla blandit elit vel libero porttitor, ut ultrices sem facilisis. Maecenas egestas dignissim lacus vitae blandit. Ut in nulla nec lorem tempus elementum sed a nisl. Nunc nisl lacus, faucibus at vulputate id, viverra vitae nibh. Nam quis tortor enim. Phasellus ultrices sit amet felis sit amet consequat. Etiam a cursus ex. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Maecenas id commodo turpis.".substring(0,275).concat("...")}
-                    primaryAction={ () => {} }
-                    tags={toolTags}
-                    title={"Tool Name"}
-                />
-                <FeaturedToolLinkListItem
-                    key={2}
-                    description={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus porttitor lorem ac velit laoreet, eu dapibus ante pellentesque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla blandit elit vel libero porttitor, ut ultrices sem facilisis. Maecenas egestas dignissim lacus vitae blandit. Ut in nulla nec lorem tempus elementum sed a nisl. Nunc nisl lacus, faucibus at vulputate id, viverra vitae nibh. Nam quis tortor enim. Phasellus ultrices sit amet felis sit amet consequat. Etiam a cursus ex. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Maecenas id commodo turpis.".substring(0,275).concat("...")}
-                    primaryAction={ () => {} }
-                    tags={toolTags}
-                    title={"Tool Name"}
-                />
-                <FeaturedToolLinkListItem
-                    key={3}
-                    description={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus porttitor lorem ac velit laoreet, eu dapibus ante pellentesque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla blandit elit vel libero porttitor, ut ultrices sem facilisis. Maecenas egestas dignissim lacus vitae blandit. Ut in nulla nec lorem tempus elementum sed a nisl. Nunc nisl lacus, faucibus at vulputate id, viverra vitae nibh. Nam quis tortor enim. Phasellus ultrices sit amet felis sit amet consequat. Etiam a cursus ex. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Maecenas id commodo turpis.".substring(0,275).concat("...")}
-                    primaryAction={ () => {} }
-                    tags={toolTags}
-                    title={"Tool Name"}
-                />
+                {
+                  [
+                    {
+                      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In vulputate scelerisque ligula, sit amet molestie quam faucibus sed. Aenean mattis a sapien ut aliquet.",
+                      tags: [
+                        {label:'Tag Label 1'},
+                        {label:'Tag Label 2'},
+                        {label:'Tag Label With a Really Long Title'}
+                      ],
+                      title: "Tool Title 1",
+                    },
+                    {
+                      description: "Etiam suscipit varius nulla, quis congue neque blandit quis. Donec convallis quam nulla, nec ultrices nunc congue eu. Quisque aliquam urna quis maximus ultrices. ",
+                      tags: [
+                        {label:'Tag Label 1'},
+                        {label:'Tag Label 2'},
+                        {label:'Tag Label With a Really Long Title'}
+                      ],
+                      title: "Tool Title 2",
+                    },
+                    {
+                      description: "Sed rhoncus tortor posuere augue ultrices pretium. Phasellus blandit tortor leo, sed consequat lacus ultricies ut.",
+                      tags: [
+                        {label:'Tag Label 1'},
+                        {label:'Tag Label 2'},
+                        {label:'Tag Label With a Really Long Title'}
+                      ],
+                      title: "Tool Title 3",
+                    }
+                  ].map( (item, index) => {
+                    return <FeaturedToolLinkListItem
+                      key={index}
+                      description={item.description.substring(0,200).concat("...")}
+                      primaryAction={ () => {} }
+                      tags={item.tags}
+                      title={item.title}
+                    />
+                  })
+                }
               </Grid>
             </Grid>
           </CustomTabPanel>
@@ -1013,7 +1031,7 @@ export const InvestigationDetailPage = (
                       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In vulputate scelerisque ligula, sit amet molestie quam faucibus sed. Aenean mattis a sapien ut aliquet.",
                       format: "PDF",
                       size: "1.04MB",
-                      tags: ['Tag 1', 'Tag 2', 'Tag 3'],
+                      tags: ['Tag Label 1', 'Tag Label 2', 'Tag Label with a really long title'],
                       title: "Resource Title 1",
                       version: "1.1",
                       year: "2022"
@@ -1022,7 +1040,7 @@ export const InvestigationDetailPage = (
                       description: "Etiam suscipit varius nulla, quis congue neque blandit quis. Donec convallis quam nulla, nec ultrices nunc congue eu. Quisque aliquam urna quis maximus ultrices. ",
                       format: "PDF",
                       size: "1.83MB",
-                      tags: ['Tag 1', 'Tag 2', 'Tag 3'],
+                      tags: ['Tag Label 1', 'Tag Label 2', 'Tag Label with a really long title'],
                       title: "Resource Title 2",
                       version: "1.0",
                       year: "2019"
@@ -1030,8 +1048,8 @@ export const InvestigationDetailPage = (
                     {
                       description: "Sed rhoncus tortor posuere augue ultrices pretium. Phasellus blandit tortor leo, sed consequat lacus ultricies ut.",
                       format: "PDF",
-                      size: "99 KB",
-                      tags: ['Tag 1', 'Tag 2', 'Tag 3'],
+                      size: "99KB",
+                      tags: ['Tag Label 1', 'Tag Label 2', 'Tag Label with a really long title'],
                       title: "Resource Title 3",
                       version: "1.2",
                       year: "2018"
@@ -1040,7 +1058,7 @@ export const InvestigationDetailPage = (
                       description: "Praesent mauris nisl, rutrum at mattis quis, condimentum non nulla. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
                       format: "PDF",
                       size: "2.23MB",
-                      tags: ['Tag 1', 'Tag 2', 'Tag 3'],
+                      tags: ['Tag Label 1', 'Tag Label 2', 'Tag Label with a really long title'],
                       title: "Resource Title 4",
                       version: "1.0",
                       year: "2017"
