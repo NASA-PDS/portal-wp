@@ -68,7 +68,7 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
       isMounted = false;
     };
 
-  }, [status, dispatch]);
+  }, [status, dispatch, dataManagerState, error]);
 
   const linkStyles = {
     color: "white",
