@@ -24,7 +24,7 @@ const getItemsByIndex = (
   index: string
 ): Investigation[] => {
   return arr.filter((item) => {
-    return item[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]
+    return item[PDS4_INFO_MODEL.INVESTIGATION.NAME]
       .toUpperCase()
       .startsWith(index.toUpperCase());
   });
@@ -194,7 +194,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                           investigation_type={ investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE] }
                           primaryAction={ () => investigationListItemPrimaryAction({ lid: investigation.lid, version: investigation.vid }) }
                           key={investigation[PDS4_INFO_MODEL.LID]}
-                          title={ investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE] }
+                          title={ investigation[PDS4_INFO_MODEL.INVESTIGATION.NAME] }
                         />
                       );
                     }

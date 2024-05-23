@@ -26,10 +26,10 @@ export namespace PDS4_INFO_MODEL {
   export enum ALIAS {
 
     /** The alternate_id attribute provides an additional identifier supplied by the data provider. */
-    ALTERNATE_ID = "pds:Alias/pds:alternate_id",
+    ALTERNATE_ID = "pds:Alias.pds:alternate_id",
     
     /** The alternate _title attribute provides an alternate title for the product. */
-    ALTERNATE_TITLE = "pds:Alias/pds:alternate_title",
+    ALTERNATE_TITLE = "pds:Alias.pds:alternate_title",
 
   }
 
@@ -40,7 +40,7 @@ export namespace PDS4_INFO_MODEL {
     TITLE = "pds:Identification_Area/pds:title",
   
     /** The version_id attribute provides the version of the product, expressed in the PDS [m.n] notation. */
-    VERSION_ID = "pds:Identification_Area/pds:version_id",
+    VERSION_ID = "pds:Identification_Area.pds:version_id",
   
   }
 
@@ -48,21 +48,21 @@ export namespace PDS4_INFO_MODEL {
   export enum INVESTIGATION {
   
     /** The description attribute provides a statement, picture in words, or account that describes or is otherwise relevant to the object. */
-    DESCRIPTION = "pds:Investigation/pds:description",
+    DESCRIPTION = "pds:Investigation.pds:description",
   
     /** The name attribute provides a word or combination of words by which the object is known. */
-    NAME = "pds:Investigation/pds:name",
+    NAME = "pds:Investigation.pds:name",
   
     /** The start_date attribute provides the date when an activity began.  */
-    START_DATE = "pds:Investigation/pds:start_date",
+    START_DATE = "pds:Investigation.pds:start_date",
   
     /** The stop_date attribute provides the date when an activity ended. */
-    STOP_DATE = "pds:Investigation/pds:stop_date",
+    STOP_DATE = "pds:Investigation.pds:stop_date",
 
-    TERSE_DESCRIPTION = "pds:Investigation/pds:terse_description",
+    TERSE_DESCRIPTION = "pds:Investigation.pds:terse_description",
   
     /** The type attribute classifies the investigation according to its scope. */
-    TYPE = "pds:Investigation/pds:type",
+    TYPE = "pds:Investigation.pds:type",
   
   }
 

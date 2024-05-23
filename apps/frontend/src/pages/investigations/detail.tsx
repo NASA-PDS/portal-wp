@@ -450,7 +450,7 @@ export const InvestigationDetailPage = (
               Investigations
             </Link>
             <Typography style={{ color: "white" }}>
-              {investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]}
+              {investigation[PDS4_INFO_MODEL.INVESTIGATION.NAME]}
             </Typography>
           </Breadcrumbs>
           <Grid container alignItems={"flex-end"}>
@@ -474,7 +474,7 @@ export const InvestigationDetailPage = (
                   fontWeight: "700",
                 }}
               >
-                {investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]}
+                {investigation[PDS4_INFO_MODEL.INVESTIGATION.NAME]}
               </Typography>
               <Typography
                 variant="subtitle1"
@@ -483,7 +483,7 @@ export const InvestigationDetailPage = (
                   marginTop: "8px"
                 }}
               >
-                {investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]}
+                {investigation[PDS4_INFO_MODEL.INVESTIGATION.NAME]}
               </Typography>
               <InvestigationStatus stopDate={investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE]} />
             </Grid>
