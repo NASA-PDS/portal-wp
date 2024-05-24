@@ -677,6 +677,7 @@ export const InvestigationDetailPage = (
                                 return <FeaturedInstrumentLinkListItem
                                   key={instrument[PDS4_INFO_MODEL.LID]}
                                   description={instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION].toString()}
+                                  lid={instrument[PDS4_INFO_MODEL.LID]}
                                   primaryAction={ () => {} }
                                   title={instrument[PDS4_INFO_MODEL.INSTRUMENT.NAME]}
                                   bundles={getRelatedInstrumentBundles(instrument[PDS4_INFO_MODEL.LID])}
