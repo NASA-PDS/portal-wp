@@ -37,7 +37,7 @@ export namespace PDS4_INFO_MODEL {
   export enum IDENTIFICATION_AREA {
   
     /** The title attribute provides a short, descriptive text string suitable use as a title or brief description in display or listing of products. */
-    TITLE = "pds:Identification_Area/pds:title",
+    TITLE = "pds:Identification_Area.pds:title",
   
     /** The version_id attribute provides the version of the product, expressed in the PDS [m.n] notation. */
     VERSION_ID = "pds:Identification_Area.pds:version_id",
@@ -73,8 +73,8 @@ export namespace PDS4_INFO_MODEL {
   }
 
   export enum INSTRUMENT_HOST {
-    DESCRIPTION = "pds:Instrument_Host/pds:description",
-    TYPE = "pds:Instrument_Host/pds:type",
+    DESCRIPTION = "pds:Instrument_Host.pds:description",
+    TYPE = "pds:Instrument_Host.pds:type",
   }
 
   export enum TARGET {

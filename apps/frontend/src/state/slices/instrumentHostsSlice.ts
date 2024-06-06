@@ -27,50 +27,43 @@ const initialState:InstrumentHostsState = {
 };
 
 /**
- * Get all the instrument hosts from the PDS OpenSearch API
+ * Get all the instrument hosts from the PDS Search API
  */ 
 export const getInstrumentHosts = createAsyncThunk(
   INSTRUMENT_HOST_ACTIONS.GET_INSTRUMENT_HOSTS,
   async (_:void, thunkAPI) => {
     
-    const username = import.meta.env.VITE_OPENSEARCH_USERNAME;
-    const password = import.meta.env.VITE_OPENSEARCH_PASSWORD;
-    const url = import.meta.env.VITE_OPENSEARCH_DOMAIN + import.meta.env.VITE_OPENSEARCH_INDEX_REGISTRY + "/_search";
-    
-    const headers = {
-      "Content-Type": "application/json",
-      "Authorization": "Basic " + btoa(username + ":" + password)
-    }
-    
-    // Set up query
-    const query = {
-      "from": 0,
-      "size": 9999, // we must provide a size otherwise we only receive a limited number of results
-      "query": {
-        "wildcard": {
-          [PDS4_INFO_MODEL.LID]: {
-            "value": "urn:*:instrument_host:*"
-          }
-        }
-      },
-      "_source": {
-        "includes": [
-          PDS4_INFO_MODEL.LID,
-          PDS4_INFO_MODEL.LIDVID,
-          PDS4_INFO_MODEL.REF_LID_INSTRUMENT,
-          PDS4_INFO_MODEL.REF_LID_TARGET,
-          PDS4_INFO_MODEL.TITLE,
-          PDS4_INFO_MODEL.VID,
-          PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE,
-          PDS4_INFO_MODEL.INSTRUMENT_HOST.DESCRIPTION,
-          PDS4_INFO_MODEL.INSTRUMENT_HOST.TYPE
-        ]
+    let apiUrl = '/api/search/1/products?q=(product_class eq "Product_Context" and lid like "urn:nasa:pds:context:instrument_host:*")&limit=9999'
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
       }
     };
     
+    const fields = [
+      PDS4_INFO_MODEL.LID,
+      PDS4_INFO_MODEL.LIDVID,
+      PDS4_INFO_MODEL.REF_LID_INSTRUMENT,
+      PDS4_INFO_MODEL.REF_LID_TARGET,
+      PDS4_INFO_MODEL.TITLE,
+      PDS4_INFO_MODEL.VID,
+      PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE,
+      PDS4_INFO_MODEL.INSTRUMENT_HOST.DESCRIPTION,
+      PDS4_INFO_MODEL.INSTRUMENT_HOST.TYPE
+    ];
+
+    // Add the specific fields that should be returned
+    apiUrl += "&fields=";
+    fields.forEach( (field, index) => {
+      apiUrl += field;
+      apiUrl += index < fields.length - 1 ? "," : "";
+    });
+    
     try {
-      const response = await axios.post(url, query, {headers: headers})
-      return response.data
+      
+      //const response = await fetch(apiUrl, config);
+      const response = await axios.get(apiUrl, config);
+      return response.data;
     } catch (err:unknown) {
       if( err instanceof Error ) {
         return thunkAPI.rejectWithValue({ error: err.message });
@@ -96,25 +89,27 @@ const instrumentHostsSlice = createSlice({
       state.status = "succeeded";
       
       // Store the fetched data into the state after parsing
-      const data = action.payload.hits.hits;
+      const data = action.payload.data;
+      console.log("Returned Instrument Host Data:", data);
 
       const compiledItems:InstrumentHostItems = {};
-      data.forEach( (element:{_source:object}) => {
+      data.forEach( (element:{"summary":object, "properties":object}) => {
 
-        const source:InstrumentHost = <InstrumentHost>element["_source"];
+        const source:InstrumentHost = <InstrumentHost>element["properties"];
+        //console.log("Target source:", source);
 
-        const lid = source[PDS4_INFO_MODEL.LID];
-        const vid = source[PDS4_INFO_MODEL.VID];
+        const lid = source[PDS4_INFO_MODEL.LID][0];
+        const vid = source[PDS4_INFO_MODEL.VID][0];
 
         const instrumentHost:InstrumentHost = <InstrumentHost>{};
-        instrumentHost[PDS4_INFO_MODEL.LID] = source[PDS4_INFO_MODEL.LID];
-        instrumentHost[PDS4_INFO_MODEL.LIDVID] = source[PDS4_INFO_MODEL.LIDVID];
+        instrumentHost[PDS4_INFO_MODEL.LID] = source[PDS4_INFO_MODEL.LID][0];
+        instrumentHost[PDS4_INFO_MODEL.LIDVID] = source[PDS4_INFO_MODEL.LIDVID][0];
         instrumentHost[PDS4_INFO_MODEL.REF_LID_INSTRUMENT] = source[PDS4_INFO_MODEL.REF_LID_INSTRUMENT];
         instrumentHost[PDS4_INFO_MODEL.REF_LID_TARGET] = source[PDS4_INFO_MODEL.REF_LID_TARGET];
-        instrumentHost[PDS4_INFO_MODEL.VID] = source[PDS4_INFO_MODEL.VID];
-        instrumentHost[PDS4_INFO_MODEL.TITLE] = source[PDS4_INFO_MODEL.TITLE];
-        instrumentHost[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE] = source[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toString();
-        instrumentHost[PDS4_INFO_MODEL.INSTRUMENT_HOST.DESCRIPTION] = source[PDS4_INFO_MODEL.INSTRUMENT_HOST.DESCRIPTION].toString();
+        instrumentHost[PDS4_INFO_MODEL.VID] = source[PDS4_INFO_MODEL.VID][0];
+        instrumentHost[PDS4_INFO_MODEL.TITLE] = source[PDS4_INFO_MODEL.TITLE][0];
+        instrumentHost[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE] = source[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE] ? source[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE][0] : "";
+        instrumentHost[PDS4_INFO_MODEL.INSTRUMENT_HOST.DESCRIPTION] = source[PDS4_INFO_MODEL.INSTRUMENT_HOST.DESCRIPTION] ? source[PDS4_INFO_MODEL.INSTRUMENT_HOST.DESCRIPTION][0] : "";
         instrumentHost[PDS4_INFO_MODEL.INSTRUMENT_HOST.TYPE] = source[PDS4_INFO_MODEL.INSTRUMENT_HOST.TYPE].toString();
 
         if( compiledItems[lid] === undefined ) {
