@@ -32,7 +32,7 @@ const getItemsByIndex = (
 
 function getAffiliatedSpacecraft(state:RootState, investigation:Investigation) {
   return selectLatestInstrumentHostsForInvestigation(state, investigation[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST])?.reduce(
-    (accumulator, item:InstrumentHost) => { return accumulator === "" ? accumulator += item[PDS4_INFO_MODEL.TITLE] : accumulator += ", ".concat(item[PDS4_INFO_MODEL.TITLE]) }, ''
+    (accumulator, item:InstrumentHost) => { return accumulator === "" ? accumulator += item[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME] : accumulator += ", ".concat(item[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME]) }, ''
   )
 }
 
