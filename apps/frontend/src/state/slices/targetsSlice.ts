@@ -94,7 +94,7 @@ const targetsSlice = createSlice({
       data.forEach( (element:{"summary":object, "properties":object}) => {
 
         const source:Target = <Target>element["properties"];
-        console.log("source:", source);
+        console.log("Target source:", source);
 
         const lid = source[PDS4_INFO_MODEL.LID][0];
         const vid = source[PDS4_INFO_MODEL.VID][0];

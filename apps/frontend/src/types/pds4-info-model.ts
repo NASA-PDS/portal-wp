@@ -67,9 +67,9 @@ export namespace PDS4_INFO_MODEL {
   }
 
   export enum INSTRUMENT {
-    DESCRIPTION = "pds:Instrument/pds:description",
-    NAME = "pds:Instrument/pds:name",
-    TYPE = "pds:Instrument/pds:type"
+    DESCRIPTION = "pds:Instrument.pds:description",
+    NAME = "pds:Instrument.pds:name",
+    TYPE = "pds:Instrument.pds:type"
   }
 
   export enum INSTRUMENT_HOST {

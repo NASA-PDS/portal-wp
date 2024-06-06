@@ -115,14 +115,14 @@ const investigationsSlice = createSlice({
       
       // Store the fetched data into the state after parsing
       const data = action.payload.data;
-      console.log("Returned Data:", data);
+      console.log("Returned Investigations Data:", data);
 
       const compiledInvestigations:InvestigationItems = {};
       data.forEach( (element:{"summary":object, "properties":object}) => {
 
         const source:Investigation = <Investigation>element["properties"];
-
         console.log("source:", source)
+        
         const lid = source[PDS4_INFO_MODEL.LID][0];
         const vid = source[PDS4_INFO_MODEL.VID][0];
 
