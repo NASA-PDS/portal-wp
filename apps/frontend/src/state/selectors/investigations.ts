@@ -39,7 +39,7 @@ export const selectInvestigationVersion = (state:RootState, lid:string, version:
  */
 export const selectLatestVersionInvestigations = createSelector([selectInvestigations], (investigations) => {
 
-  let latestInvestigations:Investigation[] = [];
+  const latestInvestigations:Investigation[] = [];
   
   // Find the latest version of each investigation and store it in an array
   let latestVersion:string = "";
@@ -120,7 +120,7 @@ export const selectFilteredInvestigations = createSelector(
       )
     });
     // Get LIDS for instruments hosts of those that matched free-text search filter
-    let foundInstrumentHostLids:string[] = [];
+    const foundInstrumentHostLids:string[] = [];
     foundInstrumentLids.forEach( (instrument:Instrument) => {
       instrument[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST]?.forEach( (instrumentHost) => {
         if( !foundInstrumentHostLids.includes(instrumentHost) ) {
