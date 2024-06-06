@@ -78,9 +78,9 @@ export namespace PDS4_INFO_MODEL {
   }
 
   export enum TARGET {
-    DESCRIPTION = "pds:Target/pds:description",
-    NAME = "pds:Target/pds:name",
-    TYPE = "pds:Target/pds:type",
+    DESCRIPTION = "pds:Target.pds:description",
+    NAME = "pds:Target.pds:name",
+    TYPE = "pds:Target.pds:type",
   }
 
   export enum CTLI_TYPE_LIST {
