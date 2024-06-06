@@ -84,7 +84,7 @@ export namespace PDS4_INFO_MODEL {
   }
 
   export enum CTLI_TYPE_LIST {
-    TYPE = "ctli:Type_List/ctli:type"
+    TYPE = "ctli:Type_List.ctli:type"
   }
 
 }
