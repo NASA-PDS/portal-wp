@@ -35,7 +35,7 @@ const initialState:InvestigationsState = {
 };
 
 /**
- * Get all the investigations from the PDS OpenSearch API
+ * Get all the investigations from the PDS Search API
  */
 export const getInvestigations = createAsyncThunk(
   INVESTIGATION_ACTIONS.GET_INVESTIGATIONS,
