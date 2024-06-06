@@ -165,7 +165,7 @@ export const InvestigationDetailPage = (
 
     instruments[selectedInstrumentHost].forEach( (instrument) => {
 
-      if( instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE] !== undefined ) {
+      if( instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE] !== undefined && instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE].length !== 0) {
 
         instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE].forEach( (instrumentType) => {
           if( !instrumentTypesArr.includes(instrumentType) ) {
