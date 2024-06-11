@@ -88,13 +88,11 @@ const targetsSlice = createSlice({
       
       // Store the fetched data into the state after parsing
       const data = action.payload.data;
-      console.log("Returned Targets Data:", data);
 
       const compiledItems:TargetItems = {};
       data.forEach( (element:{"summary":object, "properties":object}) => {
 
         const source:Target = <Target>element["properties"];
-        console.log("Target source:", source);
 
         const lid = source[PDS4_INFO_MODEL.LID][0];
         const vid = source[PDS4_INFO_MODEL.VID][0];
