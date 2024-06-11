@@ -163,11 +163,11 @@ export const InvestigationDetailPage = (
       return
     }
 
-    instruments[selectedInstrumentHost].forEach( (instrument) => {
+    instruments[selectedInstrumentHost].forEach( (instrument:Instrument) => {
 
       if( instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE] !== undefined && instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE].length !== 0) {
 
-        instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE].forEach( (instrumentType) => {
+        instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE].forEach( (instrumentType:string) => {
           if( !instrumentTypesArr.includes(instrumentType) ) {
             instrumentTypesArr.push(instrumentType);
           }
@@ -175,7 +175,7 @@ export const InvestigationDetailPage = (
 
       } else if( instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE] !== undefined ) {
 
-        instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE].forEach( (instrumentType) => {
+        instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE].forEach( (instrumentType:string) => {
           if( !instrumentTypesArr.includes(instrumentType) ) {
             instrumentTypesArr.push(instrumentType);
           }
