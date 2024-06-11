@@ -114,7 +114,6 @@ export const InvestigationDetailPage = (
   const getRelatedInstrumentBundles = (lid:string) => {
     return bundles[selectedInstrumentHost].filter( (bundleList) => {
       const foundInstrument = bundleList.observing_system_components.some( component => component.id === lid );
-      //console.log("found instrument lid:", foundInstrument, lid, bundleList.observing_system_components)
       return foundInstrument
     })
   };
@@ -140,7 +139,6 @@ export const InvestigationDetailPage = (
           }
         });
         setBundles(tempArray);
-        //console.log(tempArray);
 
         return response;
       })
