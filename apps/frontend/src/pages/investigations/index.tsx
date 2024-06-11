@@ -154,8 +154,8 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
         >
           <Box sx={{ paddingBottom: "25px" }}>
             <Grid container spacing={4} sx={{ height: "100%" }} alignItems="center" direction="row">
-              <Grid item md={1}/>
-              <Grid item xs={12} md={8}>
+              <Grid item md={1} />
+              <Grid item xs={12} md={7}>
                 <Stack direction={"column"} spacing={0.5}>
                   <Typography
                     sx={{
@@ -183,14 +183,16 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
                         </InputAdornment>
                       ),
                       endAdornment: searchFilters?.freeText && (
-                        <InputAdornment position="end" onClick={handleFreeTextSearchFilterReset}
+                        <InputAdornment
+                          position="end"
+                          onClick={handleFreeTextSearchFilterReset}
                           sx={{
                             cursor: "pointer"
                           }}
                         >
                           <CloseIcon />
                         </InputAdornment>
-                      )
+                      ),
                     }}
                     fullWidth
                     onChange={handleFreeTextSearchFilterChange}
@@ -200,43 +202,56 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
               <Grid item xs={12} md={2}>
                 <Typography
                   sx={{
-                    color: 'black',
-                    fontSize: '14px',
-                    fontFamily: 'Inter',
-                    fontWeight: '600',
-                    lineHeight: '19px',
-                    wordWrap: 'break-word',
-                    mb: '4px'
-                  }}>Investigation Type</Typography>
+                    color: "black",
+                    fontSize: "14px",
+                    fontFamily: "Inter",
+                    fontWeight: "600",
+                    lineHeight: "19px",
+                    wordWrap: "break-word",
+                    mb: "4px"
+                  }}
+                >
+                  Investigation Type
+                </Typography>
                 <Select
                   value={searchFilters?.type || INVESTIGATION_TYPE.ALL}
                   onChange={handleInvestigationTypeFilterChange}
                   fullWidth
                   IconComponent={ExpandMore}
                   sx={{
-                    borderRadius: '5px',
-                    borderWidth: '2px',
-                    borderColor: '#D1D1D1',
-                    '.MuiSelect-select': {
-                      py: '10px',
-                      px: '16px',
+                    borderRadius: "5px",
+                    borderWidth: "2px",
+                    borderColor: "#D1D1D1",
+                    ".MuiSelect-select": {
+                      py: "10px",
+                      px: "16px",
                     },
-                    '.MuiSelect-nativeInput': {
-                      color: '#2E2E32',
-                      fontSize: '14px',
-                      fontFamily: 'Public Sans',
-                      fontWeight: '400',
-                      lineHeight: '20px',
-                      wordWrap: 'break-word'
-                    }
+                    ".MuiSelect-nativeInput": {
+                      color: "#2E2E32",
+                      fontSize: "14px",
+                      fontFamily: "Public Sans",
+                      fontWeight: "400",
+                      lineHeight: "20px",
+                      wordWrap: "break-word",
+                    },
                   }}
                 >
                   <MenuItem value={"ALL"}>All</MenuItem>
-                  <MenuItem value={INVESTIGATION_TYPE.FIELD_CAMPAIGN}>{INVESTIGATION_TYPE.FIELD_CAMPAIGN}</MenuItem>
-                  <MenuItem value={INVESTIGATION_TYPE.INDIVIDUAL_INVESTIGATION}>{INVESTIGATION_TYPE.INDIVIDUAL_INVESTIGATION}</MenuItem>
-                  <MenuItem value={INVESTIGATION_TYPE.MISSION}>{INVESTIGATION_TYPE.MISSION}</MenuItem>
-                  <MenuItem value={INVESTIGATION_TYPE.OBSERVING_CAMPAIGN}>{INVESTIGATION_TYPE.OBSERVING_CAMPAIGN}</MenuItem>
-                  <MenuItem value={INVESTIGATION_TYPE.OTHER_INVESTIGATION}>{INVESTIGATION_TYPE.OTHER_INVESTIGATION}</MenuItem>
+                  <MenuItem value={INVESTIGATION_TYPE.FIELD_CAMPAIGN}>
+                    {INVESTIGATION_TYPE.FIELD_CAMPAIGN}
+                  </MenuItem>
+                  <MenuItem value={INVESTIGATION_TYPE.INDIVIDUAL_INVESTIGATION}>
+                    {INVESTIGATION_TYPE.INDIVIDUAL_INVESTIGATION}
+                  </MenuItem>
+                  <MenuItem value={INVESTIGATION_TYPE.MISSION}>
+                    {INVESTIGATION_TYPE.MISSION}
+                  </MenuItem>
+                  <MenuItem value={INVESTIGATION_TYPE.OBSERVING_CAMPAIGN}>
+                    {INVESTIGATION_TYPE.OBSERVING_CAMPAIGN}
+                  </MenuItem>
+                  <MenuItem value={INVESTIGATION_TYPE.OTHER_INVESTIGATION}>
+                    {INVESTIGATION_TYPE.OTHER_INVESTIGATION}
+                  </MenuItem>
                 </Select>
               </Grid>
               {/*<Grid item xs={2} md={1}>
@@ -253,25 +268,25 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
                 </Grid>*/}
             </Grid>
           </Box>
-          { 
-            latestInvestigations.length > 0 ? (
-              <InvestigationsIndexedListComponent investigations={latestInvestigations} />
-            ) : (
-              <>
-                {
-                  searchFilters === undefined ? (
-                    <Box sx={{ paddingBottom: "25px", textAlign: "center"}}>
-                      <Typography>No investigations found.</Typography>
-                    </Box>
-                  ) : (
-                    <Box sx={{ paddingBottom: "25px", textAlign: "center"}}>
-                      <Typography>No investigations found based on the provided search filters.</Typography>
-                    </Box>
-                  )
-                }
-              </>
-            )
-          }
+          {latestInvestigations.length > 0 ? (
+            <InvestigationsIndexedListComponent
+              investigations={latestInvestigations}
+            />
+          ) : (
+            <>
+              {searchFilters === undefined ? (
+                <Box sx={{ paddingBottom: "25px", textAlign: "center" }}>
+                  <Typography>No investigations found.</Typography>
+                </Box>
+              ) : (
+                <Box sx={{ paddingBottom: "25px", textAlign: "center" }}>
+                  <Typography>
+                    No investigations found based on the provided search filters.
+                  </Typography>
+                </Box>
+              )}
+            </>
+          )}
         </Container>
       ) : (
         <Box sx={{ padding: "40px" }}>
