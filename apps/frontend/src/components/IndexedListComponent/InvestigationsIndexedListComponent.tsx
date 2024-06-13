@@ -7,6 +7,7 @@ import FeaturedInvestigationLinkListItem from "src/components/FeaturedListItems/
 import { selectLatestInstrumentHostsForInvestigation } from "src/state/selectors/instrumentHost";
 import { RootState, store } from "src/state/store";
 import { InstrumentHost } from "src/types/instrumentHost.d";
+import { convertLogicalIdentifier, LID_FORMAT } from "src/utils/strings";
 
 type InvestigationsIndexedListComponentProps = {
   investigations: Investigation[];
@@ -43,6 +44,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
   const state = store.getState();
 
   const investigationListItemPrimaryAction = (params:InvestigationDetailPathParams) => {
+    params.lid = convertLogicalIdentifier(params.lid,LID_FORMAT.URL_FRIENDLY);
     navigate( generatePath("/investigations/:lid/:version/instruments", params) );
   };
 

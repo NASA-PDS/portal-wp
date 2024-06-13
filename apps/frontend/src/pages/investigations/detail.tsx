@@ -19,6 +19,7 @@ import "./detail.scss";
 import { StatsList } from "src/components/StatsList/StatsList";
 import InvestigationStatus from "src/components/InvestigationStatus/InvestigationStatus";
 import FeaturedResourceLinkListItem from "src/components/FeaturedListItems/FeaturedResourcesLinkListItem";
+import { LID_FORMAT, convertLogicalIdentifier } from "src/utils/strings";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -1129,7 +1130,8 @@ export const InvestigationDetailPage = (
  */
 const mapStateToProps = (state: RootState) => {
 
-  const { investigationLid, investigationVersion } = useParams();
+  let { investigationLid, investigationVersion } = useParams();
+  investigationLid = convertLogicalIdentifier(investigationLid, LID_FORMAT.DEFAULT);
   const investigation:Investigation = selectInvestigationVersion(state, investigationLid, investigationVersion);
   const instrumentHosts:InstrumentHost[] = selectLatestInstrumentHostsForInvestigation(state, investigation[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST]);
   const instruments = new Array( instrumentHosts.length );
