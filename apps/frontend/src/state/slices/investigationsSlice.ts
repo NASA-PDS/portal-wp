@@ -41,7 +41,7 @@ export const getInvestigations = createAsyncThunk(
   INVESTIGATION_ACTIONS.GET_INVESTIGATIONS,
   async (_:void, thunkAPI) => {
 
-    let queryUrl = '/api/search/1/products?q=(product_class eq "Product_Context" and lid like "urn:nasa:pds:context:investigation:*")&limit=9999'
+    let queryUrl = '/api/search/1/products?q=(lid like "urn:nasa:pds:context:investigation:*")&limit=9999'
     const config = {
       headers: {
         "Content-Type": "application/json",
