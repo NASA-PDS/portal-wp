@@ -41,7 +41,7 @@ export const getInvestigations = createAsyncThunk(
   INVESTIGATION_ACTIONS.GET_INVESTIGATIONS,
   async (_:void, thunkAPI) => {
 
-    let apiUrl = '/api/search/1/products?q=(product_class eq "Product_Context" and lid like "urn:nasa:pds:context:investigation:*")&limit=9999'
+    let queryUrl = '/api/search/1/products?q=(product_class eq "Product_Context" and lid like "urn:nasa:pds:context:investigation:*")&limit=9999'
     const config = {
       headers: {
         "Content-Type": "application/json",
@@ -65,16 +65,19 @@ export const getInvestigations = createAsyncThunk(
     ];
 
     // Add the specific fields that should be returned
-    apiUrl += "&fields=";
+    queryUrl += "&fields=";
     fields.forEach( (field, index) => {
-      apiUrl += field;
-      apiUrl += index < fields.length - 1 ? "," : "";
+      queryUrl += field;
+      queryUrl += index < fields.length - 1 ? "," : "";
     });
     
+    if( import.meta.env.DEV ) {
+      // Output query URL to help with debugging only in DEV mode
+      console.info("Investigations API Query: ", queryUrl)
+    }
+
     try {
-      
-      //const response = await fetch(apiUrl, config);
-      const response = await axios.get(apiUrl, config);
+      const response = await axios.get(queryUrl, config);
       return response.data;
     } catch (err:unknown) {
       if( err instanceof Error ) {
