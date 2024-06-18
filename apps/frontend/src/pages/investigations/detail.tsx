@@ -19,6 +19,7 @@ import "./detail.scss";
 import { StatsList } from "src/components/StatsList/StatsList";
 import InvestigationStatus from "src/components/InvestigationStatus/InvestigationStatus";
 import FeaturedResourceLinkListItem from "src/components/FeaturedListItems/FeaturedResourcesLinkListItem";
+import { LID_FORMAT, convertLogicalIdentifier } from "src/utils/strings";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -114,7 +115,6 @@ export const InvestigationDetailPage = (
   const getRelatedInstrumentBundles = (lid:string) => {
     return bundles[selectedInstrumentHost].filter( (bundleList) => {
       const foundInstrument = bundleList.observing_system_components.some( component => component.id === lid );
-      //console.log("found instrument lid:", foundInstrument, lid, bundleList.observing_system_components)
       return foundInstrument
     })
   };
@@ -140,7 +140,6 @@ export const InvestigationDetailPage = (
           }
         });
         setBundles(tempArray);
-        //console.log(tempArray);
 
         return response;
       })
@@ -163,11 +162,11 @@ export const InvestigationDetailPage = (
       return
     }
 
-    instruments[selectedInstrumentHost].forEach( (instrument) => {
+    instruments[selectedInstrumentHost].forEach( (instrument:Instrument) => {
 
-      if( instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE] !== undefined ) {
+      if( instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE] !== undefined && instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE].length !== 0) {
 
-        instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE].forEach( (instrumentType) => {
+        instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE].forEach( (instrumentType:string) => {
           if( !instrumentTypesArr.includes(instrumentType) ) {
             instrumentTypesArr.push(instrumentType);
           }
@@ -175,7 +174,7 @@ export const InvestigationDetailPage = (
 
       } else if( instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE] !== undefined ) {
 
-        instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE].forEach( (instrumentType) => {
+        instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE].forEach( (instrumentType:string) => {
           if( !instrumentTypesArr.includes(instrumentType) ) {
             instrumentTypesArr.push(instrumentType);
           }
@@ -202,53 +201,92 @@ export const InvestigationDetailPage = (
   };
 
   const getInvestigationSummary = () => {
-    return instrumentHosts[selectedInstrumentHost][PDS4_INFO_MODEL.INSTRUMENT_HOST.DESCRIPTION]
-            .replace("Instrument Host Overview ========================", "<h3>Instrument Host Overview</h3>")
-            .replace("Instrument Host Overview - Spacecraft =====================================", "<h4>Instrument Host Overview - Spacecraft</h4>")
-            .replace("Spacecraft Coordinate System ----------------------------", "<h4>Spacecraft Coordinate System</h4>")
-            .replace("Telecommunications Subsystem ----------------------------", "<h4>Telecommunications Subsystem</h4>")
-            .replace("Attitude and Articulation Control Subsystem -------------------------------------------", "<h4>Attitude and Articulation Control Subsystem</h4>")
-            .replace("Propulsion Subsystem --------------------", "<h4>Propulsion Subsystem</h4>")
-            .replace("Power Subsystem ---------------", "<h4>Power Subsystem</h4>")
-            .replace("Mission Overview ================","<h3>Mission Overview</h3>")
-            .replace("Mission Phases ==============","<h3>Mission Phases</h3>")
-            .replace("VOYAGER 1 LAUNCH ----------------", "<h4>VOYAGER 1 LAUNCH</h4>")
-            .replace("VOYAGER 1 EARTH-JUPITER CRUISE ------------------------------", "<h4>VOYAGER 1 EARTH-JUPITER CRUISE</h4>")
-            .replace("VOYAGER 1 JUPITER ENCOUNTER ---------------------------", "<h4>VOYAGER 1 JUPITER ENCOUNTER</h4>")
-            .replace("VOYAGER 1 JUPITER-SATURN CRUISE -------------------------------", "<h4>VOYAGER 1 JUPITER-SATURN CRUISE</h4>")
-            .replace("VOYAGER 1 SATURN ENCOUNTER --------------------------", "<h4>VOYAGER 1 SATURN ENCOUNTER</h4>")
-            .replace("VOYAGER 1 INTERSTELLAR MISSION ------------------------------", "<h4>VOYAGER 1 INTERSTELLAR MISSION</h4>")
-            .replace("VOYAGER 2 LAUNCH ----------------", "<h4>VOYAGER 2 LAUNCH</h4>")
-            .replace("VOYAGER 2 EARTH-JUPITER CRUISE ------------------------------", "<h4>VOYAGER 2 EARTH-JUPITER CRUISE</h4>")
-            .replace("VOYAGER 2 JUPITER ENCOUNTER ---------------------------", "<h4>VOYAGER 2 JUPITER ENCOUNTER</h4>")
-            .replace("VOYAGER 2 JUPITER-SATURN CRUISE -------------------------------", "<h4>VOYAGER 2 JUPITER-SATURN CRUISE</h4>")
-            .replace("VOYAGER 2 SATURN ENCOUNTER --------------------------", "<h4>VOYAGER 2 SATURN ENCOUNTER</h4>")
-            .replace("VOYAGER 2 SATURN-URANUS CRUISE ------------------------------", "<h4>VOYAGER 2 SATURN-URANUS CRUISE</h4>")
-            .replace("VOYAGER 2 URANUS ENCOUNTER --------------------------", "<h4>VOYAGER 2 URANUS ENCOUNTER</h4>")
-            .replace("VOYAGER 2 URANUS-NEPTUNE CRUISE -------------------------------", "<h4>VOYAGER 2 URANUS-NEPTUNE CRUISE</h4>")
-            .replace("VOYAGER 2 NEPTUNE ENCOUNTER ---------------------------", "<h4>VOYAGER 2 NEPTUNE ENCOUNTER</h4>")
-            .replace("VOYAGER 2 INTERSTELLAR MISSION ------------------------------ ", "<h4>VOYAGER 2 INTERSTELLAR MISSION</h4>")
-            .replace("PI ------------------------------------------------- --------------------", "<h4>PI</h4>")
-            .replace("DEVELOPMENT -----------", "<h4>DEVELOPMENT</h4>")
-            .replace("ROVER LAUNCH ------", "<h4>ROVER LAUNCH</h4>")
-            .replace("ROVER CRUISE AND APPROACH -------------------", "<h4>ROVER CRUISE AND APPROACH</H4>")
-            .replace("ENTRY, DESCENT, AND LANDING ---------------------------", "<h4>ENTRY, DESCENT, AND LANDING</h4>")
-            .replace("PRIMARY SURFACE MISSION -----------------------", "<h4>PRIMARY SURFACE MISSION</h4>")
-            .replace("EXTENDED SURFACE MISSION ------------------------", "<h4>EXTENDED SURFACE MISSION</h4>")
-            .replace("LAUNCH ------", "<h4>LAUNCH</h4>")
-            .replace("CRUISE ------ ", "<h4>CRUISE</h4>")
-            .replace("APPROACH --------", "<h4>APPROACH</h4>")
-            .replace("POST-LANDING THROUGH EGRESS --------------------------- ", "<h4>POST-LANDING THROUGH EGRESS</h4>")
-            .replace("PRIMARY MISSION ---------------", "<h4>PRIMARY MISSION</h4>")
-            .replace(/EXTENDED MISSION ([0-9]) ------------------/g,"<h4>EXTENDED MISSION $1</h4>")
-            .replace("Cruise Objectives. -----------------", "<h4>Cruise Objectives.</h4>")
-            .replace("Saturn (Planet) Objectives. --------------------------", "<h4>Saturn (Planet) Objectives</h4>")
-            .replace(" Titan Objectives. ----------------", "<h4> Titan Objectives </h4>")
-            .replace("Icy Satellite Objectives. ------------------------ ", "<h4>Icy Satellite Objectives</h4>")
-            .replace("Ring Objectives. ---------------", "<h4>Ring Objectives</h4>")
-            .replace("Magnetosphere Objectives ------------------------", "<h4>Magnetosphere Objectives</h4>")
-            .replace("Data Storage Subsystem ----------------------", "<h4>Data Storage Subsystem</h4>")
-            .replace(/(b|c|d|e|f)\)/g, "<br />$1)")
+    return instrumentHosts.length > 0 ? 
+            instrumentHosts[selectedInstrumentHost][PDS4_INFO_MODEL.INSTRUMENT_HOST.DESCRIPTION]
+              .replace(/(Instrument Host Overview) (=+)/g, "<h3>$1</h3>")
+              .replace(/(Instrument Host Overview - Rover) (=+)/g, "<h3>$1</h3>")
+              .replace(/(Instrument Host Overview - Spacecraft) (=+)/g, "<h3>$1</h3>")
+              .replace(/(Orbiter Description) (=+)/g, "<h3>$1</h3>")
+              .replace(/(Instrument Host Overview - DSN) (=+)/g, "<h3>$1</h3>")
+              .replace(/(Spacecraft Structural Overview) (=+)/g, "<h3>$1</h3>")
+              .replace(/(Thermal Control) (=+)/g, "<h3>$1</h3>")
+              .replace(/(Propulsion) (=+)/g, "<h3>$1</h3>")
+              .replace(/(Communications) (=+)/g, "<h3>$1</h3>")
+              .replace(/(Attitude and Orbit Control) (=+)/g, "<h3>$1</h3>")
+              .replace(/(Mechanisms) (=+)/g, "<h3>$1</h3>")
+              .replace(/(Data Handling Overview) (=+)/g, "<h3>$1</h3>")
+              .replace(/(Bus Management Unit) (=+)/g, "<h3>$1</h3>")
+              .replace(/(Acronym List) (=+)/g, "<h3>$1</h3>")
+              .replace(/(Mars Reconnaissance Orbiter Spacecraft) (-+)/g, "<h4>$1</h4>")
+              .replace(/(Data Storage Subsystem) (-+)/g, "<h4>$1</h4>")
+              .replace(/(Solar Array Drive Mechanism) (-+)/g, "<h4>$1</h4>")
+              .replace(/(Equipment Quantity) (-+)/g, "<h4>$1</h4>")
+              .replace(/(HMC) (-+)/g, "<h4>$1</h4>")
+              .replace(/(NMS) (-+)/g, "<h4>$1</h4>")
+              .replace(/(IMS\/HIS) (-+)/g, "<h4>$1</h4>")
+              .replace(/(IMS\/HERS) (-+)/g, "<h4>$1</h4>")
+              .replace(/(PIA) (-+)/g, "<h4>$1</h4>")
+              .replace(/(DID\/MSM) (-+)/g, "<h4>$1</h4>")
+              .replace(/(\.|\\|\/) ([^\\/.-=]*) (-){10,}/g, "$1<h4>$2</h4>")
+              .replace("Spacecraft Configuration for Cruise and Approach ------------------------------------------------", "<h4>Spacecraft Configuration for Cruise and Approach</h4>")
+              .replace("Spacecraft Configuration for Entry, Descent, and Landing --------------------------------------------------------", "<h3>Spacecraft Configuration for Entry, Descent, and Landing</h3>")
+              .replace("Rover on the Surface of Mars ----------------------------", "<h4>Rover on the Surface of Mars</h4>")
+              .replace("Instrument Host Overview - Mars Reconnaissance Orbiter ======================================================", "<h3>Instrument Host Overview - Mars Reconnaissance Orbiter</h3>")
+              .replace("Instrument Host Overview - 2001 Mars Odyssey ============================================", "<h3>Instrument Host Overview - 2001 Mars Odyssey</h3>")
+              .replace("Spacecraft Coordinate System ----------------------------", "<h4>Spacecraft Coordinate System</h4>")
+              .replace("Telecommunications Subsystem ----------------------------", "<h4>Telecommunications Subsystem</h4>")
+              .replace("Attitude and Articulation Control Subsystem -------------------------------------------", "<h4>Attitude and Articulation Control Subsystem</h4>")
+              .replace("Propulsion Subsystem --------------------", "<h4>Propulsion Subsystem</h4>")
+              .replace("Power Subsystem ---------------", "<h4>Power Subsystem</h4>")
+              .replace("Mission Overview ================","<h3>Mission Overview</h3>")
+              .replace("Mission Phases ==============","<h3>Mission Phases</h3>")
+              .replace("VOYAGER 1 LAUNCH ----------------", "<h4>VOYAGER 1 LAUNCH</h4>")
+              .replace("VOYAGER 1 EARTH-JUPITER CRUISE ------------------------------", "<h4>VOYAGER 1 EARTH-JUPITER CRUISE</h4>")
+              .replace("VOYAGER 1 JUPITER ENCOUNTER ---------------------------", "<h4>VOYAGER 1 JUPITER ENCOUNTER</h4>")
+              .replace("VOYAGER 1 JUPITER-SATURN CRUISE -------------------------------", "<h4>VOYAGER 1 JUPITER-SATURN CRUISE</h4>")
+              .replace("VOYAGER 1 SATURN ENCOUNTER --------------------------", "<h4>VOYAGER 1 SATURN ENCOUNTER</h4>")
+              .replace("VOYAGER 1 INTERSTELLAR MISSION ------------------------------", "<h4>VOYAGER 1 INTERSTELLAR MISSION</h4>")
+              .replace("VOYAGER 2 LAUNCH ----------------", "<h4>VOYAGER 2 LAUNCH</h4>")
+              .replace("VOYAGER 2 EARTH-JUPITER CRUISE ------------------------------", "<h4>VOYAGER 2 EARTH-JUPITER CRUISE</h4>")
+              .replace("VOYAGER 2 JUPITER ENCOUNTER ---------------------------", "<h4>VOYAGER 2 JUPITER ENCOUNTER</h4>")
+              .replace("VOYAGER 2 JUPITER-SATURN CRUISE -------------------------------", "<h4>VOYAGER 2 JUPITER-SATURN CRUISE</h4>")
+              .replace("VOYAGER 2 SATURN ENCOUNTER --------------------------", "<h4>VOYAGER 2 SATURN ENCOUNTER</h4>")
+              .replace("VOYAGER 2 SATURN-URANUS CRUISE ------------------------------", "<h4>VOYAGER 2 SATURN-URANUS CRUISE</h4>")
+              .replace("VOYAGER 2 URANUS ENCOUNTER --------------------------", "<h4>VOYAGER 2 URANUS ENCOUNTER</h4>")
+              .replace("VOYAGER 2 URANUS-NEPTUNE CRUISE -------------------------------", "<h4>VOYAGER 2 URANUS-NEPTUNE CRUISE</h4>")
+              .replace("VOYAGER 2 NEPTUNE ENCOUNTER ---------------------------", "<h4>VOYAGER 2 NEPTUNE ENCOUNTER</h4>")
+              .replace("VOYAGER 2 INTERSTELLAR MISSION ------------------------------ ", "<h4>VOYAGER 2 INTERSTELLAR MISSION</h4>")
+              .replace("PI ------------------------------------------------- --------------------", "<h4>PI</h4>")
+              .replace("DEVELOPMENT -----------", "<h4>DEVELOPMENT</h4>")
+              .replace("ROVER LAUNCH ------", "<h4>ROVER LAUNCH</h4>")
+              .replace("ROVER CRUISE AND APPROACH -------------------", "<h4>ROVER CRUISE AND APPROACH</H4>")
+              .replace("ENTRY, DESCENT, AND LANDING ---------------------------", "<h4>ENTRY, DESCENT, AND LANDING</h4>")
+              .replace("PRIMARY SURFACE MISSION -----------------------", "<h4>PRIMARY SURFACE MISSION</h4>")
+              .replace("EXTENDED SURFACE MISSION ------------------------", "<h4>EXTENDED SURFACE MISSION</h4>")
+              .replace("LAUNCH ------", "<h4>LAUNCH</h4>")
+              .replace("CRUISE ------ ", "<h4>CRUISE</h4>")
+              .replace("APPROACH --------", "<h4>APPROACH</h4>")
+              .replace("POST-LANDING THROUGH EGRESS --------------------------- ", "<h4>POST-LANDING THROUGH EGRESS</h4>")
+              .replace("PRIMARY MISSION ---------------", "<h4>PRIMARY MISSION</h4>")
+              .replace(/EXTENDED MISSION ([0-9]) ------------------/g,"<h4>EXTENDED MISSION $1</h4>")
+              .replace("Cruise Objectives. -----------------", "<h4>Cruise Objectives.</h4>")
+              .replace("Saturn (Planet) Objectives. --------------------------", "<h4>Saturn (Planet) Objectives</h4>")
+              .replace(" Titan Objectives. ----------------", "<h4> Titan Objectives </h4>")
+              .replace("Icy Satellite Objectives. ------------------------ ", "<h4>Icy Satellite Objectives</h4>")
+              .replace("Ring Objectives. ---------------", "<h4>Ring Objectives</h4>")
+              .replace("Magnetosphere Objectives ------------------------", "<h4>Magnetosphere Objectives</h4>")
+              .replace("Acronyms and Abbreviations ==========================", "<h4>Acronyms and Abbreviations</h4>")
+              .replace("Computer Command Subsystem --------------------------", "<h4>Computer Command Subsystem</h4>")
+              .replace("Flight Data Subsystem ---------------------", "<h4>Flight Data Subsystem</h4>")
+              .replace("Science Boom ------------", "<h4>Science Boom</h4>")
+              .replace("Scan Platform -------------", "<h4>Scan Platform</h4>")
+              .replace("Magnetometer Boom -----------------", "<h4>Magnetometer Boom</h4>")
+              .replace("Science Sensors ---------------", "<h4>Science Sensors</h4>")
+              .replace("Power and Pyrotechnics Subsystem --------------------------------", "<h4>Power and Pyrotechnics Subsystem</h4>")
+              .replace("Command and Data Subsystem --------------------------", "<h4>Command and Data Subsystem</h4>")
+              .replace(/ ([0-9]|a|b|c|d|e|f)\)/g, "<br />$1)")
+            :
+            investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION]
   }
 
   useEffect(() => {
@@ -411,7 +449,7 @@ export const InvestigationDetailPage = (
               Investigations
             </Link>
             <Typography style={{ color: "white" }}>
-              {investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]}
+              {investigation[PDS4_INFO_MODEL.INVESTIGATION.NAME]}
             </Typography>
           </Breadcrumbs>
           <Grid container alignItems={"flex-end"}>
@@ -435,7 +473,7 @@ export const InvestigationDetailPage = (
                   fontWeight: "700",
                 }}
               >
-                {investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]}
+                {investigation[PDS4_INFO_MODEL.INVESTIGATION.NAME]}
               </Typography>
               <Typography
                 variant="subtitle1"
@@ -444,7 +482,7 @@ export const InvestigationDetailPage = (
                   marginTop: "8px"
                 }}
               >
-                {investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]}
+                {investigation[PDS4_INFO_MODEL.INVESTIGATION.NAME]}
               </Typography>
               <InvestigationStatus stopDate={investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE]} />
             </Grid>
@@ -638,6 +676,7 @@ export const InvestigationDetailPage = (
                                 return <FeaturedInstrumentLinkListItem
                                   key={instrument[PDS4_INFO_MODEL.LID]}
                                   description={instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION].toString()}
+                                  lid={instrument[PDS4_INFO_MODEL.LID]}
                                   primaryAction={ () => {} }
                                   title={instrument[PDS4_INFO_MODEL.INSTRUMENT.NAME]}
                                   bundles={getRelatedInstrumentBundles(instrument[PDS4_INFO_MODEL.LID])}
@@ -812,7 +851,7 @@ export const InvestigationDetailPage = (
                                 description={target[PDS4_INFO_MODEL.TARGET.DESCRIPTION].toString()}
                                 lid={target[PDS4_INFO_MODEL.LID]}
                                 primaryAction={ () => {} }
-                                tags={['Tag 1', 'Tag 2', 'Tag 3']}
+                                tags={['Tag Label 1', 'Tag Label 2', 'Tag label with a very long title']}
                                 title={target[PDS4_INFO_MODEL.TARGET.NAME]}
                                 type={target[PDS4_INFO_MODEL.TARGET.TYPE]}
                               />
@@ -848,7 +887,7 @@ export const InvestigationDetailPage = (
                   }}>Tools</Typography>
                   {
                     
-                    ["Tool Name", "Tool Name", "Tool Name"].map(tool => {
+                    ["Tool Title 1", "Tool Title 2", "Tool Title 3"].map(tool => {
                       return (
                         <AnchorLink href={"#title_" + tool.replace(" ","_").toLowerCase()} sx={{
                           textDecoration: "none",
@@ -886,27 +925,45 @@ export const InvestigationDetailPage = (
               </Grid>
               <Grid item md={10}>
                 <Typography variant='body1' sx={{paddingBottom: "32px"}}>The PDS maintains many tools enabling users to work with the data in our archive. Listed below are tools that can assist you when exploring the data holding for this investigation.</Typography>
-                <FeaturedToolLinkListItem
-                    key={1}
-                    description={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus porttitor lorem ac velit laoreet, eu dapibus ante pellentesque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla blandit elit vel libero porttitor, ut ultrices sem facilisis. Maecenas egestas dignissim lacus vitae blandit. Ut in nulla nec lorem tempus elementum sed a nisl. Nunc nisl lacus, faucibus at vulputate id, viverra vitae nibh. Nam quis tortor enim. Phasellus ultrices sit amet felis sit amet consequat. Etiam a cursus ex. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Maecenas id commodo turpis.".substring(0,275).concat("...")}
-                    primaryAction={ () => {} }
-                    tags={toolTags}
-                    title={"Tool Name"}
-                />
-                <FeaturedToolLinkListItem
-                    key={2}
-                    description={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus porttitor lorem ac velit laoreet, eu dapibus ante pellentesque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla blandit elit vel libero porttitor, ut ultrices sem facilisis. Maecenas egestas dignissim lacus vitae blandit. Ut in nulla nec lorem tempus elementum sed a nisl. Nunc nisl lacus, faucibus at vulputate id, viverra vitae nibh. Nam quis tortor enim. Phasellus ultrices sit amet felis sit amet consequat. Etiam a cursus ex. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Maecenas id commodo turpis.".substring(0,275).concat("...")}
-                    primaryAction={ () => {} }
-                    tags={toolTags}
-                    title={"Tool Name"}
-                />
-                <FeaturedToolLinkListItem
-                    key={3}
-                    description={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus porttitor lorem ac velit laoreet, eu dapibus ante pellentesque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla blandit elit vel libero porttitor, ut ultrices sem facilisis. Maecenas egestas dignissim lacus vitae blandit. Ut in nulla nec lorem tempus elementum sed a nisl. Nunc nisl lacus, faucibus at vulputate id, viverra vitae nibh. Nam quis tortor enim. Phasellus ultrices sit amet felis sit amet consequat. Etiam a cursus ex. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Maecenas id commodo turpis.".substring(0,275).concat("...")}
-                    primaryAction={ () => {} }
-                    tags={toolTags}
-                    title={"Tool Name"}
-                />
+                {
+                  [
+                    {
+                      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In vulputate scelerisque ligula, sit amet molestie quam faucibus sed. Aenean mattis a sapien ut aliquet.",
+                      tags: [
+                        {label:'Tag Label 1'},
+                        {label:'Tag Label 2'},
+                        {label:'Tag Label With a Really Long Title'}
+                      ],
+                      title: "Tool Title 1",
+                    },
+                    {
+                      description: "Etiam suscipit varius nulla, quis congue neque blandit quis. Donec convallis quam nulla, nec ultrices nunc congue eu. Quisque aliquam urna quis maximus ultrices. ",
+                      tags: [
+                        {label:'Tag Label 1'},
+                        {label:'Tag Label 2'},
+                        {label:'Tag Label With a Really Long Title'}
+                      ],
+                      title: "Tool Title 2",
+                    },
+                    {
+                      description: "Sed rhoncus tortor posuere augue ultrices pretium. Phasellus blandit tortor leo, sed consequat lacus ultricies ut.",
+                      tags: [
+                        {label:'Tag Label 1'},
+                        {label:'Tag Label 2'},
+                        {label:'Tag Label With a Really Long Title'}
+                      ],
+                      title: "Tool Title 3",
+                    }
+                  ].map( (item, index) => {
+                    return <FeaturedToolLinkListItem
+                      key={index}
+                      description={item.description.substring(0,200).concat("...")}
+                      primaryAction={ () => {} }
+                      tags={item.tags}
+                      title={item.title}
+                    />
+                  })
+                }
               </Grid>
             </Grid>
           </CustomTabPanel>
@@ -1013,7 +1070,7 @@ export const InvestigationDetailPage = (
                       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In vulputate scelerisque ligula, sit amet molestie quam faucibus sed. Aenean mattis a sapien ut aliquet.",
                       format: "PDF",
                       size: "1.04MB",
-                      tags: ['Tag 1', 'Tag 2', 'Tag 3'],
+                      tags: ['Tag Label 1', 'Tag Label 2', 'Tag Label with a really long title'],
                       title: "Resource Title 1",
                       version: "1.1",
                       year: "2022"
@@ -1022,7 +1079,7 @@ export const InvestigationDetailPage = (
                       description: "Etiam suscipit varius nulla, quis congue neque blandit quis. Donec convallis quam nulla, nec ultrices nunc congue eu. Quisque aliquam urna quis maximus ultrices. ",
                       format: "PDF",
                       size: "1.83MB",
-                      tags: ['Tag 1', 'Tag 2', 'Tag 3'],
+                      tags: ['Tag Label 1', 'Tag Label 2', 'Tag Label with a really long title'],
                       title: "Resource Title 2",
                       version: "1.0",
                       year: "2019"
@@ -1030,8 +1087,8 @@ export const InvestigationDetailPage = (
                     {
                       description: "Sed rhoncus tortor posuere augue ultrices pretium. Phasellus blandit tortor leo, sed consequat lacus ultricies ut.",
                       format: "PDF",
-                      size: "99 KB",
-                      tags: ['Tag 1', 'Tag 2', 'Tag 3'],
+                      size: "99KB",
+                      tags: ['Tag Label 1', 'Tag Label 2', 'Tag Label with a really long title'],
                       title: "Resource Title 3",
                       version: "1.2",
                       year: "2018"
@@ -1040,7 +1097,7 @@ export const InvestigationDetailPage = (
                       description: "Praesent mauris nisl, rutrum at mattis quis, condimentum non nulla. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
                       format: "PDF",
                       size: "2.23MB",
-                      tags: ['Tag 1', 'Tag 2', 'Tag 3'],
+                      tags: ['Tag Label 1', 'Tag Label 2', 'Tag Label with a really long title'],
                       title: "Resource Title 4",
                       version: "1.0",
                       year: "2017"
@@ -1073,7 +1130,8 @@ export const InvestigationDetailPage = (
  */
 const mapStateToProps = (state: RootState) => {
 
-  const { investigationLid, investigationVersion } = useParams();
+  let { investigationLid, investigationVersion } = useParams();
+  investigationLid = convertLogicalIdentifier(investigationLid, LID_FORMAT.DEFAULT);
   const investigation:Investigation = selectInvestigationVersion(state, investigationLid, investigationVersion);
   const instrumentHosts:InstrumentHost[] = selectLatestInstrumentHostsForInvestigation(state, investigation[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST]);
   const instruments = new Array( instrumentHosts.length );

@@ -7,11 +7,13 @@ import Stack from '@mui/material/Stack';
 import ArrowForward from '@mui/icons-material/ArrowForward';
 import { Link } from '@mui/material';
 
+type PrimaryActionFunction = () => void;
+
 export type FeaturedInvestigationLinkListItemProps = {
   affiliated_spacecraft: string,
   description: string,
   investigation_type: string,
-  primaryAction:Function,
+  primaryAction:PrimaryActionFunction,
   title: string,
 }
 

@@ -23,7 +23,7 @@ const selectInstrumentHosts = (state:RootState): InstrumentHostItems => {
  */
 export const selectLatestVersionInstrumentHosts = createSelector([selectInstrumentHosts], (instrumentHosts) => {
 
-  let latestInstrumentHost:InstrumentHost[] = [];
+  const latestInstrumentHost:InstrumentHost[] = [];
   
   // Find the latest version of each instrument and store it in an array
   let latestVersion:string = "";

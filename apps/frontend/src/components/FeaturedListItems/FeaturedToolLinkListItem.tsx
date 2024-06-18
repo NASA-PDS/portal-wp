@@ -7,9 +7,11 @@ import ArrowForward from '@mui/icons-material/ArrowForward';
 import { Link, Stack } from '@mui/material';
 import { Tag } from '@nasapds/wds-react';
 
+type PrimaryActionFunction = () => void;
+
 export type FeaturedToolLinkListItemProps = {
   description: string,
-  primaryAction:Function,
+  primaryAction:PrimaryActionFunction,
   tags:Array<Object>
   title:string,
 }

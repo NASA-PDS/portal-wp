@@ -7,6 +7,7 @@ import FeaturedInvestigationLinkListItem from "src/components/FeaturedListItems/
 import { selectLatestInstrumentHostsForInvestigation } from "src/state/selectors/instrumentHost";
 import { RootState, store } from "src/state/store";
 import { InstrumentHost } from "src/types/instrumentHost.d";
+import { convertLogicalIdentifier, LID_FORMAT } from "src/utils/strings";
 
 type InvestigationsIndexedListComponentProps = {
   investigations: Investigation[];
@@ -24,7 +25,7 @@ const getItemsByIndex = (
   index: string
 ): Investigation[] => {
   return arr.filter((item) => {
-    return item[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]
+    return item[PDS4_INFO_MODEL.INVESTIGATION.NAME]
       .toUpperCase()
       .startsWith(index.toUpperCase());
   });
@@ -32,7 +33,7 @@ const getItemsByIndex = (
 
 function getAffiliatedSpacecraft(state:RootState, investigation:Investigation) {
   return selectLatestInstrumentHostsForInvestigation(state, investigation[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST])?.reduce(
-    (accumulator, item:InstrumentHost) => { return accumulator === "" ? accumulator += item[PDS4_INFO_MODEL.TITLE] : accumulator += ", ".concat(item[PDS4_INFO_MODEL.TITLE]) }, ''
+    (accumulator, item:InstrumentHost) => { return accumulator === "" ? accumulator += item[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME] : accumulator += ", ".concat(item[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME]) }, ''
   )
 }
 
@@ -43,6 +44,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
   const state = store.getState();
 
   const investigationListItemPrimaryAction = (params:InvestigationDetailPathParams) => {
+    params.lid = convertLogicalIdentifier(params.lid,LID_FORMAT.URL_FRIENDLY);
     navigate( generatePath("/investigations/:lid/:version/instruments", params) );
   };
 
@@ -194,7 +196,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                           investigation_type={ investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE] }
                           primaryAction={ () => investigationListItemPrimaryAction({ lid: investigation.lid, version: investigation.vid }) }
                           key={investigation[PDS4_INFO_MODEL.LID]}
-                          title={ investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE] }
+                          title={ investigation[PDS4_INFO_MODEL.INVESTIGATION.NAME] }
                         />
                       );
                     }

@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 
-import investigationsReducer from "src/state/slices/investigationsSlice";
-import targetsReducer from "src/state/slices/targetsSlice";
+import investigationsSlice from "src/state/slices/investigationsSlice";
+import targetsSlice from "src/state/slices/targetsSlice";
 import dataManagerSlice from './slices/dataManagerSlice';
 import instrumentHostsSlice from './slices/instrumentHostsSlice';
 import instrumentsSlice from './slices/instrumentsSlice';
@@ -11,8 +11,8 @@ export const store = configureStore({
     dataManager: dataManagerSlice,
     instrumentHosts: instrumentHostsSlice,
     instruments: instrumentsSlice,
-    investigations: investigationsReducer,
-    targets: targetsReducer
+    investigations: investigationsSlice,
+    targets: targetsSlice
   }
 });
 

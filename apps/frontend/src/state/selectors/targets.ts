@@ -23,7 +23,7 @@ const selectTargets = (state:RootState): TargetItems => {
  */
 export const selectLatestVersionTargets = createSelector([selectTargets], (targets) => {
 
-  let latestTargets:Target[] = [];
+  const latestTargets:Target[] = [];
   
   // Find the latest version of each target and store it in an array
   let latestVersion:string = "";

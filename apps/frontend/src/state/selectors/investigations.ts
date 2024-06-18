@@ -39,7 +39,7 @@ export const selectInvestigationVersion = (state:RootState, lid:string, version:
  */
 export const selectLatestVersionInvestigations = createSelector([selectInvestigations], (investigations) => {
 
-  let latestInvestigations:Investigation[] = [];
+  const latestInvestigations:Investigation[] = [];
   
   // Find the latest version of each investigation and store it in an array
   let latestVersion:string = "";
@@ -60,9 +60,9 @@ export const selectLatestVersionInvestigations = createSelector([selectInvestiga
 
   // Sort investigations alphabetically by title
   latestInvestigations.sort( (a:Investigation,b:Investigation) => {
-    if( a[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase() < b[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase() ) {
+    if( a[PDS4_INFO_MODEL.INVESTIGATION.NAME].toLowerCase() < b[PDS4_INFO_MODEL.INVESTIGATION.NAME].toLowerCase() ) {
       return -1
-    } else if( a[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase() > b[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase() ) {
+    } else if( a[PDS4_INFO_MODEL.INVESTIGATION.NAME].toLowerCase() > b[PDS4_INFO_MODEL.INVESTIGATION.NAME].toLowerCase() ) {
       return 1
     }
     return 0;
@@ -75,7 +75,7 @@ export const selectLatestVersionInvestigations = createSelector([selectInvestiga
   return latestInvestigations.filter(
     (item) => {
       return (
-        item[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase().includes(searchFilters?.freeText || "")
+        item[PDS4_INFO_MODEL.INVESTIGATION.NAME].toLowerCase().includes(searchFilters?.freeText || "")
         &&
         ( searchFilters.type === undefined || searchFilters.type === INVESTIGATION_TYPE.ALL || item[PDS4_INFO_MODEL.INVESTIGATION.TYPE] === searchFilters.type )
       )
@@ -90,9 +90,9 @@ export const selectFilteredInvestigations = createSelector(
 
     // Sort investigations alphabetically by title
     latestInvestigations.sort( (a:Investigation,b:Investigation) => {
-      if( a[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase() < b[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase() ) {
+      if( a[PDS4_INFO_MODEL.INVESTIGATION.NAME].toLowerCase() < b[PDS4_INFO_MODEL.INVESTIGATION.NAME].toLowerCase() ) {
         return -1
-      } else if( a[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase() > b[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase() ) {
+      } else if( a[PDS4_INFO_MODEL.INVESTIGATION.NAME].toLowerCase() > b[PDS4_INFO_MODEL.INVESTIGATION.NAME].toLowerCase() ) {
         return 1
       }
       return 0;
@@ -120,7 +120,7 @@ export const selectFilteredInvestigations = createSelector(
       )
     });
     // Get LIDS for instruments hosts of those that matched free-text search filter
-    let foundInstrumentHostLids:string[] = [];
+    const foundInstrumentHostLids:string[] = [];
     foundInstrumentLids.forEach( (instrument:Instrument) => {
       instrument[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST]?.forEach( (instrumentHost) => {
         if( !foundInstrumentHostLids.includes(instrumentHost) ) {
@@ -145,7 +145,7 @@ export const selectFilteredInvestigations = createSelector(
       (investigation) => {
         return (
           (
-            investigation[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE].toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
+            investigation[PDS4_INFO_MODEL.INVESTIGATION.NAME].toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
             ||
             investigation[PDS4_INFO_MODEL.LID].toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
             ||

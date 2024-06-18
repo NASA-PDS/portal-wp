@@ -35,63 +35,56 @@ const initialState:InvestigationsState = {
 };
 
 /**
- * Get all the investigations from the PDS OpenSearch API
+ * Get all the investigations from the PDS Search API
  */
 export const getInvestigations = createAsyncThunk(
   INVESTIGATION_ACTIONS.GET_INVESTIGATIONS,
   async (_:void, thunkAPI) => {
-    
-    const username = import.meta.env.VITE_OPENSEARCH_USERNAME;
-    const password = import.meta.env.VITE_OPENSEARCH_PASSWORD;
-    const url = import.meta.env.VITE_OPENSEARCH_DOMAIN + import.meta.env.VITE_OPENSEARCH_INDEX_REGISTRY + "/_search";
-    
-    const headers = {
-      "Content-Type": "application/json",
-      "Authorization": "Basic " + btoa(username + ":" + password)
-    }
-    
-    // Set up query
-    const query = {
-      "from": 0,
-      "size": 9999, // we must provide a size otherwise we only receive a limited number of results
-      "query": {
-        "wildcard": {
-          [PDS4_INFO_MODEL.LID]: {
-            "value": "urn:*:investigation:*"
-          }
-        }
-      },
-      "_source": {
-        "includes": [
-          PDS4_INFO_MODEL.LID,
-          PDS4_INFO_MODEL.LIDVID,
-          PDS4_INFO_MODEL.REF_LID_TARGET,
-          PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST,
-          PDS4_INFO_MODEL.REF_LID_INSTRUMENT,
-          PDS4_INFO_MODEL.VID,
-          PDS4_INFO_MODEL.ALIAS.ALTERNATE_ID,
-          PDS4_INFO_MODEL.ALIAS.ALTERNATE_TITLE,
-          PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE,
-          PDS4_INFO_MODEL.IDENTIFICATION_AREA.VERSION_ID,
-          PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION,
-          PDS4_INFO_MODEL.INVESTIGATION.TERSE_DESCRIPTION,
-          PDS4_INFO_MODEL.INVESTIGATION.NAME,
-          PDS4_INFO_MODEL.INVESTIGATION.START_DATE,
-          PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE,
-          PDS4_INFO_MODEL.INVESTIGATION.TYPE,
-        ]
+
+    let queryUrl = '/api/search/1/products?q=(lid like "urn:nasa:pds:context:investigation:*")&limit=9999'
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
       }
     };
     
+    const fields = [
+      PDS4_INFO_MODEL.LID,
+      PDS4_INFO_MODEL.LIDVID,
+      PDS4_INFO_MODEL.REF_LID_TARGET,
+      PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST,
+      PDS4_INFO_MODEL.REF_LID_INSTRUMENT,
+      PDS4_INFO_MODEL.VID,
+      PDS4_INFO_MODEL.ALIAS.ALTERNATE_ID,
+      PDS4_INFO_MODEL.ALIAS.ALTERNATE_TITLE,
+      PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION,
+      PDS4_INFO_MODEL.INVESTIGATION.NAME,
+      PDS4_INFO_MODEL.INVESTIGATION.START_DATE,
+      PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE,
+      PDS4_INFO_MODEL.INVESTIGATION.TYPE,
+    ];
+
+    // Add the specific fields that should be returned
+    queryUrl += "&fields=";
+    fields.forEach( (field, index) => {
+      queryUrl += field;
+      queryUrl += index < fields.length - 1 ? "," : "";
+    });
+    
+    if( import.meta.env.DEV ) {
+      // Output query URL to help with debugging only in DEV mode
+      console.info("Investigations API Query: ", queryUrl)
+    }
+
     try {
-      const response = await axios.post(url, query, {headers: headers});
+      const response = await axios.get(queryUrl, config);
       return response.data;
     } catch (err:unknown) {
       if( err instanceof Error ) {
         return thunkAPI.rejectWithValue({ error: err.message });
       }
     }
-    
+
   }
 );
 
@@ -124,34 +117,38 @@ const investigationsSlice = createSlice({
       state.status = "succeeded";
       
       // Store the fetched data into the state after parsing
-      const data = action.payload.hits.hits;
+      const data = action.payload.data;
 
       const compiledInvestigations:InvestigationItems = {};
-      data.forEach( (element:{_source:object}) => {
+      data.forEach( (element:{"summary":object, "properties":object}) => {
 
-        const source:Investigation = <Investigation>element["_source"];
+        const source:Investigation = <Investigation>element["properties"];
 
-        const lid = source[PDS4_INFO_MODEL.LID];
-        const vid = source[PDS4_INFO_MODEL.VID];
+        const lid = source[PDS4_INFO_MODEL.LID][0];
+        const vid = source[PDS4_INFO_MODEL.VID][0];
 
         const investigationItem:Investigation = <Investigation>{};
-        investigationItem[PDS4_INFO_MODEL.LID] = source[PDS4_INFO_MODEL.LID];
-        investigationItem[PDS4_INFO_MODEL.LIDVID] = source[PDS4_INFO_MODEL.LIDVID];
+
+        // Update General Information
+        investigationItem[PDS4_INFO_MODEL.LID] = source[PDS4_INFO_MODEL.LID][0];
+        investigationItem[PDS4_INFO_MODEL.LIDVID] = source[PDS4_INFO_MODEL.LIDVID][0];
         investigationItem[PDS4_INFO_MODEL.REF_LID_INSTRUMENT] = source[PDS4_INFO_MODEL.REF_LID_INSTRUMENT];
         investigationItem[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST] = source[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST];
         investigationItem[PDS4_INFO_MODEL.REF_LID_TARGET] = source[PDS4_INFO_MODEL.REF_LID_TARGET];
-        investigationItem[PDS4_INFO_MODEL.VID] = source[PDS4_INFO_MODEL.VID];
-        investigationItem[PDS4_INFO_MODEL.ALIAS.ALTERNATE_ID] = source[PDS4_INFO_MODEL.ALIAS.ALTERNATE_ID];
-        investigationItem[PDS4_INFO_MODEL.ALIAS.ALTERNATE_TITLE] = source[PDS4_INFO_MODEL.ALIAS.ALTERNATE_TITLE];
-        investigationItem[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE] = source[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE][0];
-        investigationItem[PDS4_INFO_MODEL.IDENTIFICATION_AREA.VERSION_ID] = source[PDS4_INFO_MODEL.IDENTIFICATION_AREA.VERSION_ID][0];
-        investigationItem[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION] = source[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION][0];
-        investigationItem[PDS4_INFO_MODEL.INVESTIGATION.NAME] = source[PDS4_INFO_MODEL.INVESTIGATION.NAME] ? source[PDS4_INFO_MODEL.INVESTIGATION.NAME][0] : "";
-        investigationItem[PDS4_INFO_MODEL.INVESTIGATION.START_DATE] = source[PDS4_INFO_MODEL.INVESTIGATION.START_DATE][0];
-        investigationItem[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE] = source[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE][0];
-        investigationItem[PDS4_INFO_MODEL.INVESTIGATION.TERSE_DESCRIPTION] = source[PDS4_INFO_MODEL.INVESTIGATION.TERSE_DESCRIPTION] ? source[PDS4_INFO_MODEL.INVESTIGATION.TERSE_DESCRIPTION][0] : "";
-        investigationItem[PDS4_INFO_MODEL.INVESTIGATION.TYPE] = source[PDS4_INFO_MODEL.INVESTIGATION.TYPE][0];
+        investigationItem[PDS4_INFO_MODEL.VID] = source[PDS4_INFO_MODEL.VID][0];
 
+        // Update Alias Information
+        investigationItem[PDS4_INFO_MODEL.ALIAS.ALTERNATE_ID] = source[PDS4_INFO_MODEL.ALIAS.ALTERNATE_ID] ? source[PDS4_INFO_MODEL.ALIAS.ALTERNATE_ID] : [];
+        investigationItem[PDS4_INFO_MODEL.ALIAS.ALTERNATE_TITLE] = source[PDS4_INFO_MODEL.ALIAS.ALTERNATE_TITLE] ? source[PDS4_INFO_MODEL.ALIAS.ALTERNATE_TITLE] : [];
+
+        // Update Investigation Information
+        investigationItem[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION] = source[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION] ? source[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION][0] : "";
+        investigationItem[PDS4_INFO_MODEL.INVESTIGATION.NAME] = source[PDS4_INFO_MODEL.INVESTIGATION.NAME] ? source[PDS4_INFO_MODEL.INVESTIGATION.NAME][0] : "";
+        investigationItem[PDS4_INFO_MODEL.INVESTIGATION.START_DATE] = source[PDS4_INFO_MODEL.INVESTIGATION.START_DATE] ? source[PDS4_INFO_MODEL.INVESTIGATION.START_DATE][0] : "";
+        investigationItem[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE] = source[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE] ? source[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE][0] : "";
+        investigationItem[PDS4_INFO_MODEL.INVESTIGATION.TERSE_DESCRIPTION] = source[PDS4_INFO_MODEL.INVESTIGATION.TERSE_DESCRIPTION] ? source[PDS4_INFO_MODEL.INVESTIGATION.TERSE_DESCRIPTION][0] : "";
+        investigationItem[PDS4_INFO_MODEL.INVESTIGATION.TYPE] = source[PDS4_INFO_MODEL.INVESTIGATION.TYPE] ? source[PDS4_INFO_MODEL.INVESTIGATION.TYPE][0] : "";
+        
         if( compiledInvestigations[lid] === undefined ) {
           compiledInvestigations[lid] = {};
         }
@@ -159,7 +156,7 @@ const investigationsSlice = createSlice({
         compiledInvestigations[lid][vid] = <Investigation>investigationItem;
 
       });
-      
+
       state.items = compiledInvestigations;
 
     });
