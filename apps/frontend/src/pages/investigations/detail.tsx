@@ -389,7 +389,12 @@ export const InvestigationDetailPage = (
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     event.preventDefault();
-    navigate( generatePath("/investigations/:lid/:version/:tabLabel", {lid: investigationLid, version: investigationVersion, tabLabel: tabs[newValue].toLowerCase()}) );
+    const params = {
+      lid: investigationLid || null,
+      version: investigationVersion || null,
+      tabLabel: tabs[newValue].toLowerCase()
+    };
+    navigate( generatePath("/investigations/:lid/:version/:tabLabel", params) );
   }
 
   const handleInstrumentHostChange = (event:SyntheticEvent) => {
