@@ -20,20 +20,6 @@ export type FeaturedTargetLinkListItemProps = {
   type:string,
 }
 
-const styles = {
-  link: {
-    color: '#1C67E3',
-    fontSize: "11px",
-    fontFamily: 'Inter',
-    fontWeight: '700',
-    textDecoration: 'underline',
-    textTransform: 'uppercase',
-    lineHeight: "19px",
-    letterSpacing: "0.25px",
-    wordWrap: 'break-word'
-  }
-}
-
 export const FeaturedTargetLinkListItem = ({
   description = '',
   lid,

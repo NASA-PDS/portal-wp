@@ -1,5 +1,3 @@
-import React from 'react';
-
 const ToolsDirectoryPage = () => {
   return <h1>Tools Directory Page</h1>;
 };

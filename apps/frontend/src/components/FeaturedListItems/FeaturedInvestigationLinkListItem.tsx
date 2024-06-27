@@ -5,7 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import ArrowForward from '@mui/icons-material/ArrowForward';
-import { Button, Link } from '@mui/material';
+import { Link } from '@mui/material';
 
 type PrimaryActionFunction = () => void;
 

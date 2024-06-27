@@ -5,9 +5,8 @@ import IconButton from '@mui/material/IconButton';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import ArrowForward from '@mui/icons-material/ArrowForward';
-import { Link as AnchorLink } from '@mui/material';
+import { Link } from '@mui/material';
 import { useState } from 'react';
-import { Link } from "react-router-dom";
 import { stringCleanup } from 'src/utils/strings';
 
 type PrimaryActionFunction = () => void;
@@ -19,22 +18,6 @@ export type FeaturedInstrumentLinkListItemProps = {
   title:string,
   bundles:[]
 }
-
-const styles = {
-  link: {
-    color: '#1C67E3',
-    fontSize: "11px",
-    fontFamily: 'Inter',
-    fontWeight: '700',
-    textDecoration: 'underline',
-    textTransform: 'uppercase',
-    lineHeight: "19px",
-    letterSpacing: "0.25px",
-    wordWrap: 'break-word'
-  }
-}
-
-
 
 export const FeaturedInstrumentLinkListItem = ({
   bundles = [],
@@ -79,7 +62,7 @@ export const FeaturedInstrumentLinkListItem = ({
             </IconButton>
           </Grid>
           <Grid item xs={4}>
-            <AnchorLink component="button" onClick={() => primaryAction()}
+            <Link component="button" onClick={() => primaryAction()}
               sx={{
                 textAlign: "left",
                 color: "#000000",
@@ -96,7 +79,7 @@ export const FeaturedInstrumentLinkListItem = ({
               }}>
                 {title}
               </Typography>
-            </AnchorLink>
+            </Link>
           </Grid>
           <Grid item xs={5}>
             <Typography
@@ -183,7 +166,7 @@ export const FeaturedInstrumentLinkListItem = ({
             marginBottom: "8px",
           }}
         >
-          <AnchorLink component="button" onClick={() => primaryAction()}
+          <Link component="button" onClick={() => primaryAction()}
             sx={{
               textAlign: "left",
               color: "#000000",
@@ -193,7 +176,7 @@ export const FeaturedInstrumentLinkListItem = ({
             <Typography variant="subtitle2" display="inline">
               {title}
             </Typography>
-          </AnchorLink>
+          </Link>
 
           <Typography variant="body1" gutterBottom
             sx={{
@@ -291,118 +274,6 @@ export const FeaturedInstrumentLinkListItem = ({
               }}>No Bundles Found.</Typography>
             }
           </Box>
-          {/*
-          <Box sx={{
-            marginBottom: "20px"
-          }}>
-            <Typography sx={{
-              color: 'black',
-              fontSize: "14px",
-              fontFamily: 'Inter',
-              fontWeight: '600',
-              lineHeight: "19px",
-              wordWrap: 'break-word'
-            }}>
-              Raw Data Products
-            </Typography>
-            {
-              [
-                {title:"Lorem Ipsum", description: "Description lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc accumsan posuere dui non scelerisque."},
-              ].map( item => {
-                return <Box sx={{
-                  marginBottom: "5px"
-                }}>
-                  <Link style={styles.link}>{item.title}</Link>
-                  <Typography sx={{
-                    marginLeft: "32px",
-                    color: '#17171B',
-                    fontSize: "11px",
-                    fontFamily: 'Inter',
-                    fontWeight: '400',
-                    textTransform: 'uppercase',
-                    lineHeight: "19px",
-                    letterSpacing: "0.25px",
-                    wordWrap: 'break-word'
-                  }}>{item.description}</Typography>
-                </Box>
-              })
-            }
-          </Box>
-          <Box sx={{
-            marginBottom: "20px"
-          }}>
-            <Typography sx={{
-              color: 'black',
-              fontSize: "14px",
-              fontFamily: 'Inter',
-              fontWeight: '600',
-              lineHeight: "19px",
-              wordWrap: 'break-word'
-            }}>
-              Derived Data Products
-            </Typography>
-            {
-              [
-                {title:"Lorem Ipsum", description: "Description lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc accumsan posuere dui non scelerisque."},
-                {title:"Lorem Ipsum", description: "Description lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc accumsan posuere dui non scelerisque."},
-                {title:"Lorem Ipsum", description: "Description lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc accumsan posuere dui non scelerisque."},
-              ].map( item => {
-                return <Box sx={{
-                  marginBottom: "5px"
-                }}>
-                  <Link style={styles.link}>{item.title}</Link>
-                  <Typography sx={{
-                    marginLeft: "32px",
-                    color: '#17171B',
-                    fontSize: "11px",
-                    fontFamily: 'Inter',
-                    fontWeight: '400',
-                    textTransform: 'uppercase',
-                    lineHeight: "19px",
-                    letterSpacing: "0.25px",
-                    wordWrap: 'break-word'
-                  }}>{item.description}</Typography>
-                </Box>
-              })
-            }
-          </Box>
-          <Box sx={{
-            marginBottom: "20px"
-          }}>
-            <Typography sx={{
-              color: 'black',
-              fontSize: "14px",
-              fontFamily: 'Inter',
-              fontWeight: '600',
-              lineHeight: "19px",
-              wordWrap: 'break-word'
-            }}>
-              Derived Data Products from Investigators
-            </Typography>
-            {
-              [
-                {title:"Lorem Ipsum", description: "Description lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc accumsan posuere dui non scelerisque."},
-                {title:"Lorem Ipsum", description: "Description lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc accumsan posuere dui non scelerisque."},
-              ].map( item => {
-                return <Box sx={{
-                  marginBottom: "5px"
-                }}>
-                  <Link style={styles.link}>{item.title}</Link>
-                  <Typography sx={{
-                    marginLeft: "32px",
-                    color: '#17171B',
-                    fontSize: "11px",
-                    fontFamily: 'Inter',
-                    fontWeight: '400',
-                    textTransform: 'uppercase',
-                    lineHeight: "19px",
-                    letterSpacing: "0.25px",
-                    wordWrap: 'break-word'
-                  }}>{item.description}</Typography>
-                </Box>
-              })
-            }
-          </Box>*/}
         </Box>
         : <></>
       }

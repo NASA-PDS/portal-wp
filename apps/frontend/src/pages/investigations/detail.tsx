@@ -2,7 +2,7 @@ import { Box, Breadcrumbs, Button, Container, Link as AnchorLink, Grid, Stack, T
 import { dataRequiresFetchOrUpdate, getData } from "src/state/slices/dataManagerSlice";
 import { generatePath, Link, useNavigate, useParams } from "react-router-dom";
 import { Instrument, InstrumentHost, Investigation, Target } from "src/types";
-import React, { useEffect, useState } from "react";
+import React, { SyntheticEvent, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "src/state/hooks";
 import { connect } from "react-redux";
 import FeaturedInstrumentLinkListItem from "src/components/FeaturedListItems/FeaturedInstrumentLinkListItem";
@@ -25,6 +25,11 @@ interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
+}
+
+type Stats = {
+  label: string;
+  value: string;
 }
 
 function CustomTabPanel(props: TabPanelProps) {
@@ -106,11 +111,6 @@ export const InvestigationDetailPage = (
   ];
   
   const [value, setValue] = useState(tabs.findIndex( (tab) => tab == tabLabel?.toLowerCase()));
-  const toolTags = [
-    {label:'Tag Label 1'},
-    {label:'Tag Label 2'},
-    {label:'Tag Label With a Really Long Title'}
-  ];
 
   const getRelatedInstrumentBundles = (lid:string) => {
     return bundles[selectedInstrumentHost].filter( (bundleList) => {
@@ -392,11 +392,13 @@ export const InvestigationDetailPage = (
     navigate( generatePath("/investigations/:lid/:version/:tabLabel", {lid: investigationLid, version: investigationVersion, tabLabel: tabs[newValue].toLowerCase()}) );
   }
 
-  const handleInstrumentHostChange = (event) => {
+  const handleInstrumentHostChange = (event:SyntheticEvent) => {
     event.preventDefault();
-    const instrumentHostIndex = event.target.getAttribute("data-instrument-host-index");
 
-    setSelectedInstrumentHost(instrumentHostIndex);
+    const instrumentHostIndex = event.currentTarget.getAttribute("data-instrument-host-index");
+    if( instrumentHostIndex !== null ) {
+      setSelectedInstrumentHost(parseInt(instrumentHostIndex))
+    }
   };
 
   return (
