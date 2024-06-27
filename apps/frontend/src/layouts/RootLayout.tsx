@@ -9,6 +9,11 @@ const navItems = [
     href: "/find-data",
     items: [
       {
+        id: "find-data-investigations",
+        label: "Investigations",
+        href: "/investigations",
+      },
+      /*{
         id: "find-data-1",
         label: "Find Data Link 1",
         href: "/find-data/find-data-link-1",
@@ -17,12 +22,7 @@ const navItems = [
         id: "find-data-2",
         label: "Find Data Link 2",
         href: "/find-data/find-data-link-2",
-      },
-      {
-        id: "find-data-3",
-        label: "Find Data Link 3",
-        href: "/find-data/find-data-link-3",
-      },
+      },*/
     ],
   },
   {
