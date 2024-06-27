@@ -56,10 +56,12 @@ export const FeaturedInstrumentLinkListItem = ({
     }}>
       <Box sx={{ width: "100%"}}>
         <Grid container spacing={2} sx={{
-          minHeight: "64px",
-          paddingY: "10px",
-          alignItems: "center"
-        }}>
+            minHeight: "64px",
+            paddingY: "10px",
+            alignItems: "center"
+          }}
+          display={{xs: "none", md: "flex"}}
+        >
           <Grid item xs={1}>
             <IconButton onClick={toggleDetails}>
               {
@@ -74,7 +76,6 @@ export const FeaturedInstrumentLinkListItem = ({
                     <path fillRule="evenodd" clipRule="evenodd" d="M11.0552 10L7.80005 6.76716L8.57249 6L12.6 10L8.57249 14L7.80005 13.2328L11.0552 10Z" fill="black"/>
                   </svg>
               }
-
             </IconButton>
           </Grid>
           <Grid item xs={4}>
@@ -152,10 +153,90 @@ export const FeaturedInstrumentLinkListItem = ({
             </Stack>
           </Grid>
         </Grid>
-        <Divider sx={{
-          marginTop: "15px",
-        }}/>
       </Box>
+      <Stack 
+        sx={{
+          padding: "20px 20px 20px 0px",
+        }}
+        display={{xs: "flex", md: "none"}}
+        direction={"row"}
+        alignItems={"top"}
+      >
+        <Box sx={{height: "100%"}}>
+          <IconButton onClick={toggleDetails}>
+            {
+              showDetails ?
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="10" cy="10.0004" r="9.5" stroke="black"/>
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M10 11.0555L13.2328 7.80042L14 8.57286L10 12.6004L6 8.57286L6.76716 7.80042L10 11.0555Z" fill="black"/>
+                </svg>
+              :
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="10" cy="10" r="9.5" transform="rotate(-90 10 10)" stroke="black"/>
+                  <path fillRule="evenodd" clipRule="evenodd" d="M11.0552 10L7.80005 6.76716L8.57249 6L12.6 10L8.57249 14L7.80005 13.2328L11.0552 10Z" fill="black"/>
+                </svg>
+            }
+          </IconButton>
+        </Box>
+        <Stack alignItems="left" gap={1} sx={{
+            paddingLeft: "15px",
+            marginBottom: "8px",
+          }}
+        >
+          <AnchorLink component="button" onClick={() => primaryAction()}
+            sx={{
+              textAlign: "left",
+              color: "#000000",
+              textDecoration: "none",
+              cursor: "pointer"
+            }}>
+            <Typography variant="subtitle2" display="inline">
+              {title}
+            </Typography>
+          </AnchorLink>
+
+          <Typography variant="body1" gutterBottom
+            sx={{
+              fontFamily: "Inter",
+              fontSize: "12px",
+              lineHeight: "130%",
+              fontWeight: "500"
+            }}
+          >
+            {stringCleanup(description, lid)}
+          </Typography>
+
+          <Stack direction="row" alignItems={"center"} gap={1}>
+            <Typography sx={{
+              color: 'black',
+              fontSize: 16,
+              fontFamily: 'Inter',
+              fontWeight: '600',
+              lineHeight: '20px',
+              wordWrap: "break-word"
+            }}
+            >View Instrument and Data</Typography>
+            <IconButton
+              sx={{
+                "&:hover": {
+                  backgroundColor: "#B60109"
+                },
+                backgroundColor: "#F64137",
+                height: "20px",
+                width: "20px",
+                padding: "10px"
+              }}
+              aria-label="arrow"
+              onClick={() => {primaryAction()}}>
+                <ArrowForward sx={{
+                  color: "#FFFFFF",
+                  width: "14px"
+                }}
+              />
+            </IconButton>
+          </Stack>
+        </Stack>
+      </Stack>
       { showDetails ?
         <Box sx={{
           backgroundColor: "#F6F6F6",
@@ -325,6 +406,7 @@ export const FeaturedInstrumentLinkListItem = ({
         </Box>
         : <></>
       }
+      <Divider />
     </Stack>
   );
 }

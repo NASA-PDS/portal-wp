@@ -97,7 +97,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
           textAlign: "left",
         }}
       >
-        <Box>
+        <Box display={{xs: "none", md: "flex"}}>
           <Grid
             container
             spacing={2}

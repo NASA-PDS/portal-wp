@@ -221,7 +221,7 @@ export const FeaturedTargetLinkListItem = ({
               maxWidth: "140px",
               wordWrap: "break-word"
             }}>Tags</Typography>
-            <Stack direction={"row"} spacing={1}>
+            <Stack direction={"row"} spacing={1} useFlexGap flexWrap="wrap">
               {
                 tags.map( (tag, index) => {
                   return <Tag label={tag} key={index}></Tag>
