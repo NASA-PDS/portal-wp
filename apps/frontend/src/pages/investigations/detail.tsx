@@ -694,7 +694,7 @@ export const InvestigationDetailPage = (
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>
             <Grid container>
-              <Grid item md={2}>
+              <Grid item md={2} display={{ xs: "none", sm: "none", md: "block"}}>
                 <Box sx={{
                   borderLeft: "1px solid #D1D1D1",
                   position: "sticky",
@@ -777,7 +777,7 @@ export const InvestigationDetailPage = (
           </CustomTabPanel>
           <CustomTabPanel value={value} index={2}>
             <Grid container>
-              <Grid item md={2}>
+              <Grid item md={2} display={{ xs: "none", sm: "none", md: "block"}}>
                 <Box sx={{
                     borderLeft: "1px solid #D1D1D1",
                     position: "sticky",
@@ -867,7 +867,7 @@ export const InvestigationDetailPage = (
           </CustomTabPanel>
           <CustomTabPanel value={value} index={3}>
             <Grid container>
-              <Grid item md={2}>
+              <Grid item md={2} display={{ xs: "none", sm: "none", md: "block"}}>
                 <Box sx={{
                   borderLeft: "1px solid #D1D1D1",
                   position: "sticky",
