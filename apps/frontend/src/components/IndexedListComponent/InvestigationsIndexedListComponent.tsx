@@ -14,6 +14,7 @@ type InvestigationsIndexedListComponentProps = {
 };
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+const OTHER_CHARS = "0123456789".split("");
 
 type InvestigationDetailPathParams = {
   lid:string;
@@ -51,6 +52,49 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
   return (
     <>
       <Box sx={{textAlign:"center"}}>
+        {
+          (
+            investigations.some((investigation) => {
+              return "0123456789".includes(investigation[PDS4_INFO_MODEL.INVESTIGATION.NAME].substring(0,1))
+            }) && (
+              <Link
+                sx={{
+                  fontFamily: "Inter",
+                  fontSize: "29px",
+                  fontWeight: "700",
+                  lineHeight: "29px",
+                  paddingRight: "10px",
+                  color: "#1976d2",
+                }}
+                href={"#hash"}
+                key={"letter_hash"}
+                underline="none"
+              >
+                #
+              </Link>
+            )
+          ) || (
+            investigations.some((investigation) => {
+              return !"0123456789".includes(investigation[PDS4_INFO_MODEL.INVESTIGATION.NAME].substring(0,1))
+            }) && (
+              <Link
+                sx={{
+                  fontFamily: "Inter",
+                  fontSize: "29px",
+                  fontWeight: "700",
+                  lineHeight: "29px",
+                  paddingRight: "10px",
+                  color: "#959599",
+                }}
+                href={"#hash"}
+                key={"letter_hash"}
+                underline="none"
+              >
+                #
+              </Link>
+            )
+          )
+        }
         {investigations.length > 0 &&
           ALPHABET.map((letter) => {
 
@@ -158,6 +202,52 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
           </Grid>
         </Box>
         <Box>
+          {investigations.length > 0 &&
+            OTHER_CHARS.map((character) => {
+
+              const indexedInvestigations = getItemsByIndex(investigations, character);
+              const indexedInvestigationsCount = Object.keys(indexedInvestigations).length;
+
+              return (
+                <React.Fragment key={"investigations_hash"}>
+                  { indexedInvestigationsCount > 0 ? 
+                    <>
+                      <Typography
+                        variant="h3"
+                        sx={{
+                          fontFamily: "Inter",
+                          fontSize: "29px",
+                          fontWeight: "700",
+                          lineHeight: "29px",
+                          paddingRight: "10px",
+                          paddingTop: "15px",
+                          color: indexedInvestigationsCount
+                            ? "#000000"
+                            : "#959599",
+                        }}
+                      >
+                        <a id={"hash"}>#</a>
+                      </Typography>
+                      <br />
+                    </> : <></>
+                  }
+                  {indexedInvestigations.map(
+                    (investigation: Investigation) => {
+                      return (
+                        <FeaturedInvestigationLinkListItem
+                          affiliated_spacecraft={ getAffiliatedSpacecraft(state, investigation)}
+                          description={ investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION] }
+                          investigation_type={ investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE] }
+                          primaryAction={ () => investigationListItemPrimaryAction({ lid: investigation.lid, version: investigation.vid }) }
+                          key={investigation[PDS4_INFO_MODEL.LID]}
+                          title={ investigation[PDS4_INFO_MODEL.INVESTIGATION.NAME] }
+                        />
+                      );
+                    }
+                  )}
+                </React.Fragment>
+              );
+            })}
           {investigations.length > 0 &&
             ALPHABET.map((letter) => {
 
