@@ -1136,9 +1136,9 @@ export const InvestigationDetailPage = (
  */
 const mapStateToProps = (state: RootState) => {
 
-  let { investigationLid, investigationVersion } = useParams();
-  investigationLid = convertLogicalIdentifier(investigationLid, LID_FORMAT.DEFAULT);
-  const investigation:Investigation = selectInvestigationVersion(state, investigationLid, investigationVersion);
+  const { investigationLid, investigationVersion } = useParams();
+  const convertedInvestigationLid = convertLogicalIdentifier(investigationLid !== undefined ? investigationLid : "", LID_FORMAT.DEFAULT);
+  const investigation:Investigation = selectInvestigationVersion(state, convertedInvestigationLid, investigationVersion !== undefined ? investigationVersion : "");
   const instrumentHosts:InstrumentHost[] = selectLatestInstrumentHostsForInvestigation(state, investigation[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST]);
   const instruments = new Array( instrumentHosts.length );
   const targets = new Array( instrumentHosts.length );
