@@ -306,8 +306,8 @@ export const InvestigationDetailPage = (
             investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION]
   }
 
+
   useEffect(() => {
-    let isMounted = true;
 
     // Check if data manager status is 'idle', then fetch the investigations data from the API
     if (dataRequiresFetchOrUpdate(dataManagerState)) {
@@ -328,10 +328,6 @@ export const InvestigationDetailPage = (
       console.log(error);
     }
 
-    // Cleanup function
-    return () => {
-      isMounted = false;
-    };
   }, [status, dispatch, dataManagerState, error]);
 
   /*useEffect( () => {

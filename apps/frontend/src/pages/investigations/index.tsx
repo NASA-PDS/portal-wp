@@ -47,8 +47,6 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
 
   useEffect(() => {
 
-    let isMounted = true;
-
     // Check if data manager status is 'idle', then fetch the investigations data from the API
     if( dataRequiresFetchOrUpdate(dataManagerState) ) {
       dispatch(getData());
@@ -64,9 +62,7 @@ export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPagePro
     }
 
     // Cleanup function
-    return () => {
-      isMounted = false;
-    };
+    return () => {};
 
   }, [status, dispatch, dataManagerState, error]);
 
