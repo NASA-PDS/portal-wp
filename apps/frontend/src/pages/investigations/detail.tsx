@@ -134,9 +134,9 @@ export const InvestigationDetailPage = (
         const data = bundles[index];
         const tempArray = bundles.map( (list, i) => {
           if( i === index) {
-            return data
+            return data;
           } else {
-            return list
+            return list;
           }
         });
         setBundles(tempArray);
