@@ -2,7 +2,7 @@ import { Box, Breadcrumbs, Button, Container, Link as AnchorLink, Grid, Stack, T
 import { dataRequiresFetchOrUpdate, getData } from "src/state/slices/dataManagerSlice";
 import { generatePath, Link, useNavigate, useParams } from "react-router-dom";
 import { Instrument, InstrumentHost, Investigation, Target } from "src/types";
-import React, { SyntheticEvent, useCallback, useEffect, useState } from "react";
+import React, { SyntheticEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "src/state/hooks";
 import { connect } from "react-redux";
 import FeaturedInstrumentLinkListItem from "src/components/FeaturedListItems/FeaturedInstrumentLinkListItem";
@@ -102,13 +102,14 @@ export const InvestigationDetailPage = (
     }
   ]
   
-  const tabs = [
+  const tabs = useMemo(() => {
+    return [
     'instruments',
     'overview',
     'targets',
     'tools',
     'resources'
-  ];
+  ]}, []);
   
   const [value, setValue] = useState(tabs.findIndex( (tab) => tab == tabLabel?.toLowerCase()));
 
@@ -168,7 +169,7 @@ export const InvestigationDetailPage = (
 
   useEffect( () => {
     setValue(tabs.findIndex( (tab) => tab == tabLabel?.toLowerCase()));
-  })
+  }, [tabs, tabLabel])
 
   const initInstrumentTypes = useCallback( () => {
 
