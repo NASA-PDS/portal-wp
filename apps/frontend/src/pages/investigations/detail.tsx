@@ -2,7 +2,7 @@ import { Box, Breadcrumbs, Button, Container, Link as AnchorLink, Grid, Stack, T
 import { dataRequiresFetchOrUpdate, getData } from "src/state/slices/dataManagerSlice";
 import { generatePath, Link, useNavigate, useParams } from "react-router-dom";
 import { Instrument, InstrumentHost, Investigation, Target } from "src/types";
-import React, { SyntheticEvent, useEffect, useState } from "react";
+import React, { SyntheticEvent, useCallback, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "src/state/hooks";
 import { connect } from "react-redux";
 import FeaturedInstrumentLinkListItem from "src/components/FeaturedListItems/FeaturedInstrumentLinkListItem";
@@ -170,7 +170,7 @@ export const InvestigationDetailPage = (
     setValue(tabs.findIndex( (tab) => tab == tabLabel?.toLowerCase()));
   })
 
-  const initInstrumentTypes = () => {
+  const initInstrumentTypes = useCallback( () => {
 
     const instrumentTypesArr:string[] = [];
 
@@ -215,7 +215,7 @@ export const InvestigationDetailPage = (
     
     setInstrumentTypes(instrumentTypesArr);
     
-  };
+  }, [instrumentHosts.length, instruments, selectedInstrumentHost]);
 
   const getInvestigationSummary = () => {
     return instrumentHosts.length > 0 ? 
@@ -340,7 +340,7 @@ export const InvestigationDetailPage = (
 
   useEffect( () => {
     initInstrumentTypes();
-  }, [selectedInstrumentHost])
+  }, [selectedInstrumentHost, initInstrumentTypes])
 
   const styles = {
     breadcrumbs:{
