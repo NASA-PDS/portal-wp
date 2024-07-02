@@ -7,7 +7,6 @@ import Stack from '@mui/material/Stack';
 import ArrowForward from '@mui/icons-material/ArrowForward';
 import { Link } from '@mui/material';
 import { useState } from 'react';
-import { stringCleanup } from 'src/utils/strings';
 
 type PrimaryActionFunction = () => void;
 
@@ -93,16 +92,7 @@ export const FeaturedInstrumentLinkListItem = ({
                 wordWrap: 'break-word'
               }}
               >
-                {
-                  stringCleanup(description, lid)
-                  /*[
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In vulputate scelerisque ligula, sit amet molestie quam faucibus sed. Aenean mattis a sapien ut aliquet.",
-                    "Etiam suscipit varius nulla, quis congue neque blandit quis. Donec convallis quam nulla, nec ultrices nunc congue eu. Quisque aliquam urna quis maximus ultrices. ",
-                    "Sed rhoncus tortor posuere augue ultrices pretium. Phasellus blandit tortor leo, sed consequat lacus ultricies ut.",
-                    "Praesent mauris nisl, rutrum at mattis quis, condimentum non nulla. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
-                    "Proin rutrum quis justo sit amet cursus. Duis lacinia blandit turpis, ac mattis nisl lacinia et. Mauris tempus feugiat auctor. Quisque quis orci scelerisque, placerat quam et, dapibus ante."
-                  ][Math.floor(Math.random() * 5)]*/
-                }
+                {description}
             </Typography>
           </Grid>
           <Grid item xs={2}>
@@ -186,7 +176,7 @@ export const FeaturedInstrumentLinkListItem = ({
               fontWeight: "500"
             }}
           >
-            {stringCleanup(description, lid)}
+            {description}
           </Typography>
 
           <Stack direction="row" alignItems={"center"} gap={1}>

@@ -17,21 +17,6 @@ export type FeaturedInvestigationLinkListItemProps = {
   title: string,
 }
 
-function stringCleanup(str:string):string {
-  
-  return str.replace("Mission Overview ================","")
-    .replace("Significance ------------","")
-    .replace("Cruise Objectives. -----------------", "")
-    .replace("TABLE OF CONTENTS ---------------------------------- =", "")
-    .replace("============", "")
-    .replace("Introduction ------------", "")
-    .replace("One-sentence Mission Result Summary =======================", "")
-    .replace("MESSENGER ==========", "")
-    .replace("ROSETTA Mission Overview = ROSETTA Mission Objectives - Science Objectives = Mission Profile = Mission Phases Overview - Mission Phase Schedule - Solar Conjunctions/Oppositions - Payload Checkouts = Mission Phases Description - Launch phase (LEOP) - Commissioning phase - Cruise phase 1 - Earth swing-by 1 - Cruise phase 2 (and Deep Impact) - Mars swing-by - Cruise phase 3 - Earth swing-by 2 - Cruise phase 4 (splitted in 4-1 and 4-2) - Steins flyby - Earth swing-by 3 - Cruise phase 5 - Lutetia flyby - Rendez-Vous Manouver 1 - Cruise phase 6 - Rendez-Vous Manouver 2 - Near comet drift (NCD) phase - Approach phase - Lander delivery and relay phase - Escort phase - Near perihelion phase - Extended mission = Orbiter Experiments - ALICE - CONSERT - COSIMA - GIADA - MIDAS - MIRO - OSIRIS - ROSINA - RPC - RSI - VIRTIS - SREM = LANDER (PHILAE) - Science Objectives - Lander Experiments = Ground Segment - Rosetta Ground Segment - Rosetta Science Operations Center - Rosetta Mission Operations Center - Rosetta Lander Ground Segment - Lander Control Center - Science Operations and Navigation Center - Rosetta Scientific Data Archive = Acronyms ROSETTA =========================================", "")
-    .substring(0,250)
-    .concat("...")
-}
-
 export const FeaturedInvestigationLinkListItem = ({
   affiliated_spacecraft = '',
   description = '',
@@ -72,7 +57,7 @@ export const FeaturedInvestigationLinkListItem = ({
               fontSize: "12px",
               lineHeight: "130%",
               fontWeight: "500"}}>
-              {stringCleanup(description)}
+              {description}
             </Typography>
           </Stack>
         </Grid>
@@ -136,7 +121,7 @@ export const FeaturedInvestigationLinkListItem = ({
               fontWeight: "500"
             }}
           >
-            {stringCleanup(description)}
+            {description}
           </Typography>
         </Stack>
         <Box sx={{paddingLeft: "15px"}}>
