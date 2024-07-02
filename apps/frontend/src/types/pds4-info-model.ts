@@ -34,6 +34,21 @@ export const PDS4_INFO_MODEL = {
 
   },
 
+  BUNDLE: {
+
+    /**
+     * The description attribute provides a statement, picture in words, or account
+     * that describes or is otherwise relevant to the object. 
+     */
+    DESCRIPTION: "pds:Bundle.pds:description",
+
+    /**
+     * The bundle_type attribute provides a classification for the bundle.
+     */
+    TYPE: "pds:Bundle.pds:bundle_type",
+
+  },
+
   CTLI_TYPE_LIST: {
     TYPE: "ctli:Type_List.ctli:type"
   },

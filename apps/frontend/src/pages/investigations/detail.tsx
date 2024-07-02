@@ -124,11 +124,28 @@ export const InvestigationDetailPage = (
     return Promise.all(
       instrumentHosts.map( async (instrumentHost:InstrumentHost, index:number) => {
 
-        const query = '/api/search/1/products?q=(pds:Internal_Reference.pds:lid_reference eq "' + instrumentHost[PDS4_INFO_MODEL.LID] + '" and product_class eq "Product_Bundle")';
+        let query = '/api/search/1/products?q=(pds:Internal_Reference.pds:lid_reference eq "' + instrumentHost[PDS4_INFO_MODEL.LID] + '" and product_class eq "Product_Bundle")';
+         const config = {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          signal: abortController.signal
+        };
 
-        const response = await fetch(query, {
-          signal: abortController.signal,
+        const fields = [
+          PDS4_INFO_MODEL.LID,
+          PDS4_INFO_MODEL.TITLE,
+          PDS4_INFO_MODEL.BUNDLE.DESCRIPTION
+        ];
+    
+        // Add the specific fields that should be returned
+        query += "&fields=";
+        fields.forEach( (field, index) => {
+          query += field;
+          query += index < fields.length - 1 ? "," : "";
         });
+ 
+        const response = await fetch(query, config);
 
         bundles[index] = (await response.json()).data;
         const data = bundles[index];
