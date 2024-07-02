@@ -12,7 +12,7 @@ type PrimaryActionFunction = () => void;
 export type FeaturedToolLinkListItemProps = {
   description: string,
   primaryAction:PrimaryActionFunction,
-  tags:Array<Object>
+  tags:Array<{label:string}>
   title:string,
 }
 
