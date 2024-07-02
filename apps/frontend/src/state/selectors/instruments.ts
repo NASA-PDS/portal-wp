@@ -44,9 +44,9 @@ export const selectFilteredInstruments = createSelector([selectLatestVersionInst
   
   // Sort instruments alphabetically by title
   latestInstruments.sort( (a:Instrument,b:Instrument) => {
-    if( a[PDS4_INFO_MODEL.TITLE].toLowerCase() < b[PDS4_INFO_MODEL.TITLE].toLowerCase() ) {
+    if( a[PDS4_INFO_MODEL.INSTRUMENT.NAME].toLowerCase() < b[PDS4_INFO_MODEL.INSTRUMENT.NAME].toLowerCase() ) {
       return -1
-    } else if( a[PDS4_INFO_MODEL.TITLE].toLowerCase() > b[PDS4_INFO_MODEL.TITLE].toLowerCase() ) {
+    } else if( a[PDS4_INFO_MODEL.INSTRUMENT.NAME].toLowerCase() > b[PDS4_INFO_MODEL.INSTRUMENT.NAME].toLowerCase() ) {
       return 1
     }
     return 0;

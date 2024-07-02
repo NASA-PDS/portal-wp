@@ -44,9 +44,9 @@ export const selectFilteredInstrumentHosts = createSelector([selectLatestVersion
  
   // Sort instrument hosts alphabetically by title
   latestInstrumentHosts.sort( (a:InstrumentHost,b:InstrumentHost) => {
-    if( a[PDS4_INFO_MODEL.TITLE].toLowerCase() < b[PDS4_INFO_MODEL.TITLE].toLowerCase() ) {
+    if( a[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME].toLowerCase() < b[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME].toLowerCase() ) {
       return -1
-    } else if( a[PDS4_INFO_MODEL.TITLE].toLowerCase() > b[PDS4_INFO_MODEL.TITLE].toLowerCase() ) {
+    } else if( a[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME].toLowerCase() > b[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME].toLowerCase() ) {
       return 1
     }
     return 0;

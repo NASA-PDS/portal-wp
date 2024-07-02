@@ -551,7 +551,7 @@ export const InvestigationDetailPage = (
                     onClick={ handleInstrumentHostChange }
                     data-instrument-host-index={index}
                   >
-                    {host[PDS4_INFO_MODEL.IDENTIFICATION_AREA.TITLE]
+                    {host[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME]
                       .toString()
                       .toLowerCase()}
                   </Button>
@@ -679,7 +679,6 @@ export const InvestigationDetailPage = (
                             instruments[selectedInstrumentHost].map( (instrument:Instrument) => {
                               if( instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE]?.includes(instrumentType)
                                     || instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]?.includes(instrumentType) ) {
-                                //return <div key={"instrument_" + index}>{instrument[PDS4_INFO_MODEL.TITLE]}</div>
                                 return <FeaturedInstrumentLinkListItem
                                   key={instrument[PDS4_INFO_MODEL.LID]}
                                   description={instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION].toString()}
@@ -1153,9 +1152,9 @@ const mapStateToProps = (state: RootState) => {
     // get targets
     targets[index] = selectLatestTargetsForInstrumentHost(state, instrumentHost[PDS4_INFO_MODEL.REF_LID_TARGET])
                       .sort( (a:Target, b:Target) => {
-                        if( a[PDS4_INFO_MODEL.TITLE].toLowerCase() < b[PDS4_INFO_MODEL.TITLE].toLowerCase() ) {
+                        if( a[PDS4_INFO_MODEL.TARGET.NAME].toLowerCase() < b[PDS4_INFO_MODEL.TARGET.NAME].toLowerCase() ) {
                           return -1
-                        } else if( a[PDS4_INFO_MODEL.TITLE].toLowerCase() > b[PDS4_INFO_MODEL.TITLE].toLowerCase() ) {
+                        } else if( a[PDS4_INFO_MODEL.TARGET.NAME].toLowerCase() > b[PDS4_INFO_MODEL.TARGET.NAME].toLowerCase() ) {
                           return 1
                         }
                         return 0;

@@ -44,9 +44,9 @@ export const selectFilteredTargets = createSelector([selectLatestVersionTargets]
   
   // Sort targets alphabetically by title
   latestTargets.sort( (a:Target,b:Target) => {
-    if( a[PDS4_INFO_MODEL.TITLE].toLowerCase() < b[PDS4_INFO_MODEL.TITLE].toLowerCase() ) {
+    if( a[PDS4_INFO_MODEL.TARGET.NAME].toLowerCase() < b[PDS4_INFO_MODEL.TARGET.NAME].toLowerCase() ) {
       return -1
-    } else if( a[PDS4_INFO_MODEL.TITLE].toLowerCase() > b[PDS4_INFO_MODEL.TITLE].toLowerCase() ) {
+    } else if( a[PDS4_INFO_MODEL.TARGET.NAME].toLowerCase() > b[PDS4_INFO_MODEL.TARGET.NAME].toLowerCase() ) {
       return 1
     }
     return 0;

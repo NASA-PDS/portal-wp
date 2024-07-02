@@ -22,6 +22,6 @@ module.exports = {
         "caughtErrorsIgnorePattern": "^_"
       }
     ],
-    '@typescript-eslint/no-namespace': "off"
+    //'@typescript-eslint/no-namespace': "off"
   },
 }
