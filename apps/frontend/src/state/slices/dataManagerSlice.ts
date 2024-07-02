@@ -23,19 +23,14 @@ export const getData = createAsyncThunk(
   'data-manager/',
   async (_, api) => {
 
-    const response = await Promise.all([
-      api.dispatch(getInstrumentHosts()),
-      api.dispatch(getInstruments()),
-      api.dispatch(getInvestigations()),
-      api.dispatch(getTargets())
-    ]);
-
-    if( response.find( (item:any) => item.error) ) {
-      const errors = response.map( (item) => item.payload );
-      return api.rejectWithValue(errors);
-    } else {
-      return response
-    }
+    await Promise.all([
+        api.dispatch(getInstrumentHosts()),
+        api.dispatch(getInstruments()),
+        api.dispatch(getInvestigations()),
+        api.dispatch(getTargets())
+    ]).catch( (error) => {
+      return api.rejectWithValue(error);
+    });
 
   }
 )
