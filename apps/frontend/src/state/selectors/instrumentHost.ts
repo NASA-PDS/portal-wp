@@ -1,5 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit";
-import { InstrumentHost } from "src/types/instrumentHost.d";
+import { InstrumentHost } from "src/types/instrumentHost";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { RootState } from "src/state/store";
 import { InstrumentHostItems } from "src/state/slices/instrumentHostsSlice";

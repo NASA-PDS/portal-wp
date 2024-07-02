@@ -6,7 +6,7 @@ import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import FeaturedInvestigationLinkListItem from "src/components/FeaturedListItems/FeaturedInvestigationLinkListItem";
 import { selectLatestInstrumentHostsForInvestigation } from "src/state/selectors/instrumentHost";
 import { RootState, store } from "src/state/store";
-import { InstrumentHost } from "src/types/instrumentHost.d";
+import { InstrumentHost } from "src/types/instrumentHost";
 import { convertLogicalIdentifier, LID_FORMAT } from "src/utils/strings";
 
 type InvestigationsIndexedListComponentProps = {

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-import { Target } from "src/types/target.d";
+import { Target } from "src/types/target";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 
 enum TARGET_ACTIONS {

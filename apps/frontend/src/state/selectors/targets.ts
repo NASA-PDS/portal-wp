@@ -1,7 +1,7 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { TargetItems } from "src/state/slices/targetsSlice";
 import { RootState } from "src/state/store";
-import { Target } from "src/types/target.d";
+import { Target } from "src/types/target";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 
 export const targetDataReady = (state:RootState):boolean => {
