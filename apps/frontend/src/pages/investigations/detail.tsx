@@ -30,6 +30,7 @@ interface TabPanelProps {
 type Stats = {
   label: string;
   value: string;
+  enableCopy?: boolean;
 }
 
 function CustomTabPanel(props: TabPanelProps) {
@@ -98,7 +99,8 @@ export const InvestigationDetailPage = (
     },
     {
       label: "Logical Identifier",
-      value: investigation.lid
+      value: investigation.lid,
+      enableCopy: true
     }
   ]
   

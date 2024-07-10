@@ -1,13 +1,18 @@
 import { Box, Divider, Typography } from "@mui/material"
+import { copyToClipboard } from "src/utils/strings";
 
 export type StatsItemProps = {
   label:string,
   value:string,
+  index:number,
+  enableCopy:boolean
 }
 
 export const StatsItem = ({
   label,
-  value
+  value,
+  index,
+  enableCopy = false
 }: StatsItemProps) => {
   
   return (
@@ -29,7 +34,7 @@ export const StatsItem = ({
         wordWrap: 'break-word',
         marginTop: "8px"
       }}>{label}</Typography>
-      <Typography sx={{
+      <Typography id={'stat_'+index} sx={{
         color: 'white',
         fontSize: "14px",
         fontFamily: 'Inter',
@@ -38,6 +43,21 @@ export const StatsItem = ({
         wordWrap: 'break-word',
         marginTop: "4px"
       }}>{value}</Typography>
+      {enableCopy}
+      {
+        enableCopy && <Typography sx={{
+            color: 'white',
+            cursor: "pointer",
+            fontSize: "14px",
+            fontFamily: 'Inter',
+            fontWeight: '600',
+            lineHeight: "19px",
+            marginTop: "4px"
+          }} 
+          onClick={() => {copyToClipboard("stat_"+index)}}>
+            Copy to Clipboard
+        </Typography>
+      }
     </Box>
   );
 }

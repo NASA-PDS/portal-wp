@@ -5,6 +5,7 @@ import StatsItem from './StatsItem';
 export type Stats = {
   label: string;
   value: string;
+  enableCopy: boolean
 }
 
 type StatProps = {
@@ -18,7 +19,7 @@ export const StatsList = ({
   return (
     <Grid container spacing={2}>
       {
-        stats.map(item => {
+        stats.map((item,index) => {
           return <Grid item xs={6} md={6} sx={{
             /*"&:first-child": {
               marginTop: { 
@@ -28,7 +29,7 @@ export const StatsList = ({
             },*/
             marginTop: "24px"
           }}>
-            <StatsItem label={item.label} value={item.value} />
+            <StatsItem label={item.label} value={item.value} index={index} enableCopy={item.enableCopy} />
           </Grid>
         })
       }
