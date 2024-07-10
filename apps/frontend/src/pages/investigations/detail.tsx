@@ -360,8 +360,6 @@ export const InvestigationDetailPage = (
           maxWidth={"xl"}
           sx={{
             paddingY: "24px",
-            paddingLeft: "148px",
-            paddingRight: "148px",
           }}
         >
           <Breadcrumbs
