@@ -8,6 +8,7 @@ import ArrowForward from '@mui/icons-material/ArrowForward';
 import { useState } from 'react';
 import { Link as AnchorLink } from '@mui/material';
 import { Tag } from '@nasapds/wds-react';
+import { ellipsisText } from 'src/utils/strings';
 
 type PrimaryActionFunction = () => void;
 
@@ -94,7 +95,7 @@ export const FeaturedTargetLinkListItem = ({
                 wordWrap: 'break-word'
               }}
               >
-                {description}
+                {ellipsisText(description, 256)}
             </Typography>
           </Grid>
           <Grid item xs={2} sx={{textAlign:"right"}}>

@@ -6,6 +6,7 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import ArrowForward from '@mui/icons-material/ArrowForward';
 import { Link } from '@mui/material';
+import { ellipsisText } from 'src/utils/strings';
 
 type PrimaryActionFunction = () => void;
 
@@ -57,7 +58,7 @@ export const FeaturedInvestigationLinkListItem = ({
               fontSize: "12px",
               lineHeight: "130%",
               fontWeight: "500"}}>
-              {description}
+              {ellipsisText(description,256)}
             </Typography>
           </Stack>
         </Grid>
@@ -121,7 +122,7 @@ export const FeaturedInvestigationLinkListItem = ({
               fontWeight: "500"
             }}
           >
-            {description}
+            {ellipsisText(description,256)}
           </Typography>
         </Stack>
         <Box sx={{paddingLeft: "15px"}}>

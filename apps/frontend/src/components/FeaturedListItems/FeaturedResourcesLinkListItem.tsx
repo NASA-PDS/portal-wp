@@ -7,6 +7,7 @@ import ArrowForward from '@mui/icons-material/ArrowForward';
 import { Link, Stack } from '@mui/material';
 import { Tag } from '@nasapds/wds-react';
 import { useState } from 'react';
+import { ellipsisText } from 'src/utils/strings';
 
 type PrimaryActionFunction = () => void;
 
@@ -97,7 +98,7 @@ export const FeaturedResrouceLinkListItem = ({
                 }}
                 gutterBottom
                 >
-                {description.substring(0, 275) + "..."}
+                {ellipsisText(description, 256)}
               </Typography>
             </Stack>
           </Grid>

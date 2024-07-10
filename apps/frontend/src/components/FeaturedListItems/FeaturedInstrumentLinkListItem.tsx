@@ -7,6 +7,7 @@ import Stack from '@mui/material/Stack';
 import ArrowForward from '@mui/icons-material/ArrowForward';
 import { Link } from '@mui/material';
 import { useState } from 'react';
+import { ellipsisText } from 'src/utils/strings';
 
 type PrimaryActionFunction = () => void;
 
@@ -92,7 +93,7 @@ export const FeaturedInstrumentLinkListItem = ({
                 wordWrap: 'break-word'
               }}
               >
-                {description}
+                {ellipsisText(description, 256)}
             </Typography>
           </Grid>
           <Grid item xs={2}>
@@ -176,7 +177,7 @@ export const FeaturedInstrumentLinkListItem = ({
               fontWeight: "500"
             }}
           >
-            {description}
+            {ellipsisText(description, 256)}
           </Typography>
 
           <Stack direction="row" alignItems={"center"} gap={1}>

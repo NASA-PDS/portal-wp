@@ -895,7 +895,7 @@ export const InvestigationDetailPage = (
                   ].map( (item, index) => {
                     return <FeaturedToolLinkListItem
                       key={index}
-                      description={item.description.substring(0,200).concat("...")}
+                      description={item.description}
                       primaryAction={ () => {} }
                       tags={item.tags}
                       title={item.title}
