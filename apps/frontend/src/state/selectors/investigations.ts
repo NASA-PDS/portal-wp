@@ -90,9 +90,9 @@ export const selectFilteredInvestigations = createSelector(
 
     // Sort investigations alphabetically by title
     latestInvestigations.sort( (a:Investigation,b:Investigation) => {
-      if( a[PDS4_INFO_MODEL.INVESTIGATION.NAME].toLowerCase() < b[PDS4_INFO_MODEL.INVESTIGATION.NAME].toLowerCase() ) {
+      if( a[PDS4_INFO_MODEL.TITLE].toLowerCase() < b[PDS4_INFO_MODEL.TITLE].toLowerCase() ) {
         return -1
-      } else if( a[PDS4_INFO_MODEL.INVESTIGATION.NAME].toLowerCase() > b[PDS4_INFO_MODEL.INVESTIGATION.NAME].toLowerCase() ) {
+      } else if( a[PDS4_INFO_MODEL.TITLE].toLowerCase() > b[PDS4_INFO_MODEL.TITLE].toLowerCase() ) {
         return 1
       }
       return 0;
@@ -145,7 +145,7 @@ export const selectFilteredInvestigations = createSelector(
       (investigation) => {
         return (
           (
-            investigation[PDS4_INFO_MODEL.INVESTIGATION.NAME].toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
+            investigation[PDS4_INFO_MODEL.TITLE].toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
             ||
             investigation[PDS4_INFO_MODEL.LID].toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
             ||

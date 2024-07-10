@@ -54,6 +54,7 @@ export const getInvestigations = createAsyncThunk(
       PDS4_INFO_MODEL.REF_LID_TARGET,
       PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST,
       PDS4_INFO_MODEL.REF_LID_INSTRUMENT,
+      PDS4_INFO_MODEL.TITLE,
       PDS4_INFO_MODEL.VID,
       PDS4_INFO_MODEL.ALIAS.ALTERNATE_ID,
       PDS4_INFO_MODEL.ALIAS.ALTERNATE_TITLE,
@@ -135,6 +136,7 @@ const investigationsSlice = createSlice({
         investigationItem[PDS4_INFO_MODEL.REF_LID_INSTRUMENT] = source[PDS4_INFO_MODEL.REF_LID_INSTRUMENT];
         investigationItem[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST] = source[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST];
         investigationItem[PDS4_INFO_MODEL.REF_LID_TARGET] = source[PDS4_INFO_MODEL.REF_LID_TARGET];
+        investigationItem[PDS4_INFO_MODEL.TITLE] = source[PDS4_INFO_MODEL.TITLE][0];
         investigationItem[PDS4_INFO_MODEL.VID] = source[PDS4_INFO_MODEL.VID][0];
 
         // Update Alias Information

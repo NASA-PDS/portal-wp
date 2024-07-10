@@ -26,7 +26,7 @@ const getItemsByIndex = (
   index: string
 ): Investigation[] => {
   return arr.filter((item) => {
-    return item[PDS4_INFO_MODEL.INVESTIGATION.NAME]
+    return item[PDS4_INFO_MODEL.TITLE]
       .toUpperCase()
       .startsWith(index.toUpperCase());
   });
@@ -55,7 +55,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
         {
           (
             investigations.some((investigation) => {
-              return "0123456789".includes(investigation[PDS4_INFO_MODEL.INVESTIGATION.NAME].substring(0,1))
+              return "0123456789".includes(investigation[PDS4_INFO_MODEL.TITLE].substring(0,1))
             }) && (
               <Link
                 sx={{
@@ -75,7 +75,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
             )
           ) || (
             investigations.some((investigation) => {
-              return !"0123456789".includes(investigation[PDS4_INFO_MODEL.INVESTIGATION.NAME].substring(0,1))
+              return !"0123456789".includes(investigation[PDS4_INFO_MODEL.TITLE].substring(0,1))
             }) && (
               <Link
                 sx={{
@@ -240,7 +240,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                           investigation_type={ investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE] }
                           primaryAction={ () => investigationListItemPrimaryAction({ lid: investigation.lid, version: investigation.vid }) }
                           key={investigation[PDS4_INFO_MODEL.LID]}
-                          title={ investigation[PDS4_INFO_MODEL.INVESTIGATION.NAME] }
+                          title={ investigation[PDS4_INFO_MODEL.TITLE] }
                         />
                       );
                     }
@@ -286,7 +286,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                           investigation_type={ investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE] }
                           primaryAction={ () => investigationListItemPrimaryAction({ lid: investigation.lid, version: investigation.vid }) }
                           key={investigation[PDS4_INFO_MODEL.LID]}
-                          title={ investigation[PDS4_INFO_MODEL.INVESTIGATION.NAME] }
+                          title={ investigation[PDS4_INFO_MODEL.TITLE] }
                         />
                       );
                     }
