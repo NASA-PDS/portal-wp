@@ -1105,4 +1105,5 @@ const mapStateToProps = (state: RootState) => {
 
 };
 
-export default connect(mapStateToProps)(InvestigationDetailPage);
+const connectedComponent = connect(mapStateToProps)(InvestigationDetailPage);
+export default connectedComponent;
