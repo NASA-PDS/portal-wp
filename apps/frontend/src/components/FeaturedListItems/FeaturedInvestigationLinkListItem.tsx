@@ -5,7 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import ArrowForward from '@mui/icons-material/ArrowForward';
-import { Link } from '@mui/material';
+import { Link } from 'react-router-dom';
 import { ellipsisText } from 'src/utils/strings';
 
 type PrimaryActionFunction = () => void;
@@ -33,8 +33,8 @@ export const FeaturedInvestigationLinkListItem = ({
           <Stack alignItems="left" gap={1} sx={{
             paddingLeft: "15px"
           }}>
-            <Link component="button" onClick={() => primaryAction()}
-              sx={{
+            <Link to={{}} onClick={() => primaryAction()}
+              style={{
                 textAlign: "left",
                 color: "#000000",
                 textDecoration: "none",
@@ -52,12 +52,16 @@ export const FeaturedInvestigationLinkListItem = ({
               </Typography>
             </Link>
 
-            <Typography variant="body1" gutterBottom
-            sx={{
-              fontFamily: "Inter",
-              fontSize: "12px",
-              lineHeight: "130%",
-              fontWeight: "500"}}>
+            <Typography 
+              variant="body1"
+              gutterBottom
+              sx={{
+                fontFamily: "Inter",
+                fontSize: "12px",
+                lineHeight: "130%",
+                fontWeight: "500",
+              }}
+            >
               {ellipsisText(description,256)}
             </Typography>
           </Stack>
@@ -102,8 +106,8 @@ export const FeaturedInvestigationLinkListItem = ({
             marginBottom: "8px",
           }}
         >
-          <Link component="button" onClick={() => primaryAction()}
-            sx={{
+          <Link to={{}} onClick={() => primaryAction()}
+            style={{
               textAlign: "left",
               color: "#000000",
               textDecoration: "none",
@@ -169,8 +173,7 @@ export const FeaturedInvestigationLinkListItem = ({
             }}>{affiliated_spacecraft ? affiliated_spacecraft : "-"}</Typography>
           </Stack>
           <Stack direction={"row"} alignItems={"center"} gap={1} sx={{paddingTop: "8px"}}>
-            <Link sx={{
-              // Explore
+            <Link to={{}} style={{
               color: 'black',
               fontSize: "18px",
               fontFamily: 'Inter',
@@ -179,7 +182,6 @@ export const FeaturedInvestigationLinkListItem = ({
               wordWrap: 'break-word',
               textDecoration: "none",
               cursor: "pointer"
-              
             }} onClick={() => {primaryAction()}}>
               Explore {title}
             </Link>
