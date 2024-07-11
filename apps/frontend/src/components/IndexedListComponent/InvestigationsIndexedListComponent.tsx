@@ -1,6 +1,6 @@
-import React from "react";
-import {Box, Container, Grid, Link, Typography } from "@mui/material";
-import { generatePath, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import {Box, Container, Divider, Grid, Link, MenuItem, Select, Typography } from "@mui/material";
+import { generatePath, useLocation, useNavigate } from "react-router-dom";
 import { Investigation } from "src/types/investigation.d";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import FeaturedInvestigationLinkListItem from "src/components/FeaturedListItems/FeaturedInvestigationLinkListItem";
@@ -8,6 +8,7 @@ import { selectLatestInstrumentHostsForInvestigation } from "src/state/selectors
 import { RootState, store } from "src/state/store";
 import { InstrumentHost } from "src/types/instrumentHost";
 import { convertLogicalIdentifier, LID_FORMAT } from "src/utils/strings";
+import { ExpandMore } from "@mui/icons-material";
 
 type InvestigationsIndexedListComponentProps = {
   investigations: Investigation[];
@@ -42,16 +43,38 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
 
   const investigations = props.investigations;
   const navigate = useNavigate();
+  const location = useLocation();
   const state = store.getState();
+
+  const [indexValue, setIndexValue] = useState(location.hash.replace("#",""));
 
   const investigationListItemPrimaryAction = (params:InvestigationDetailPathParams) => {
     params.lid = convertLogicalIdentifier(params.lid,LID_FORMAT.URL_FRIENDLY);
     navigate( generatePath("/investigations/:lid/:version/instruments", params) );
   };
 
+  const scrollToIndex = (id:string) => {
+    console.log("Set scroll to: ", id)
+    setIndexValue(id);
+  }
+
+  useEffect( () => {
+
+    if( indexValue !== "" ) {
+      // Using setTimeout due to a weird issue in the browser that doesn't scroll to the element without setTimeout
+      // Reference: https://stackoverflow.com/questions/64508413/scrollintoview-works-only-once-when-followed-by-console-log
+      setTimeout(() => {
+        console.log("Scrolling to:", indexValue)
+        navigate("#" + indexValue),
+        5
+      });
+    }
+
+  }, [indexValue, navigate]);
+
   return (
     <>
-      <Box sx={{textAlign:"center"}}>
+      <Box sx={{textAlign:"center"}} display={{ xs: "none", md: "block"}}>
         {
           (
             investigations.some((investigation) => {
@@ -133,6 +156,82 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
               </Typography>
             );
           })}
+      </Box>
+      <Box display={{ xs:"block", md:"none"}}>
+        <Divider sx={{marginBottom:"16px"}}/>
+        <Typography
+          sx={{
+            color: "black",
+            fontSize: "14px",
+            fontFamily: "Inter",
+            fontWeight: "600",
+            lineHeight: "19px",
+            wordWrap: "break-word",
+            mb: "4px"
+          }}
+        >
+          Scroll to
+        </Typography>
+        <Select
+          value={indexValue}
+          onChange={(event) => { event.preventDefault(); scrollToIndex(event.target.value); }}
+          fullWidth
+          IconComponent={ExpandMore}
+          sx={{
+            borderRadius: "5px",
+            borderWidth: "2px",
+            borderColor: "#D1D1D1",
+            ".MuiSelect-select": {
+              py: "10px",
+              px: "16px",
+            },
+            ".MuiSelect-nativeInput": {
+              color: "#2E2E32",
+              fontSize: "14px",
+              fontFamily: "Public Sans",
+              fontWeight: "400",
+              lineHeight: "20px",
+              wordWrap: "break-word",
+            },
+          }}
+        >
+          <MenuItem value={indexValue}>
+            Select an index
+          </MenuItem>
+          {
+            (
+              investigations.some((investigation) => {
+                return "0123456789".includes(investigation[PDS4_INFO_MODEL.TITLE].substring(0,1))
+              }) && (
+                <MenuItem value={"hash"}>
+                  {"#"}
+                </MenuItem>
+              )
+            ) || (
+              investigations.some((investigation) => {
+                return !"0123456789".includes(investigation[PDS4_INFO_MODEL.TITLE].substring(0,1))
+              }) && (
+                <MenuItem value={"hash"} disabled={true}>
+                  {"#"}
+                </MenuItem>
+              )
+            )
+          }
+          {
+            investigations.length > 0 && ALPHABET.map((letter) => {
+  
+              const indexedInvestigations = getItemsByIndex(investigations, letter);
+              const indexedInvestigationsCount = Object.keys(indexedInvestigations).length;
+              const anchorName = indexedInvestigationsCount > 0 ? "#" + letter : undefined;
+  
+              return (
+                <MenuItem value={letter} disabled={indexedInvestigationsCount === 0}>
+                  {letter}
+                </MenuItem>
+              )
+            }) 
+          }
+        </Select>
       </Box>
       <Container
         maxWidth={"xl"}
