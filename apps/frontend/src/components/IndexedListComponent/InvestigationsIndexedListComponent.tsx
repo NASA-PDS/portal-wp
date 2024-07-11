@@ -203,13 +203,13 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
         </Box>
         <Box>
           {investigations.length > 0 &&
-            OTHER_CHARS.map((character) => {
+            OTHER_CHARS.map((character, index) => {
 
               const indexedInvestigations = getItemsByIndex(investigations, character);
               const indexedInvestigationsCount = Object.keys(indexedInvestigations).length;
 
               return (
-                <React.Fragment key={"investigations_hash"}>
+                <React.Fragment key={"investigations_hash" + index}>
                   { indexedInvestigationsCount > 0 ? 
                     <>
                       <Typography
