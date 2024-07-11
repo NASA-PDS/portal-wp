@@ -348,9 +348,10 @@ export const InvestigationDetailPage = (
         disableGutters
         sx={{
           backgroundColor: "#000000",
-          backgroundImage: "url(/assets/images/headers/investigations/".concat(investigation[PDS4_INFO_MODEL.LID]).concat(".png)"),
+          backgroundImage: "url(/assets/images/headers/investigations/".concat(investigation[PDS4_INFO_MODEL.LID]).concat(".jpg)"),
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
           minHeight: "200px",
           height: "fit-content",
           textAlign: "left",
