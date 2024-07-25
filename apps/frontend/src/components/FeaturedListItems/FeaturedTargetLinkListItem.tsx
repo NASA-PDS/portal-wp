@@ -154,8 +154,8 @@ export const FeaturedTargetLinkListItem = ({
                 </svg>
             }
           </IconButton>
-                  </Box>
-          <Stack alignItems="left" gap={1} sx={{
+        </Box>
+        <Stack alignItems="left" gap={1} sx={{
             paddingLeft: "15px",
             marginBottom: "8px",
           }}

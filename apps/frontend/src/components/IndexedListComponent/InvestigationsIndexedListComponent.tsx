@@ -334,12 +334,16 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                     (investigation: Investigation) => {
                       return (
                         <FeaturedInvestigationLinkListItem
-                          affiliated_spacecraft={ getAffiliatedSpacecraft(state, investigation)}
                           description={ investigation[PDS4_INFO_MODEL.INVESTIGATION.TERSE_DESCRIPTION] ? investigation[PDS4_INFO_MODEL.INVESTIGATION.TERSE_DESCRIPTION] : investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION] }
-                          investigation_type={ investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE] }
-                          primaryAction={ () => investigationListItemPrimaryAction({ lid: investigation.lid, version: investigation.vid }) }
+                          instrumentHosts={ getAffiliatedSpacecraft(state, investigation) }
                           key={investigation[PDS4_INFO_MODEL.LID]}
+                          lid={ investigation[PDS4_INFO_MODEL.LID] }
+                          primaryAction={ () => investigationListItemPrimaryAction({ lid: investigation.lid, version: investigation.vid }) }
+                          startDate={ investigation[PDS4_INFO_MODEL.INVESTIGATION.START_DATE] }
+                          stopDate={ investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE] }
+                          tags={ [] }
                           title={ investigation[PDS4_INFO_MODEL.TITLE] }
+                          type={ investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE]}
                         />
                       );
                     }
@@ -365,7 +369,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                           fontWeight: "700",
                           lineHeight: "29px",
                           paddingRight: "10px",
-                          paddingTop: "15px",
+                          paddingY: "15px",
                           color: indexedInvestigationsCount
                             ? "#000000"
                             : "#959599",
@@ -373,19 +377,22 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                       >
                         <a id={letter}>{letter}</a>
                       </Typography>
-                      <br />
                     </> : <></>
                   }
                   {indexedInvestigations.map(
                     (investigation: Investigation) => {
                       return (
                         <FeaturedInvestigationLinkListItem
-                          affiliated_spacecraft={ getAffiliatedSpacecraft(state, investigation)}
-                          description={ investigation[PDS4_INFO_MODEL.INVESTIGATION.TERSE_DESCRIPTION] ? investigation[PDS4_INFO_MODEL.INVESTIGATION.TERSE_DESCRIPTION].substring(0,256) : investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION].substring(0,256) }
-                          investigation_type={ investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE] }
-                          primaryAction={ () => investigationListItemPrimaryAction({ lid: investigation.lid, version: investigation.vid }) }
+                          description={ investigation[PDS4_INFO_MODEL.INVESTIGATION.TERSE_DESCRIPTION] ? investigation[PDS4_INFO_MODEL.INVESTIGATION.TERSE_DESCRIPTION] : investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION] }
+                          instrumentHosts={ getAffiliatedSpacecraft(state, investigation) }
                           key={investigation[PDS4_INFO_MODEL.LID]}
+                          lid={ investigation[PDS4_INFO_MODEL.LID] }
+                          primaryAction={ () => investigationListItemPrimaryAction({ lid: investigation.lid, version: investigation.vid }) }
+                          tags={ [] }
+                          startDate={ investigation[PDS4_INFO_MODEL.INVESTIGATION.START_DATE] }
+                          stopDate={ investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE] }
                           title={ investigation[PDS4_INFO_MODEL.TITLE] }
+                          type={ investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE]}
                         />
                       );
                     }
