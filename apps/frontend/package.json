@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "lint-watch": "esw . --watch --color --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint-watch": "esw . --watch --clear --color --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
