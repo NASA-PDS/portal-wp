@@ -1,4 +1,4 @@
-import { SyntheticEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { SyntheticEvent, useCallback, useEffect, useRef, useState } from "react";
 
 import { generatePath, Link, useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "src/state/hooks";
@@ -29,7 +29,7 @@ const InvestigationDetailPage = () => {
   const { investigationLid, investigationVersion, tabLabel } = useParams();
   const dispatch = useAppDispatch();
   const convertedInvestigationLid = convertLogicalIdentifier(investigationLid !== undefined ? investigationLid : "", LID_FORMAT.DEFAULT);
-  
+
   const dataManagerStatus = useAppSelector( (state) => { return state.dataManager.status } )
 
   useEffect( () => {
@@ -49,7 +49,6 @@ const InvestigationDetailPage = () => {
 };
 
 interface InvestigationDetailBodyProps {
-  bundles:Array<Array<Bundle>>;
   instrumentHosts:InstrumentHost[];
   instruments:Array<Array<Instrument>>;
   investigation:Investigation;
@@ -106,19 +105,15 @@ const TABS = [
 ];
 
 const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
-
-  let {bundles} = props;
+  
   const {instrumentHosts, instruments, investigation, status, tabLabel, targets } = props;
-
-  const navigate = useNavigate();
-
-  //const [bundles, setBundles] = useState<Array<unknown>>(new Array(instrumentHosts.length).fill([]));
-  console.log("initializing bundles:", bundles);
-  console.log("instrumentHosts.length:", instrumentHosts.length)
+  const bundles = useRef<Array<Array<Bundle>>>([]);
   const [instrumentTypes, setInstrumentTypes] = useState<string[]>([]);
   const [selectedInstrumentHost, setSelectedInstrumentHost] = useState<number>(0);
   const [value, setValue] = useState(TABS.findIndex( (tab) => tab == tabLabel?.toLowerCase()));
-
+  
+  const navigate = useNavigate();
+  
   const stats:Stats[] = [
     {
       label: "Investigation Type",
@@ -239,7 +234,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
     
       
     });
-    console.log("instrumentTypesArr:", instrumentTypesArr)
+
     setInstrumentTypes(instrumentTypesArr);
     
   }, [instrumentHosts.length, instruments, selectedInstrumentHost]);
@@ -252,7 +247,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
   }
 
   const getRelatedInstrumentBundles = (lid:string) => {
-    return bundles[selectedInstrumentHost].filter( (bundleList) => {
+    return bundles.current[selectedInstrumentHost].filter( (bundleList) => {
       const foundInstrument = bundleList.observing_system_components.some( component => component.id === lid );
       return foundInstrument
     })
@@ -275,6 +270,8 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
   };
 
   const fetchBundles = useCallback( async (abortController:AbortController) => {
+
+    bundles.current = new Array( instrumentHosts.length ).fill([]);
 
     return Promise.all(
       instrumentHosts.map( async (instrumentHost:InstrumentHost, index:number) => {
@@ -301,31 +298,10 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
         });
 
         const response = await fetch(query, config);
-        //console.log(`response (${index}):`, (await response.json()));
-
-        console.log("bundles:", bundles )
-        const tempBundles = bundles.slice();
-        console.log("tempBundles:", tempBundles);
+        const tempBundles = bundles.current.slice();
         const temp = (await response.json());
-        console.log(`temp (${index}):`, temp)
         tempBundles[index] = temp.data !== undefined ? temp.data : [];
-        console.log("tempBundles:", tempBundles);
-        //setBundles(tempBundles);
-        bundles = tempBundles;
-        console.log("bundles (final):", bundles)
-
-        //bundles[index] = (await response.json()).data;
-        //const data = bundles[index];
-        
-        //console.log("data:", data);
-        //const tempArray = bundles.map( (list, i) => {
-        //  if( i === index) {
-        //    return data;
-        //  } else {
-        //    return list;
-        //  }
-        //});
-        //setBundles(tempArray);
+        bundles.current = tempBundles;
 
         return response;
       })
@@ -335,12 +311,11 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
   useEffect(() => {
 
     if (status === "succeeded") {
-      console.log("status:", status);
       const abortController = new AbortController();
       fetchBundles(abortController);
     }
 
-  }, [status]);
+  }, [status, fetchBundles]);
 
   useEffect( () => {
     initInstrumentTypes();
@@ -1097,7 +1072,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
 
 const mapStateToProps = (state:RootState, ownProps:{investigationLid:string, investigationVersion:string, tabLabel:string}):InvestigationDetailBodyProps => {
 
-  let bundles:Array<Array<Bundle>> = [];
+  //let bundles:Array<Array<Bundle>> = [];
   let instruments:Array<Array<Instrument>> = [];
   let instrumentHosts:InstrumentHost[] = []
   let investigation:Investigation = Object();
@@ -1112,8 +1087,7 @@ const mapStateToProps = (state:RootState, ownProps:{investigationLid:string, inv
       instrumentHosts = selectLatestInstrumentHostsForInvestigation(state, investigation[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST]);
       instruments = new Array( instrumentHosts.length );
       targets = new Array( instrumentHosts.length );
-      bundles = new Array( instrumentHosts.length ).fill([]);
-      
+
       // Get data for each instrument host
       instrumentHosts.map( (instrumentHost:InstrumentHost, index:number) => {
 
@@ -1138,7 +1112,6 @@ const mapStateToProps = (state:RootState, ownProps:{investigationLid:string, inv
   }
 
   return {
-    bundles: bundles,
     instrumentHosts: instrumentHosts,
     instruments: instruments,
     investigation: investigation,

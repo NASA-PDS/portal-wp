@@ -222,8 +222,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
   
               const indexedInvestigations = getItemsByIndex(investigations, letter);
               const indexedInvestigationsCount = Object.keys(indexedInvestigations).length;
-              const anchorName = indexedInvestigationsCount > 0 ? "#" + letter : undefined;
-  
+
               return (
                 <MenuItem value={letter} disabled={indexedInvestigationsCount === 0}>
                   {letter}

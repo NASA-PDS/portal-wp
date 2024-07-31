@@ -31,7 +31,7 @@ import InvestigationsIndexedListComponent from "src/components/IndexedListCompon
 import { ExpandMore } from "@mui/icons-material";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
 
-type InvestigationsDirectoryPageProps = {
+type InvestigationsDirectoryPageComponentProps = {
   dataFetched: boolean;
   error: string | null | undefined,
   latestInvestigations: Investigation[];
@@ -39,7 +39,7 @@ type InvestigationsDirectoryPageProps = {
   status: string;
 };
 
-export const InvestigationsDirectoryPage = (props:InvestigationsDirectoryPageProps) => {
+export const InvestigationsDirectoryPageComponent = (props:InvestigationsDirectoryPageComponentProps) => {
 
   const dispatch = useAppDispatch();
 
@@ -313,4 +313,5 @@ const mapStateToProps = (state:RootState) => {
   }
 };
 
-export default connect(mapStateToProps)(InvestigationsDirectoryPage);
+const InvestigationsDirectoryPage = connect(mapStateToProps)(InvestigationsDirectoryPageComponent);
+export default InvestigationsDirectoryPage
