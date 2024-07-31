@@ -98,7 +98,11 @@ const navItems = [
 
 function PortalHeader() {
    return (
-      <Header navItems={navItems} title={"Planetary Data System"} />
+      <Header 
+        navItems={navItems}
+        title={"Planetary Data System"}
+        titleLink={"/"} 
+      />
    )
 }
 
