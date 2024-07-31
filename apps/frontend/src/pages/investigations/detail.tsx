@@ -107,7 +107,7 @@ const TABS = [
 
 const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
 
-  let {bundles } = props;
+  let {bundles} = props;
   const {instrumentHosts, instruments, investigation, status, tabLabel, targets } = props;
 
   const navigate = useNavigate();
