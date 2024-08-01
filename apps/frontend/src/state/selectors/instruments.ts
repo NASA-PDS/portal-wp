@@ -18,6 +18,16 @@ const selectInstruments = (state:RootState): InstrumentItems => {
 };
 
 /**
+ * A redux selector to retrieve instrument data stored in our redux state.
+ * @param {RootState} state The redux state of type RootState
+ * @param {string} lid The lid of the instrument that needs to be returned
+ * @returns {Object<[key: string]: Instrument>} A hash array of instrument versions
+ */
+const selectInstrument = (state:RootState, lid:string):{[key:string]: Instrument} => {
+  return state.instruments.items[lid];
+}
+
+/**
  * A memoized redux selector that efficiently returns the latest list of instruments.
  * @returns {Instrument[]} A list of the latest instruments.
  */
@@ -33,6 +43,21 @@ export const selectLatestVersionInstruments = createSelector([selectInstruments]
   });
 
   return latestInstruments;
+
+});
+
+/**
+ * A memoized redux selector that efficiently returns the latest instrument.
+ * @param {RootState} state The redux state of type RootState
+ * @param {string} instrumentLid The LID of the instrument that needs to be fetched
+ * @returns {Instrument} The latest instrument.
+ */
+export const selectLatestInstrumentVersion = createSelector( [selectInstrument], (instrumentVersions) => {
+
+  // Find the latest version of the instrument
+  const latestVersion:string = Object.keys(instrumentVersions).sort().reverse()[0];
+
+  return instrumentVersions[latestVersion];
 
 });
 
