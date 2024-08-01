@@ -8,6 +8,7 @@ import { getData } from "src/state/slices/dataManagerSlice";
 import { useAppDispatch, useAppSelector } from "src/state/hooks";
 import { RootState } from "src/state/store";
 import { selectLatestInstrumentVersion } from "src/state/selectors/instruments";
+import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
 
 
 interface InstrumentDetailBodyProps {
@@ -47,6 +48,10 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
 
   return (
     <>
+      <DocumentMeta
+        title={ instrument.title + " Instrument details" }
+        description={ instrument.title + "Instrument details" }
+      />
       Instrument Detail Page
     </>
   );
