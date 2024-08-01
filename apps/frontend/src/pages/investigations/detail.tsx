@@ -48,6 +48,10 @@ const InvestigationDetailPage = () => {
   
 };
 
+type InstrumentDetailPathParams = {
+  lid:string;
+}
+
 interface InvestigationDetailBodyProps {
   instrumentHosts:InstrumentHost[];
   instruments:Array<Array<Instrument>>;
@@ -267,6 +271,11 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
     if( instrumentHostIndex !== null ) {
       setSelectedInstrumentHost(parseInt(instrumentHostIndex))
     }
+  };
+
+  const instrumentListItemPrimaryAction = (params:InstrumentDetailPathParams) => {
+    params.lid = convertLogicalIdentifier(params.lid,LID_FORMAT.URL_FRIENDLY);
+    navigate( generatePath("/instruments/:lid/data", params) );
   };
 
   const fetchBundles = useCallback( async (abortController:AbortController) => {
@@ -618,7 +627,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                       key={instrument[PDS4_INFO_MODEL.LID]}
                                       description={instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION].toString()}
                                       lid={instrument[PDS4_INFO_MODEL.LID]}
-                                      primaryAction={ () => {} }
+                                      primaryAction={ () => instrumentListItemPrimaryAction({ lid: instrument[PDS4_INFO_MODEL.LID] }) }
                                       title={instrument[PDS4_INFO_MODEL.INSTRUMENT.NAME]}
                                       bundles={getRelatedInstrumentBundles(instrument[PDS4_INFO_MODEL.LID])}
                                     />
