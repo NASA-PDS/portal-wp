@@ -118,8 +118,8 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
             )
           )
         }
-        {investigations.length > 0 &&
-          ALPHABET.map((letter) => {
+        {
+          investigations.length > 0 && ALPHABET.map((letter) => {
 
             const indexedInvestigations = getItemsByIndex(investigations, letter);
             const indexedInvestigationsCount = Object.keys(indexedInvestigations).length;
@@ -155,7 +155,8 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                 {letter}
               </Typography>
             );
-          })}
+          })
+        }
       </Box>
       <Box display={{ xs:"block", md:"none"}}>
         <Divider sx={{marginBottom:"16px"}}/>
@@ -300,8 +301,8 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
           </Grid>
         </Box>
         <Box>
-          {investigations.length > 0 &&
-            OTHER_CHARS.map((character, index) => {
+          {
+            investigations.length > 0 && OTHER_CHARS.map((character, index) => {
 
               const indexedInvestigations = getItemsByIndex(investigations, character);
               const indexedInvestigationsCount = Object.keys(indexedInvestigations).length;
@@ -349,18 +350,17 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                   )}
                 </React.Fragment>
               );
-            })}
-          {investigations.length > 0 &&
-            ALPHABET.map((letter) => {
+            })
+          }
+          {
+            investigations.length > 0 && ALPHABET.map((letter) => {
 
               const indexedInvestigations = getItemsByIndex(investigations, letter);
               const indexedInvestigationsCount = Object.keys(indexedInvestigations).length;
 
               return (
                 <React.Fragment key={"investigations_" + letter}>
-                  { indexedInvestigationsCount > 0 ? 
-                    <>
-                      <Typography
+                  { <Typography
                         variant="h3"
                         sx={{
                           fontFamily: "Inter",
@@ -376,9 +376,8 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                       >
                         <a id={letter}>{letter}</a>
                       </Typography>
-                    </> : <></>
                   }
-                  {indexedInvestigations.map(
+                  { indexedInvestigations.map(
                     (investigation: Investigation) => {
                       return (
                         <FeaturedInvestigationLinkListItem
@@ -398,7 +397,8 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                   )}
                 </React.Fragment>
               );
-            })}
+            })
+          }
         </Box>
       </Container>
     </>
