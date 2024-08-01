@@ -334,6 +334,7 @@ export const FeaturedInvestigationLinkListItem = ({
           </Stack>
         </Stack>
       </Stack>
+      <Divider />
       { showDetails &&
         <Box sx={{
           backgroundColor: "#F6F6F6",
@@ -586,7 +587,6 @@ export const FeaturedInvestigationLinkListItem = ({
           </Stack>
           </Box>
       }
-      <Divider />
     </Stack>
   );
 }
