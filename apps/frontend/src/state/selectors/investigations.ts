@@ -20,6 +20,10 @@ const selectInvestigations = (state:RootState): InvestigationItems => {
   return state.investigations.items;
 };
 
+const selectInvestigation = (state:RootState, lid:string) => {
+  return state.investigations.items[lid];
+}
+
 /**
  * The search filter that should be applied to the list of investigations.
  * @param {RootState} state The redux state of type RootState
@@ -49,6 +53,19 @@ export const selectLatestVersionInvestigations = createSelector([selectInvestiga
   });
 
   return latestInvestigations;
+
+});
+
+/**
+ * A memoized redux selector that efficiently returns the latest list of investigations.
+ * @returns {Investigation[]} A list of the latest investigations.
+ */
+export const selectLatestInvestigationVersion = createSelector( [selectInvestigation], (investigationVersions) => {
+
+  // Find the latest version of the investigation
+  const latestVersion:string = Object.keys(investigationVersions).sort().reverse()[0];
+
+  return investigationVersions[latestVersion];
 
 });
 

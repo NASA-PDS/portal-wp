@@ -19,7 +19,6 @@ const OTHER_CHARS = "0123456789".split("");
 
 type InvestigationDetailPathParams = {
   lid:string;
-  version:string;
 }
 
 const getItemsByIndex = (
@@ -50,7 +49,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
 
   const investigationListItemPrimaryAction = (params:InvestigationDetailPathParams) => {
     params.lid = convertLogicalIdentifier(params.lid,LID_FORMAT.URL_FRIENDLY);
-    navigate( generatePath("/investigations/:lid/:version/instruments", params) );
+    navigate( generatePath("/investigations/:lid/instruments", params) );
   };
 
   const scrollToIndex = (id:string) => {
@@ -338,7 +337,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                           instrumentHosts={ getAffiliatedSpacecraft(state, investigation) }
                           key={investigation[PDS4_INFO_MODEL.LID]}
                           lid={ investigation[PDS4_INFO_MODEL.LID] }
-                          primaryAction={ () => investigationListItemPrimaryAction({ lid: investigation.lid, version: investigation.vid }) }
+                          primaryAction={ () => investigationListItemPrimaryAction({ lid: investigation.lid }) }
                           startDate={ investigation[PDS4_INFO_MODEL.INVESTIGATION.START_DATE] }
                           stopDate={ investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE] }
                           tags={ [] }
@@ -385,7 +384,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                           instrumentHosts={ getAffiliatedSpacecraft(state, investigation) }
                           key={investigation[PDS4_INFO_MODEL.LID]}
                           lid={ investigation[PDS4_INFO_MODEL.LID] }
-                          primaryAction={ () => investigationListItemPrimaryAction({ lid: investigation.lid, version: investigation.vid }) }
+                          primaryAction={ () => investigationListItemPrimaryAction({ lid: investigation.lid }) }
                           tags={ [] }
                           startDate={ investigation[PDS4_INFO_MODEL.INVESTIGATION.START_DATE] }
                           stopDate={ investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE] }

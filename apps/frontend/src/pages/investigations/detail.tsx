@@ -6,7 +6,7 @@ import { convertLogicalIdentifier, LID_FORMAT } from "src/utils/strings";
 import { getData } from "src/state/slices/dataManagerSlice";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { RootState } from "src/state/store";
-import { selectInvestigationVersion } from "src/state/selectors/investigations";
+import { selectLatestInvestigationVersion } from "src/state/selectors/investigations";
 import { connect } from "react-redux";
 import { Instrument, InstrumentHost, Investigation, Target } from "src/types";
 import { selectLatestInstrumentHostsForInvestigation } from "src/state/selectors/instrumentHost";
@@ -26,7 +26,7 @@ import { Bundle } from "src/types/bundle";
 
 const InvestigationDetailPage = () => {
 
-  const { investigationLid, investigationVersion, tabLabel } = useParams();
+  const { investigationLid, tabLabel } = useParams();
   const dispatch = useAppDispatch();
   const convertedInvestigationLid = convertLogicalIdentifier(investigationLid !== undefined ? investigationLid : "", LID_FORMAT.DEFAULT);
 
@@ -42,7 +42,7 @@ const InvestigationDetailPage = () => {
 
   return (
     <>
-    <ConnectedComponent investigationLid={convertedInvestigationLid} investigationVersion={investigationVersion} tabLabel={tabLabel} />
+    <ConnectedComponent investigationLid={convertedInvestigationLid} tabLabel={tabLabel} />
     </>
   )
   
@@ -1072,7 +1072,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
   )
 };
 
-const mapStateToProps = (state:RootState, ownProps:{investigationLid:string, investigationVersion:string, tabLabel:string}):InvestigationDetailBodyProps => {
+const mapStateToProps = (state:RootState, ownProps:{investigationLid:string, tabLabel:string}):InvestigationDetailBodyProps => {
 
   //let bundles:Array<Array<Bundle>> = [];
   let instruments:Array<Array<Instrument>> = [];
@@ -1082,7 +1082,7 @@ const mapStateToProps = (state:RootState, ownProps:{investigationLid:string, inv
   
   if( state.investigations.status === 'succeeded' ) {
 
-    investigation = selectInvestigationVersion(state, ownProps.investigationLid, ownProps.investigationVersion);
+    investigation = selectLatestInvestigationVersion(state, ownProps.investigationLid);
 
     if( state.instrumentHosts.status === 'succeeded' ) {
 
