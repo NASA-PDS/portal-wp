@@ -17,6 +17,10 @@ const selectInstrumentHosts = (state:RootState): InstrumentHostItems => {
   return state.instrumentHosts.items;
 };
 
+const selectInstrumentHost = (state:RootState, lid:string) => {
+  return state.instrumentHosts.items[lid];
+};
+
 /**
  * A memoized redux selector that efficiently returns the latest list of instrument hosts.
  * @returns {InstrumentHost[]} A list of the latest instrument hosts.
@@ -33,6 +37,15 @@ export const selectLatestVersionInstrumentHosts = createSelector([selectInstrume
   });
 
   return latestInstrumentHost;
+
+});
+
+export const selectLatestInstrumentHostVersion = createSelector( [selectInstrumentHost], (instrumentHostVersions) => {
+
+  // Find the latest version of the instrument
+  const latestVersion:string = Object.keys(instrumentHostVersions).sort().reverse()[0];
+
+  return instrumentHostVersions[latestVersion];
 
 });
 
