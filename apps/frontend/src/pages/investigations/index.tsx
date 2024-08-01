@@ -77,7 +77,7 @@ export const InvestigationsDirectoryPageComponent = (props:InvestigationsDirecto
   };
 
   const handleFreeTextSearchFilterChange = (event:React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(setFreeTextSearchFilter(event.currentTarget.value))
+    dispatch(setFreeTextSearchFilter(event.target.value))
   };
 
   const handleFreeTextSearchFilterReset = () => {

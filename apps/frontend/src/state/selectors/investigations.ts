@@ -98,27 +98,34 @@ export const selectFilteredInvestigations = createSelector(
       return 0;
     });
 
+    // Search Filters are undefined, so return full list of investigations
     if( searchFilters === undefined ) {
       return latestInvestigations;
     }
 
-    // Get LIDS for targets that match free-text search filter
-    const foundTargetLids = latestTargets.filter( (target) => {
-      return (
-        target[PDS4_INFO_MODEL.TARGET.NAME]?.toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
-        ||
-        target[PDS4_INFO_MODEL.LID]?.toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
-      )
-    }).map( (target) => { return target[PDS4_INFO_MODEL.LID]});
-    
-    // Get LIDS for instruments that match free-text search filter
-    const foundInstrumentLids = latestInstruments.filter( (instrument) => {
-      return (
-        instrument[PDS4_INFO_MODEL.INSTRUMENT.NAME]?.toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
-        ||
-        instrument[PDS4_INFO_MODEL.LID]?.toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
-      )
-    });
+    let foundTargetLids:string[] = [];
+    let foundInstrumentLids:Instrument[] = [];
+    if( searchFilters.freeText !== undefined ) {
+
+      // Get LIDS for targets that match free-text search filter
+      foundTargetLids = latestTargets.filter( (target) => {
+        return (
+          target[PDS4_INFO_MODEL.TARGET.NAME]?.toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
+          ||
+          target[PDS4_INFO_MODEL.LID]?.toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
+        )
+      }).map( (target) => { return target[PDS4_INFO_MODEL.LID]});
+
+      // Get LIDS for instruments that match free-text search filter
+      foundInstrumentLids = latestInstruments.filter( (instrument) => {
+        return (
+          instrument[PDS4_INFO_MODEL.INSTRUMENT.NAME]?.toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
+          ||
+          instrument[PDS4_INFO_MODEL.LID]?.toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
+        )
+      });
+    }
+
     // Get LIDS for instruments hosts of those that matched free-text search filter
     const foundInstrumentHostLids:string[] = [];
     foundInstrumentLids.forEach( (instrument:Instrument) => {
@@ -145,16 +152,18 @@ export const selectFilteredInvestigations = createSelector(
       (investigation) => {
         return (
           (
-            investigation[PDS4_INFO_MODEL.TITLE].toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
-            ||
-            investigation[PDS4_INFO_MODEL.LID].toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
-            ||
-            targetInvestigationLids.includes(investigation[PDS4_INFO_MODEL.LID])
-            ||
-            instrumentHostInvestigationLids.includes(investigation[PDS4_INFO_MODEL.LID])
+            searchFilters.freeText === undefined 
+            || investigation[PDS4_INFO_MODEL.TITLE].toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
+            || investigation[PDS4_INFO_MODEL.LID].toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
+            || targetInvestigationLids.includes(investigation[PDS4_INFO_MODEL.LID])
+            || instrumentHostInvestigationLids.includes(investigation[PDS4_INFO_MODEL.LID])
           )
           &&
-          ( searchFilters.type === undefined || searchFilters.type === INVESTIGATION_TYPE.ALL || investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE] === searchFilters.type )
+          ( 
+            searchFilters.type === undefined 
+            || searchFilters.type === INVESTIGATION_TYPE.ALL 
+            || searchFilters.type === investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE] 
+          )
         )
       }
     );
