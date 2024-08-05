@@ -5,7 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import ArrowForward from '@mui/icons-material/ArrowForward';
-import { Link } from '@mui/material';
+import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { ellipsisText } from 'src/utils/strings';
 
@@ -28,6 +28,7 @@ export const FeaturedInstrumentLinkListItem = ({
 }: FeaturedInstrumentLinkListItemProps) => {
 
   const [showDetails, setShowDetails] = useState<boolean>(false);
+  const descriptionLength = 256;
 
   const toggleDetails = () => {
     setShowDetails( !showDetails );
@@ -61,43 +62,48 @@ export const FeaturedInstrumentLinkListItem = ({
               }
             </IconButton>
           </Grid>
-          <Grid item xs={4}>
-            <Link component="button" onClick={() => primaryAction()}
-              sx={{
-                textAlign: "left",
-                color: "#000000",
-                textDecoration: "none",
-                cursor: "pointer"
-              }}>
-              <Typography sx={{
-                color: 'black',
-                fontSize: "1.125rem",
-                fontFamily: 'Inter',
-                fontWeight: '600',
-                lineHeight: '23px',
-                wordWrap: 'break-word'
-              }}>
-                {title}
-              </Typography>
-            </Link>
-          </Grid>
-          <Grid item xs={5}>
-            <Typography
-              sx={{
-                color: 'black',
-                fontSize: '0.75rem',
-                fontFamily: 'Inter',
-                fontWeight: '400',
-                lineHeight: '16px',
-                letterSpacing: "0.25px",
-                wordWrap: 'break-word'
-              }}
+          <Grid item xs={8}>
+            <Stack alignItems="left" gap={1} sx={{
+              paddingLeft: "15px"
+            }}>
+              <Link to={{}} onClick={() => primaryAction()}
+                style={{
+                  textAlign: "left",
+                  color: "#000000",
+                  textDecoration: "none",
+                  cursor: "pointer"
+                }}>
+                <Typography sx={{
+                    color: "#000000",
+                    fontSize: "14px",
+                    fontFamily: 'Inter',
+                    fontWeight: '600',
+                    lineHeight: "19px",
+                    wordWrap: 'break-word'
+                  }}>
+                  {title}
+                </Typography>
+              </Link>
+              <Typography 
+                variant="body1"
+                gutterBottom
+                sx={{
+                  fontFamily: "Inter",
+                  fontSize: "12px",
+                  lineHeight: "130%",
+                  fontWeight: "500",
+                }}
+                title={description}
               >
-                {ellipsisText(description, 256)}
-            </Typography>
+                {ellipsisText(description, descriptionLength)}
+              </Typography>
+            </Stack>
           </Grid>
-          <Grid item xs={2}>
-            <Stack direction="row">
+          <Grid item lg={1} display={{ xs: "none", sm: "none", lg: "block"}}>
+            { /* Column Gutter */ } 
+          </Grid>
+          <Grid item xs={2} sx={{textAlign: "right"}}>
+            <Stack direction="row" gap={1} alignItems={"center"}>
               <Typography sx={{
                 color: 'black',
                 fontSize: 16,
