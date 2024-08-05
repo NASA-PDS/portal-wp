@@ -628,7 +628,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                       description={instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION].toString()}
                                       lid={instrument[PDS4_INFO_MODEL.LID]}
                                       primaryAction={ () => instrumentListItemPrimaryAction({ lid: instrument[PDS4_INFO_MODEL.LID] }) }
-                                      title={instrument[PDS4_INFO_MODEL.INSTRUMENT.NAME]}
+                                      title={instrument[PDS4_INFO_MODEL.TITLE]}
                                       bundles={getRelatedInstrumentBundles(instrument[PDS4_INFO_MODEL.LID])}
                                     />
                                   }
