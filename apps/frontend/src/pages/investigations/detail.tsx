@@ -502,6 +502,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
               </Box>
             </Container>
           </Container>
+          {/* Main Content */}
           <Container
             maxWidth={false}
             disableGutters
@@ -510,6 +511,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
               padding: "24px"
             }}
           >
+            {/* Tab Bar */}
             <Container
               maxWidth={"xl"}
               disableGutters
@@ -534,6 +536,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                 </Tabs>
               </Box>
             </Container>
+            {/* Tabs */}
             <Container
               maxWidth={"xl"}
               disableGutters
