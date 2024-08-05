@@ -270,25 +270,27 @@ export const InvestigationsDirectoryPageComponent = (props:InvestigationsDirecto
                   </Grid>*/}
               </Grid>
             </Box>
-            {latestInvestigations.length > 0 ? (
-              <InvestigationsIndexedListComponent
-                investigations={latestInvestigations}
-              />
-            ) : (
-              <>
-                {searchFilters === undefined ? (
-                  <Box sx={{ paddingBottom: "25px", textAlign: "center" }}>
-                    <Typography>No investigations found.</Typography>
-                  </Box>
-                ) : (
-                  <Box sx={{ paddingBottom: "25px", textAlign: "center" }}>
-                    <Typography>
-                      No investigations found based on the provided search filters.
-                    </Typography>
-                  </Box>
-                )}
-              </>
-            )}
+            {
+              latestInvestigations.length > 0 ? (
+                <InvestigationsIndexedListComponent
+                  investigations={latestInvestigations}
+                />
+              ) : (
+                <>
+                  {searchFilters === undefined ? (
+                    <Box sx={{ paddingBottom: "25px", textAlign: "center" }}>
+                      <Typography>No investigations found.</Typography>
+                    </Box>
+                  ) : (
+                    <Box sx={{ paddingBottom: "25px", textAlign: "center" }}>
+                      <Typography>
+                        No investigations found based on the provided search filters.
+                      </Typography>
+                    </Box>
+                  )}
+                </>
+              )
+            }
           </Container>
         ) : (
           <Box sx={{ padding: "40px" }}>
