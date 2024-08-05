@@ -92,7 +92,7 @@ export const InvestigationsDirectoryPageComponent = (props:InvestigationsDirecto
     <>
       <DocumentMeta
         title={ "Investigations Directory" }
-        description={ "Planetary Data Systems Investigations directory page." }
+        description={ "Planetary Data Systems Investigations Directory." }
       />
       <Container maxWidth={false} disableGutters>
         {/* Page Intro */}

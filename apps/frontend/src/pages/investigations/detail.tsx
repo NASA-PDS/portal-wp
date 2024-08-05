@@ -337,8 +337,8 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
   return (
     <>
       <DocumentMeta
-        title={ investigation.title + " Investigation details" }
-        description={ investigation.title + "Investigation details" }
+        title={ investigation.title + " Investigation Details" }
+        description={ investigation.title + "Investigation Details." }
       />
       {
         (status === 'idle' || status === 'pending' )
