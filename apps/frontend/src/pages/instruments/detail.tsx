@@ -9,14 +9,15 @@ import { useAppDispatch, useAppSelector } from "src/state/hooks";
 import { RootState } from "src/state/store";
 import { selectLatestInstrumentVersion } from "src/state/selectors/instruments";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
-import { Box, Breadcrumbs, Container, Divider, Grid, Link as AnchorLink, Tab, Tabs, Typography, Stack } from "@mui/material";
-import { Loader } from "@nasapds/wds-react";
+import { Box, Breadcrumbs, Container, Divider, Grid, Link as AnchorLink, Tab, Tabs, Typography, Stack, Button, IconButton } from "@mui/material";
+import { IconArrowFilledDown, IconChevronDown, Loader } from "@nasapds/wds-react";
 import InvestigationStatus from "src/components/InvestigationStatus/InvestigationStatus";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import StatsList from "src/components/StatsList/StatsList";
 import { selectLatestInstrumentHostVersion } from "src/state/selectors/instrumentHost";
 import { selectLatestInvestigationVersion } from "src/state/selectors/investigations";
 import FeaturedDataBundleLinkListItem from "src/components/FeaturedListItems/FeaturedDataBundleLinkListItem";
+import { ArrowOutward } from "@mui/icons-material";
 
 
 interface InstrumentDetailBodyProps {
@@ -298,6 +299,112 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                 </Grid>
               </Grid>
             </Container>
+          </Container>
+          <Container
+            maxWidth={false}
+            disableGutters
+            sx={{
+              textAlign: "left",
+              padding: "24px",
+              backgroundColor: "#F6F6F6"
+            }}
+          >
+            {/* Quick Action Bar */}
+            <Container
+              maxWidth={"xl"}
+              disableGutters
+              sx={{
+                paddingY: "24px",
+              }}
+            >
+              <Grid container>
+                <Grid item lg={1} display={{ xs: "none", sm: "none", lg: "block"}}>
+                  { /* Column Gutter */ } 
+                </Grid>
+                <Grid item lg={10}>
+                  <Stack direction={{ xs: 'column', sm: 'row' }} gap={"16px"}>
+                    <Stack direction={"row"}>
+                      <Button sx={{
+                        backgroundColor: "#F64137",
+                        paddingY: "12px",
+                        paddingX: "20px",
+                        borderRadius: "0px",
+                        color: 'white',
+                        fontSize: "16px",
+                        fontFamily: 'Inter',
+                        fontWeight: '600',
+                        lineHeight: "20px",
+                        wordWrap: 'break-word'
+                      }}>Browse Data
+                      <IconArrowFilledDown />
+                      </Button>
+                    </Stack>
+                    <Stack direction="row" alignItems={"center"} gap={"4px"}>
+                      <Typography sx={{
+                        color: 'black',
+                        fontSize: 16,
+                        fontFamily: 'Inter',
+                        fontWeight: '600',
+                        lineHeight: '20px',
+                        wordWrap: "break-word"
+                      }}
+                      >Mission Home Page</Typography>
+                      <IconButton
+                        sx={{
+                          "&:hover": {
+                            backgroundColor: "#B60109"
+                          },
+                          backgroundColor: "#F64137",
+                          height: "20px",
+                          width: "20px",
+                          padding: "10px"
+                        }}
+                        aria-label="arrow"
+                        onClick={() => {}}>
+                          <ArrowOutward sx={{
+                            color: "#FFFFFF",
+                            width: "14px"
+                          }}
+                        />
+                      </IconButton>
+                    </Stack>
+                    <Stack direction="row" alignItems={"center"} gap={"4px"}>
+                      <Typography sx={{
+                        color: 'black',
+                        fontSize: 16,
+                        fontFamily: 'Inter',
+                        fontWeight: '600',
+                        lineHeight: '20px',
+                        wordWrap: "break-word"
+                      }}
+                      >Instrument Team Page</Typography>
+                      <IconButton
+                        sx={{
+                          "&:hover": {
+                            backgroundColor: "#B60109"
+                          },
+                          backgroundColor: "#F64137",
+                          height: "20px",
+                          width: "20px",
+                          padding: "10px"
+                        }}
+                        aria-label="arrow"
+                        onClick={() => {}}>
+                          <ArrowOutward sx={{
+                            color: "#FFFFFF",
+                            width: "14px"
+                          }}
+                        />
+                      </IconButton>
+                    </Stack>
+                  </Stack>
+                </Grid>
+                <Grid item lg={1} display={{ xs: "none", sm: "none", lg: "block"}}>
+                  { /* Column Gutter */ } 
+                </Grid>
+              </Grid>
+            </Container>
+
           </Container>
           {/* Main Content Body */}
           <Container
