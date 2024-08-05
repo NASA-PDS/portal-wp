@@ -259,11 +259,10 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     const params = {
-      lid: investigation[PDS4_INFO_MODEL.LID] || null,
-      version: investigation[PDS4_INFO_MODEL.VID] || null,
+      lid: convertLogicalIdentifier(investigation[PDS4_INFO_MODEL.LID], LID_FORMAT.URL_FRIENDLY) || null,
       tabLabel: TABS[newValue].toLowerCase()
     };
-    navigate( generatePath("/investigations/:lid/:version/:tabLabel", params) );
+    navigate( generatePath("/investigations/:lid/:tabLabel", params) );
   };
 
   const handleInstrumentHostChange = (event:SyntheticEvent) => {
