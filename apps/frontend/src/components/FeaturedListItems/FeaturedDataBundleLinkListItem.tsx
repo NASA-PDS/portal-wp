@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
-import { ArrowForward, ArrowOutward } from '@mui/icons-material';
+import { ArrowOutward } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { ellipsisText } from 'src/utils/strings';
