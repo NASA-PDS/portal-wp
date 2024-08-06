@@ -75,6 +75,22 @@ And then start the containers:
 docker-compose up
 ```
 
+## Secrets Baseline
+To generate the [Detect Secrets](https://github.com/NASA-PDS/nasa-pds.github.io/wiki/Git-and-Github-Guide#detect-secrets) baseline for this repo, numerous directories need to be ignored.
+```
+detect-secrets scan . \
+   --all-files \
+   --disable-plugin AbsolutePathDetectorExperimental \
+   --exclude-files '\.secrets..*' \
+   --exclude-files '\.git.*' \
+   --exclude-files '\.pre-commit-config\.yaml' \
+   --exclude-files 'target' \
+   --exclude-files 'wordpress/data/wp-includes/' \
+   --exclude-files 'wordpress/data/wp-admin/js/' \
+   --exclude-files 'wordpress/data/wp-content/plugins/' \
+   --exclude-files 'wordpress/data/wp-content/themes/' > .secrets.baseline
+```
+
 ### Notes:
 
 #### Invoking Docker Compose
