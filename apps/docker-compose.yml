@@ -1,0 +1,112 @@
+version: "3.9"
+
+services:
+
+  wpcli:
+    command: tail -f /dev/null
+    container_name: pds-portal-wpcli
+    depends_on:
+      - backend
+    environment:
+      - WORDPRESS_DB_HOST=db:3306
+      - WORDPRESS_DB_NAME_FILE=/run/secrets/WORDPRESS_DB_NAME
+      - WORDPRESS_DB_USER_FILE=/run/secrets/WORDPRESS_DB_USER
+      - WORDPRESS_DB_PASSWORD_FILE=/run/secrets/WORDPRESS_DB_PASSWORD
+    image: wordpress:cli-php8.2
+    secrets:
+      - WORDPRESS_DB_NAME
+      - WORDPRESS_DB_USER
+      - WORDPRESS_DB_PASSWORD
+    user: 1000:1000
+    volumes:
+      - ./backend/nasa-pds-wp/data:/var/www/html
+
+#  frontend:
+#    build:
+#      dockerfile: Dockerfile
+#      context: ./frontend
+#    container_name: "pds-portal-frontend"
+#    depends_on:
+#      - backend
+#    expose:
+#      - '5173'
+#    image: 'pds-portal-frontend'
+#    ports:
+#      - '5173:5173'
+#    user: node
+#    volumes:
+#      - "./frontend:/app"
+#      - "/app/node_modules/"
+#      - ./node_modules/@nasapds/pds-wds-react:/app/node_modules/@nasapds/pds-wds-react
+
+  backend:
+    container_name: 'pds-portal-backend'
+    build:
+      dockerfile: Dockerfile
+      context: ./backend/nasa-pds-wp
+    depends_on:
+      db:
+        condition: service_healthy
+    expose:
+      - '80'
+    environment:
+      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_NAME_FILE=/run/secrets/WORDPRESS_DB_NAME
+      - WORDPRESS_DB_USER_FILE=/run/secrets/WORDPRESS_DB_USER
+      - WORDPRESS_DB_PASSWORD_FILE=/run/secrets/WORDPRESS_DB_PASSWORD
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost"]
+    image: 'pds-portal-backend'
+    ports:
+      - '8080:80'
+    restart: always
+    secrets:
+      - WORDPRESS_DB_NAME
+      - WORDPRESS_DB_USER
+      - WORDPRESS_DB_PASSWORD
+    user: 1000:1000
+    volumes:
+      - "./backend/nasa-pds-wp/data:/var/www/html"
+      - "./backend/nasa-pds-wp/plugins:/var/www/html/wp-content/plugins"
+      - "./backend/nasa-pds-wp/themes:/var/www/html/wp-content/themes"
+
+  db:
+    container_name: 'pds-portal-db'
+    build:
+      dockerfile: Dockerfile
+      context: ./db
+    environment:
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/MYSQL_ROOT_PASSWORD
+      - MYSQL_DATABASE_FILE=/run/secrets/MYSQL_DATABASE
+      - MYSQL_USER_FILE=/run/secrets/MYSQL_USER
+      - MYSQL_PASSWORD_FILE=/run/secrets/MYSQL_PASSWORD
+    healthcheck:
+        test: "exit 0"
+    image: 'pds-portal-db'
+    ports:
+      - '3306:3306'
+    restart: always
+    secrets:
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_DATABASE
+      - MYSQL_USER
+      - MYSQL_PASSWORD
+    volumes:
+      - "./db/init/:/docker-entrypoint-initdb.d/"
+      - "./db/data:/var/lib/mysql"
+
+secrets:
+  MYSQL_ROOT_PASSWORD:
+    file: ./db/secrets/MYSQL_ROOT_PASSWORD.txt
+  MYSQL_DATABASE:
+    file: ./db/secrets/MYSQL_DATABASE.txt
+  MYSQL_USER:
+    file: ./db/secrets/MYSQL_USER.txt
+  MYSQL_PASSWORD:
+    file: ./db/secrets/MYSQL_PASSWORD.txt
+  WORDPRESS_DB_NAME:
+    file: ./backend/nasa-pds-wp/secrets/WORDPRESS_DB_NAME.txt
+  WORDPRESS_DB_USER:
+    file: ./backend/nasa-pds-wp/secrets/WORDPRESS_DB_USER.txt
+  WORDPRESS_DB_PASSWORD:
+    file: ./backend/nasa-pds-wp/secrets/WORDPRESS_DB_PASSWORD.txt

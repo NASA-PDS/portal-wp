@@ -1,14 +1,16 @@
-
 # db ignore settings
-db/data
-db/secrets/*
-!db/secrets/.gitkeep
-!db/secrets/*.example
-db/init/*
-!db/init/.gitkeep
+apps/db/data
+apps/db/secrets/*
+!apps/db/secrets/.gitkeep
+!apps/db/secrets/*.example
+apps/db/init/*
+!apps/db/init/.gitkeep
 
 # www ignore settings
-wordpress/data
-wordpress/secrets/*
-!wordpress/secrets/.gitkeep
-!wordpress/secrets/*.example
+apps/backend/nasa-pds-wp/data
+apps/backend/nasa-pds-wp/secrets/*
+!apps/backend/nasa-pds-wp/secrets/.gitkeep
+!apps/backend/nasa-pds-wp/secrets/*.example
+
+# frontend ignore settings
+apps/frontend/.vite
