@@ -13,7 +13,7 @@ import { selectLatestInstrumentHostsForInvestigation } from "src/state/selectors
 import { selectLatestInstrumentsForInstrumentHost } from "src/state/selectors/instruments";
 import { selectLatestTargetsForInstrumentHost } from "src/state/selectors/targets";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
-import { Box, Breadcrumbs, Button, Container, Divider, Grid, Link as AnchorLink, Stack, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Breadcrumbs, Button, Container, Divider, Grid, Link as AnchorLink, Stack, Tab, Tabs, Typography, IconButton } from "@mui/material";
 import InvestigationStatus from "src/components/InvestigationStatus/InvestigationStatus";
 import StatsList from "src/components/StatsList/StatsList";
 
@@ -23,6 +23,7 @@ import FeaturedToolLinkListItem from "src/components/FeaturedListItems/FeaturedT
 import FeaturedResourceLinkListItem from "src/components/FeaturedListItems/FeaturedResourcesLinkListItem";
 import { Loader } from "@nasapds/wds-react";
 import { Bundle } from "src/types/bundle";
+import { ArrowForward } from "@mui/icons-material";
 
 const InvestigationDetailPage = () => {
 
@@ -724,6 +725,49 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                         __html: getInvestigationSummary()
                       }}>
                     </Typography>
+                    <Typography sx={{
+                      color: 'black',
+                      fontSize: "22px",
+                      fontFamily: 'Inter',
+                      fontWeight: '700',
+                      lineHeight: "26px",
+                      wordWrap: 'break-word'
+                    }}>
+                      Looking for Data
+                    </Typography>
+                    <Stack direction="column" alignItems={"left"} gap={2} sx={{
+                      paddingTop: "16px"
+                    }}>
+                      <Stack direction="row" alignItems={"center"} gap={1} onClick={ () => {} }>
+                        <Typography sx={{
+                          color: 'black',
+                          fontSize: 16,
+                          fontFamily: 'Inter',
+                          fontWeight: '600',
+                          lineHeight: '20px',
+                          wordWrap: "break-word"
+                        }}
+                        >Instruments</Typography>
+                        <IconButton
+                          sx={{
+                            "&:hover": {
+                              backgroundColor: "#B60109"
+                            },
+                            backgroundColor: "#F64137",
+                            height: "20px",
+                            width: "20px",
+                            padding: "10px"
+                          }}
+                          aria-label="arrow"
+                          onClick={() => { }}>
+                            <ArrowForward sx={{
+                              color: "#FFFFFF",
+                              width: "14px"
+                            }}
+                          />
+                        </IconButton>
+                      </Stack>
+                    </Stack>
                   </Grid>
                 </Grid>
               </CustomTabPanel>
