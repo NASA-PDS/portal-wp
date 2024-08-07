@@ -1,0 +1,19 @@
+.MuiButtonBase-root.MuiButton-root.pds-search-searchButton.wds-button-cta{
+    margin-left: 12px;
+    height: 52px;
+    text-transform: none;
+}
+
+.searchBarContainer{
+    display: flex;
+}
+
+.pds-search-bar{
+    width: 100%;
+    height: 52px;
+}
+
+.pds-search-bar .MuiInputBase-root.MuiOutlinedInput-root{
+    height: 52px;
+}
+

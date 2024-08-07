@@ -10,6 +10,11 @@ const navItems = [
         id: "find-data-investigations",
         label: "Investigations",
         href: "/investigations",
+      },
+      {
+        id: "data-search",
+        label: "Search",
+        href: "/search",
       }
     ],
   },
