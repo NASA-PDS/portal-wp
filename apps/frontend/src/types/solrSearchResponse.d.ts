@@ -68,4 +68,5 @@ type ResponseHeader = {
 type Params = {
     q: string;
     wt: string;
+    rows: string;
 }

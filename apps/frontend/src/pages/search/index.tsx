@@ -10,43 +10,68 @@ import {
   Link,
 } from "@mui/material";
 
-import { generatePath, useNavigate, useParams } from "react-router-dom";
+import {
+  createSearchParams,
+  generatePath,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 
-import { Button, IconSearch, TextField, Typography } from "@nasapds/wds-react";
+import {
+  Button,
+  IconSearch,
+  Pagination,
+  TextField,
+  Typography,
+} from "@nasapds/wds-react";
 
 import "./search.css";
+
+const linkStyles = {
+  color: "white",
+  fontFamily: "Inter",
+  fontSize: "14px",
+  fontWeight: "300",
+  lineHeight: "19px",
+  paddingY: "4px",
+};
 
 const SearchPage = () => {
   const navigate = useNavigate();
   const params = useParams();
 
-  const linkStyles = {
-    color: "white",
-    fontFamily: "Inter",
-    fontSize: "14px",
-    fontWeight: "300",
-    lineHeight: "19px",
-    paddingY: "4px",
-  };
-
+  const [searchParams, setSearchParams] = useSearchParams();
   const [searchInputValue, setSearchInputValue] = useState("");
   const [searchResults, setSearchResults] = useState<SolrSearchResponse | null>(
     null
   );
 
+  const [paginationPage, setPaginationPage] = useState(1);
+  const [paginationCount, setPaginationCount] = useState(1);
+  const [resultRows, setResultRows] = useState(20);
+
   const formatSearchResults = (data: SolrSearchResponse) => {
-    console.log("data", data);
     return data;
   };
 
-  const doSearch = async (searchText: string) => {
-    const response = await fetch(
-      "https://pds.nasa.gov/services/search/search?wt=json&q=" + searchText
-    );
+  const doSearch = async (searchText: string, start: number, rows: number) => {
+    const url =
+      "https://pds.nasa.gov/services/search/search?wt=json&q=" +
+      searchText +
+      "&rows=" +
+      rows +
+      "&start=" +
+      start;
+
+    console.log("fetchurl", url);
+
+    const response = await fetch(url);
     const data = await response.json();
-    setSearchResults(data);
     const formattedResults = formatSearchResults(data);
+
     setSearchResults(formattedResults);
+    calculatePaginationCount(formattedResults);
   };
 
   const handleSearchInputValueChange = (
@@ -71,12 +96,59 @@ const SearchPage = () => {
     navigate(generatePath("/search/:searchText/", params));
   };
 
+  const handlePaginationChange = (
+    event: ChangeEvent<unknown>,
+    value: number
+  ) => {
+    const params = {
+      searchText: searchInputValue,
+    };
+    const page = value.toString();
+
+    navigate({
+      pathname: generatePath("/search/:searchText/", params),
+      search: createSearchParams({ page }).toString(),
+    });
+  };
+
+  const calculateStartValue = (page: number, rows: number) => {
+    return (page - 1) * rows;
+  };
+
+  const calculatePaginationCount = (data: SolrSearchResponse) => {
+    const rows = Number(data.responseHeader.params.rows);
+    const hits = data.response.numFound;
+    const count = Math.ceil(hits / rows);
+
+    setPaginationCount(count);
+  };
+
   useEffect(() => {
     if (params.searchText) {
       setSearchInputValue(params.searchText);
-      doSearch(params.searchText);
+
+      let defaultPage = 1;
+      let defaultStart = 0;
+      let defaultRows = 20;
+
+      const rowsParam = Number(searchParams.get("rows"));
+      if (rowsParam) {
+        setResultRows(rowsParam);
+        defaultRows = rowsParam;
+      }
+
+      const paginationPageParam = Number(searchParams.get("page"));
+      if (paginationPageParam) {
+        setPaginationPage(paginationPageParam);
+        defaultPage = paginationPageParam;
+        defaultStart = calculateStartValue(defaultPage, defaultRows);
+      } else {
+        setPaginationPage(1);
+      }
+
+      doSearch(params.searchText, defaultStart, defaultRows);
     }
-  }, [params.searchText]);
+  }, [params.searchText, searchParams.get("page")]);
 
   return (
     <>
@@ -141,8 +213,9 @@ const SearchPage = () => {
                   </Typography>
                   <Typography variant="body5" weight="regular">
                     {searchResults.response.start + 1} -{" "}
-                    {searchResults.response.docs.length - 1} of{" "}
-                    {searchResults.response.numFound} results (
+                    {Number(searchResults.response.start) +
+                      Number(searchResults.response.docs.length)}{" "}
+                    of {searchResults.response.numFound} results (
                     {searchResults.responseHeader.QTime}) seconds
                   </Typography>
                 </Box>
@@ -204,6 +277,32 @@ const SearchPage = () => {
             </Grid>
           </Grid>
         </Container>
+
+        {searchResults ? (
+          <Container
+            maxWidth={"xl"}
+            sx={{
+              paddingY: "24px",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Pagination
+                count={paginationCount}
+                page={paginationPage}
+                siblingCount={1}
+                onChange={handlePaginationChange}
+              />
+            </Box>
+          </Container>
+        ) : (
+          <></>
+        )}
       </Container>
     </>
   );
