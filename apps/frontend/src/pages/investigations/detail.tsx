@@ -43,7 +43,7 @@ const InvestigationDetailPage = () => {
 
   return (
     <>
-    <ConnectedComponent investigationLid={convertedInvestigationLid} tabLabel={tabLabel} />
+      <ConnectedComponent investigationLid={convertedInvestigationLid} tabLabel={tabLabel ? tabLabel : "data"} />
     </>
   )
   
