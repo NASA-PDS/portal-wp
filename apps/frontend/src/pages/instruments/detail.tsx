@@ -10,7 +10,7 @@ import { RootState } from "src/state/store";
 import { selectLatestInstrumentVersion } from "src/state/selectors/instruments";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
 import { Box, Breadcrumbs, Container, Divider, Grid, Link as AnchorLink, Tab, Tabs, Typography, Stack, Button, IconButton } from "@mui/material";
-import { IconArrowFilledDown, IconChevronDown, Loader } from "@nasapds/wds-react";
+import { IconArrowFilledDown, Loader } from "@nasapds/wds-react";
 import InvestigationStatus from "src/components/InvestigationStatus/InvestigationStatus";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { Stats, StatsList } from "src/components/StatsList/StatsList";
