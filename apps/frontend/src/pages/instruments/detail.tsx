@@ -527,7 +527,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                                   paddingTop: "50px"
                                 }
                               }} key={"instrumentType_" + index}>
-                                <a name={"title_" + dataType.toLowerCase()}>{dataType}</a>
+                                <a id={"title_" + dataType.toLowerCase()}>{dataType}</a>
                               </Typography>
                               {
                                 [{

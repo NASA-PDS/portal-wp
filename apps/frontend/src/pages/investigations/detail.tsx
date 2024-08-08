@@ -620,7 +620,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                   paddingTop: "50px"
                                 }
                               }} key={"instrumentType_" + index}>
-                                <a name={"title_" + instrumentType.toLowerCase()}>{instrumentType}</a>
+                                <a id={"title_" + instrumentType.toLowerCase()}>{instrumentType}</a>
                               </Typography>
                               {
                                 instruments[selectedInstrumentHost].map( (instrument:Instrument) => {
