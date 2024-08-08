@@ -1,4 +1,5 @@
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
+import { SolrSearchResponse } from "src/types/solrSearchResponse";
 
 import {
   Box,
@@ -7,12 +8,11 @@ import {
   Grid,
   InputAdornment,
   Link,
-  Typography,
 } from "@mui/material";
 
 import { generatePath, useNavigate, useParams } from "react-router-dom";
 
-import { Button, IconSearch, TextField } from "@nasapds/wds-react";
+import { Button, IconSearch, TextField, Typography } from "@nasapds/wds-react";
 
 import "./search.css";
 
@@ -30,7 +30,14 @@ const SearchPage = () => {
   };
 
   const [searchInputValue, setSearchInputValue] = useState("");
-  const [searchResults, setSearchResults] = useState("");
+  const [searchResults, setSearchResults] = useState<SolrSearchResponse | null>(
+    null
+  );
+
+  const formatSearchResults = (data: SolrSearchResponse) => {
+    console.log("data", data);
+    return data;
+  };
 
   const doSearch = async (searchText: string) => {
     const response = await fetch(
@@ -38,6 +45,8 @@ const SearchPage = () => {
     );
     const data = await response.json();
     setSearchResults(data);
+    const formattedResults = formatSearchResults(data);
+    setSearchResults(formattedResults);
   };
 
   const handleSearchInputValueChange = (
@@ -106,7 +115,9 @@ const SearchPage = () => {
                 >
                   Home
                 </Link>
-                <Typography>Search</Typography>
+                <Typography variant="h6" weight="regular">
+                  Search
+                </Typography>
               </Breadcrumbs>
             </Grid>
           </Grid>
@@ -120,7 +131,24 @@ const SearchPage = () => {
             columns={{ xs: 3, sm: 8, md: 12 }}
           >
             <Grid item xs={3} sm={3} md={3}>
-              <Typography>Showing Results For ...</Typography>
+              {searchResults ? (
+                <Box>
+                  <Typography variant="h3" weight="bold">
+                    Showing results for &nbsp;
+                    <Box component="span" className="resultsCounterInputValue">
+                      {searchResults.responseHeader.params.q}
+                    </Box>
+                  </Typography>
+                  <Typography variant="body5" weight="regular">
+                    {searchResults.response.start + 1} -{" "}
+                    {searchResults.response.docs.length - 1} of{" "}
+                    {searchResults.response.numFound} results (
+                    {searchResults.responseHeader.QTime}) seconds
+                  </Typography>
+                </Box>
+              ) : (
+                <></>
+              )}
             </Grid>
 
             <Grid item xs={9} sm={9} md={9}>
@@ -161,10 +189,16 @@ const SearchPage = () => {
         >
           <Grid container spacing={4} columns={{ xs: 3, sm: 8, md: 12 }}>
             <Grid item xs={3} sm={3} md={3}>
-              <Typography>Filters go here</Typography>
+              <Typography variant="h6" weight="regular">
+                Filters go here
+              </Typography>
             </Grid>
             <Grid item xs={9} sm={9} md={9}>
-              <Typography sx={{ wordBreak: "break-all" }}>
+              <Typography
+                variant="h6"
+                weight="regular"
+                sx={{ wordBreak: "break-all" }}
+              >
                 Results go here: {JSON.stringify(searchResults)}
               </Typography>
             </Grid>

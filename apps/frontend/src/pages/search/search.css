@@ -17,3 +17,7 @@
     height: 52px;
 }
 
+.resultsCounterInputValue{
+    color: var(--pds-primary-blue);
+}
+
