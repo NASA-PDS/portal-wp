@@ -13,7 +13,7 @@ import { Box, Breadcrumbs, Container, Divider, Grid, Link as AnchorLink, Tab, Ta
 import { IconArrowFilledDown, IconChevronDown, Loader } from "@nasapds/wds-react";
 import InvestigationStatus from "src/components/InvestigationStatus/InvestigationStatus";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
-import StatsList from "src/components/StatsList/StatsList";
+import { Stats, StatsList } from "src/components/StatsList/StatsList";
 import { selectLatestInstrumentHostVersion } from "src/state/selectors/instrumentHost";
 import { selectLatestInvestigationVersion } from "src/state/selectors/investigations";
 import FeaturedDataBundleLinkListItem from "src/components/FeaturedListItems/FeaturedDataBundleLinkListItem";
@@ -26,12 +26,6 @@ interface InstrumentDetailBodyProps {
   investigation:Investigation,
   status:string;
   tabLabel:string
-}
-
-interface Stats {
-  label: string;
-  value: string;
-  enableCopy?: boolean;
 }
 
 interface TabPanelProps {
