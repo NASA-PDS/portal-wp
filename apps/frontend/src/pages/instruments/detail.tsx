@@ -192,7 +192,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
         (status === 'idle' || status === 'pending' )
         &&
         <Box sx={{ padding: "40px" }}>
-          <Loader variant="indeterminate"/>
+          <Loader />
         </Box>
       }
       {
