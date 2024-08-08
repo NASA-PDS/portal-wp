@@ -13,7 +13,6 @@ type PrimaryActionFunction = () => void;
 
 export type FeaturedInstrumentLinkListItemProps = {
   description:string,
-  lid:string,
   primaryAction:PrimaryActionFunction,
   title:string,
   bundles:[]
@@ -21,10 +20,9 @@ export type FeaturedInstrumentLinkListItemProps = {
 
 export const FeaturedInstrumentLinkListItem = ({
   bundles = [],
-  description = '',
-  lid = '',
+  description,
   primaryAction,
-  title = '',
+  title,
 }: FeaturedInstrumentLinkListItemProps) => {
 
   const [showDetails, setShowDetails] = useState<boolean>(false);
