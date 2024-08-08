@@ -1,10 +1,30 @@
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
-import { useRouteError } from 'react-router-dom';
+import { isRouteErrorResponse, useRouteError } from 'react-router-dom';
 
 const RootErrorBoundary = () => {
 
-  const error = useRouteError() as Error;
+  const error = useRouteError();
+  let errorMessage:string;
+  let errorStatus:number | undefined = undefined;
+
+  if( isRouteErrorResponse(error) ) {
+    // error is type `ErrorResponse`
+    errorMessage = error.data || error.statusText;
+    errorStatus = error.status;
+  } else if (error instanceof Error) {
+    errorMessage = error.message;
+  } else if (typeof error === 'string') {
+    errorMessage = error;
+  } else {
+
+    if( import.meta.env.DEV ) {
+      // Output query URL to help with debugging only in DEV mode
+      console.error(error);
+    }
+    errorMessage = '😱 Something went wrong';
+  }
+
 
   return (
     <>
@@ -12,7 +32,17 @@ const RootErrorBoundary = () => {
       <div style={{ backgroundColor: 'white', padding: '0px', color: 'black', }}>
         <h1>Uh Oh!</h1>
         {
-          error.status === 404 ? <>😱 Not Found (404)</> : <>😱 Something went wrong</>
+          errorStatus === 404 && (
+            <>
+              😱 Not Found (404)
+              <br />{errorMessage}
+            </>
+          )
+        }
+        {
+          errorStatus === undefined && (
+            <>{errorMessage}</>
+          )
         }
       </div>
       <Footer />
