@@ -1,7 +1,11 @@
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 import { SolrSearchResponse } from "src/types/solrSearchResponse";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
 
 import {
+  Button as MuiButton,
   Box,
   Breadcrumbs,
   Container,
@@ -20,6 +24,7 @@ import {
 
 import {
   Button,
+  IconArrowCircleDown,
   IconSearch,
   Pagination,
   TextField,
@@ -50,19 +55,50 @@ const SearchPage = () => {
   const [paginationPage, setPaginationPage] = useState(1);
   const [paginationCount, setPaginationCount] = useState(1);
   const [resultRows, setResultRows] = useState(20);
+  const [resultSort, setResultSort] = useState("relevance");
 
   const formatSearchResults = (data: SolrSearchResponse) => {
     return data;
   };
 
-  const doSearch = async (searchText: string, start: number, rows: number) => {
-    const url =
+  const doNavigate = (
+    searchText: string,
+    rows: string,
+    sort: string,
+    page: string
+  ) => {
+    const pathParams = {
+      searchText,
+    };
+    const queryParams = {
+      rows,
+      sort,
+      page,
+    };
+
+    navigate({
+      pathname: generatePath("/search/:searchText/", pathParams),
+      search: createSearchParams(queryParams).toString(),
+    });
+  };
+
+  const doSearch = async (
+    searchText: string,
+    start: number,
+    rows: number,
+    sort: string
+  ) => {
+    let url =
       "https://pds.nasa.gov/services/search/search?wt=json&q=" +
       searchText +
       "&rows=" +
       rows +
       "&start=" +
       start;
+
+    if (sort !== "relevance") {
+      url = url + "&sort=title " + sort;
+    }
 
     console.log("fetchurl", url);
 
@@ -82,33 +118,37 @@ const SearchPage = () => {
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key == "Enter") {
-      const params = {
-        searchText: searchInputValue,
-      };
-      navigate(generatePath("/search/:searchText/", params));
+      doNavigate(searchInputValue, resultRows.toString(), resultSort, "1");
     }
   };
 
   const handleSearchClick = () => {
-    const params = {
-      searchText: searchInputValue,
-    };
-    navigate(generatePath("/search/:searchText/", params));
+    doNavigate(searchInputValue, resultRows.toString(), resultSort, "1");
   };
 
   const handlePaginationChange = (
     event: ChangeEvent<unknown>,
     value: number
   ) => {
-    const params = {
-      searchText: searchInputValue,
-    };
-    const page = value.toString();
+    doNavigate(
+      searchInputValue,
+      resultRows.toString(),
+      resultSort,
+      value.toString()
+    );
+  };
 
-    navigate({
-      pathname: generatePath("/search/:searchText/", params),
-      search: createSearchParams({ page }).toString(),
-    });
+  const handleResultRowsChange = (event: SelectChangeEvent) => {
+    doNavigate(searchInputValue, event.target.value, resultSort, "1");
+  };
+
+  const handleSortChange = (event: SelectChangeEvent) => {
+    doNavigate(
+      searchInputValue,
+      resultRows.toString(),
+      event.target.value,
+      "1"
+    );
   };
 
   const calculateStartValue = (page: number, rows: number) => {
@@ -127,28 +167,40 @@ const SearchPage = () => {
     if (params.searchText) {
       setSearchInputValue(params.searchText);
 
-      let defaultPage = 1;
-      let defaultStart = 0;
-      let defaultRows = 20;
+      let page = 1;
+      let start = 0;
+      let rows = 20;
+      let sort = "relevance";
 
       const rowsParam = Number(searchParams.get("rows"));
       if (rowsParam) {
-        setResultRows(rowsParam);
-        defaultRows = rowsParam;
+        rows = rowsParam;
+        setResultRows(rows);
       }
 
       const paginationPageParam = Number(searchParams.get("page"));
       if (paginationPageParam) {
         setPaginationPage(paginationPageParam);
-        defaultPage = paginationPageParam;
-        defaultStart = calculateStartValue(defaultPage, defaultRows);
+        page = paginationPageParam;
+        start = calculateStartValue(page, rows);
       } else {
         setPaginationPage(1);
       }
 
-      doSearch(params.searchText, defaultStart, defaultRows);
+      const sortParam = searchParams.get("sort");
+      if (sortParam) {
+        sort = sortParam;
+        setResultSort(sort);
+      }
+
+      doSearch(params.searchText, start, rows, sort);
     }
-  }, [params.searchText, searchParams.get("page")]);
+  }, [
+    params.searchText,
+    searchParams.get("page"),
+    searchParams.get("rows"),
+    searchParams.get("sort"),
+  ]);
 
   return (
     <>
@@ -206,7 +258,7 @@ const SearchPage = () => {
               {searchResults ? (
                 <Box>
                   <Typography variant="h3" weight="bold">
-                    Showing results for &nbsp;
+                    Showing results for{" "}
                     <Box component="span" className="resultsCounterInputValue">
                       {searchResults.responseHeader.params.q}
                     </Box>
@@ -253,7 +305,71 @@ const SearchPage = () => {
             </Grid>
           </Grid>
         </Container>
+
+        <Container
+          className="pds-search-options-container"
+          maxWidth={"xl"}
+          sx={{
+            paddingY: "24px",
+          }}
+        >
+          <Box className="pds-search-option-box">
+            <MuiButton variant="text" className="pds-search-option-button">
+              Expand All
+            </MuiButton>
+            <Typography variant="h8" weight="semibold">
+              {" "}
+              |{" "}
+            </Typography>
+            <MuiButton variant="text" className="pds-search-option-button">
+              Collapse All
+            </MuiButton>
+          </Box>
+          <Box className="pds-search-option-box">
+            <FormControl sx={{ m: 1, minWidth: 120 }}>
+              <Select
+                className="pds-select-search-options"
+                value={resultRows.toString()}
+                renderValue={(selected) => {
+                  return "NUMBER OF RESULTS: " + selected;
+                }}
+                onChange={handleResultRowsChange}
+                displayEmpty
+                inputProps={{ "aria-label": "Without label" }}
+                IconComponent={IconArrowCircleDown}
+                variant="standard"
+              >
+                <MenuItem value={20}>20</MenuItem>
+                <MenuItem value={40}>40</MenuItem>
+                <MenuItem value={60}>60</MenuItem>
+                <MenuItem value={80}>80</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+
+          <Box className="pds-search-option-box">
+            <FormControl sx={{ m: 1, minWidth: 120 }}>
+              <Select
+                className="pds-select-search-options"
+                value={resultSort}
+                renderValue={(selected) => {
+                  return "SORT: " + selected.toUpperCase();
+                }}
+                onChange={handleSortChange}
+                displayEmpty
+                inputProps={{ "aria-label": "Without label" }}
+                IconComponent={IconArrowCircleDown}
+                variant="standard"
+              >
+                <MenuItem value={"relevance"}>Relevance</MenuItem>
+                <MenuItem value={"asc"}>Ascending</MenuItem>
+                <MenuItem value={"desc"}>Descending</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+        </Container>
         {/* Search Results Content */}
+
         <Container
           maxWidth={"xl"}
           sx={{
