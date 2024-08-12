@@ -91,3 +91,15 @@
     background-color: transparent;
     color: var(--pds-secondary-black-t1);
 }
+
+.pds-search-empty-container{
+    text-align: center;
+    height: 60vh;
+}
+
+.pds-search-empty-icon-div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+

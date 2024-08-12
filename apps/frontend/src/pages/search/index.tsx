@@ -33,6 +33,8 @@ import {
 
 import "./search.css";
 
+const feedbackEmail = "mailto:example@example.com";
+
 const linkStyles = {
   color: "white",
   fontFamily: "Inter",
@@ -194,6 +196,8 @@ const SearchPage = () => {
       }
 
       doSearch(params.searchText, start, rows, sort);
+    } else {
+      setSearchResults(null);
     }
   }, [
     params.searchText,
@@ -256,23 +260,44 @@ const SearchPage = () => {
           >
             <Grid item xs={3} sm={3} md={3}>
               {searchResults ? (
+                searchResults.response.numFound > 0 ? (
+                  <Box>
+                    <Typography variant="h3" weight="bold">
+                      Showing results for{" "}
+                      <Box
+                        component="span"
+                        className="resultsCounterInputValue"
+                      >
+                        {searchResults.responseHeader.params.q}
+                      </Box>
+                    </Typography>
+                    <Typography variant="body5" weight="regular">
+                      {searchResults.response.start + 1} -{" "}
+                      {Number(searchResults.response.start) +
+                        Number(searchResults.response.docs.length)}{" "}
+                      of {searchResults.response.numFound} results (
+                      {searchResults.responseHeader.QTime}) seconds
+                    </Typography>
+                  </Box>
+                ) : (
+                  <Box>
+                    <Typography variant="h3" weight="bold">
+                      No results to show
+                    </Typography>
+                    <Typography variant="body5" weight="regular">
+                      0 of 0 results
+                    </Typography>
+                  </Box>
+                )
+              ) : (
                 <Box>
                   <Typography variant="h3" weight="bold">
-                    Showing results for{" "}
-                    <Box component="span" className="resultsCounterInputValue">
-                      {searchResults.responseHeader.params.q}
-                    </Box>
+                    No results to show
                   </Typography>
                   <Typography variant="body5" weight="regular">
-                    {searchResults.response.start + 1} -{" "}
-                    {Number(searchResults.response.start) +
-                      Number(searchResults.response.docs.length)}{" "}
-                    of {searchResults.response.numFound} results (
-                    {searchResults.responseHeader.QTime}) seconds
+                    0 of 0 results
                   </Typography>
                 </Box>
-              ) : (
-                <></>
               )}
             </Grid>
 
@@ -306,116 +331,187 @@ const SearchPage = () => {
           </Grid>
         </Container>
 
-        <Container
-          className="pds-search-options-container"
-          maxWidth={"xl"}
-          sx={{
-            paddingY: "24px",
-          }}
-        >
-          <Box className="pds-search-option-box">
-            <MuiButton variant="text" className="pds-search-option-button">
-              Expand All
-            </MuiButton>
-            <Typography variant="h8" weight="semibold">
-              {" "}
-              |{" "}
-            </Typography>
-            <MuiButton variant="text" className="pds-search-option-button">
-              Collapse All
-            </MuiButton>
-          </Box>
-          <Box className="pds-search-option-box">
-            <FormControl sx={{ m: 1, minWidth: 120 }}>
-              <Select
-                className="pds-select-search-options"
-                value={resultRows.toString()}
-                renderValue={(selected) => {
-                  return "NUMBER OF RESULTS: " + selected;
-                }}
-                onChange={handleResultRowsChange}
-                displayEmpty
-                inputProps={{ "aria-label": "Without label" }}
-                IconComponent={IconArrowCircleDown}
-                variant="standard"
-              >
-                <MenuItem value={20}>20</MenuItem>
-                <MenuItem value={40}>40</MenuItem>
-                <MenuItem value={60}>60</MenuItem>
-                <MenuItem value={80}>80</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
+        {searchResults ? (
+          searchResults.response.numFound > 0 ? (
+            <Container
+              className="pds-search-options-container"
+              maxWidth={"xl"}
+              sx={{
+                paddingY: "24px",
+              }}
+            >
+              <Box className="pds-search-option-box">
+                <MuiButton variant="text" className="pds-search-option-button">
+                  Expand All
+                </MuiButton>
+                <Typography variant="h8" weight="semibold">
+                  {" "}
+                  |{" "}
+                </Typography>
+                <MuiButton variant="text" className="pds-search-option-button">
+                  Collapse All
+                </MuiButton>
+              </Box>
+              <Box className="pds-search-option-box">
+                <FormControl sx={{ m: 1, minWidth: 120 }}>
+                  <Select
+                    className="pds-select-search-options"
+                    value={resultRows.toString()}
+                    renderValue={(selected) => {
+                      return "NUMBER OF RESULTS: " + selected;
+                    }}
+                    onChange={handleResultRowsChange}
+                    displayEmpty
+                    inputProps={{ "aria-label": "Without label" }}
+                    IconComponent={IconArrowCircleDown}
+                    variant="standard"
+                  >
+                    <MenuItem value={20}>20</MenuItem>
+                    <MenuItem value={40}>40</MenuItem>
+                    <MenuItem value={60}>60</MenuItem>
+                    <MenuItem value={80}>80</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
 
-          <Box className="pds-search-option-box">
-            <FormControl sx={{ m: 1, minWidth: 120 }}>
-              <Select
-                className="pds-select-search-options"
-                value={resultSort}
-                renderValue={(selected) => {
-                  return "SORT: " + selected.toUpperCase();
-                }}
-                onChange={handleSortChange}
-                displayEmpty
-                inputProps={{ "aria-label": "Without label" }}
-                IconComponent={IconArrowCircleDown}
-                variant="standard"
-              >
-                <MenuItem value={"relevance"}>Relevance</MenuItem>
-                <MenuItem value={"asc"}>Ascending</MenuItem>
-                <MenuItem value={"desc"}>Descending</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-        </Container>
+              <Box className="pds-search-option-box">
+                <FormControl sx={{ m: 1, minWidth: 120 }}>
+                  <Select
+                    className="pds-select-search-options"
+                    value={resultSort}
+                    renderValue={(selected) => {
+                      return "SORT: " + selected.toUpperCase();
+                    }}
+                    onChange={handleSortChange}
+                    displayEmpty
+                    inputProps={{ "aria-label": "Without label" }}
+                    IconComponent={IconArrowCircleDown}
+                    variant="standard"
+                  >
+                    <MenuItem value={"relevance"}>Relevance</MenuItem>
+                    <MenuItem value={"asc"}>Ascending</MenuItem>
+                    <MenuItem value={"desc"}>Descending</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+            </Container>
+          ) : (
+            <></>
+          )
+        ) : (
+          <></>
+        )}
         {/* Search Results Content */}
 
-        <Container
-          maxWidth={"xl"}
-          sx={{
-            paddingY: "24px",
-          }}
-        >
-          <Grid container spacing={4} columns={{ xs: 3, sm: 8, md: 12 }}>
-            <Grid item xs={3} sm={3} md={3}>
-              <Typography variant="h6" weight="regular">
-                Filters go here
-              </Typography>
-            </Grid>
-            <Grid item xs={9} sm={9} md={9}>
-              <Typography
-                variant="h6"
-                weight="regular"
-                sx={{ wordBreak: "break-all" }}
-              >
-                Results go here: {JSON.stringify(searchResults)}
-              </Typography>
-            </Grid>
-          </Grid>
-        </Container>
-
         {searchResults ? (
+          searchResults.response.numFound > 0 ? (
+            <Container
+              maxWidth={"xl"}
+              sx={{
+                paddingY: "24px",
+              }}
+            >
+              <Grid container spacing={4} columns={{ xs: 3, sm: 8, md: 12 }}>
+                <Grid item xs={3} sm={3} md={3}>
+                  <Typography variant="h6" weight="regular">
+                    Filters go here
+                  </Typography>
+                </Grid>
+                <Grid item xs={9} sm={9} md={9}>
+                  <Typography
+                    variant="h6"
+                    weight="regular"
+                    sx={{ wordBreak: "break-all" }}
+                  >
+                    Results go here: {JSON.stringify(searchResults)}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Container>
+          ) : (
+            <Container
+              maxWidth={"xl"}
+              sx={{
+                paddingY: "24px",
+              }}
+            >
+              <Box className="pds-search-empty-container">
+                <br />
+                <Typography variant="h3" weight="bold">
+                  No Results Found
+                </Typography>
+                <Typography variant="h4" weight="regular">
+                  You may want to try using different keywords, checking for
+                  typos, or adjusting your filters
+                </Typography>
+                <br />
+                <Typography variant="h4" weight="regular">
+                  Not the results you expected?{" "}
+                  <a href={feedbackEmail} target="_top">
+                    Give feedback
+                  </a>
+                </Typography>
+              </Box>
+            </Container>
+          )
+        ) : (
           <Container
             maxWidth={"xl"}
             sx={{
               paddingY: "24px",
             }}
           >
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Pagination
-                count={paginationCount}
-                page={paginationPage}
-                siblingCount={1}
-                onChange={handlePaginationChange}
-              />
+            <Box className="pds-search-empty-container">
+              <br />
+              <Typography
+                variant="h3"
+                weight="bold"
+                className="pds-search-empty-icon-div"
+              >
+                <IconSearch />
+                &nbsp;Enter a search query to show results
+              </Typography>
+              <Typography variant="h4" weight="regular">
+                You may want to try using different keywords, checking for
+                typos, or adjusting your filters
+              </Typography>
+              <br />
+              <Typography variant="h4" weight="regular">
+                Not the results you expected?{" "}
+                <a href={feedbackEmail} target="_top">
+                  Give feedback
+                </a>
+              </Typography>
             </Box>
           </Container>
+        )}
+
+        {searchResults ? (
+          searchResults.response.numFound > 0 ? (
+            <Container
+              maxWidth={"xl"}
+              sx={{
+                paddingY: "24px",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Pagination
+                  count={paginationCount}
+                  page={paginationPage}
+                  siblingCount={1}
+                  onChange={handlePaginationChange}
+                />
+              </Box>
+            </Container>
+          ) : (
+            <></>
+          )
         ) : (
           <></>
         )}
