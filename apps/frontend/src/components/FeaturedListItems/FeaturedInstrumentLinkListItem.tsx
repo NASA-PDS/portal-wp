@@ -163,8 +163,8 @@ export const FeaturedInstrumentLinkListItem = ({
             marginBottom: "8px",
           }}
         >
-          <Link component="button" onClick={() => primaryAction()}
-            sx={{
+          <Link to={{}} onClick={() => primaryAction()}
+            style={{
               textAlign: "left",
               color: "#000000",
               textDecoration: "none",
