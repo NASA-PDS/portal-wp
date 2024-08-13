@@ -344,7 +344,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
         (status === 'idle' || status === 'pending' )
         &&
         <Box sx={{ padding: "40px" }}>
-          <Loader variant="indeterminate"/>
+          <Loader />
         </Box>
       }
       {
