@@ -43,7 +43,7 @@ const InvestigationDetailPage = () => {
 
   return (
     <>
-      <ConnectedComponent investigationLid={convertedInvestigationLid} tabLabel={tabLabel ? tabLabel : "data"} />
+      <ConnectedComponent investigationLid={convertedInvestigationLid} tabLabel={tabLabel ? tabLabel : "instruments"} />
     </>
   )
   
@@ -258,10 +258,12 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
     })
   };
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (event: SyntheticEvent) => {
+    const newTabIndex = parseInt(event.currentTarget.getAttribute("data-tab-index") || "0");
+    const urlFriendlyLid:string = convertLogicalIdentifier(investigation[PDS4_INFO_MODEL.LID], LID_FORMAT.URL_FRIENDLY);
     const params = {
-      lid: convertLogicalIdentifier(investigation[PDS4_INFO_MODEL.LID], LID_FORMAT.URL_FRIENDLY) || null,
-      tabLabel: TABS[newValue].toLowerCase()
+      lid: urlFriendlyLid ? urlFriendlyLid : null,
+      tabLabel: TABS[newTabIndex].toLowerCase()
     };
     navigate( generatePath("/investigations/:lid/:tabLabel", params) );
   };
@@ -527,8 +529,8 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                   aria-label="Investigation Host Tabs"
                   sx={styles.tabs}
                 >
-                  <Tab label="Instruments" {...a11yProps(0)} disableRipple disableTouchRipple />
-                  <Tab label="Overview" {...a11yProps(1)} disableRipple disableTouchRipple />
+                  <Tab label="Instruments" data-tab-index={0} {...a11yProps(0)} disableRipple disableTouchRipple />
+                  <Tab label="Overview" data-tab-index={1} {...a11yProps(1)} disableRipple disableTouchRipple />
                   {/* Hidden for the time being as these aren't part of the Phase 1 MVP
                   <Tab label="Targets" {...a11yProps(2)} disableRipple disableTouchRipple />
                   <Tab label="Tools" {...a11yProps(3)} disableRipple disableTouchRipple />

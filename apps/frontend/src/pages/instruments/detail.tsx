@@ -84,7 +84,7 @@ const InstrumentDetailPage = () => {
 
   return (
     <>
-      <ConnectedComponent instrumentLid={convertedInstrumentLid} tabLabel={tabLabel} />
+      <ConnectedComponent instrumentLid={convertedInstrumentLid} tabLabel={tabLabel ? tabLabel : "instruments"} />
     </>
   );
 
@@ -144,10 +144,12 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
     }
   }
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (event: React.SyntheticEvent) => {
+    const newTabIndex = parseInt(event.currentTarget.getAttribute("data-tab-index") || "0");
+    const urlFriendlyLid:string = convertLogicalIdentifier(instrument[PDS4_INFO_MODEL.LID], LID_FORMAT.URL_FRIENDLY);
     const params = {
-      lid: convertLogicalIdentifier(instrument[PDS4_INFO_MODEL.LID], LID_FORMAT.URL_FRIENDLY) || null,
-      tabLabel: TABS[newValue].toLowerCase()
+      lid: urlFriendlyLid ? urlFriendlyLid : null,
+      tabLabel: TABS[newTabIndex].toLowerCase()
     };
     navigate( generatePath("/instruments/:lid/:tabLabel", params) );
   };
@@ -429,8 +431,8 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                       aria-label="Investigation Host Tabs"
                       sx={styles.tabs}
                     >
-                      <Tab label="Data" {...a11yProps(0)} disableRipple disableTouchRipple />
-                      <Tab label="Overview" {...a11yProps(1)} disableRipple disableTouchRipple />
+                      <Tab label="Data" data-tab-index={0} {...a11yProps(0)} disableRipple disableTouchRipple />
+                      <Tab label="Overview" data-tab-index={1} {...a11yProps(1)} disableRipple disableTouchRipple />
                     </Tabs>
                   </Box>
                 </Grid>
