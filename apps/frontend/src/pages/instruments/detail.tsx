@@ -92,7 +92,7 @@ const InstrumentDetailPage = () => {
 
 const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
 
-  const {instrument, instrumentHost, investigation, status, tabLabel } = props;
+  const {instrument, investigation, status, tabLabel } = props;
   const [dataTypes, setDataTypes] = useState<string[]>([]);
   const [value, setValue] = useState(TABS.findIndex( (tab) => tab == tabLabel?.toLowerCase()));
 
