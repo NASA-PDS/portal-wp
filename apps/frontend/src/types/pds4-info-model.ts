@@ -63,10 +63,6 @@ export const PDS4_INFO_MODEL = {
 
   },
 
-  CTLI_TYPE_LIST: {
-    TYPE: "ctli:Type_List.ctli:type",
-  },
-
   /** The identification area consists of attributes that identify and name an object. */
   IDENTIFICATION_AREA: {
 

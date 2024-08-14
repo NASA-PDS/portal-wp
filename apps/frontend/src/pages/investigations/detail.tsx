@@ -208,15 +208,8 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
 
     instruments[selectedInstrumentHost].forEach( (instrument:Instrument) => {
 
-      if( instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE] !== undefined && instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE].length !== 0) {
 
-        instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE].forEach( (instrumentType:string) => {
-          if( !instrumentTypesArr.includes(instrumentType) ) {
-            instrumentTypesArr.push(instrumentType);
-          }
-        });
-
-      } else if( instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE] !== undefined ) {
+      if( instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE] !== undefined && instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE].length !== 0 ) {
 
         instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE].forEach( (instrumentType:string) => {
           if( !instrumentTypesArr.includes(instrumentType) ) {
@@ -626,8 +619,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                               </Typography>
                               {
                                 instruments[selectedInstrumentHost].map( (instrument:Instrument) => {
-                                  if( instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE]?.includes(instrumentType)
-                                        || instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]?.includes(instrumentType) ) {
+                                  if( instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]?.includes(instrumentType) ) {
                                     return <FeaturedInstrumentLinkListItem
                                       key={instrument[PDS4_INFO_MODEL.LID]}
                                       description={instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION].toString()}
