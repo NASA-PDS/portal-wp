@@ -288,6 +288,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
         let query = '/api/search/1/products?q=(pds:Internal_Reference.pds:lid_reference eq "' + lid + '" and product_class eq "Product_Bundle")';
         const config = {
           headers: {
+            "Accept": "application/json",
             "Content-Type": "application/json",
           },
           signal: abortController.signal

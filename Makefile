@@ -6,6 +6,10 @@ export WPCLI_CONTAINER_NAME = ${NAME_PREFIX}-wpcli
 export RUN_OPTIONS = 
 export DOCKER_COMPOSE_YML = ./apps/docker-compose.yml
 
+# ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+# Docker Recipes
+
 build:		## Builds all services using Docker Compose
 	docker compose --file ${DOCKER_COMPOSE_YML} build
 
@@ -119,6 +123,24 @@ stop-wpcli:		## Stops running wpcli service
 
 watch-containers:		## Display a list of running containers that refreshes periodically
 	watch docker container ls
+
+# ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+# Secrets Detection Receipes
+# 
+# Reference:
+# https://github.com/NASA-PDS/nasa-pds.github.io/wiki/Git-and-Github-Guide#detect-secrets
+#
+
+audit-secrets:	## Audit .secrets.baseline
+	detect-secrets audit .secrets.baseline
+
+update-secrets-baseline:	## Updates .secrets.baseline
+	detect-secrets scan --disable-plugin AbsolutePathDetectorExperimental \
+		--exclude-files '\.secrets..*' \
+		--exclude-files '\.git.*' \
+		--exclude-files '\.pre-commit-config\.yaml' \
+		--exclude-files 'node_modules' > .secrets.baseline
 
 # ----------------------------------------------------------------------------
 # Self-Documented Makefile
