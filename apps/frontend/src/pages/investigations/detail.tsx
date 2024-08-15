@@ -110,15 +110,15 @@ const TABS = [
 ];
 
 const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
-  
+
   const {instrumentHosts, instruments, investigation, status, tabLabel, targets } = props;
   const bundles = useRef<Array<Array<Bundle>>>([]);
   const [instrumentTypes, setInstrumentTypes] = useState<string[]>([]);
   const [selectedInstrumentHost, setSelectedInstrumentHost] = useState<number>(0);
   const [value, setValue] = useState(TABS.findIndex( (tab) => tab == tabLabel?.toLowerCase()));
-  
+
   const navigate = useNavigate();
-  
+
   const stats:Stats[] = [
     {
       label: "Investigation Type",
@@ -208,7 +208,6 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
 
     instruments[selectedInstrumentHost].forEach( (instrument:Instrument) => {
 
-
       if( instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE] !== undefined && instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE].length !== 0 ) {
 
         instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE].forEach( (instrumentType:string) => {
@@ -245,10 +244,10 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
   }
 
   const getRelatedInstrumentBundles = (lid:string) => {
-    return bundles.current[selectedInstrumentHost].filter( (bundleList) => {
-      const foundInstrument = bundleList.observing_system_components.some( component => component.id === lid );
+    return bundles.current[selectedInstrumentHost].filter( (bundle) => {
+      const foundInstrument = bundle[PDS4_INFO_MODEL.OBSERVING_SYSTEM_COMPONENTS].some( (component) => component.id === lid);
       return foundInstrument
-    })
+    });
   };
 
   const handleTabChange = (event: SyntheticEvent) => {
@@ -290,8 +289,10 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
 
         const fields = [
           PDS4_INFO_MODEL.LID,
+          PDS4_INFO_MODEL.OBSERVING_SYSTEM_COMPONENTS,
           PDS4_INFO_MODEL.TITLE,
-          PDS4_INFO_MODEL.BUNDLE.DESCRIPTION
+          PDS4_INFO_MODEL.BUNDLE.DESCRIPTION,
+          PDS4_INFO_MODEL.BUNDLE.TYPE
         ];
     
         // Add the specific fields that should be returned
@@ -301,13 +302,18 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
           query += index < fields.length - 1 ? "," : "";
         });
 
+        if( import.meta.env.DEV ) {
+          // Output query URL to help with debugging only in DEV mode
+          console.info("Bundle Query: ", query)
+        }
+
         const response = await fetch(query, config);
-        const tempBundles = bundles.current.slice();
         const temp = (await response.json());
-        tempBundles[index] = temp.data !== undefined ? temp.data : [];
-        bundles.current = tempBundles;
+
+        bundles.current[index] = temp.data;
 
         return response;
+
       })
     );
   }, [bundles, instrumentHosts]);

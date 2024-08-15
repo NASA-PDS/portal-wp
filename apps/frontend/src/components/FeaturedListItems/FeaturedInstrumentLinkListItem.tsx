@@ -21,7 +21,7 @@ export type FeaturedInstrumentLinkListItemProps = {
 }
 
 export const FeaturedInstrumentLinkListItem = ({
-  bundles = [],
+  bundles,
   description,
   primaryAction,
   title,

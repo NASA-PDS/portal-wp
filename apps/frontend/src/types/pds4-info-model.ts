@@ -26,6 +26,9 @@ export const PDS4_INFO_MODEL = {
   /** An identifier for the set of related investigation logical identifiers (LID) */
   REF_LID_INVESTIGATION: "ref_lid_investigation",
 
+  /** The Observing System Component class describes one or more subsystems used to collect data. */
+  OBSERVING_SYSTEM_COMPONENTS: "observing_system_components",
+
   /** 
    * The title attribute provides a short, descriptive text string suitable for
    * use as a title or brief description in a display or listing of products.
