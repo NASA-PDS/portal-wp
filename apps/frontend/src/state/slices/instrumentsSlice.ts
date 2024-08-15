@@ -36,6 +36,7 @@ export const getInstruments = createAsyncThunk(
     let queryUrl = '/api/search/1/products?q=(lid like "urn:nasa:pds:context:instrument:*")&limit=9999'
     const config = {
       headers: {
+        "Accept": "application/json",
         "Content-Type": "application/json",
       }
     };
