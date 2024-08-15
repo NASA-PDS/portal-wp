@@ -14,9 +14,10 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "/api": {
-        target: "https://pds.nasa.gov/",
+      "^/api/search/1/": {
+        target: "http://localhost:8080/",
         changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/search\/1/i, ''),
       }
     }
   },
