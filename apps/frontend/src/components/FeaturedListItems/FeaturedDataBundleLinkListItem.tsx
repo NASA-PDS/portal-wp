@@ -250,6 +250,28 @@ export const FeaturedDataBundleLinkListItem = ({
               wordWrap: 'break-word'
             }}>{lid}</Typography>
           </Stack>
+          <Stack direction={"row"} alignItems={"center"} sx={{ marginBottom: "8px"}}>
+            <Typography sx={{
+              color: 'black',
+              fontSize: "14px",
+              fontFamily: 'Inter',
+              fontWeight: '600',
+              lineHeight: "19px",
+              minWidth: "140px",
+              maxWidth: "140px",
+              wordWrap: "break-word"
+            }}>Type</Typography>
+            <Typography sx={{
+              fontSize: "12px",
+              fontFamily: 'Inter',
+              fontWeight: '400',
+              textDecoration: 'underline',
+              lineHeight: "15.60px",
+              letterSpacing: "0.25px",
+              textDecorationLine: "none",
+              wordWrap: 'break-word'
+            }}>{type}</Typography>
+          </Stack>
           <Stack direction={"row"} alignItems={"center"} >
             <Typography sx={{
               color: 'black',
@@ -289,58 +311,80 @@ export const FeaturedDataBundleLinkListItem = ({
             padding: "20px 20px 20px 20px",
           }} display={{xs: "block", md:"none"}}>
             <Stack direction={"column"} alignItems={"left"} sx={{ marginBottom: "8px"}}>
-            <Typography sx={{
-              color: 'black',
-              fontSize: "14px",
-              fontFamily: 'Inter',
-              fontWeight: '600',
-              lineHeight: "19px",
-              minWidth: "140px",
-              maxWidth: "140px",
-              wordWrap: "break-word"
-            }}>Identifier</Typography>
-            <Typography sx={{
-              fontSize: "12px",
-              fontFamily: 'Inter',
-              fontWeight: '400',
-              textDecoration: 'underline',
-              lineHeight: "15.60px",
-              letterSpacing: "0.25px",
-              textDecorationLine: "none",
-              wordWrap: 'break-word'
-            }}>{lid}</Typography>
-          </Stack>
-          <Stack direction={"column"} alignItems={"left"} >
-            <Typography sx={{
-              color: 'black',
-              fontSize: "14px",
-              fontFamily: 'Inter',
-              fontWeight: '600',
-              lineHeight: "19px",
-              minWidth: "140px",
-              maxWidth: "140px",
-              wordWrap: "break-word"
-            }}>Tags</Typography>
-            <Stack direction={"row"} spacing={1} useFlexGap flexWrap="wrap">
-              {
-                tags.length > 0 && tags.map( (tag, index) => {
-                  return <Tag label={tag} key={index}></Tag>
-                })
-              }
-              {
-                tags.length === 0 && <Typography sx={{
-                  color: 'black',
-                  fontSize: "14px",
-                  fontFamily: 'Inter',
-                  fontWeight: '600',
-                  lineHeight: "19px",
-                  minWidth: "140px",
-                  maxWidth: "140px",
-                  wordWrap: "break-word"
-                }}>-</Typography>
-              }
+              <Typography sx={{
+                color: 'black',
+                fontSize: "14px",
+                fontFamily: 'Inter',
+                fontWeight: '600',
+                lineHeight: "19px",
+                minWidth: "140px",
+                maxWidth: "140px",
+                wordWrap: "break-word"
+              }}>Identifier</Typography>
+              <Typography sx={{
+                fontSize: "12px",
+                fontFamily: 'Inter',
+                fontWeight: '400',
+                textDecoration: 'underline',
+                lineHeight: "15.60px",
+                letterSpacing: "0.25px",
+                textDecorationLine: "none",
+                wordWrap: 'break-word'
+              }}>{lid}</Typography>
             </Stack>
-          </Stack>
+            <Stack direction={"column"} alignItems={"left"} sx={{ marginBottom: "8px"}}>
+              <Typography sx={{
+                color: 'black',
+                fontSize: "14px",
+                fontFamily: 'Inter',
+                fontWeight: '600',
+                lineHeight: "19px",
+                minWidth: "140px",
+                maxWidth: "140px",
+                wordWrap: "break-word"
+              }}>Type</Typography>
+              <Typography sx={{
+                fontSize: "12px",
+                fontFamily: 'Inter',
+                fontWeight: '400',
+                textDecoration: 'underline',
+                lineHeight: "15.60px",
+                letterSpacing: "0.25px",
+                textDecorationLine: "none",
+                wordWrap: 'break-word'
+              }}>{type}</Typography>
+            </Stack>
+            <Stack direction={"column"} alignItems={"left"} >
+              <Typography sx={{
+                color: 'black',
+                fontSize: "14px",
+                fontFamily: 'Inter',
+                fontWeight: '600',
+                lineHeight: "19px",
+                minWidth: "140px",
+                maxWidth: "140px",
+                wordWrap: "break-word"
+              }}>Tags</Typography>
+              <Stack direction={"row"} spacing={1} useFlexGap flexWrap="wrap">
+                {
+                  tags.length > 0 && tags.map( (tag, index) => {
+                    return <Tag label={tag} key={index}></Tag>
+                  })
+                }
+                {
+                  tags.length === 0 && <Typography sx={{
+                    color: 'black',
+                    fontSize: "14px",
+                    fontFamily: 'Inter',
+                    fontWeight: '600',
+                    lineHeight: "19px",
+                    minWidth: "140px",
+                    maxWidth: "140px",
+                    wordWrap: "break-word"
+                  }}>-</Typography>
+                }
+              </Stack>
+            </Stack>
           </Box>
       }
     </Stack>

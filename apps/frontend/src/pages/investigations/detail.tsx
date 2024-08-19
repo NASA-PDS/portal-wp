@@ -43,7 +43,7 @@ const InvestigationDetailPage = () => {
 
   return (
     <>
-    <ConnectedComponent investigationLid={convertedInvestigationLid} tabLabel={tabLabel} />
+      <ConnectedComponent investigationLid={convertedInvestigationLid} tabLabel={tabLabel ? tabLabel : "instruments"} />
     </>
   )
   
@@ -110,15 +110,15 @@ const TABS = [
 ];
 
 const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
-  
+
   const {instrumentHosts, instruments, investigation, status, tabLabel, targets } = props;
   const bundles = useRef<Array<Array<Bundle>>>([]);
   const [instrumentTypes, setInstrumentTypes] = useState<string[]>([]);
   const [selectedInstrumentHost, setSelectedInstrumentHost] = useState<number>(0);
   const [value, setValue] = useState(TABS.findIndex( (tab) => tab == tabLabel?.toLowerCase()));
-  
+
   const navigate = useNavigate();
-  
+
   const stats:Stats[] = [
     {
       label: "Investigation Type",
@@ -208,15 +208,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
 
     instruments[selectedInstrumentHost].forEach( (instrument:Instrument) => {
 
-      if( instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE] !== undefined && instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE].length !== 0) {
-
-        instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE].forEach( (instrumentType:string) => {
-          if( !instrumentTypesArr.includes(instrumentType) ) {
-            instrumentTypesArr.push(instrumentType);
-          }
-        });
-
-      } else if( instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE] !== undefined ) {
+      if( instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE] !== undefined && instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE].length !== 0 ) {
 
         instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE].forEach( (instrumentType:string) => {
           if( !instrumentTypesArr.includes(instrumentType) ) {
@@ -252,16 +244,18 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
   }
 
   const getRelatedInstrumentBundles = (lid:string) => {
-    return bundles.current[selectedInstrumentHost].filter( (bundleList) => {
-      const foundInstrument = bundleList.observing_system_components.some( component => component.id === lid );
+    return bundles.current[selectedInstrumentHost].filter( (bundle) => {
+      const foundInstrument = bundle[PDS4_INFO_MODEL.OBSERVING_SYSTEM_COMPONENTS].some( (component) => component.id === lid);
       return foundInstrument
-    })
+    });
   };
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (event: SyntheticEvent) => {
+    const newTabIndex = parseInt(event.currentTarget.getAttribute("data-tab-index") || "0");
+    const urlFriendlyLid:string = convertLogicalIdentifier(investigation[PDS4_INFO_MODEL.LID], LID_FORMAT.URL_FRIENDLY);
     const params = {
-      lid: convertLogicalIdentifier(investigation[PDS4_INFO_MODEL.LID], LID_FORMAT.URL_FRIENDLY) || null,
-      tabLabel: TABS[newValue].toLowerCase()
+      lid: urlFriendlyLid ? urlFriendlyLid : null,
+      tabLabel: TABS[newTabIndex].toLowerCase()
     };
     navigate( generatePath("/investigations/:lid/:tabLabel", params) );
   };
@@ -296,8 +290,10 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
 
         const fields = [
           PDS4_INFO_MODEL.LID,
+          PDS4_INFO_MODEL.OBSERVING_SYSTEM_COMPONENTS,
           PDS4_INFO_MODEL.TITLE,
-          PDS4_INFO_MODEL.BUNDLE.DESCRIPTION
+          PDS4_INFO_MODEL.BUNDLE.DESCRIPTION,
+          PDS4_INFO_MODEL.BUNDLE.TYPE
         ];
     
         // Add the specific fields that should be returned
@@ -307,13 +303,18 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
           query += index < fields.length - 1 ? "," : "";
         });
 
+        if( import.meta.env.DEV ) {
+          // Output query URL to help with debugging only in DEV mode
+          console.info("Bundle Query: ", query)
+        }
+
         const response = await fetch(query, config);
-        const tempBundles = bundles.current.slice();
         const temp = (await response.json());
-        tempBundles[index] = temp.data !== undefined ? temp.data : [];
-        bundles.current = tempBundles;
+
+        bundles.current[index] = temp.data;
 
         return response;
+
       })
     );
   }, [bundles, instrumentHosts]);
@@ -528,8 +529,8 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                   aria-label="Investigation Host Tabs"
                   sx={styles.tabs}
                 >
-                  <Tab label="Instruments" {...a11yProps(0)} disableRipple disableTouchRipple />
-                  <Tab label="Overview" {...a11yProps(1)} disableRipple disableTouchRipple />
+                  <Tab label="Instruments" data-tab-index={0} {...a11yProps(0)} disableRipple disableTouchRipple />
+                  <Tab label="Overview" data-tab-index={1} {...a11yProps(1)} disableRipple disableTouchRipple />
                   {/* Hidden for the time being as these aren't part of the Phase 1 MVP
                   <Tab label="Targets" {...a11yProps(2)} disableRipple disableTouchRipple />
                   <Tab label="Tools" {...a11yProps(3)} disableRipple disableTouchRipple />
@@ -621,16 +622,14 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                   paddingTop: "50px"
                                 }
                               }} key={"instrumentType_" + index}>
-                                <a name={"title_" + instrumentType.toLowerCase()}>{instrumentType}</a>
+                                <a id={"title_" + instrumentType.toLowerCase()}>{instrumentType}</a>
                               </Typography>
                               {
                                 instruments[selectedInstrumentHost].map( (instrument:Instrument) => {
-                                  if( instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE]?.includes(instrumentType)
-                                        || instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]?.includes(instrumentType) ) {
+                                  if( instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]?.includes(instrumentType) ) {
                                     return <FeaturedInstrumentLinkListItem
                                       key={instrument[PDS4_INFO_MODEL.LID]}
                                       description={instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION].toString()}
-                                      lid={instrument[PDS4_INFO_MODEL.LID]}
                                       primaryAction={ () => instrumentListItemPrimaryAction({ lid: instrument[PDS4_INFO_MODEL.LID] }) }
                                       title={instrument[PDS4_INFO_MODEL.TITLE]}
                                       bundles={getRelatedInstrumentBundles(instrument[PDS4_INFO_MODEL.LID])}

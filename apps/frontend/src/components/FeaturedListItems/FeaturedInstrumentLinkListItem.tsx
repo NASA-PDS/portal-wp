@@ -8,23 +8,23 @@ import ArrowForward from '@mui/icons-material/ArrowForward';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { ellipsisText } from 'src/utils/strings';
+import { Bundle } from 'src/types/bundle';
+import { PDS4_INFO_MODEL } from 'src/types/pds4-info-model';
 
 type PrimaryActionFunction = () => void;
 
 export type FeaturedInstrumentLinkListItemProps = {
   description:string,
-  lid:string,
   primaryAction:PrimaryActionFunction,
   title:string,
-  bundles:[]
+  bundles:Bundle[]
 }
 
 export const FeaturedInstrumentLinkListItem = ({
-  bundles = [],
-  description = '',
-  lid = '',
+  bundles,
+  description,
   primaryAction,
-  title = '',
+  title,
 }: FeaturedInstrumentLinkListItemProps) => {
 
   const [showDetails, setShowDetails] = useState<boolean>(false);
@@ -163,8 +163,8 @@ export const FeaturedInstrumentLinkListItem = ({
             marginBottom: "8px",
           }}
         >
-          <Link component="button" onClick={() => primaryAction()}
-            sx={{
+          <Link to={{}} onClick={() => primaryAction()}
+            style={{
               textAlign: "left",
               color: "#000000",
               textDecoration: "none",
@@ -241,7 +241,7 @@ export const FeaturedInstrumentLinkListItem = ({
                           lineHeight: "19px",
                           letterSpacing: "0.25px",
                           wordWrap: 'break-word',
-                        }}>{bundle.title}</Typography>
+                        }}>{bundle[PDS4_INFO_MODEL.TITLE]}</Typography>
                         <Typography sx={{
                           color: '#17171B',
                           fontSize: "11px",
@@ -252,7 +252,7 @@ export const FeaturedInstrumentLinkListItem = ({
                           letterSpacing: "0.25px",
                           paddingLeft: "24px",
                           wordWrap: 'break-word'
-                        }}>{bundle.properties["pds:Bundle.pds:description"] !== undefined ? bundle.properties["pds:Bundle.pds:description"][0] : "No Description Available"}</Typography>
+                        }}>{bundle[PDS4_INFO_MODEL.BUNDLE.DESCRIPTION] !== undefined ? bundle[PDS4_INFO_MODEL.BUNDLE.DESCRIPTION] : "No description available."}</Typography>
                       </Stack>
                     </Box>
                   )
