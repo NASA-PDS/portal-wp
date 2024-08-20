@@ -4,6 +4,12 @@ export type SolrSearchResponse = {
     facet_counts: Facetcounts;
 }
 
+export type SolrIdentifierNameResponse = {
+    responseHeader: ResponseHeader;
+    response: IdentifierNameResponse;
+    facet_counts: Facetcounts;
+}
+
 type Facetcounts = {
     facet_queries: Facetqueries;
     facet_fields: Facetfields;
@@ -20,6 +26,10 @@ type Facetfields = {
     facet_instrument: (number | string)[];
     facet_primary_result_purpose: (number | string)[];
     facet_primary_result_processing_level: string[];
+
+    investigation_ref: string[];
+    target_ref: string[];
+    instrument_ref: string[];
 }
 
 type Facetqueries = object;
@@ -28,10 +38,17 @@ type Response = {
     numFound: number;
     start: number;
     maxScore: number;
-    docs: Doc[];
+    docs: SearchResultDoc[];
 }
 
-type Doc = {
+type IdentifierNameResponse = {
+    numFound: number;
+    start: number;
+    maxScore: number;
+    docs: IdentifierNameDoc[];
+}
+
+type SearchResultDoc = {
     file_ref_location: string[];
     data_class: string[];
     description: string[];
@@ -57,6 +74,14 @@ type Doc = {
     resource_name: string[];
     timestamp: string;
     score: number;
+    
+}
+
+type IdentifierNameDoc = {
+    identifier: string;
+    investigation_name: string[];
+    instrument_name: string[];
+    target_name: string[];
 }
 
 type ResponseHeader = {
@@ -67,6 +92,8 @@ type ResponseHeader = {
 
 type Params = {
     q: string;
-    wt: string;
+    start: string;
+    fq: string[] | string;
     rows: string;
+    wt: string;
 }
