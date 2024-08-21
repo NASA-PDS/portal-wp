@@ -1,0 +1,36 @@
+.pds-filter-textfield .MuiInputBase-root.MuiInput-root.MuiInput-underline.Mui-focused::after {
+   border-bottom: 2px solid #F6F6F6;
+}
+
+.pds-filter-textfield .MuiInputBase-root.MuiInput-root.MuiInput-underline {
+   height: 29px;
+}
+
+.pds-filter-textfield.MuiFormControl-root.MuiTextField-root {
+   padding-bottom: 11px;
+}
+
+.pds-checkbox-box {
+   padding-top: 8px;
+   padding-bottom: 8px;
+}
+
+.pds-checkbox-container {
+   max-height: 400px;
+   overflow-y: scroll;
+}
+
+.pds-checkbox-container::-webkit-scrollbar {
+   -webkit-appearance: none;
+   width: 7px;
+}
+
+.pds-checkbox-container::-webkit-scrollbar-thumb {
+   border-radius: 4px;
+   background-color: rgba(0, 0, 0, .5);
+   -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+}
+
+.pds-checkbox-container .MuiCheckbox-root {
+   margin-top: -3px;
+}

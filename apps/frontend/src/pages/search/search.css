@@ -75,6 +75,7 @@
 .pds-search-options-container.MuiContainer-root.MuiContainer-maxWidthXl {
     display: flex;
     justify-content: right;
+    padding-bottom: 0;
 }
 
 
@@ -101,5 +102,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.pds-search-results-labels{
+    padding-bottom: 32px;
 }
 

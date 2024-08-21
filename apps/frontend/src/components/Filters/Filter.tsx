@@ -5,10 +5,15 @@ import {
   Divider,
   Grid,
   IconButton,
+  InputAdornment,
   TextField,
-  Typography,
 } from "@mui/material";
-import { IconArrowCircleDown, IconArrowCircleUp } from "@nasapds/wds-react";
+import {
+  IconArrowCircleDown,
+  IconArrowCircleUp,
+  IconSearch,
+  Typography,
+} from "@nasapds/wds-react";
 
 export type FilterOptionProps = {
   title: string;
@@ -24,6 +29,8 @@ export type FilterProps = {
   options: FilterOptionProps[];
   onChecked: (event: ChangeEvent<HTMLInputElement>) => void;
 };
+
+import "./filter.scss";
 
 const Filter = ({
   title,
@@ -67,23 +74,8 @@ const Filter = ({
           alignItems="center"
           sx={{ paddingBottom: 0 }}
         >
-          <Grid item xs={12}>
-            <TextField
-              id="outlined-controlled"
-              label="Controlled"
-              value={subFilter}
-              onChange={onSubFilterChange}
-            />
-          </Grid>
-        </Grid>
-        <Grid
-          container
-          spacing={2}
-          alignItems="center"
-          sx={{ paddingBottom: 0 }}
-        >
           <Grid item xs={10}>
-            <Typography fontWeight="fontWeightMedium" sx={{ color: "#58585a" }}>
+            <Typography variant="h8" weight="semibold">
               {displayTitle.toUpperCase()}
             </Typography>
           </Grid>
@@ -95,10 +87,40 @@ const Filter = ({
         </Grid>
       </Box>
 
-      {!isCollapsed
-        ? options.map((option, index) =>
+      {!isCollapsed ? (
+        <Grid
+          container
+          spacing={2}
+          alignItems="center"
+          sx={{ paddingBottom: 0 }}
+        >
+          <Grid item xs={12}>
+            <TextField
+              className="pds-filter-textfield"
+              id="subfilter"
+              value={subFilter}
+              variant="standard"
+              onChange={onSubFilterChange}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <IconSearch />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+        </Grid>
+      ) : (
+        <></>
+      )}
+
+      {!isCollapsed ? (
+        <Box className="pds-checkbox-container">
+          {options.map((option, index) =>
             titleIncludesSubFilter(option.title, subFilter) ? (
               <Box
+                className="pds-checkbox-box"
                 sx={{
                   cursor: "pointer",
                   display: "flex",
@@ -115,18 +137,18 @@ const Filter = ({
                     option.isChecked && option.title === "all" ? true : false
                   }
                 />
-                <Typography
-                  fontWeight="fontWeightMedium"
-                  sx={{ color: "#58585a" }}
-                >
+                <Typography variant="h6" weight="regular">
                   {option.title.toUpperCase()}
                 </Typography>
               </Box>
             ) : (
               <></>
             )
-          )
-        : ""}
+          )}
+        </Box>
+      ) : (
+        ""
+      )}
       <Divider />
     </div>
   );

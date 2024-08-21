@@ -810,6 +810,29 @@ const SearchPage = () => {
                   paddingY: "24px",
                 }}
               >
+                <Grid
+                  container
+                  spacing={4}
+                  columns={{ xs: 3, sm: 8, md: 12 }}
+                  className="pds-search-results-labels"
+                >
+                  <Grid item xs={3} sm={3} md={3}>
+                    <Typography variant="h5" weight="semibold">
+                      Filters
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={7} sm={7} md={7}>
+                    <Typography variant="h5" weight="semibold">
+                      Results
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={2} sm={2} md={2}>
+                    <Typography variant="h5" weight="semibold">
+                      Page Type
+                    </Typography>
+                  </Grid>
+                </Grid>
+
                 <Grid container spacing={4} columns={{ xs: 3, sm: 8, md: 12 }}>
                   <Grid item xs={3} sm={3} md={3}>
                     <Typography variant="h6" weight="regular">
