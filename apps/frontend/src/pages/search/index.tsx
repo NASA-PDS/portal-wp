@@ -338,8 +338,7 @@ const SearchPage = () => {
       if (filtersParam) {
         filters = filtersParam;
         setResultFilters(filters);
-      }
-      else{
+      } else {
         setResultFilters(filters);
       }
 
@@ -359,7 +358,11 @@ const SearchPage = () => {
     return text.replace("1,", "");
   };
 
-  const removeFilter = (value: string, name: string, existingFilters: string) => {
+  const removeFilter = (
+    value: string,
+    name: string,
+    existingFilters: string
+  ) => {
     let filters = existingFilters;
     const replaceFilterInside = "+" + value + "+" + name;
     const replaceFilterFirst = value + "+" + name + "+";
@@ -370,45 +373,47 @@ const SearchPage = () => {
     filters = filters.replace(replaceFilterOnly, "");
 
     return filters;
-  }
+  };
 
-  const removeAllFilters = (filtersToRemove: {value: string, name: string}[], existingFilters: string) => {
+  const removeAllFilters = (
+    filtersToRemove: { value: string; name: string }[],
+    existingFilters: string
+  ) => {
     let filters = existingFilters;
 
-      filtersToRemove.forEach((filter) => {
-        filters = removeFilter(filter.value, filter.name, filters);
-      });
+    filtersToRemove.forEach((filter) => {
+      filters = removeFilter(filter.value, filter.name, filters);
+    });
 
-      return filters;
-  }
+    return filters;
+  };
 
   const handleFilterChecked = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, checked, value } = e.target;
     let filters = "";
 
-    if(name === "all"){
-      if(checked){
-        const filtersToDelete: {value: string, name: string}[] = [];
+    if (name === "all") {
+      if (checked) {
+        const filtersToDelete: { value: string; name: string }[] = [];
 
         const fqs = resultFilters.split("+");
         fqs.forEach((fq, index) => {
           if (index % 2 === 0) {
-            if(fq === value){
+            if (fq === value) {
               filtersToDelete.push({
                 value: fq,
-                name: fqs[index + 1]
-              })
+                name: fqs[index + 1],
+              });
             }
           }
         });
 
         filters = removeAllFilters(filtersToDelete, resultFilters);
       }
-    }
-    else{
+    } else {
       if (checked) {
         const newFilter = value + "+" + name;
-  
+
         if (resultFilters.length > 0) {
           if (!filters.includes(newFilter))
             filters = resultFilters + "+" + newFilter;
@@ -416,7 +421,7 @@ const SearchPage = () => {
           filters = newFilter;
         }
       } else {
-       filters = removeFilter(value, name, resultFilters);
+        filters = removeFilter(value, name, resultFilters);
       }
     }
 
@@ -467,7 +472,7 @@ const SearchPage = () => {
     }
 
     return isChecked;
-  }
+  };
 
   const parseFilterOptions = (
     options: { name: string; identifier: string }[],
@@ -480,18 +485,14 @@ const SearchPage = () => {
       title: "all",
       value: "all",
       resultsFound: 0,
-      isChecked: isAllOptionsChecked(parentValue, filters)
+      isChecked: isAllOptionsChecked(parentValue, filters),
     });
 
     options.forEach((option) => {
       parsedOptions.push({
         title: option.name,
         value: option.identifier,
-        isChecked: isOptionChecked(
-          option.identifier,
-          parentValue,
-          filters
-        ),
+        isChecked: isOptionChecked(option.identifier, parentValue, filters),
         resultsFound: 0,
       });
     });

@@ -25,7 +25,13 @@ export type FilterProps = {
   onChecked: (event: ChangeEvent<HTMLInputElement>) => void;
 };
 
-const Filter = ({ title, displayTitle, value, options, onChecked }: FilterProps) => {
+const Filter = ({
+  title,
+  displayTitle,
+  value,
+  options,
+  onChecked,
+}: FilterProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [subFilter, setSubFilter] = useState("");
 
@@ -35,33 +41,39 @@ const Filter = ({ title, displayTitle, value, options, onChecked }: FilterProps)
 
   const onSubFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSubFilter(event.target.value);
-  }
+  };
 
-  const titleIncludesSubFilter = (titleString: string, subFilterString: string) => {
+  const titleIncludesSubFilter = (
+    titleString: string,
+    subFilterString: string
+  ) => {
     let isIncluded = false;
 
-    if(titleString.toLowerCase().includes(subFilterString.toLowerCase()) || titleString.toLowerCase() === "all"){
+    if (
+      titleString.toLowerCase().includes(subFilterString.toLowerCase()) ||
+      titleString.toLowerCase() === "all"
+    ) {
       isIncluded = true;
     }
     return isIncluded;
-  }
+  };
 
   return (
     <div>
       <Box>
-      <Grid
+        <Grid
           container
           spacing={2}
           alignItems="center"
           sx={{ paddingBottom: 0 }}
         >
           <Grid item xs={12}>
-          <TextField
-            id="outlined-controlled"
-            label="Controlled"
-            value={subFilter}
-            onChange={onSubFilterChange}
-          />
+            <TextField
+              id="outlined-controlled"
+              label="Controlled"
+              value={subFilter}
+              onChange={onSubFilterChange}
+            />
           </Grid>
         </Grid>
         <Grid
@@ -84,33 +96,36 @@ const Filter = ({ title, displayTitle, value, options, onChecked }: FilterProps)
       </Box>
 
       {!isCollapsed
-        ? options.map((option, index) => (
-          titleIncludesSubFilter(option.title, subFilter)?
-            <Box
-              sx={{
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "start",
-              }}
-            >
-              <Checkbox
-                sx={{ padding: 0 }}
-                onChange={onChecked}
-                name={option.value}
-                value={value}
-                checked={option.isChecked}
-                disabled={option.isChecked && option.title === "all"? true: false}
-              />
-              <Typography
-                fontWeight="fontWeightMedium"
-                sx={{ color: "#58585a" }}
+        ? options.map((option, index) =>
+            titleIncludesSubFilter(option.title, subFilter) ? (
+              <Box
+                sx={{
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "start",
+                }}
               >
-                {option.title.toUpperCase()}
-              </Typography>
-            </Box>
-            :
-            <></>
-          ))
+                <Checkbox
+                  sx={{ padding: 0 }}
+                  onChange={onChecked}
+                  name={option.value}
+                  value={value}
+                  checked={option.isChecked}
+                  disabled={
+                    option.isChecked && option.title === "all" ? true : false
+                  }
+                />
+                <Typography
+                  fontWeight="fontWeightMedium"
+                  sx={{ color: "#58585a" }}
+                >
+                  {option.title.toUpperCase()}
+                </Typography>
+              </Box>
+            ) : (
+              <></>
+            )
+          )
         : ""}
       <Divider />
     </div>
