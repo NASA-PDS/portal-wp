@@ -375,7 +375,7 @@ const SearchPage = () => {
     return filters;
   };
 
-  const removeAllFilters = (
+  const removeFilters = (
     filtersToRemove: { value: string; name: string }[],
     existingFilters: string
   ) => {
@@ -408,7 +408,7 @@ const SearchPage = () => {
           }
         });
 
-        filters = removeAllFilters(filtersToDelete, resultFilters);
+        filters = removeFilters(filtersToDelete, resultFilters);
       }
     } else {
       if (checked) {
@@ -472,6 +472,31 @@ const SearchPage = () => {
     }
 
     return isChecked;
+  };
+
+  const handleFilterChipDelete = (value: string, parentValue: string) => {
+    let filters = "";
+
+    filters = removeFilter(parentValue, value, resultFilters);
+    doNavigate(
+      searchInputValue,
+      resultRows.toString(),
+      resultSort,
+      "1",
+      filters
+    );
+  };
+
+  const handleFilterClear = () => {
+    const filters = "";
+
+    doNavigate(
+      searchInputValue,
+      resultRows.toString(),
+      resultSort,
+      "1",
+      filters
+    );
   };
 
   const parseFilterOptions = (
@@ -818,7 +843,7 @@ const SearchPage = () => {
                 >
                   <Grid item xs={3} sm={3} md={3}>
                     <Typography variant="h5" weight="semibold">
-                      Filters
+                      {resultFilters.length > 0 ? "Active Filters" : "Filters"}
                     </Typography>
                   </Grid>
                   <Grid item xs={7} sm={7} md={7}>
@@ -837,20 +862,33 @@ const SearchPage = () => {
                   <Grid item xs={3} sm={3} md={3}>
                     <Typography variant="h6" weight="regular">
                       <Filters
-                        //filters={parseFilters(searchResults.facet_counts)}
                         filters={parsedFilters}
                         onChecked={handleFilterChecked}
+                        onFilterChipDelete={handleFilterChipDelete}
+                        onFilterClear={handleFilterClear}
                       ></Filters>
                     </Typography>
                   </Grid>
                   <Grid item xs={9} sm={9} md={9}>
-                    <Typography
-                      variant="h6"
-                      weight="regular"
-                      sx={{ wordBreak: "break-all" }}
-                    >
-                      Results go here: {JSON.stringify(searchResults)}
-                    </Typography>
+                    {searchResults.response.docs.map((doc, index) => (
+                      <Box sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
+                        <Typography
+                          variant="h6"
+                          weight="regular"
+                          sx={{ wordBreak: "break-all" }}
+                        >
+                          title: {doc.title}
+                        </Typography>
+
+                        <Typography
+                          variant="h6"
+                          weight="regular"
+                          sx={{ wordBreak: "break-all" }}
+                        >
+                          identifier: {doc.identifier}
+                        </Typography>
+                      </Box>
+                    ))}
                   </Grid>
                 </Grid>
               </Container>

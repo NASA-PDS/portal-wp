@@ -46,7 +46,7 @@ const Filter = ({
     setIsCollapsed(!isCollapsed);
   };
 
-  const onSubFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onSubFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSubFilter(event.target.value);
   };
 
