@@ -50,6 +50,19 @@ import "./search.css";
 
 const feedbackEmail = "mailto:example@example.com";
 const solrEndpoint = "https://pds.nasa.gov/services/search/search";
+const getFiltersQuery =
+  "&rows=0&facet=on&facet.field=investigation_ref&facet.field=instrument_ref&facet.field=target_ref&wt=json&facet.limit=-1";
+const filterDefault =
+  "&fq=-product_class:Product_Attribute_Definition&fq=-product_class:Product_Class_Definition&fq=-product_class:Product_Target_PDS3&fq=-product_class:Product_Instrument_PDS3&fq=-product_class:Product_Instrument_Host_PDS3&fq=-product_class:Product_Mission_PDS3&fq=-collection_type:schema&fq=-data_class:resource";
+const investigationNamesEndpoint =
+  solrEndpoint +
+  "?wt=json&q=data_class:Investigation&fl=investigation_name,identifier&rows=10000";
+const instrumentNamesEndpoint =
+  solrEndpoint +
+  "?wt=json&q=data_class:Instrument&fl=instrument_name,identifier&rows=10000";
+const targetNamesEndpoint =
+  solrEndpoint +
+  "?wt=json&q=data_class:Target&fl=target_name,identifier&rows=10000";
 
 const linkStyles = {
   color: "white",
@@ -79,7 +92,7 @@ const SearchPage = () => {
 
   const [parsedFilters, setParsedFilters] = useState<FilterProps[]>([]);
 
-  const [areResultsExpanded, setAreResultsExpanded] = useState(true);
+  const [areResultsExpanded, setAreResultsExpanded] = useState(false);
 
   const formatSearchResults = (data: SolrSearchResponse) => {
     return data;
@@ -142,48 +155,13 @@ const SearchPage = () => {
     return formattedFilterQueryString;
   };
 
-  const doFilterMap = async (
-    urnUrl: string,
-    namesUrl: string,
-    type: string
-  ) => {
+  const mapFilterIdsToName = (ids: string[], names: IdentifierNameDoc[]) => {
     const filtersMap: { name: string; identifier: string }[] = [];
     const notFoundfiltersMap: string[] = [];
 
-    const urnResponse = await fetch(urnUrl);
-    const urnData = await urnResponse.json();
-
-    const namesResponse = await fetch(namesUrl);
-    const namesData = await namesResponse.json();
-
-    const formattedUrnData = formatIdentifierNameResults(urnData);
-    const formattedInvestigationData = formatIdentifierNameResults(namesData);
-
-    let urns: string[] = [];
-    if (
-      formattedUrnData.facet_counts.facet_fields.investigation_ref &&
-      formattedUrnData.facet_counts.facet_fields.investigation_ref.length > 0
-    ) {
-      urns = formattedUrnData.facet_counts.facet_fields.investigation_ref;
-    }
-    if (
-      formattedUrnData.facet_counts.facet_fields.instrument_ref &&
-      formattedUrnData.facet_counts.facet_fields.instrument_ref.length > 0
-    ) {
-      urns = formattedUrnData.facet_counts.facet_fields.instrument_ref;
-    }
-    if (
-      formattedUrnData.facet_counts.facet_fields.target_ref &&
-      formattedUrnData.facet_counts.facet_fields.target_ref.length > 0
-    ) {
-      urns = formattedUrnData.facet_counts.facet_fields.target_ref;
-    }
-
-    const names: IdentifierNameDoc[] = formattedInvestigationData.response.docs;
-
-    urns.forEach((urn, index) => {
+    ids.forEach((id, index) => {
       if (index % 2 == 0) {
-        const urnSplit = urn.split("::")[0];
+        const urnSplit = id.split("::")[0];
         const nameDoc = names.find((name) => name.identifier === urnSplit);
 
         if (nameDoc) {
@@ -201,7 +179,7 @@ const SearchPage = () => {
 
           filtersMap.push({
             name,
-            identifier: urn,
+            identifier: id,
           });
         } else {
           notFoundfiltersMap.push(urnSplit);
@@ -209,7 +187,66 @@ const SearchPage = () => {
       }
     });
 
+    console.log("filters with no matching name", notFoundfiltersMap);
     return filtersMap;
+  };
+
+  const doFilterMap = (
+    filterIdsData: SolrIdentifierNameResponse,
+    investigationsData: SolrIdentifierNameResponse,
+    instrumentsData: SolrIdentifierNameResponse,
+    targetsData: SolrIdentifierNameResponse,
+    originalFilters: string
+  ) => {
+    let investigationFilterIds: string[] = [];
+    let instrumentFilterIds: string[] = [];
+    let targetFilterIds: string[] = [];
+
+    if (
+      filterIdsData.facet_counts.facet_fields.investigation_ref &&
+      filterIdsData.facet_counts.facet_fields.investigation_ref.length > 0
+    ) {
+      investigationFilterIds =
+        filterIdsData.facet_counts.facet_fields.investigation_ref;
+    }
+    if (
+      filterIdsData.facet_counts.facet_fields.instrument_ref &&
+      filterIdsData.facet_counts.facet_fields.instrument_ref.length > 0
+    ) {
+      instrumentFilterIds =
+        filterIdsData.facet_counts.facet_fields.instrument_ref;
+    }
+    if (
+      filterIdsData.facet_counts.facet_fields.target_ref &&
+      filterIdsData.facet_counts.facet_fields.target_ref.length > 0
+    ) {
+      targetFilterIds = filterIdsData.facet_counts.facet_fields.target_ref;
+    }
+
+    const investigationNames: IdentifierNameDoc[] =
+      investigationsData.response.docs;
+    const instrumentNames: IdentifierNameDoc[] = instrumentsData.response.docs;
+    const targetNames: IdentifierNameDoc[] = targetsData.response.docs;
+
+    const investigationFilterOptions = mapFilterIdsToName(
+      investigationFilterIds,
+      investigationNames
+    );
+    const instrumentFilterOptions = mapFilterIdsToName(
+      instrumentFilterIds,
+      instrumentNames
+    );
+    const targetFilterOptions = mapFilterIdsToName(
+      targetFilterIds,
+      targetNames
+    );
+
+    setPropsForFilter(
+      investigationFilterOptions,
+      instrumentFilterOptions,
+      targetFilterOptions,
+      originalFilters
+    );
   };
 
   const doSearch = async (
@@ -226,7 +263,8 @@ const SearchPage = () => {
       "&rows=" +
       rows +
       "&start=" +
-      start;
+      start +
+      filterDefault;
 
     if (sort !== "relevance") {
       url = url + "&sort=title " + sort;
@@ -532,51 +570,50 @@ const SearchPage = () => {
   };
 
   const parseFilters = (originalSearchText: string, filters: string) => {
-    const investigationUrnsUrl =
-      solrEndpoint +
-      "?q=" +
-      originalSearchText +
-      "&rows=0&facet=on&facet.field=investigation_ref&wt=json&facet.limit=-1";
+    const filterIdsUrl =
+      solrEndpoint + "?q=" + originalSearchText + getFiltersQuery;
 
-    const investigationsUrl =
-      "https://pds.nasa.gov/services/search/search?wt=json&q=data_class:Investigation&fl=investigation_name,identifier&rows=10000";
+    const investigationsUrl = investigationNamesEndpoint;
 
-    const instrumentUrnsUrl =
-      solrEndpoint +
-      "?q=" +
-      originalSearchText +
-      "&rows=0&facet=on&facet.field=instrument_ref&wt=json&facet.limit=-1";
+    const instrumentsUrl = instrumentNamesEndpoint;
 
-    const instrumentsUrl =
-      "https://pds.nasa.gov/services/search/search?wt=json&q=data_class:Instrument&fl=instrument_name,identifier&rows=10000";
+    const targetsUrl = targetNamesEndpoint;
 
-    const targetUrnsUrl =
-      solrEndpoint +
-      "?q=" +
-      originalSearchText +
-      "&rows=0&facet=on&facet.field=target_ref&wt=json&facet.limit=-1";
+    fetch(filterIdsUrl) // api for the get request
+      .then((filtersResponse) => filtersResponse.json())
+      .then((filterIdsData) => {
+        const formattedFilterIdData =
+          formatIdentifierNameResults(filterIdsData);
 
-    const targetsUrl =
-      "https://pds.nasa.gov/services/search/search?wt=json&q=data_class:Target&fl=target_name,identifier&rows=10000";
+        fetch(investigationsUrl) // api for the get request
+          .then((investigationsResponse) => investigationsResponse.json())
+          .then((investigationsData) => {
+            const formattedInvestigationData =
+              formatIdentifierNameResults(investigationsData);
 
-    doFilterMap(investigationUrnsUrl, investigationsUrl, "investigations").then(
-      (investigationFilterOptions) => {
-        doFilterMap(instrumentUrnsUrl, instrumentsUrl, "instruments").then(
-          (instrumentFilterOptions) => {
-            doFilterMap(targetUrnsUrl, targetsUrl, "targets").then(
-              (targetFilterOptions) => {
-                setPropsForFilter(
-                  investigationFilterOptions,
-                  instrumentFilterOptions,
-                  targetFilterOptions,
-                  filters
-                );
-              }
-            );
-          }
-        );
-      }
-    );
+            fetch(instrumentsUrl) // api for the get request
+              .then((instrumentsResponse) => instrumentsResponse.json())
+              .then((instrumentsData) => {
+                const formattedInstrumentsData =
+                  formatIdentifierNameResults(instrumentsData);
+
+                fetch(targetsUrl) // api for the get request
+                  .then((targetsResponse) => targetsResponse.json())
+                  .then((targetsData) => {
+                    const formattedTargetsData =
+                      formatIdentifierNameResults(targetsData);
+
+                    doFilterMap(
+                      formattedFilterIdData,
+                      formattedInvestigationData,
+                      formattedInstrumentsData,
+                      formattedTargetsData,
+                      filters
+                    );
+                  });
+              });
+          });
+      });
   };
 
   const setPropsForFilter = (
@@ -984,7 +1021,6 @@ const SearchPage = () => {
                                     ? { value: doc.investigation_stop_date[0] }
                                     : { value: "-" }
                                 }
-                                tags={["?????", "?????", "?????", "?????"]}
                               />
                             </FeaturedLink>
                           ) : (
@@ -1017,7 +1053,6 @@ const SearchPage = () => {
                                     ? { value: doc["form-instrument-host"][0] }
                                     : { value: "-" }
                                 }
-                                tags={["?????", "?????", "?????", "?????"]}
                               />
                             </FeaturedLink>
                           ) : (
@@ -1072,7 +1107,6 @@ const SearchPage = () => {
                                     : { value: "-" }
                                 }
                                 variant={FeaturedLinkDetailsVariant.DATA_BUNDLE}
-                                tags={["?????", "?????", "?????", "?????"]}
                               />
                             </FeaturedLink>
                           ) : (
@@ -1132,7 +1166,6 @@ const SearchPage = () => {
                                 variant={
                                   FeaturedLinkDetailsVariant.DATA_COLLECTION
                                 }
-                                tags={["?????", "?????", "?????", "?????"]}
                               />
                             </FeaturedLink>
                           ) : (
@@ -1156,7 +1189,6 @@ const SearchPage = () => {
                                   doc.target_type ? doc.target_type : ["-"]
                                 }
                                 variant={FeaturedLinkDetailsVariant.TARGET}
-                                tags={["?????", "?????", "?????", "?????"]}
                               />
                             </FeaturedLink>
                           ) : (
@@ -1194,7 +1226,6 @@ const SearchPage = () => {
                                     : { value: "-" }
                                 }
                                 variant={FeaturedLinkDetailsVariant.TOOL}
-                                tags={["?????", "?????", "?????", "?????"]}
                               />
                             </FeaturedLink>
                           ) : (
@@ -1246,7 +1277,6 @@ const SearchPage = () => {
                                     : { value: "-" }
                                 }
                                 variant={FeaturedLinkDetailsVariant.DATA_SET}
-                                tags={["?????", "?????", "?????", "?????"]}
                               />
                             </FeaturedLink>
                           ) : (
