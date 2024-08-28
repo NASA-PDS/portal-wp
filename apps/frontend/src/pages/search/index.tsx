@@ -691,7 +691,7 @@ const SearchPage = () => {
     <>
       <StyledEngineProvider injectFirst>
         <Container maxWidth={false} disableGutters sx={{ textAlign: "left" }}>
-          {/* Page Intro */}
+          {/* Result Counter & Search Bar*/}
           <Container
             maxWidth={"xl"}
             sx={{
@@ -741,36 +741,25 @@ const SearchPage = () => {
               columns={{ xs: 3, sm: 8, md: 12 }}
             >
               <Grid item xs={3} sm={3} md={3}>
-                {searchResults ? (
-                  searchResults.response.numFound > 0 ? (
-                    <Box>
-                      <Typography variant="h3" weight="bold">
-                        Showing results for{" "}
-                        <Box
-                          component="span"
-                          className="resultsCounterInputValue"
-                        >
-                          {searchResults.responseHeader.params.q}
-                        </Box>
-                      </Typography>
-                      <Typography variant="body5" weight="regular">
-                        {searchResults.response.start + 1} -{" "}
-                        {Number(searchResults.response.start) +
-                          Number(searchResults.response.docs.length)}{" "}
-                        of {searchResults.response.numFound} results (
-                        {searchResults.responseHeader.QTime}) seconds
-                      </Typography>
-                    </Box>
-                  ) : (
-                    <Box>
-                      <Typography variant="h3" weight="bold">
-                        No results to show
-                      </Typography>
-                      <Typography variant="body5" weight="regular">
-                        0 of 0 results
-                      </Typography>
-                    </Box>
-                  )
+                {searchResults && searchResults.response.numFound > 0 ? (
+                  <Box>
+                    <Typography variant="h3" weight="bold">
+                      Showing results for{" "}
+                      <Box
+                        component="span"
+                        className="resultsCounterInputValue"
+                      >
+                        {searchResults.responseHeader.params.q}
+                      </Box>
+                    </Typography>
+                    <Typography variant="body5" weight="regular">
+                      {searchResults.response.start + 1} -{" "}
+                      {Number(searchResults.response.start) +
+                        Number(searchResults.response.docs.length)}{" "}
+                      of {searchResults.response.numFound} results (
+                      {searchResults.responseHeader.QTime}) seconds
+                    </Typography>
+                  </Box>
                 ) : (
                   <Box>
                     <Typography variant="h3" weight="bold">
@@ -812,93 +801,84 @@ const SearchPage = () => {
               </Grid>
             </Grid>
           </Container>
-
-          {searchResults ? (
-            searchResults.response.numFound > 0 ? (
-              <Container
-                className="pds-search-options-container"
-                maxWidth={"xl"}
-                sx={{
-                  paddingY: "24px",
-                }}
-              >
-                <Box className="pds-search-option-box">
-                  <MuiButton
-                    variant="text"
-                    className="pds-search-option-button"
+          {/*Search Options*/}
+          {searchResults && searchResults.response.numFound > 0 ? (
+            <Container
+              className="pds-search-options-container"
+              maxWidth={"xl"}
+              sx={{
+                paddingY: "24px",
+              }}
+            >
+              <Box className="pds-search-option-box">
+                <MuiButton variant="text" className="pds-search-option-button">
+                  Expand All
+                </MuiButton>
+                <Typography variant="h8" weight="semibold">
+                  {" "}
+                  |{" "}
+                </Typography>
+                <MuiButton variant="text" className="pds-search-option-button">
+                  Collapse All
+                </MuiButton>
+              </Box>
+              <Box className="pds-search-option-box">
+                <FormControl sx={{ m: 1, minWidth: 120 }}>
+                  <Select
+                    className="pds-select-search-options"
+                    value={resultRows.toString()}
+                    renderValue={(selected) => {
+                      return "NUMBER OF RESULTS: " + selected;
+                    }}
+                    onChange={handleResultRowsChange}
+                    displayEmpty
+                    inputProps={{ "aria-label": "Without label" }}
+                    IconComponent={IconArrowCircleDown}
+                    variant="standard"
                   >
-                    Expand All
-                  </MuiButton>
-                  <Typography variant="h8" weight="semibold">
-                    {" "}
-                    |{" "}
-                  </Typography>
-                  <MuiButton
-                    variant="text"
-                    className="pds-search-option-button"
-                  >
-                    Collapse All
-                  </MuiButton>
-                </Box>
-                <Box className="pds-search-option-box">
-                  <FormControl sx={{ m: 1, minWidth: 120 }}>
-                    <Select
-                      className="pds-select-search-options"
-                      value={resultRows.toString()}
-                      renderValue={(selected) => {
-                        return "NUMBER OF RESULTS: " + selected;
-                      }}
-                      onChange={handleResultRowsChange}
-                      displayEmpty
-                      inputProps={{ "aria-label": "Without label" }}
-                      IconComponent={IconArrowCircleDown}
-                      variant="standard"
-                    >
-                      <MenuItem value={20}>20</MenuItem>
-                      <MenuItem value={40}>40</MenuItem>
-                      <MenuItem value={60}>60</MenuItem>
-                      <MenuItem value={80}>80</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Box>
+                    <MenuItem value={20}>20</MenuItem>
+                    <MenuItem value={40}>40</MenuItem>
+                    <MenuItem value={60}>60</MenuItem>
+                    <MenuItem value={80}>80</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
 
-                <Box className="pds-search-option-box">
-                  <FormControl sx={{ m: 1, minWidth: 120 }}>
-                    <Select
-                      className="pds-select-search-options"
-                      value={resultSort}
-                      renderValue={(selected) => {
-                        return "SORT: " + selected.toUpperCase();
-                      }}
-                      onChange={handleSortChange}
-                      displayEmpty
-                      inputProps={{ "aria-label": "Without label" }}
-                      IconComponent={IconArrowCircleDown}
-                      variant="standard"
-                    >
-                      <MenuItem value={"relevance"}>Relevance</MenuItem>
-                      <MenuItem value={"asc"}>Ascending</MenuItem>
-                      <MenuItem value={"desc"}>Descending</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Box>
-              </Container>
-            ) : (
-              <></>
-            )
+              <Box className="pds-search-option-box">
+                <FormControl sx={{ m: 1, minWidth: 120 }}>
+                  <Select
+                    className="pds-select-search-options"
+                    value={resultSort}
+                    renderValue={(selected) => {
+                      return "SORT: " + selected.toUpperCase();
+                    }}
+                    onChange={handleSortChange}
+                    displayEmpty
+                    inputProps={{ "aria-label": "Without label" }}
+                    IconComponent={IconArrowCircleDown}
+                    variant="standard"
+                  >
+                    <MenuItem value={"relevance"}>Relevance</MenuItem>
+                    <MenuItem value={"asc"}>Ascending</MenuItem>
+                    <MenuItem value={"desc"}>Descending</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+            </Container>
           ) : (
             <></>
           )}
           {/* Search Results Content */}
-
           {searchResults ? (
-            searchResults.response.numFound > 0 ? (
-              <Container
-                maxWidth={"xl"}
-                sx={{
-                  paddingY: "24px",
-                }}
-              >
+            <Container
+              maxWidth={"xl"}
+              sx={{
+                paddingY: "24px",
+              }}
+            >
+              {/*Results Label */}
+              {searchResults.response.numFound > 0 ||
+              resultFilters.length > 0 ? (
                 <Grid
                   container
                   spacing={4}
@@ -911,17 +891,32 @@ const SearchPage = () => {
                     </Typography>
                   </Grid>
                   <Grid item xs={7} sm={7} md={7}>
-                    <Typography variant="h5" weight="semibold">
-                      Results
-                    </Typography>
+                    {searchResults.response.numFound === 0 &&
+                    resultFilters.length > 0 ? (
+                      <></>
+                    ) : (
+                      <Typography variant="h5" weight="semibold">
+                        Results
+                      </Typography>
+                    )}
                   </Grid>
                   <Grid item xs={2} sm={2} md={2}>
-                    <Typography variant="h5" weight="semibold">
-                      Page Type
-                    </Typography>
+                    {searchResults.response.numFound === 0 &&
+                    resultFilters.length > 0 ? (
+                      <></>
+                    ) : (
+                      <Typography variant="h5" weight="semibold">
+                        Page Type
+                      </Typography>
+                    )}
                   </Grid>
                 </Grid>
+              ) : (
+                <></>
+              )}
 
+              {searchResults.response.numFound > 0 ||
+              resultFilters.length > 0 ? (
                 <Grid container spacing={4} columns={{ xs: 3, sm: 8, md: 12 }}>
                   <Grid item xs={3} sm={3} md={3}>
                     <Typography variant="h6" weight="regular">
@@ -934,332 +929,341 @@ const SearchPage = () => {
                     </Typography>
                   </Grid>
                   <Grid item xs={9} sm={9} md={9}>
-                    {searchResults.response.docs.map((doc, index) => (
-                      <Box>
-                        {getDocType(doc) === "investigation" ? (
-                          <FeaturedLink
-                            title={doc.title}
-                            description={
-                              doc.investigation_description
-                                ? doc.investigation_description[0]
-                                : doc.instrument_host_description
-                                ? doc.instrument_host_description[0]
-                                : "-"
-                            }
-                            primaryLink="/"
-                          >
-                            <FeaturedLinkDetails
-                              variant={FeaturedLinkDetailsVariant.INVESTIGATION}
-                              instrumentHostTitles={
-                                doc.instrument_host_name
-                                  ? doc.instrument_host_name
-                                  : ["-"]
+                    {searchResults.response.docs.length > 0 ? (
+                      searchResults.response.docs.map((doc, index) => (
+                        <Box>
+                          {getDocType(doc) === "investigation" ? (
+                            <FeaturedLink
+                              title={doc.title}
+                              description={
+                                doc.investigation_description
+                                  ? doc.investigation_description[0]
+                                  : doc.instrument_host_description
+                                  ? doc.instrument_host_description[0]
+                                  : "-"
                               }
-                              lid={{ value: doc.identifier }}
-                              startDate={
-                                doc.investigation_start_date
-                                  ? { value: doc.investigation_start_date[0] }
-                                  : { value: "-" }
-                              }
-                              stopDate={
-                                doc.investigation_stop_date
-                                  ? { value: doc.investigation_stop_date[0] }
-                                  : { value: "-" }
-                              }
-                              tags={["?????", "?????", "?????", "?????"]}
-                            />
-                          </FeaturedLink>
-                        ) : (
-                          <></>
-                        )}
+                              primaryLink="/"
+                            >
+                              <FeaturedLinkDetails
+                                variant={
+                                  FeaturedLinkDetailsVariant.INVESTIGATION
+                                }
+                                instrumentHostTitles={
+                                  doc.instrument_host_name
+                                    ? doc.instrument_host_name
+                                    : ["-"]
+                                }
+                                lid={{ value: doc.identifier }}
+                                startDate={
+                                  doc.investigation_start_date
+                                    ? { value: doc.investigation_start_date[0] }
+                                    : { value: "-" }
+                                }
+                                stopDate={
+                                  doc.investigation_stop_date
+                                    ? { value: doc.investigation_stop_date[0] }
+                                    : { value: "-" }
+                                }
+                                tags={["?????", "?????", "?????", "?????"]}
+                              />
+                            </FeaturedLink>
+                          ) : (
+                            <></>
+                          )}
 
-                        {getDocType(doc) === "instrument" ? (
-                          <FeaturedLink
-                            title={doc.title}
-                            description={
-                              doc.instrument_description
-                                ? doc.instrument_description[0]
-                                : "-"
-                            }
-                            primaryLink="/"
-                          >
-                            <FeaturedLinkDetails
-                              variant={FeaturedLinkDetailsVariant.INSTRUMENT}
-                              instrumentType={
-                                doc["form-instrument-type"]
-                                  ? doc["form-instrument-type"]
-                                  : ["-"]
+                          {getDocType(doc) === "instrument" ? (
+                            <FeaturedLink
+                              title={doc.title}
+                              description={
+                                doc.instrument_description
+                                  ? doc.instrument_description[0]
+                                  : "-"
                               }
-                              lid={{ value: doc.identifier }}
-                              startDate={{ value: "-" }}
-                              stopDate={{ value: "-" }}
-                              investigation={
-                                doc["form-instrument-host"]
-                                  ? { value: doc["form-instrument-host"][0] }
-                                  : { value: "-" }
-                              }
-                              tags={["?????", "?????", "?????", "?????"]}
-                            />
-                          </FeaturedLink>
-                        ) : (
-                          <></>
-                        )}
+                              primaryLink="/"
+                            >
+                              <FeaturedLinkDetails
+                                variant={FeaturedLinkDetailsVariant.INSTRUMENT}
+                                instrumentType={
+                                  doc["form-instrument-type"]
+                                    ? doc["form-instrument-type"]
+                                    : ["-"]
+                                }
+                                lid={{ value: doc.identifier }}
+                                startDate={{ value: "-" }}
+                                stopDate={{ value: "-" }}
+                                investigation={
+                                  doc["form-instrument-host"]
+                                    ? { value: doc["form-instrument-host"][0] }
+                                    : { value: "-" }
+                                }
+                                tags={["?????", "?????", "?????", "?????"]}
+                              />
+                            </FeaturedLink>
+                          ) : (
+                            <></>
+                          )}
 
-                        {getDocType(doc) === "databundle" ? (
-                          <FeaturedLink
-                            title={doc.title}
-                            description={
-                              doc.description ? doc.description[0] : "-"
-                            }
-                            primaryLink="/"
-                          >
-                            <FeaturedLinkDetails
-                              doi={
-                                doc.citation_doi
-                                  ? { value: doc.citation_doi[0] }
-                                  : { value: "-" }
+                          {getDocType(doc) === "databundle" ? (
+                            <FeaturedLink
+                              title={doc.title}
+                              description={
+                                doc.description ? doc.description[0] : "-"
                               }
-                              investigation={
-                                doc["form-investigation"]
-                                  ? { value: doc["form-investigation"][0] }
-                                  : { value: "-" }
-                              }
-                              instrumentType={[""]}
-                              processingLevel={
-                                doc.primary_result_processing_level
-                                  ? {
-                                      value:
-                                        doc.primary_result_processing_level[0],
-                                    }
-                                  : { value: "-" }
-                              }
-                              lid={{ value: doc.identifier }}
-                              startDate={
-                                doc.observation_start_date_time
-                                  ? {
-                                      value: doc.observation_start_date_time[0],
-                                    }
-                                  : { value: "-" }
-                              }
-                              stopDate={
-                                doc.observation_stop_date_time
-                                  ? { value: doc.observation_stop_date_time[0] }
-                                  : { value: "-" }
-                              }
-                              variant={FeaturedLinkDetailsVariant.DATA_BUNDLE}
-                              tags={["?????", "?????", "?????", "?????"]}
-                            />
-                          </FeaturedLink>
-                        ) : (
-                          <></>
-                        )}
+                              primaryLink="/"
+                            >
+                              <FeaturedLinkDetails
+                                doi={
+                                  doc.citation_doi
+                                    ? { value: doc.citation_doi[0] }
+                                    : { value: "-" }
+                                }
+                                investigation={
+                                  doc["form-investigation"]
+                                    ? { value: doc["form-investigation"][0] }
+                                    : { value: "-" }
+                                }
+                                instrumentType={[""]}
+                                processingLevel={
+                                  doc.primary_result_processing_level
+                                    ? {
+                                        value:
+                                          doc
+                                            .primary_result_processing_level[0],
+                                      }
+                                    : { value: "-" }
+                                }
+                                lid={{ value: doc.identifier }}
+                                startDate={
+                                  doc.observation_start_date_time
+                                    ? {
+                                        value:
+                                          doc.observation_start_date_time[0],
+                                      }
+                                    : { value: "-" }
+                                }
+                                stopDate={
+                                  doc.observation_stop_date_time
+                                    ? {
+                                        value:
+                                          doc.observation_stop_date_time[0],
+                                      }
+                                    : { value: "-" }
+                                }
+                                variant={FeaturedLinkDetailsVariant.DATA_BUNDLE}
+                                tags={["?????", "?????", "?????", "?????"]}
+                              />
+                            </FeaturedLink>
+                          ) : (
+                            <></>
+                          )}
 
-                        {getDocType(doc) === "datacollection" ? (
-                          <FeaturedLink
-                            title={doc.title}
-                            description={
-                              doc.description ? doc.description[0] : "-"
-                            }
-                            primaryLink="/"
-                          >
-                            <FeaturedLinkDetails
-                              doi={{ value: doc.search_id }}
-                              investigation={
-                                doc.investigation_name
-                                  ? { value: doc.investigation_name[0] }
-                                  : { value: "-" }
+                          {getDocType(doc) === "datacollection" ? (
+                            <FeaturedLink
+                              title={doc.title}
+                              description={
+                                doc.description ? doc.description[0] : "-"
                               }
-                              disciplineName={
-                                doc.primary_result_discipline_name
-                                  ? {
-                                      value:
-                                        doc.primary_result_discipline_name[0],
-                                    }
-                                  : { value: "-" }
-                              }
-                              processingLevel={
-                                doc.primary_result_processing_level
-                                  ? {
-                                      value:
-                                        doc.primary_result_processing_level[0],
-                                    }
-                                  : { value: "-" }
-                              }
-                              lid={{ value: doc.identifier }}
-                              startDate={
-                                doc.observation_start_date_time
-                                  ? {
-                                      value: doc.observation_start_date_time[0],
-                                    }
-                                  : { value: "-" }
-                              }
-                              stopDate={
-                                doc.observation_stop_date_time
-                                  ? { value: doc.observation_stop_date_time[0] }
-                                  : { value: "-" }
-                              }
-                              variant={
-                                FeaturedLinkDetailsVariant.DATA_COLLECTION
-                              }
-                              tags={["?????", "?????", "?????", "?????"]}
-                            />
-                          </FeaturedLink>
-                        ) : (
-                          <></>
-                        )}
+                              primaryLink="/"
+                            >
+                              <FeaturedLinkDetails
+                                doi={{ value: doc.search_id }}
+                                investigation={
+                                  doc.investigation_name
+                                    ? { value: doc.investigation_name[0] }
+                                    : { value: "-" }
+                                }
+                                disciplineName={
+                                  doc.primary_result_discipline_name
+                                    ? {
+                                        value:
+                                          doc.primary_result_discipline_name[0],
+                                      }
+                                    : { value: "-" }
+                                }
+                                processingLevel={
+                                  doc.primary_result_processing_level
+                                    ? {
+                                        value:
+                                          doc
+                                            .primary_result_processing_level[0],
+                                      }
+                                    : { value: "-" }
+                                }
+                                lid={{ value: doc.identifier }}
+                                startDate={
+                                  doc.observation_start_date_time
+                                    ? {
+                                        value:
+                                          doc.observation_start_date_time[0],
+                                      }
+                                    : { value: "-" }
+                                }
+                                stopDate={
+                                  doc.observation_stop_date_time
+                                    ? {
+                                        value:
+                                          doc.observation_stop_date_time[0],
+                                      }
+                                    : { value: "-" }
+                                }
+                                variant={
+                                  FeaturedLinkDetailsVariant.DATA_COLLECTION
+                                }
+                                tags={["?????", "?????", "?????", "?????"]}
+                              />
+                            </FeaturedLink>
+                          ) : (
+                            <></>
+                          )}
 
-                        {getDocType(doc) === "target" ? (
-                          <FeaturedLink
-                            title={doc.title}
-                            description={
-                              doc.target_description
-                                ? doc.target_description[0]
-                                : "-"
-                            }
-                            primaryLink="/"
-                          >
-                            <FeaturedLinkDetails
-                              lid={{ value: doc.identifier }}
-                              targetType={
-                                doc.target_type ? doc.target_type : ["-"]
+                          {getDocType(doc) === "target" ? (
+                            <FeaturedLink
+                              title={doc.title}
+                              description={
+                                doc.target_description
+                                  ? doc.target_description[0]
+                                  : "-"
                               }
-                              variant={FeaturedLinkDetailsVariant.TARGET}
-                              tags={["?????", "?????", "?????", "?????"]}
-                            />
-                          </FeaturedLink>
-                        ) : (
-                          <></>
-                        )}
+                              primaryLink="/"
+                            >
+                              <FeaturedLinkDetails
+                                lid={{ value: doc.identifier }}
+                                targetType={
+                                  doc.target_type ? doc.target_type : ["-"]
+                                }
+                                variant={FeaturedLinkDetailsVariant.TARGET}
+                                tags={["?????", "?????", "?????", "?????"]}
+                              />
+                            </FeaturedLink>
+                          ) : (
+                            <></>
+                          )}
 
-                        {getDocType(doc) === "tool" ? (
-                          <FeaturedLink
-                            title={doc.title}
-                            description={
-                              doc.description ? doc.description[0] : "-"
-                            }
-                            primaryLink="/"
-                          >
-                            <FeaturedLinkDetails
-                              support={
-                                doc.pds_model_version
-                                  ? { value: doc.pds_model_version }
-                                  : { value: "-" }
+                          {getDocType(doc) === "tool" ? (
+                            <FeaturedLink
+                              title={doc.title}
+                              description={
+                                doc.description ? doc.description[0] : "-"
                               }
-                              url={
-                                doc.service_url
-                                  ? { value: doc.service_url[0] }
-                                  : { value: "-" }
-                              }
-                              categories={
-                                doc.service_category
-                                  ? doc.service_category
-                                  : ["-"]
-                              }
-                              version={
-                                doc.version_id
-                                  ? { value: doc.version_id[0] }
-                                  : { value: "-" }
-                              }
-                              variant={FeaturedLinkDetailsVariant.TOOL}
-                              tags={["?????", "?????", "?????", "?????"]}
-                            />
-                          </FeaturedLink>
-                        ) : (
-                          <></>
-                        )}
+                              primaryLink="/"
+                            >
+                              <FeaturedLinkDetails
+                                support={
+                                  doc.pds_model_version
+                                    ? { value: doc.pds_model_version }
+                                    : { value: "-" }
+                                }
+                                url={
+                                  doc.service_url
+                                    ? { value: doc.service_url[0] }
+                                    : { value: "-" }
+                                }
+                                categories={
+                                  doc.service_category
+                                    ? doc.service_category
+                                    : ["-"]
+                                }
+                                version={
+                                  doc.version_id
+                                    ? { value: doc.version_id[0] }
+                                    : { value: "-" }
+                                }
+                                variant={FeaturedLinkDetailsVariant.TOOL}
+                                tags={["?????", "?????", "?????", "?????"]}
+                              />
+                            </FeaturedLink>
+                          ) : (
+                            <></>
+                          )}
 
-                        {getDocType(doc) === "resource" ? (
-                          <FeaturedLink
-                            title={doc.title}
-                            description={
-                              doc.description ? doc.description[0] : "-"
-                            }
-                            primaryLink="/"
-                          >
-                            <FeaturedLinkDetails
-                              variant={FeaturedLinkDetailsVariant.RESOURCE}
-                              format={{ value: "" }}
-                              size={{ value: "" }}
-                              version={{ value: "" }}
-                              year={{ value: "" }}
-                            />
-                          </FeaturedLink>
-                        ) : (
-                          <></>
-                        )}
-
-                        {getDocType(doc) === "dataset" ? (
-                          <FeaturedLink
-                            title={doc.title}
-                            description={
-                              doc.description ? doc.description[0] : "-"
-                            }
-                            primaryLink="/"
-                          >
-                            <FeaturedLinkDetails
-                              disciplineName={{ value: "?????" }}
-                              doi={{ value: doc.search_id }}
-                              investigation={
-                                doc.investigation_name
-                                  ? { value: doc.investigation_name[0] }
-                                  : { value: "-" }
+                          {getDocType(doc) === "resource" ? (
+                            <FeaturedLink
+                              title={doc.title}
+                              description={
+                                doc.description ? doc.description[0] : "-"
                               }
-                              processingLevel={{ value: "?????" }}
-                              target={
-                                doc["form-target"]
-                                  ? { value: doc["form-target"][0] }
-                                  : { value: "-" }
-                              }
-                              variant={FeaturedLinkDetailsVariant.DATA_SET}
-                              tags={["?????", "?????", "?????", "?????"]}
-                            />
-                          </FeaturedLink>
-                        ) : (
-                          <></>
-                        )}
+                              primaryLink="/"
+                            >
+                              <FeaturedLinkDetails
+                                variant={FeaturedLinkDetailsVariant.RESOURCE}
+                                format={{ value: "" }}
+                                size={{ value: "" }}
+                                version={{ value: "" }}
+                                year={{ value: "" }}
+                              />
+                            </FeaturedLink>
+                          ) : (
+                            <></>
+                          )}
 
-                        {getDocType(doc) === "" ? (
-                          <Box>
-                            <p>
-                              This doc type is not supported: {doc.title}.
-                              product_class: {doc.product_class}. data_class:{" "}
-                              {doc.data_class}.{" "}
-                            </p>
-                          </Box>
-                        ) : (
-                          <></>
-                        )}
+                          {getDocType(doc) === "dataset" ? (
+                            <FeaturedLink
+                              title={doc.title}
+                              description={
+                                doc.description ? doc.description[0] : "-"
+                              }
+                              primaryLink="/"
+                            >
+                              <FeaturedLinkDetails
+                                disciplineName={{ value: "?????" }}
+                                doi={{ value: doc.search_id }}
+                                investigation={
+                                  doc.investigation_name
+                                    ? { value: doc.investigation_name[0] }
+                                    : { value: "-" }
+                                }
+                                processingLevel={{ value: "?????" }}
+                                target={
+                                  doc["form-target"]
+                                    ? { value: doc["form-target"][0] }
+                                    : { value: "-" }
+                                }
+                                variant={FeaturedLinkDetailsVariant.DATA_SET}
+                                tags={["?????", "?????", "?????", "?????"]}
+                              />
+                            </FeaturedLink>
+                          ) : (
+                            <></>
+                          )}
+
+                          {getDocType(doc) === "" ? (
+                            <Box>
+                              <p>
+                                This doc type is not supported: {doc.title}.
+                                product_class: {doc.product_class}. data_class:{" "}
+                                {doc.data_class}.{" "}
+                              </p>
+                            </Box>
+                          ) : (
+                            <></>
+                          )}
+                        </Box>
+                      ))
+                    ) : (
+                      <Box className="pds-search-empty-container">
+                        <br />
+                        <Typography variant="h3" weight="bold">
+                          No Results Found
+                        </Typography>
+                        <Typography variant="h4" weight="regular">
+                          You may want to try using different keywords, checking
+                          for typos, or adjusting your filters
+                        </Typography>
+                        <br />
+                        <Typography variant="h4" weight="regular">
+                          Not the results you expected?{" "}
+                          <a href={feedbackEmail} target="_top">
+                            Give feedback
+                          </a>
+                        </Typography>
                       </Box>
-                    ))}
+                    )}
                   </Grid>
                 </Grid>
-              </Container>
-            ) : (
-              <Container
-                maxWidth={"xl"}
-                sx={{
-                  paddingY: "24px",
-                }}
-              >
-                <Box className="pds-search-empty-container">
-                  <br />
-                  <Typography variant="h3" weight="bold">
-                    No Results Found
-                  </Typography>
-                  <Typography variant="h4" weight="regular">
-                    You may want to try using different keywords, checking for
-                    typos, or adjusting your filters
-                  </Typography>
-                  <br />
-                  <Typography variant="h4" weight="regular">
-                    Not the results you expected?{" "}
-                    <a href={feedbackEmail} target="_top">
-                      Give feedback
-                    </a>
-                  </Typography>
-                </Box>
-              </Container>
-            )
+              ) : (
+                <></>
+              )}
+            </Container>
           ) : (
             <Container
               maxWidth={"xl"}
@@ -1291,33 +1295,58 @@ const SearchPage = () => {
               </Box>
             </Container>
           )}
-
-          {searchResults ? (
-            searchResults.response.numFound > 0 ? (
-              <Container
-                maxWidth={"xl"}
+          {searchResults &&
+          searchResults.response.numFound === 0 &&
+          resultFilters.length === 0 ? (
+            <Container
+              maxWidth={"xl"}
+              sx={{
+                paddingY: "24px",
+              }}
+            >
+              <Box className="pds-search-empty-container">
+                <br />
+                <Typography variant="h3" weight="bold">
+                  No Results Found
+                </Typography>
+                <Typography variant="h4" weight="regular">
+                  You may want to try using different keywords, checking for
+                  typos, or adjusting your filters
+                </Typography>
+                <br />
+                <Typography variant="h4" weight="regular">
+                  Not the results you expected?{" "}
+                  <a href={feedbackEmail} target="_top">
+                    Give feedback
+                  </a>
+                </Typography>
+              </Box>
+            </Container>
+          ) : (
+            <></>
+          )}
+          {searchResults && searchResults.response.numFound > 0 ? (
+            <Container
+              maxWidth={"xl"}
+              sx={{
+                paddingY: "24px",
+              }}
+            >
+              <Box
                 sx={{
-                  paddingY: "24px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Pagination
-                    count={paginationCount}
-                    page={paginationPage}
-                    siblingCount={1}
-                    onChange={handlePaginationChange}
-                  />
-                </Box>
-              </Container>
-            ) : (
-              <></>
-            )
+                <Pagination
+                  count={paginationCount}
+                  page={paginationPage}
+                  siblingCount={1}
+                  onChange={handlePaginationChange}
+                />
+              </Box>
+            </Container>
           ) : (
             <></>
           )}
