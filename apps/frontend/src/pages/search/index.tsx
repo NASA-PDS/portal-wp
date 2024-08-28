@@ -79,6 +79,8 @@ const SearchPage = () => {
 
   const [parsedFilters, setParsedFilters] = useState<FilterProps[]>([]);
 
+  const [areResultsExpanded, setAreResultsExpanded] = useState(true);
+
   const formatSearchResults = (data: SolrSearchResponse) => {
     return data;
   };
@@ -687,6 +689,14 @@ const SearchPage = () => {
     return docType;
   };
 
+  const handleExpandAll = () => {
+    setAreResultsExpanded(true);
+  };
+
+  const handleCollapseAll = () => {
+    setAreResultsExpanded(false);
+  };
+
   return (
     <>
       <StyledEngineProvider injectFirst>
@@ -811,14 +821,23 @@ const SearchPage = () => {
               }}
             >
               <Box className="pds-search-option-box">
-                <MuiButton variant="text" className="pds-search-option-button">
+                <MuiButton
+                  variant="text"
+                  className="pds-search-option-button"
+                  onClick={handleExpandAll}
+                >
                   Expand All
                 </MuiButton>
+
                 <Typography variant="h8" weight="semibold">
                   {" "}
                   |{" "}
                 </Typography>
-                <MuiButton variant="text" className="pds-search-option-button">
+                <MuiButton
+                  variant="text"
+                  className="pds-search-option-button"
+                  onClick={handleCollapseAll}
+                >
                   Collapse All
                 </MuiButton>
               </Box>
@@ -943,6 +962,7 @@ const SearchPage = () => {
                                   : "-"
                               }
                               primaryLink="/"
+                              startExpanded={areResultsExpanded}
                             >
                               <FeaturedLinkDetails
                                 variant={
@@ -980,6 +1000,7 @@ const SearchPage = () => {
                                   : "-"
                               }
                               primaryLink="/"
+                              startExpanded={areResultsExpanded}
                             >
                               <FeaturedLinkDetails
                                 variant={FeaturedLinkDetailsVariant.INSTRUMENT}
@@ -1010,6 +1031,7 @@ const SearchPage = () => {
                                 doc.description ? doc.description[0] : "-"
                               }
                               primaryLink="/"
+                              startExpanded={areResultsExpanded}
                             >
                               <FeaturedLinkDetails
                                 doi={
@@ -1064,6 +1086,7 @@ const SearchPage = () => {
                                 doc.description ? doc.description[0] : "-"
                               }
                               primaryLink="/"
+                              startExpanded={areResultsExpanded}
                             >
                               <FeaturedLinkDetails
                                 doi={{ value: doc.search_id }}
@@ -1125,6 +1148,7 @@ const SearchPage = () => {
                                   : "-"
                               }
                               primaryLink="/"
+                              startExpanded={areResultsExpanded}
                             >
                               <FeaturedLinkDetails
                                 lid={{ value: doc.identifier }}
@@ -1146,6 +1170,7 @@ const SearchPage = () => {
                                 doc.description ? doc.description[0] : "-"
                               }
                               primaryLink="/"
+                              startExpanded={areResultsExpanded}
                             >
                               <FeaturedLinkDetails
                                 support={
@@ -1183,6 +1208,7 @@ const SearchPage = () => {
                                 doc.description ? doc.description[0] : "-"
                               }
                               primaryLink="/"
+                              startExpanded={areResultsExpanded}
                             >
                               <FeaturedLinkDetails
                                 variant={FeaturedLinkDetailsVariant.RESOURCE}
@@ -1203,6 +1229,7 @@ const SearchPage = () => {
                                 doc.description ? doc.description[0] : "-"
                               }
                               primaryLink="/"
+                              startExpanded={areResultsExpanded}
                             >
                               <FeaturedLinkDetails
                                 disciplineName={{ value: "?????" }}
