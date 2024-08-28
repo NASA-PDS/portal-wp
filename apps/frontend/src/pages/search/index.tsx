@@ -1,8 +1,9 @@
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 import {
+  IdentifierNameDoc,
   SolrSearchResponse,
   SolrIdentifierNameResponse,
-  IdentifierNameDoc,
+  SearchResultDoc,
 } from "src/types/solrSearchResponse";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -40,6 +41,9 @@ import {
   Pagination,
   TextField,
   Typography,
+  FeaturedLink,
+  FeaturedLinkDetails,
+  FeaturedLinkDetailsVariant,
 } from "@nasapds/wds-react";
 
 import "./search.css";
@@ -623,6 +627,66 @@ const SearchPage = () => {
     setParsedFilters(filters);
   };
 
+  const getDocType = (doc: SearchResultDoc) => {
+    let docType = "";
+    if (doc.product_class) {
+      if (doc.product_class[0].toLowerCase() === "product_data_set_pds3") {
+        docType = "dataset";
+      }
+      if (doc.product_class[0].toLowerCase() === "product_bundle") {
+        docType = "databundle";
+      }
+      /*
+      if (doc.product_class[0].toLowerCase() === "product_collection") {
+        if (
+          doc.collection_type &&
+          doc.collection_type[0].toLowerCase() === "document"
+        ) {
+          docType = "datacollection";
+        }
+      }
+      */
+      if (doc.product_class[0].toLowerCase() === "product_context") {
+        if (
+          doc.data_class &&
+          doc.data_class[0].toLowerCase() === "investigation"
+        ) {
+          docType = "investigation";
+        }
+        if (
+          doc.data_class &&
+          doc.data_class[0].toLowerCase() === "instrument"
+        ) {
+          docType = "instrument";
+        }
+        if (doc.data_class && doc.data_class[0].toLowerCase() === "target") {
+          docType = "target";
+        }
+        /*
+        if (
+          doc.data_class &&
+          doc.data_class[0].toLowerCase() === "instrument_host"
+        ) {
+          docType = "investigation";
+        }
+        */
+        if (doc.product_class[0].toLowerCase() === "product_service") {
+          docType = "tool";
+        }
+        /*
+        if (
+          doc.product_class[0].toLowerCase() === "product_document" ||
+          (doc.collection_type &&
+            doc.collection_type[0].toLowerCase() === "document")
+        ) {
+          docType = "resource";
+        }
+        */
+      }
+    }
+    return docType;
+  };
+
   return (
     <>
       <StyledEngineProvider injectFirst>
@@ -871,22 +935,300 @@ const SearchPage = () => {
                   </Grid>
                   <Grid item xs={9} sm={9} md={9}>
                     {searchResults.response.docs.map((doc, index) => (
-                      <Box sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
-                        <Typography
-                          variant="h6"
-                          weight="regular"
-                          sx={{ wordBreak: "break-all" }}
-                        >
-                          title: {doc.title}
-                        </Typography>
+                      <Box>
+                        {getDocType(doc) === "investigation" ? (
+                          <FeaturedLink
+                            title={doc.title}
+                            description={
+                              doc.investigation_description
+                                ? doc.investigation_description[0]
+                                : doc.instrument_host_description
+                                ? doc.instrument_host_description[0]
+                                : "-"
+                            }
+                            primaryLink="/"
+                          >
+                            <FeaturedLinkDetails
+                              variant={FeaturedLinkDetailsVariant.INVESTIGATION}
+                              instrumentHostTitles={
+                                doc.instrument_host_name
+                                  ? doc.instrument_host_name
+                                  : ["-"]
+                              }
+                              lid={{ value: doc.identifier }}
+                              startDate={
+                                doc.investigation_start_date
+                                  ? { value: doc.investigation_start_date[0] }
+                                  : { value: "-" }
+                              }
+                              stopDate={
+                                doc.investigation_stop_date
+                                  ? { value: doc.investigation_stop_date[0] }
+                                  : { value: "-" }
+                              }
+                              tags={["?????", "?????", "?????", "?????"]}
+                            />
+                          </FeaturedLink>
+                        ) : (
+                          <></>
+                        )}
 
-                        <Typography
-                          variant="h6"
-                          weight="regular"
-                          sx={{ wordBreak: "break-all" }}
-                        >
-                          identifier: {doc.identifier}
-                        </Typography>
+                        {getDocType(doc) === "instrument" ? (
+                          <FeaturedLink
+                            title={doc.title}
+                            description={
+                              doc.instrument_description
+                                ? doc.instrument_description[0]
+                                : "-"
+                            }
+                            primaryLink="/"
+                          >
+                            <FeaturedLinkDetails
+                              variant={FeaturedLinkDetailsVariant.INSTRUMENT}
+                              instrumentType={
+                                doc["form-instrument-type"]
+                                  ? doc["form-instrument-type"]
+                                  : ["-"]
+                              }
+                              lid={{ value: doc.identifier }}
+                              startDate={{ value: "-" }}
+                              stopDate={{ value: "-" }}
+                              investigation={
+                                doc["form-instrument-host"]
+                                  ? { value: doc["form-instrument-host"][0] }
+                                  : { value: "-" }
+                              }
+                              tags={["?????", "?????", "?????", "?????"]}
+                            />
+                          </FeaturedLink>
+                        ) : (
+                          <></>
+                        )}
+
+                        {getDocType(doc) === "databundle" ? (
+                          <FeaturedLink
+                            title={doc.title}
+                            description={
+                              doc.description ? doc.description[0] : "-"
+                            }
+                            primaryLink="/"
+                          >
+                            <FeaturedLinkDetails
+                              doi={
+                                doc.citation_doi
+                                  ? { value: doc.citation_doi[0] }
+                                  : { value: "-" }
+                              }
+                              investigation={
+                                doc["form-investigation"]
+                                  ? { value: doc["form-investigation"][0] }
+                                  : { value: "-" }
+                              }
+                              instrumentType={[""]}
+                              processingLevel={
+                                doc.primary_result_processing_level
+                                  ? {
+                                      value:
+                                        doc.primary_result_processing_level[0],
+                                    }
+                                  : { value: "-" }
+                              }
+                              lid={{ value: doc.identifier }}
+                              startDate={
+                                doc.observation_start_date_time
+                                  ? {
+                                      value: doc.observation_start_date_time[0],
+                                    }
+                                  : { value: "-" }
+                              }
+                              stopDate={
+                                doc.observation_stop_date_time
+                                  ? { value: doc.observation_stop_date_time[0] }
+                                  : { value: "-" }
+                              }
+                              variant={FeaturedLinkDetailsVariant.DATA_BUNDLE}
+                              tags={["?????", "?????", "?????", "?????"]}
+                            />
+                          </FeaturedLink>
+                        ) : (
+                          <></>
+                        )}
+
+                        {getDocType(doc) === "datacollection" ? (
+                          <FeaturedLink
+                            title={doc.title}
+                            description={
+                              doc.description ? doc.description[0] : "-"
+                            }
+                            primaryLink="/"
+                          >
+                            <FeaturedLinkDetails
+                              doi={{ value: doc.search_id }}
+                              investigation={
+                                doc.investigation_name
+                                  ? { value: doc.investigation_name[0] }
+                                  : { value: "-" }
+                              }
+                              disciplineName={
+                                doc.primary_result_discipline_name
+                                  ? {
+                                      value:
+                                        doc.primary_result_discipline_name[0],
+                                    }
+                                  : { value: "-" }
+                              }
+                              processingLevel={
+                                doc.primary_result_processing_level
+                                  ? {
+                                      value:
+                                        doc.primary_result_processing_level[0],
+                                    }
+                                  : { value: "-" }
+                              }
+                              lid={{ value: doc.identifier }}
+                              startDate={
+                                doc.observation_start_date_time
+                                  ? {
+                                      value: doc.observation_start_date_time[0],
+                                    }
+                                  : { value: "-" }
+                              }
+                              stopDate={
+                                doc.observation_stop_date_time
+                                  ? { value: doc.observation_stop_date_time[0] }
+                                  : { value: "-" }
+                              }
+                              variant={
+                                FeaturedLinkDetailsVariant.DATA_COLLECTION
+                              }
+                              tags={["?????", "?????", "?????", "?????"]}
+                            />
+                          </FeaturedLink>
+                        ) : (
+                          <></>
+                        )}
+
+                        {getDocType(doc) === "target" ? (
+                          <FeaturedLink
+                            title={doc.title}
+                            description={
+                              doc.target_description
+                                ? doc.target_description[0]
+                                : "-"
+                            }
+                            primaryLink="/"
+                          >
+                            <FeaturedLinkDetails
+                              lid={{ value: doc.identifier }}
+                              targetType={
+                                doc.target_type ? doc.target_type : ["-"]
+                              }
+                              variant={FeaturedLinkDetailsVariant.TARGET}
+                              tags={["?????", "?????", "?????", "?????"]}
+                            />
+                          </FeaturedLink>
+                        ) : (
+                          <></>
+                        )}
+
+                        {getDocType(doc) === "tool" ? (
+                          <FeaturedLink
+                            title={doc.title}
+                            description={
+                              doc.description ? doc.description[0] : "-"
+                            }
+                            primaryLink="/"
+                          >
+                            <FeaturedLinkDetails
+                              support={
+                                doc.pds_model_version
+                                  ? { value: doc.pds_model_version }
+                                  : { value: "-" }
+                              }
+                              url={
+                                doc.service_url
+                                  ? { value: doc.service_url[0] }
+                                  : { value: "-" }
+                              }
+                              categories={
+                                doc.service_category
+                                  ? doc.service_category
+                                  : ["-"]
+                              }
+                              version={
+                                doc.version_id
+                                  ? { value: doc.version_id[0] }
+                                  : { value: "-" }
+                              }
+                              variant={FeaturedLinkDetailsVariant.TOOL}
+                              tags={["?????", "?????", "?????", "?????"]}
+                            />
+                          </FeaturedLink>
+                        ) : (
+                          <></>
+                        )}
+
+                        {getDocType(doc) === "resource" ? (
+                          <FeaturedLink
+                            title={doc.title}
+                            description={
+                              doc.description ? doc.description[0] : "-"
+                            }
+                            primaryLink="/"
+                          >
+                            <FeaturedLinkDetails
+                              variant={FeaturedLinkDetailsVariant.RESOURCE}
+                              format={{ value: "" }}
+                              size={{ value: "" }}
+                              version={{ value: "" }}
+                              year={{ value: "" }}
+                            />
+                          </FeaturedLink>
+                        ) : (
+                          <></>
+                        )}
+
+                        {getDocType(doc) === "dataset" ? (
+                          <FeaturedLink
+                            title={doc.title}
+                            description={
+                              doc.description ? doc.description[0] : "-"
+                            }
+                            primaryLink="/"
+                          >
+                            <FeaturedLinkDetails
+                              disciplineName={{ value: "?????" }}
+                              doi={{ value: doc.search_id }}
+                              investigation={
+                                doc.investigation_name
+                                  ? { value: doc.investigation_name[0] }
+                                  : { value: "-" }
+                              }
+                              processingLevel={{ value: "?????" }}
+                              target={
+                                doc["form-target"]
+                                  ? { value: doc["form-target"][0] }
+                                  : { value: "-" }
+                              }
+                              variant={FeaturedLinkDetailsVariant.DATA_SET}
+                              tags={["?????", "?????", "?????", "?????"]}
+                            />
+                          </FeaturedLink>
+                        ) : (
+                          <></>
+                        )}
+
+                        {getDocType(doc) === "" ? (
+                          <Box>
+                            <p>
+                              This doc type is not supported: {doc.title}.
+                              product_class: {doc.product_class}. data_class:{" "}
+                              {doc.data_class}.{" "}
+                            </p>
+                          </Box>
+                        ) : (
+                          <></>
+                        )}
                       </Box>
                     ))}
                   </Grid>

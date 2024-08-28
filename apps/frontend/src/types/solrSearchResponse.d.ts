@@ -74,7 +74,28 @@ type SearchResultDoc = {
     resource_name: string[];
     timestamp: string;
     score: number;
-    
+    collection_type?: string[];
+    investigation_description?: string[];
+    instrument_host_name?: string[];
+    investigation_start_date?: string[];
+    investigation_stop_date?: string[];
+    instrument_description?: string[];
+    'form-instrument-type'?: string[];
+    'form-instrument-host'?: string[];
+    'form-investigation'?: string[];
+    citation_doi?: string[];
+    primary_result_processing_level?: string[];
+    observation_start_date_time?: string[];
+    observation_stop_date_time?: string[];
+    investigation_name?: string[];
+    primary_result_discipline_name?: string[];
+    target_type?: string[];
+    service_url?: string[];
+    version_id?: string[];
+    service_category?: string[];
+    'form-target'?: string[];
+    target_description?: string[];
+    instrument_host_description?: string[];
 }
 
 type IdentifierNameDoc = {
