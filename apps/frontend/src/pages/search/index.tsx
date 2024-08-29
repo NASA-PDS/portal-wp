@@ -684,6 +684,18 @@ const SearchPage = () => {
           docType = "datacollection";
         }
       }
+      if (doc.product_class[0].toLowerCase() === "product_service") {
+        docType = "tool";
+      }
+      /*
+      if (
+        doc.product_class[0].toLowerCase() === "product_document" ||
+        (doc.collection_type &&
+          doc.collection_type[0].toLowerCase() === "document")
+      ) {
+        docType = "resource";
+      }
+      */
       if (doc.product_class[0].toLowerCase() === "product_context") {
         if (
           doc.data_class &&
@@ -706,18 +718,6 @@ const SearchPage = () => {
           doc.data_class[0].toLowerCase() === "instrument_host"
         ) {
           docType = "investigation";
-        }
-        */
-        if (doc.product_class[0].toLowerCase() === "product_service") {
-          docType = "tool";
-        }
-        /*
-        if (
-          doc.product_class[0].toLowerCase() === "product_document" ||
-          (doc.collection_type &&
-            doc.collection_type[0].toLowerCase() === "document")
-        ) {
-          docType = "resource";
         }
         */
       }
