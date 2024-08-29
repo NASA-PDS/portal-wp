@@ -675,16 +675,15 @@ const SearchPage = () => {
       if (doc.product_class[0].toLowerCase() === "product_bundle") {
         docType = "databundle";
       }
-      /*
       if (doc.product_class[0].toLowerCase() === "product_collection") {
-        if (
-          doc.collection_type &&
-          doc.collection_type[0].toLowerCase() === "document"
-        ) {
+        if (doc.collection_type) {
+          if (doc.collection_type[0] !== "document") {
+            docType = "datacollection";
+          }
+        } else {
           docType = "datacollection";
         }
       }
-      */
       if (doc.product_class[0].toLowerCase() === "product_context") {
         if (
           doc.data_class &&
