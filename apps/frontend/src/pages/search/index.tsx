@@ -999,6 +999,14 @@ const SearchPage = () => {
                               }
                               primaryLink="/"
                               startExpanded={areResultsExpanded}
+                              columns={[
+                                {
+                                  horizontalAlign: "center",
+                                  data: "Investigation",
+                                  verticalAlign: "center",
+                                  width: 1,
+                                },
+                              ]}
                             >
                               <FeaturedLinkDetails
                                 variant={
@@ -1036,6 +1044,14 @@ const SearchPage = () => {
                               }
                               primaryLink="/"
                               startExpanded={areResultsExpanded}
+                              columns={[
+                                {
+                                  horizontalAlign: "center",
+                                  data: "Instrument",
+                                  verticalAlign: "center",
+                                  width: 1,
+                                },
+                              ]}
                             >
                               <FeaturedLinkDetails
                                 variant={FeaturedLinkDetailsVariant.INSTRUMENT}
@@ -1066,6 +1082,14 @@ const SearchPage = () => {
                               }
                               primaryLink="/"
                               startExpanded={areResultsExpanded}
+                              columns={[
+                                {
+                                  horizontalAlign: "center",
+                                  data: "Data Bundle",
+                                  verticalAlign: "center",
+                                  width: 1,
+                                },
+                              ]}
                             >
                               <FeaturedLinkDetails
                                 doi={
@@ -1120,6 +1144,14 @@ const SearchPage = () => {
                               }
                               primaryLink="/"
                               startExpanded={areResultsExpanded}
+                              columns={[
+                                {
+                                  horizontalAlign: "center",
+                                  data: "Data Collection",
+                                  verticalAlign: "center",
+                                  width: 1,
+                                },
+                              ]}
                             >
                               <FeaturedLinkDetails
                                 doi={{ value: doc.search_id }}
@@ -1181,6 +1213,14 @@ const SearchPage = () => {
                               }
                               primaryLink="/"
                               startExpanded={areResultsExpanded}
+                              columns={[
+                                {
+                                  horizontalAlign: "center",
+                                  data: "Target",
+                                  verticalAlign: "center",
+                                  width: 1,
+                                },
+                              ]}
                             >
                               <FeaturedLinkDetails
                                 lid={{ value: doc.identifier }}
@@ -1202,6 +1242,14 @@ const SearchPage = () => {
                               }
                               primaryLink="/"
                               startExpanded={areResultsExpanded}
+                              columns={[
+                                {
+                                  horizontalAlign: "center",
+                                  data: "Tool",
+                                  verticalAlign: "center",
+                                  width: 1,
+                                },
+                              ]}
                             >
                               <FeaturedLinkDetails
                                 support={
@@ -1239,6 +1287,14 @@ const SearchPage = () => {
                               }
                               primaryLink="/"
                               startExpanded={areResultsExpanded}
+                              columns={[
+                                {
+                                  horizontalAlign: "center",
+                                  data: "Resource",
+                                  verticalAlign: "center",
+                                  width: 1,
+                                },
+                              ]}
                             >
                               <FeaturedLinkDetails
                                 variant={FeaturedLinkDetailsVariant.RESOURCE}
@@ -1260,6 +1316,14 @@ const SearchPage = () => {
                               }
                               primaryLink="/"
                               startExpanded={areResultsExpanded}
+                              columns={[
+                                {
+                                  horizontalAlign: "center",
+                                  data: "Data Set",
+                                  verticalAlign: "center",
+                                  width: 1,
+                                },
+                              ]}
                             >
                               <FeaturedLinkDetails
                                 disciplineName={{ value: "?????" }}
