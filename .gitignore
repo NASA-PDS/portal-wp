@@ -14,3 +14,9 @@ apps/backend/nasa-pds-wp/secrets/*
 
 # frontend ignore settings
 apps/frontend/.vite
+
+# Terraform
+*.tfstate
+*.tfstate.backup
+.terraform.*
+.terraform/

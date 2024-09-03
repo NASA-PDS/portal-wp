@@ -29,23 +29,6 @@ provider "aws" {
   region = "us-west-2"
 }
 
-# S3 Bucket
-# =========
-#
-# Since Node.js neatly distributes itself into a set of static files, we can
-# make the app available over a web server in front of S3. So, let's define
-# the S3 bucket.
-
-resource "aws_s3_bucket" "vite_app_bucket" {
-  bucket = "pds-en"  # TBD: Please fill in the correct bucket name
-  acl    = "public-read"
-
-  website {
-    index_document = "index.html"
-    error_document = "index.html"
-  }
-}
-
 
 # S3 Uploading
 # ============
@@ -53,11 +36,11 @@ resource "aws_s3_bucket" "vite_app_bucket" {
 # After building the project with npm we upload the files from `dist`.
 
 resource "aws_s3_bucket_object" "vite_app_files" {
-  for_each = fileset("../dist", "**")
+  for_each = fileset("../apps/frontend/dist", "**")
 
-  bucket = aws_s3_bucket.vite_app_bucket.id
+  bucket = "pds-portal-demo"
   key    = each.value
-  source = "${path.module}/../dist/${each.value}"
+  source = "${path.module}/../apps/frontend/dist/${each.value}"
   acl    = "public-read"
 }
 
@@ -68,7 +51,7 @@ resource "aws_s3_bucket_object" "vite_app_files" {
 # Make sure the files are readable by the public internet.
 
 resource "aws_s3_bucket_policy" "vite_app_bucket_policy" {
-  bucket = aws_s3_bucket.vite_app_bucket.id
+  bucket = "pds-portal-demo"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -77,12 +60,8 @@ resource "aws_s3_bucket_policy" "vite_app_bucket_policy" {
         Action    = "s3:GetObject"
         Effect    = "Allow"
         Principal = "*"
-        Resource  = "${aws_s3_bucket.vite_app_bucket.arn}/*"
+        Resource  = "arn:aws:s3:::pds-portal-demo/*"
       }
     ]
   })
-}
-
-output "s3_bucket_website_url" {
-  value = aws_s3_bucket.vite_app_bucket.website_endpoint
 }
