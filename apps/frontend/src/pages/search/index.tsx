@@ -1,4 +1,4 @@
-import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
+import { ChangeEvent, KeyboardEvent, useEffect, useState, useRef } from "react";
 import {
   IdentifierNameDoc,
   SolrSearchResponse,
@@ -76,9 +76,9 @@ const linkStyles = {
 const SearchPage = () => {
   const navigate = useNavigate();
   const params = useParams();
+  const searchInputRef = useRef("");
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [searchInputValue, setSearchInputValue] = useState("");
+  const [searchParams] = useSearchParams();
   const [searchResults, setSearchResults] = useState<SolrSearchResponse | null>(
     null
   );
@@ -157,7 +157,6 @@ const SearchPage = () => {
 
   const mapFilterIdsToName = (ids: string[], names: IdentifierNameDoc[]) => {
     const filtersMap: { name: string; identifier: string }[] = [];
-    const notFoundfiltersMap: string[] = [];
 
     ids.forEach((id, index) => {
       if (index % 2 == 0) {
@@ -181,13 +180,10 @@ const SearchPage = () => {
             name,
             identifier: id,
           });
-        } else {
-          notFoundfiltersMap.push(urnSplit);
         }
       }
     });
 
-    console.log("filters with no matching name", notFoundfiltersMap);
     return filtersMap;
   };
 
@@ -289,25 +285,38 @@ const SearchPage = () => {
   const handleSearchInputValueChange = (
     event: ChangeEvent<HTMLInputElement>
   ) => {
-    setSearchInputValue(event.target.value);
+    searchInputRef.current = event.target.value;
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key == "Enter") {
-      doNavigate(searchInputValue, resultRows.toString(), resultSort, "1", "");
+      doNavigate(
+        searchInputRef.current,
+        resultRows.toString(),
+        resultSort,
+        "1",
+        ""
+      );
     }
   };
 
   const handleSearchClick = () => {
-    doNavigate(searchInputValue, resultRows.toString(), resultSort, "1", "");
+    doNavigate(
+      searchInputRef.current,
+      resultRows.toString(),
+      resultSort,
+      "1",
+      ""
+    );
   };
 
   const handlePaginationChange = (
     event: ChangeEvent<unknown>,
     value: number
   ) => {
+    console.log("event", event);
     doNavigate(
-      searchInputValue,
+      searchInputRef.current,
       resultRows.toString(),
       resultSort,
       value.toString(),
@@ -317,7 +326,7 @@ const SearchPage = () => {
 
   const handleResultRowsChange = (event: SelectChangeEvent) => {
     doNavigate(
-      searchInputValue,
+      searchInputRef.current,
       event.target.value,
       resultSort,
       "1",
@@ -327,7 +336,7 @@ const SearchPage = () => {
 
   const handleSortChange = (event: SelectChangeEvent) => {
     doNavigate(
-      searchInputValue,
+      searchInputRef.current,
       resultRows.toString(),
       event.target.value,
       "1",
@@ -349,7 +358,7 @@ const SearchPage = () => {
 
   useEffect(() => {
     if (params.searchText) {
-      setSearchInputValue(params.searchText);
+      searchInputRef.current = params.searchText;
 
       let page = 1;
       let start = 0;
@@ -397,10 +406,6 @@ const SearchPage = () => {
     searchParams.get("sort"),
     searchParams.get("filters"),
   ]);
-
-  const formatOptionTitle = (text: string) => {
-    return text.replace("1,", "");
-  };
 
   const removeFilter = (
     value: string,
@@ -470,7 +475,7 @@ const SearchPage = () => {
     }
 
     doNavigate(
-      searchInputValue,
+      searchInputRef.current,
       resultRows.toString(),
       resultSort,
       "1",
@@ -523,7 +528,7 @@ const SearchPage = () => {
 
     filters = removeFilter(parentValue, value, resultFilters);
     doNavigate(
-      searchInputValue,
+      searchInputRef.current,
       resultRows.toString(),
       resultSort,
       "1",
@@ -535,7 +540,7 @@ const SearchPage = () => {
     const filters = "";
 
     doNavigate(
-      searchInputValue,
+      searchInputRef.current,
       resultRows.toString(),
       resultSort,
       "1",
@@ -834,7 +839,8 @@ const SearchPage = () => {
                     }}
                     onChange={handleSearchInputValueChange}
                     onKeyDown={handleKeyDown}
-                    value={searchInputValue}
+                    inputRef={searchInputRef}
+                    defaultValue={params.searchText ? params.searchText : ""}
                   />
                   <Button
                     variant={"cta"}
@@ -985,7 +991,7 @@ const SearchPage = () => {
                   </Grid>
                   <Grid item xs={9} sm={9} md={9}>
                     {searchResults.response.docs.length > 0 ? (
-                      searchResults.response.docs.map((doc, index) => (
+                      searchResults.response.docs.map((doc) => (
                         <Box>
                           {getDocType(doc) === "investigation" ? (
                             <FeaturedLink

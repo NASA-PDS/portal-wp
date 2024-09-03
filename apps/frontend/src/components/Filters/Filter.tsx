@@ -32,13 +32,7 @@ export type FilterProps = {
 
 import "./filter.scss";
 
-const Filter = ({
-  title,
-  displayTitle,
-  value,
-  options,
-  onChecked,
-}: FilterProps) => {
+const Filter = ({ displayTitle, value, options, onChecked }: FilterProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [subFilter, setSubFilter] = useState("");
 
@@ -117,7 +111,7 @@ const Filter = ({
 
       {!isCollapsed ? (
         <Box className="pds-checkbox-container">
-          {options.map((option, index) =>
+          {options.map((option) =>
             titleIncludesSubFilter(option.title, subFilter) ? (
               <Box
                 className="pds-checkbox-box"
