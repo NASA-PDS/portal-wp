@@ -5,7 +5,7 @@ import StatsItem from './StatsItem';
 export type Stats = {
   label: string;
   value: string;
-  enableCopy: boolean
+  enableCopy?: boolean
 }
 
 type StatProps = {
@@ -29,7 +29,7 @@ export const StatsList = ({
             },*/
             marginTop: "24px"
           }}>
-            <StatsItem label={item.label} value={item.value} index={index} enableCopy={item.enableCopy} />
+            <StatsItem label={item.label} value={item.value} index={index} enableCopy={item.enableCopy || false} />
           </Grid>
         })
       }

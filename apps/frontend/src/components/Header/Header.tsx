@@ -1,6 +1,7 @@
 import { Header } from "@nasapds/wds-react";
+import { NavItems } from "@nasapds/wds-react";
 
-const navItems = [
+const navItems:NavItems[] = [
   {
     id: "find-data",
     label: "Find Data",

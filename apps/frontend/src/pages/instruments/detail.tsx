@@ -10,10 +10,10 @@ import { RootState } from "src/state/store";
 import { selectLatestInstrumentVersion } from "src/state/selectors/instruments";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
 import { Box, Breadcrumbs, Container, Divider, Grid, Link as AnchorLink, Tab, Tabs, Typography, Stack, Button, IconButton } from "@mui/material";
-import { IconArrowFilledDown, IconChevronDown, Loader } from "@nasapds/wds-react";
+import { IconArrowFilledDown, Loader } from "@nasapds/wds-react";
 import InvestigationStatus from "src/components/InvestigationStatus/InvestigationStatus";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
-import StatsList from "src/components/StatsList/StatsList";
+import { Stats, StatsList } from "src/components/StatsList/StatsList";
 import { selectLatestInstrumentHostVersion } from "src/state/selectors/instrumentHost";
 import { selectLatestInvestigationVersion } from "src/state/selectors/investigations";
 import FeaturedDataBundleLinkListItem from "src/components/FeaturedListItems/FeaturedDataBundleLinkListItem";
@@ -26,12 +26,6 @@ interface InstrumentDetailBodyProps {
   investigation:Investigation,
   status:string;
   tabLabel:string
-}
-
-interface Stats {
-  label: string;
-  value: string;
-  enableCopy?: boolean;
 }
 
 interface TabPanelProps {
@@ -90,7 +84,7 @@ const InstrumentDetailPage = () => {
 
   return (
     <>
-      <ConnectedComponent instrumentLid={convertedInstrumentLid} tabLabel={tabLabel} />
+      <ConnectedComponent instrumentLid={convertedInstrumentLid} tabLabel={tabLabel ? tabLabel : "instruments"} />
     </>
   );
 
@@ -98,7 +92,7 @@ const InstrumentDetailPage = () => {
 
 const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
 
-  const {instrument, instrumentHost, investigation, status, tabLabel } = props;
+  const {instrument, investigation, status, tabLabel } = props;
   const [dataTypes, setDataTypes] = useState<string[]>([]);
   const [value, setValue] = useState(TABS.findIndex( (tab) => tab == tabLabel?.toLowerCase()));
 
@@ -150,10 +144,12 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
     }
   }
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (event: React.SyntheticEvent) => {
+    const newTabIndex = parseInt(event.currentTarget.getAttribute("data-tab-index") || "0");
+    const urlFriendlyLid:string = convertLogicalIdentifier(instrument[PDS4_INFO_MODEL.LID], LID_FORMAT.URL_FRIENDLY);
     const params = {
-      lid: convertLogicalIdentifier(instrument[PDS4_INFO_MODEL.LID], LID_FORMAT.URL_FRIENDLY) || null,
-      tabLabel: TABS[newValue].toLowerCase()
+      lid: urlFriendlyLid ? urlFriendlyLid : null,
+      tabLabel: TABS[newTabIndex].toLowerCase()
     };
     navigate( generatePath("/instruments/:lid/:tabLabel", params) );
   };
@@ -192,7 +188,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
         (status === 'idle' || status === 'pending' )
         &&
         <Box sx={{ padding: "40px" }}>
-          <Loader variant="indeterminate"/>
+          <Loader />
         </Box>
       }
       {
@@ -435,8 +431,8 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                       aria-label="Investigation Host Tabs"
                       sx={styles.tabs}
                     >
-                      <Tab label="Data" {...a11yProps(0)} disableRipple disableTouchRipple />
-                      <Tab label="Overview" {...a11yProps(1)} disableRipple disableTouchRipple />
+                      <Tab label="Data" data-tab-index={0} {...a11yProps(0)} disableRipple disableTouchRipple />
+                      <Tab label="Overview" data-tab-index={1} {...a11yProps(1)} disableRipple disableTouchRipple />
                     </Tabs>
                   </Box>
                 </Grid>
@@ -533,7 +529,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                                   paddingTop: "50px"
                                 }
                               }} key={"instrumentType_" + index}>
-                                <a name={"title_" + dataType.toLowerCase()}>{dataType}</a>
+                                <a id={"title_" + dataType.toLowerCase()}>{dataType}</a>
                               </Typography>
                               {
                                 [{
