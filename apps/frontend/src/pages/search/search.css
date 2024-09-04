@@ -108,3 +108,8 @@
     padding-bottom: 32px;
 }
 
+.loader-container{
+    text-align: center;
+    height: 60vh;
+}
+
