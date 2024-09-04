@@ -3,7 +3,6 @@ import {
   IdentifierNameDoc,
   SolrSearchResponse,
   SolrIdentifierNameResponse,
-  SearchResultDoc,
 } from "src/types/solrSearchResponse";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -14,7 +13,6 @@ import {
   FilterProps,
 } from "../../components/Filters/Filter";
 import { ellipsisText } from "../../utils/strings";
-
 import {
   Button as MuiButton,
   Box,
@@ -26,7 +24,6 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
-
 import {
   createSearchParams,
   generatePath,
@@ -34,20 +31,28 @@ import {
   useParams,
   useSearchParams,
 } from "react-router-dom";
-
 import {
   Button,
-  IconArrowCircleDown,
-  IconSearch,
-  Pagination,
-  TextField,
-  Typography,
   FeaturedLink,
   FeaturedLinkDetails,
   FeaturedLinkDetailsVariant,
+  IconArrowCircleDown,
+  IconSearch,
   Loader,
+  Pagination,
+  TextField,
+  Typography,
 } from "@nasapds/wds-react";
-
+import {
+  calculatePaginationCount,
+  calculateStartValue,
+  formatFilterQueries,
+  formatIdentifierNameResults,
+  formatSearchResults,
+  getDocType,
+  isAllOptionsChecked,
+  isOptionChecked,
+} from "./searchUtils";
 import "./search.css";
 
 const feedbackEmail = "mailto:example@example.com";
@@ -84,79 +89,14 @@ const SearchPage = () => {
   const [searchResults, setSearchResults] = useState<SolrSearchResponse | null>(
     null
   );
-
   const [paginationPage, setPaginationPage] = useState(1);
   const [paginationCount, setPaginationCount] = useState(1);
   const [resultRows, setResultRows] = useState(20);
   const [resultSort, setResultSort] = useState("relevance");
   const [isLoading, setIsLoading] = useState(false);
-
   const [resultFilters, setResultFilters] = useState("");
-
   const [parsedFilters, setParsedFilters] = useState<FilterProps[]>([]);
-
   const [areResultsExpanded, setAreResultsExpanded] = useState(false);
-
-  const formatSearchResults = (data: SolrSearchResponse) => {
-    return data;
-  };
-
-  const formatIdentifierNameResults = (data: SolrIdentifierNameResponse) => {
-    return data;
-  };
-
-  const doNavigate = (
-    searchText: string,
-    rows: string,
-    sort: string,
-    page: string,
-    filters: string
-  ) => {
-    const pathParams = {
-      searchText,
-    };
-
-    let queryParams;
-    if (filters.length > 0) {
-      queryParams = {
-        rows,
-        sort,
-        page,
-        filters,
-      };
-    } else {
-      queryParams = {
-        rows,
-        sort,
-        page,
-      };
-    }
-
-    navigate({
-      pathname: generatePath("/search/:searchText/", pathParams),
-      search: createSearchParams(queryParams).toString(),
-    });
-  };
-
-  const formatFilterQueries = (filters: string) => {
-    const filterArray = filters.split("+");
-    let formattedFilterQueryString = "";
-
-    filterArray.forEach((filterName, index) => {
-      if (index % 2 == 0) {
-        const filterValue = filterArray[index + 1];
-        formattedFilterQueryString =
-          formattedFilterQueryString +
-          "&fq=" +
-          filterName +
-          ':"' +
-          filterValue +
-          '"';
-      }
-    });
-
-    return formattedFilterQueryString;
-  };
 
   const mapFilterIdsToName = (ids: string[], names: IdentifierNameDoc[]) => {
     const filtersMap: { name: string; identifier: string }[] = [];
@@ -248,6 +188,84 @@ const SearchPage = () => {
     );
   };
 
+  const setPropsForFilter = (
+    investigationFilterOptions: { name: string; identifier: string }[],
+    instrumentFilterOptions: { name: string; identifier: string }[],
+    targetFilterOptions: { name: string; identifier: string }[],
+    originalFilters: string
+  ) => {
+    const filters: FilterProps[] = [];
+
+    const investigationFilter = {
+      displayTitle: "Investigations",
+      title: "facet_investigation",
+      value: "investigation_ref",
+      options: parseFilterOptions(
+        investigationFilterOptions,
+        originalFilters,
+        "investigation_ref"
+      ),
+      onChecked: handleFilterChecked,
+    };
+    filters.push(investigationFilter);
+
+    const instrumentsFilter = {
+      displayTitle: "Instruments",
+      title: "facet_instrument",
+      value: "instrument_ref",
+      options: parseFilterOptions(
+        instrumentFilterOptions,
+        originalFilters,
+        "instrument_ref"
+      ),
+      onChecked: handleFilterChecked,
+    };
+    filters.push(instrumentsFilter);
+
+    const targetsFilter = {
+      displayTitle: "Targets",
+      title: "facet_target",
+      value: "target_ref",
+      options: parseFilterOptions(
+        targetFilterOptions,
+        originalFilters,
+        "target_ref"
+      ),
+      onChecked: handleFilterChecked,
+    };
+    filters.push(targetsFilter);
+
+    setParsedFilters(filters);
+
+    setIsLoading(false);
+  };
+
+  const parseFilterOptions = (
+    options: { name: string; identifier: string }[],
+    filters: string,
+    parentValue: string
+  ) => {
+    const parsedOptions: FilterOptionProps[] = [];
+
+    parsedOptions.push({
+      title: "all",
+      value: "all",
+      resultsFound: 0,
+      isChecked: isAllOptionsChecked(parentValue, filters),
+    });
+
+    options.forEach((option) => {
+      parsedOptions.push({
+        title: option.name,
+        value: option.identifier,
+        isChecked: isOptionChecked(option.identifier, parentValue, filters),
+        resultsFound: 0,
+      });
+    });
+
+    return parsedOptions;
+  };
+
   const doSearch = async (
     searchText: string,
     start: number,
@@ -282,7 +300,7 @@ const SearchPage = () => {
     const formattedResults = formatSearchResults(data);
 
     setSearchResults(formattedResults);
-    calculatePaginationCount(formattedResults);
+    setPaginationCount(calculatePaginationCount(formattedResults));
 
     parseFilters(searchText, filters);
   };
@@ -349,62 +367,38 @@ const SearchPage = () => {
     );
   };
 
-  const calculateStartValue = (page: number, rows: number) => {
-    return (page - 1) * rows;
+  const handleFilterChipDelete = (value: string, parentValue: string) => {
+    let filters = "";
+
+    filters = removeFilter(parentValue, value, resultFilters);
+    doNavigate(
+      searchInputRef.current,
+      resultRows.toString(),
+      resultSort,
+      "1",
+      filters
+    );
   };
 
-  const calculatePaginationCount = (data: SolrSearchResponse) => {
-    const rows = Number(data.responseHeader.params.rows);
-    const hits = data.response.numFound;
-    const count = Math.ceil(hits / rows);
+  const handleFilterClear = () => {
+    const filters = "";
 
-    setPaginationCount(count);
+    doNavigate(
+      searchInputRef.current,
+      resultRows.toString(),
+      resultSort,
+      "1",
+      filters
+    );
   };
 
-  useEffect(() => {
-    if (params.searchText) {
-      searchInputRef.current = params.searchText;
+  const handleExpandAll = () => {
+    setAreResultsExpanded(true);
+  };
 
-      let page = 1;
-      let start = 0;
-      let rows = 20;
-      let sort = "relevance";
-      let filters = "";
-
-      const rowsParam = Number(searchParams.get("rows"));
-      if (rowsParam) {
-        rows = rowsParam;
-        setResultRows(rows);
-      }
-
-      const paginationPageParam = Number(searchParams.get("page"));
-      if (paginationPageParam) {
-        setPaginationPage(paginationPageParam);
-        page = paginationPageParam;
-        start = calculateStartValue(page, rows);
-      } else {
-        setPaginationPage(1);
-      }
-
-      const sortParam = searchParams.get("sort");
-      if (sortParam) {
-        sort = sortParam;
-        setResultSort(sort);
-      }
-
-      const filtersParam = searchParams.get("filters");
-      if (filtersParam) {
-        filters = filtersParam;
-        setResultFilters(filters);
-      } else {
-        setResultFilters(filters);
-      }
-
-      doSearch(params.searchText, start, rows, sort, filters);
-    } else {
-      setSearchResults(null);
-    }
-  }, [params.searchText, searchParams]);
+  const handleCollapseAll = () => {
+    setAreResultsExpanded(false);
+  };
 
   const removeFilter = (
     value: string,
@@ -482,97 +476,6 @@ const SearchPage = () => {
     );
   };
 
-  const isOptionChecked = (
-    identifier: string,
-    parentValue: string,
-    filters: string
-  ) => {
-    let isOptionChecked = false;
-
-    if (filters && filters.length > 0) {
-      const fqs = filters.split("+");
-
-      fqs.forEach((fq, index) => {
-        if (index % 2 === 0) {
-          if (fq === parentValue && fqs[index + 1] === identifier) {
-            isOptionChecked = true;
-          }
-        }
-      });
-    }
-
-    return isOptionChecked;
-  };
-
-  const isAllOptionsChecked = (value: string, filters: string) => {
-    let isChecked = true;
-
-    if (filters && filters.length > 0) {
-      const fqs = filters.split("+");
-
-      fqs.forEach((fq, index) => {
-        if (index % 2 === 0) {
-          if (fq === value) {
-            isChecked = false;
-          }
-        }
-      });
-    }
-
-    return isChecked;
-  };
-
-  const handleFilterChipDelete = (value: string, parentValue: string) => {
-    let filters = "";
-
-    filters = removeFilter(parentValue, value, resultFilters);
-    doNavigate(
-      searchInputRef.current,
-      resultRows.toString(),
-      resultSort,
-      "1",
-      filters
-    );
-  };
-
-  const handleFilterClear = () => {
-    const filters = "";
-
-    doNavigate(
-      searchInputRef.current,
-      resultRows.toString(),
-      resultSort,
-      "1",
-      filters
-    );
-  };
-
-  const parseFilterOptions = (
-    options: { name: string; identifier: string }[],
-    filters: string,
-    parentValue: string
-  ) => {
-    const parsedOptions: FilterOptionProps[] = [];
-
-    parsedOptions.push({
-      title: "all",
-      value: "all",
-      resultsFound: 0,
-      isChecked: isAllOptionsChecked(parentValue, filters),
-    });
-
-    options.forEach((option) => {
-      parsedOptions.push({
-        title: option.name,
-        value: option.identifier,
-        isChecked: isOptionChecked(option.identifier, parentValue, filters),
-        resultsFound: 0,
-      });
-    });
-
-    return parsedOptions;
-  };
-
   const parseFilters = (originalSearchText: string, filters: string) => {
     const filterIdsUrl =
       solrEndpoint + "?q=" + originalSearchText + getFiltersQuery;
@@ -620,124 +523,83 @@ const SearchPage = () => {
       });
   };
 
-  const setPropsForFilter = (
-    investigationFilterOptions: { name: string; identifier: string }[],
-    instrumentFilterOptions: { name: string; identifier: string }[],
-    targetFilterOptions: { name: string; identifier: string }[],
-    originalFilters: string
+  const doNavigate = (
+    searchText: string,
+    rows: string,
+    sort: string,
+    page: string,
+    filters: string
   ) => {
-    const filters: FilterProps[] = [];
-
-    const investigationFilter = {
-      displayTitle: "Investigations",
-      title: "facet_investigation",
-      value: "investigation_ref",
-      options: parseFilterOptions(
-        investigationFilterOptions,
-        originalFilters,
-        "investigation_ref"
-      ),
-      onChecked: handleFilterChecked,
+    const pathParams = {
+      searchText,
     };
-    filters.push(investigationFilter);
 
-    const instrumentsFilter = {
-      displayTitle: "Instruments",
-      title: "facet_instrument",
-      value: "instrument_ref",
-      options: parseFilterOptions(
-        instrumentFilterOptions,
-        originalFilters,
-        "instrument_ref"
-      ),
-      onChecked: handleFilterChecked,
-    };
-    filters.push(instrumentsFilter);
-
-    const targetsFilter = {
-      displayTitle: "Targets",
-      title: "facet_target",
-      value: "target_ref",
-      options: parseFilterOptions(
-        targetFilterOptions,
-        originalFilters,
-        "target_ref"
-      ),
-      onChecked: handleFilterChecked,
-    };
-    filters.push(targetsFilter);
-
-    setParsedFilters(filters);
-
-    setIsLoading(false);
-  };
-
-  const getDocType = (doc: SearchResultDoc) => {
-    let docType = "";
-    if (doc.product_class) {
-      if (doc.product_class[0].toLowerCase() === "product_data_set_pds3") {
-        docType = "dataset";
-      }
-      if (doc.product_class[0].toLowerCase() === "product_bundle") {
-        docType = "databundle";
-      }
-      if (doc.product_class[0].toLowerCase() === "product_collection") {
-        if (doc.collection_type) {
-          if (doc.collection_type[0] !== "document") {
-            docType = "datacollection";
-          }
-        } else {
-          docType = "datacollection";
-        }
-      }
-      if (doc.product_class[0].toLowerCase() === "product_service") {
-        docType = "tool";
-      }
-      /*
-      if (
-        doc.product_class[0].toLowerCase() === "product_document" ||
-        (doc.collection_type &&
-          doc.collection_type[0].toLowerCase() === "document")
-      ) {
-        docType = "resource";
-      }
-      */
-      if (doc.product_class[0].toLowerCase() === "product_context") {
-        if (
-          doc.data_class &&
-          doc.data_class[0].toLowerCase() === "investigation"
-        ) {
-          docType = "investigation";
-        }
-        if (
-          doc.data_class &&
-          doc.data_class[0].toLowerCase() === "instrument"
-        ) {
-          docType = "instrument";
-        }
-        if (doc.data_class && doc.data_class[0].toLowerCase() === "target") {
-          docType = "target";
-        }
-        /*
-        if (
-          doc.data_class &&
-          doc.data_class[0].toLowerCase() === "instrument_host"
-        ) {
-          docType = "investigation";
-        }
-        */
-      }
+    let queryParams;
+    if (filters.length > 0) {
+      queryParams = {
+        rows,
+        sort,
+        page,
+        filters,
+      };
+    } else {
+      queryParams = {
+        rows,
+        sort,
+        page,
+      };
     }
-    return docType;
+
+    navigate({
+      pathname: generatePath("/search/:searchText/", pathParams),
+      search: createSearchParams(queryParams).toString(),
+    });
   };
 
-  const handleExpandAll = () => {
-    setAreResultsExpanded(true);
-  };
+  useEffect(() => {
+    if (params.searchText) {
+      searchInputRef.current = params.searchText;
 
-  const handleCollapseAll = () => {
-    setAreResultsExpanded(false);
-  };
+      let page = 1;
+      let start = 0;
+      let rows = 20;
+      let sort = "relevance";
+      let filters = "";
+
+      const rowsParam = Number(searchParams.get("rows"));
+      if (rowsParam) {
+        rows = rowsParam;
+        setResultRows(rows);
+      }
+
+      const paginationPageParam = Number(searchParams.get("page"));
+      if (paginationPageParam) {
+        setPaginationPage(paginationPageParam);
+        page = paginationPageParam;
+        start = calculateStartValue(page, rows);
+      } else {
+        setPaginationPage(1);
+      }
+
+      const sortParam = searchParams.get("sort");
+      if (sortParam) {
+        sort = sortParam;
+        setResultSort(sort);
+      }
+
+      const filtersParam = searchParams.get("filters");
+      if (filtersParam) {
+        filters = filtersParam;
+        setResultFilters(filters);
+      } else {
+        setResultFilters(filters);
+      }
+
+      doSearch(params.searchText, start, rows, sort, filters);
+    } else {
+      setSearchResults(null);
+    }
+  }, [params.searchText, searchParams]);
 
   return (
     <>
