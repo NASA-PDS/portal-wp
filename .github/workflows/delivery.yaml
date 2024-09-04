@@ -1,0 +1,67 @@
+# Note: for this workflow to succeed, the following secrets must be installed
+# in the repository (or inherited from the repository's organization):
+#
+# - `AWS_ACCESS_KEY_ID`
+# - `AWS_SECRET_ACCESS_KEY`
+# - `AWS_SESSION_TOKEN`
+# - `ADMIN_GITHUB_TOKEN`
+
+
+
+---
+
+name: Delivery
+
+
+on:
+    push:
+        branches:
+             - develop-disabled
+        paths-ignore:
+            - 'CHANGELOG.md'
+            - 'docs/requirements/**'
+    workflow_dispatch:
+
+
+jobs:
+    delivery:
+        name: Delivery
+        if: github.actor != 'pdsen-ci'
+        runs-on: ubuntu-latest
+        steps:
+            -
+                name: Checkout
+                uses: actions/checkout@v4
+                with:
+                    lfs: true
+                    token: ${{secrets.ADMIN_GITHUB_TOKEN}}
+                    fetch-depth: 0
+            -
+                name: Node
+                uses: actions/setup-node@v4
+                with:
+                    node-version: "lts"
+            -
+                name: Terraform
+                uses: hashicorp/setup-terraform@v3
+                with:
+                    terraform-version: "1.8.6"
+            -
+                name: Preparation
+                run: |
+                    cd apps/frontend
+                    npm clean-install
+                    npm run build
+                    terraform init -no-color
+                    terraform validate -no-color
+            -
+                name: Destruction
+                run: terraform apply -destroy -no-color -auto-approve
+                continue-on-error: true
+            -
+                name: Application
+                run: terraform apply -no-color -auto-approve
+
+...
+
+# -*- mode: yaml; indent: 4; fill-column: 120; coding: utf-8 -*-
