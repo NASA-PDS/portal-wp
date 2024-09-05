@@ -55,6 +55,9 @@ import {
 } from "./searchUtils";
 import "./search.css";
 
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
+
 const feedbackEmail = "mailto:example@example.com";
 const solrEndpoint = "https://pds.nasa.gov/services/search/search";
 const getFiltersQuery =
@@ -81,6 +84,8 @@ const linkStyles = {
 };
 
 const SearchPage = () => {
+  const theme = useTheme();
+  const isSmallScreen = !useMediaQuery(theme.breakpoints.up("md"));
   const navigate = useNavigate();
   const params = useParams();
   const searchInputRef = useRef("");
@@ -721,7 +726,7 @@ const SearchPage = () => {
           </Container>
 
           {isLoading ? (
-            <Box className="loader-container">
+            <Box className="pds-search-loader-container">
               <Loader />
             </Box>
           ) : (
@@ -813,40 +818,50 @@ const SearchPage = () => {
                   {/*Results Label */}
                   {searchResults.response.numFound > 0 ||
                   resultFilters.length > 0 ? (
-                    <Grid
-                      container
-                      spacing={4}
-                      columns={{ xs: 3, sm: 8, md: 12 }}
-                      className="pds-search-results-labels"
+                    <Box
+                      sx={{
+                        display: { xs: "none", md: "block" },
+                      }}
                     >
-                      <Grid item xs={3} sm={3} md={3}>
-                        <Typography variant="h5" weight="semibold">
-                          {resultFilters.length > 0
-                            ? "Active Filters"
-                            : "Filters"}
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={7} sm={7} md={7}>
-                        {searchResults.response.numFound === 0 &&
-                        resultFilters.length > 0 ? (
-                          <></>
-                        ) : (
+                      <Grid
+                        container
+                        spacing={4}
+                        columns={{ xs: 3, sm: 8, md: 12 }}
+                        className="pds-search-results-labels"
+                      >
+                        <Grid item xs={3} sm={3} md={3}>
                           <Typography variant="h5" weight="semibold">
-                            Results
+                            {resultFilters.length > 0
+                              ? "Active Filters"
+                              : "Filters"}
                           </Typography>
-                        )}
+                        </Grid>
+                        <Grid item xs={6} sm={6} md={6}>
+                          {searchResults.response.numFound === 0 &&
+                          resultFilters.length > 0 ? (
+                            <></>
+                          ) : (
+                            <Typography variant="h5" weight="semibold">
+                              Results
+                            </Typography>
+                          )}
+                        </Grid>
+                        <Grid item xs={2} sm={2} md={2}>
+                          {searchResults.response.numFound === 0 &&
+                          resultFilters.length > 0 ? (
+                            <></>
+                          ) : (
+                            <Typography
+                              variant="h5"
+                              weight="semibold"
+                              className="pds-search-page-type-label"
+                            >
+                              Page Type
+                            </Typography>
+                          )}
+                        </Grid>
                       </Grid>
-                      <Grid item xs={2} sm={2} md={2}>
-                        {searchResults.response.numFound === 0 &&
-                        resultFilters.length > 0 ? (
-                          <></>
-                        ) : (
-                          <Typography variant="h5" weight="semibold">
-                            Page Type
-                          </Typography>
-                        )}
-                      </Grid>
-                    </Grid>
+                    </Box>
                   ) : (
                     <></>
                   )}
@@ -856,19 +871,20 @@ const SearchPage = () => {
                     <Grid
                       container
                       spacing={4}
-                      columns={{ xs: 3, sm: 8, md: 12 }}
+                      columns={{ xs: 4, sm: 8, md: 12 }}
                     >
-                      <Grid item xs={3} sm={3} md={3}>
+                      <Grid item xs={12} sm={12} md={3}>
                         <Typography variant="h6" weight="regular">
                           <Filters
                             filters={parsedFilters}
                             onChecked={handleFilterChecked}
                             onFilterChipDelete={handleFilterChipDelete}
                             onFilterClear={handleFilterClear}
+                            collapseAll={isSmallScreen}
                           ></Filters>
                         </Typography>
                       </Grid>
-                      <Grid item xs={9} sm={9} md={9}>
+                      <Grid item xs={12} sm={12} md={9}>
                         {searchResults.response.docs.length > 0 ? (
                           searchResults.response.docs.map((doc) => (
                             <Box>

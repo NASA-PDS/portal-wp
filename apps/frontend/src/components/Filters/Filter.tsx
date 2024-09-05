@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import {
   Box,
   Checkbox,
@@ -28,11 +28,18 @@ export type FilterProps = {
   title: string;
   options: FilterOptionProps[];
   onChecked: (event: ChangeEvent<HTMLInputElement>) => void;
+  collapseAll?: boolean;
 };
 
 import "./filter.scss";
 
-const Filter = ({ displayTitle, value, options, onChecked }: FilterProps) => {
+const Filter = ({
+  displayTitle,
+  value,
+  options,
+  onChecked,
+  collapseAll = false,
+}: FilterProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [subFilter, setSubFilter] = useState("");
 
@@ -59,6 +66,10 @@ const Filter = ({ displayTitle, value, options, onChecked }: FilterProps) => {
     return isIncluded;
   };
 
+  useEffect(() => {
+    setIsCollapsed(collapseAll);
+  }, [collapseAll]);
+
   return (
     <div>
       <Box>
@@ -73,7 +84,7 @@ const Filter = ({ displayTitle, value, options, onChecked }: FilterProps) => {
               {displayTitle.toUpperCase()}
             </Typography>
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={2} className="pds-search-filter-dropdown-button-grid">
             <IconButton aria-label="star" onClick={handleCollapseClick}>
               {isCollapsed ? <IconArrowCircleDown /> : <IconArrowCircleUp />}
             </IconButton>
@@ -110,11 +121,11 @@ const Filter = ({ displayTitle, value, options, onChecked }: FilterProps) => {
       )}
 
       {!isCollapsed ? (
-        <Box className="pds-checkbox-container">
+        <Box className="pds-search-filter-checkbox-container">
           {options.map((option) =>
             titleIncludesSubFilter(option.title, subFilter) ? (
               <Box
-                className="pds-checkbox-box"
+                className="pds-search-filter-checkbox-box"
                 sx={{
                   cursor: "pointer",
                   display: "flex",

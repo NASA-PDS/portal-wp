@@ -10,31 +10,35 @@
    padding-bottom: 11px;
 }
 
-.pds-checkbox-box {
+.pds-search-filter-checkbox-box {
    padding-top: 8px;
    padding-bottom: 8px;
 }
 
-.pds-checkbox-container {
+.pds-search-filter-checkbox-container {
    max-height: 400px;
    overflow-y: scroll;
 }
 
-.pds-checkbox-container::-webkit-scrollbar {
+.pds-search-filter-checkbox-container::-webkit-scrollbar {
    -webkit-appearance: none;
    width: 7px;
 }
 
-.pds-checkbox-container::-webkit-scrollbar-thumb {
+.pds-search-filter-checkbox-container::-webkit-scrollbar-thumb {
    border-radius: 4px;
    background-color: rgba(0, 0, 0, .5);
    -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
 }
 
-.pds-checkbox-container .MuiCheckbox-root {
+.pds-search-filter-checkbox-container .MuiCheckbox-root {
    margin-top: -3px;
 }
 
 .filtersTitleBox {
    margin-top: 20px;
+}
+
+.pds-search-filter-dropdown-button-grid{
+   text-align: right;
 }

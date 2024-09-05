@@ -108,8 +108,13 @@
     padding-bottom: 32px;
 }
 
-.loader-container{
+.pds-search-loader-container{
     text-align: center;
     height: 60vh;
+}
+
+.pds-search-page-type-label{
+    text-align: center;
+    padding-left: 16px;
 }
 

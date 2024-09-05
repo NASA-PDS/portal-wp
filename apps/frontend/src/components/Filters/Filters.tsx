@@ -9,6 +9,7 @@ export type FiltersProps = {
   onChecked: (event: ChangeEvent<HTMLInputElement>) => void;
   onFilterChipDelete: (value: string, parentValue: string) => void;
   onFilterClear: () => void;
+  collapseAll?: boolean;
 };
 
 type Option = FilterOptionProps & { parentValue: string };
@@ -18,6 +19,7 @@ const Filters = ({
   onChecked,
   onFilterChipDelete,
   onFilterClear,
+  collapseAll = false,
 }: FiltersProps) => {
   const [selectedOptions, setSelectedOptions] = useState<Option[]>([]);
 
@@ -96,6 +98,7 @@ const Filters = ({
           displayTitle={filter.displayTitle}
           options={filter.options}
           onChecked={onChecked}
+          collapseAll={collapseAll}
         />
       ))}
     </>
