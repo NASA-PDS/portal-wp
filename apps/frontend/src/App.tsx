@@ -81,6 +81,10 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <SearchPage />
+          },
+          {
+            path: ":searchText",
+            element: <SearchPage />,
           }
         ]
       },
