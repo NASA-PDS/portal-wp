@@ -1,4 +1,5 @@
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
+import { ExploreTopicsSixUp } from "src/components/ExploreTopicsSixUp";
 
 const HomePage = () => {
   return <>
@@ -6,7 +7,20 @@ const HomePage = () => {
       title={ "Homepage" }
       description={ "The Planetary Data Systems Homepage" }
     />
-    <h1>Homepage</h1>
+    <ExploreTopicsSixUp
+      tabs={[
+        {
+          label: "Investigations",
+          content: <>Investigation's Content</>
+        },
+        {
+          label: "Instruments",
+          content: <>Instrument's Content</>
+        }
+      ]}
+      tabsDescription="Explore the PDS Data Archive by browsing data by the categories they are orgnized within."
+      title={"Explore our Data Archive"}
+    />
   </>;
 };
 
