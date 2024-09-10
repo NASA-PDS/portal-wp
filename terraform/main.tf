@@ -64,11 +64,11 @@ resource "aws_s3_bucket" "vite_app_bucket" {
 # After building the project with npm we upload the files from `dist`.
 
 resource "aws_s3_object" "vite_app_files" {
-  for_each = fileset("../dist", "**")
+  for_each = fileset("../apps/frontend/dist", "**")
 
   bucket = aws_s3_bucket.vite_app_bucket.id
   key    = each.value
-  source = "${path.module}/../dist/${each.value}"
+  source = "${path.module}/../apps/frontend/dist/${each.value}"
 }
 
 
