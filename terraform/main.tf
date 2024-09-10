@@ -2,13 +2,16 @@
 # ==========
 #
 #
-# To use this, first do `npm install` and `npm run build` to create the
-# `dist` directory. You can then run `terraform init` and `terraform apply`
-# to make it live.
+# To use this, first do `npm clean-install` and `npm run build` to create the
+# `dist` directory in `apps/frontend`.
 #
-# Please note that the S3 bucket name below will likely need to be updated.
-# The region may need to be updated as well.
-
+# You can then run:
+#
+#    terraform init
+#    terraform import aws_s3_bucket.vite_app_bucket pds-portal-demo
+#    terraform apply
+#
+# See the note under the vite_app_bucket resource, below.
 
 # Metadata
 # ========
@@ -40,9 +43,19 @@ provider "aws" {
 # Since Node.js neatly distributes itself into a set of static files, we can
 # make the app available over a web server in front of S3. So, let's define
 # the S3 bucket.
+#
+# NOTE: this bucket cannot be created by the user running `terraform apply`
+# due to permissions, so once an admin (such as Vivian Tang) has created it,
+# simply do:
+#
+#    terraform import aws_s3_bucket.vite_app_bucket pds-portal-demo
+#
+# Then you can proceed with:
+#
+#    terraform apply
 
 resource "aws_s3_bucket" "vite_app_bucket" {
-  bucket = "pds-en"
+  bucket = "pds-portal-demo"
 }
 
 # S3 Uploading
