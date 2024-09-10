@@ -75,27 +75,29 @@ resource "aws_s3_object" "vite_app_files" {
 # S3 Policy
 # =========
 #
-# Make sure the files are readable by the public internet.
+# Make sure the files are readable by CloudFront.
 
 resource "aws_s3_bucket_policy" "vite_app_bucket_policy" {
   bucket = aws_s3_bucket.vite_app_bucket.id
 
   policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "s3:GetObject"
-        Effect = "Allow"
-        Principal = {
-          "Service" = "cloudfront.amazonaws.com"
+    "Version": "2008-10-17",
+    "Id": "PolicyForCloudFrontPrivateContent",
+    "Statement": [
+        {
+            "Sid": "AllowCloudFrontServicePrincipal",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "cloudfront.amazonaws.com"
+            },
+            "Action": "s3:GetObject",
+            "Resource": "${aws_s3_bucket.vite_app_bucket.arn}/*",
+            "Condition": {
+                "StringEquals": {
+                  "AWS:SourceArn": "arn:aws:cloudfront::441083951559:distribution/E18VQ4K51WT0LV"
+                }
+            }
         }
-        Resource = "${aws_s3_bucket.vite_app_bucket.arn}/*"
-        Condition = {
-          StringEquals = {
-            "aws:SourceArn" = "arn:aws:cloudfront::441083951559:distribution/E18VQ4K51WT0LV"
-          }
-        }
-      }
     ]
   })
 }
