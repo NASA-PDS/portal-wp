@@ -2,13 +2,16 @@
 # ==========
 #
 #
-# To use this, first do `npm install` and `npm run build` to create the
-# `dist` directory. You can then run `terraform init` and `terraform apply`
-# to make it live.
+# To use this, first do `npm clean-install` and `npm run build` to create the
+# `dist` directory in `apps/frontend`.
 #
-# Please note that the S3 bucket name below will likely need to be updated.
-# The region may need to be updated as well.
-
+# You can then run:
+#
+#    terraform init
+#    terraform import aws_s3_bucket.vite_app_bucket pds-portal-demo
+#    terraform apply
+#
+# See the note under the vite_app_bucket resource, below.
 
 # Metadata
 # ========
@@ -16,9 +19,14 @@
 # Required Terraform version.
 
 terraform {
-  required_version = ">= 1.0.0"
+  required_version = ">=1.2.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0.0"
+    }
+  }
 }
-
 
 # AWS Provision
 # =============
@@ -35,54 +43,61 @@ provider "aws" {
 # Since Node.js neatly distributes itself into a set of static files, we can
 # make the app available over a web server in front of S3. So, let's define
 # the S3 bucket.
+#
+# NOTE: this bucket cannot be created by the user running `terraform apply`
+# due to permissions, so once an admin (such as Vivian Tang) has created it,
+# simply do:
+#
+#    terraform import aws_s3_bucket.vite_app_bucket pds-portal-demo
+#
+# Then you can proceed with:
+#
+#    terraform apply
 
 resource "aws_s3_bucket" "vite_app_bucket" {
-  bucket = "pds-en"  # TBD: Please fill in the correct bucket name
-  acl    = "public-read"
-
-  website {
-    index_document = "index.html"
-    error_document = "index.html"
-  }
+  bucket = "pds-portal-demo"
 }
-
 
 # S3 Uploading
 # ============
 #
 # After building the project with npm we upload the files from `dist`.
 
-resource "aws_s3_bucket_object" "vite_app_files" {
-  for_each = fileset("../dist", "**")
+resource "aws_s3_object" "vite_app_files" {
+  for_each = fileset("../apps/frontend/dist", "**")
 
   bucket = aws_s3_bucket.vite_app_bucket.id
   key    = each.value
-  source = "${path.module}/../dist/${each.value}"
-  acl    = "public-read"
+  source = "${path.module}/../apps/frontend/dist/${each.value}"
 }
 
 
 # S3 Policy
 # =========
 #
-# Make sure the files are readable by the public internet.
+# Make sure the files are readable by CloudFront.
 
 resource "aws_s3_bucket_policy" "vite_app_bucket_policy" {
   bucket = aws_s3_bucket.vite_app_bucket.id
 
   policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action    = "s3:GetObject"
-        Effect    = "Allow"
-        Principal = "*"
-        Resource  = "${aws_s3_bucket.vite_app_bucket.arn}/*"
-      }
+    "Version": "2008-10-17",
+    "Id": "PolicyForCloudFrontPrivateContent",
+    "Statement": [
+        {
+            "Sid": "AllowCloudFrontServicePrincipal",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "cloudfront.amazonaws.com"
+            },
+            "Action": "s3:GetObject",
+            "Resource": "${aws_s3_bucket.vite_app_bucket.arn}/*",
+            "Condition": {
+                "StringEquals": {
+                  "AWS:SourceArn": "arn:aws:cloudfront::441083951559:distribution/E18VQ4K51WT0LV"
+                }
+            }
+        }
     ]
   })
-}
-
-output "s3_bucket_website_url" {
-  value = aws_s3_bucket.vite_app_bucket.website_endpoint
 }
