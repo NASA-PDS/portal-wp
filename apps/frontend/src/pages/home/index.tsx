@@ -187,8 +187,8 @@ const HomePage = () => {
                   </>
                 })
               }
-            <Grid item xs={12} sm={6} md={4} lg={2}><LinkCard title={"More Investigations"} url={"/investigations"} /></Grid>
-          </Grid>
+              <Grid item xs={12} sm={6} md={4} lg={2}><LinkCard title={"More Investigations"} url={"/investigations"} /></Grid>
+            </Grid>
           </>
         },
       ]}
