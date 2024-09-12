@@ -1,6 +1,8 @@
 import { Container } from "@mui/material";
 import { QuickLinksBar } from "@nasapds/wds-react";
 
+import "./SubmitDataQuickLinks.scss"
+
 export const SubmitDataQuickLinks = () => {
   return <>
     <Container
