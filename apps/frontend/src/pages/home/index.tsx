@@ -199,7 +199,8 @@ const HomePage = () => {
     <ExploreTopicsFourUp
       title="Explore Tools and Services"
       jumpLinkLabel="More About Tools & Services"
-      jumpLinkUrl="/tools"
+      jumpLinkUrl="https://pds.nasa.gov/tools/about/"
+      jumpLinkType={"external"}
       content={
         <Grid container spacing={"12px"}>
           {

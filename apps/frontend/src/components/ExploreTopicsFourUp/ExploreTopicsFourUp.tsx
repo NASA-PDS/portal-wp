@@ -9,12 +9,14 @@ export type ExploreTopicsFourUpProps = {
   title:string;
   jumpLinkUrl:string;
   jumpLinkLabel:string;
+  jumpLinkType:"internal" | "external";
 }
 
 export const ExploreTopicsFourUp = ({
   content,
   jumpLinkUrl,
   jumpLinkLabel,
+  jumpLinkType = "internal",
   title,
 }:ExploreTopicsFourUpProps) => {
   return <>
@@ -28,7 +30,7 @@ export const ExploreTopicsFourUp = ({
         >
           <MuiStack direction={"row"} alignItems={"center"} justifyContent={"space-between"}>
             <Typography variant="h2" weight="bold" className="pds-explore-topics-four-up-title">{title}</Typography>
-            <Link to={jumpLinkUrl}><PrimaryButton label={jumpLinkLabel} /></Link>
+            <Link to={jumpLinkUrl}><PrimaryButton label={jumpLinkLabel} iconType={jumpLinkType} /></Link>
           </MuiStack>
           {content}
       </Container>
