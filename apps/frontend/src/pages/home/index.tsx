@@ -3,6 +3,7 @@ import { Card, LinkCard, MediaCard } from "@nasapds/wds-react";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
 import { ExploreTopicsSixUp } from "src/components/ExploreTopicsSixUp";
 import { SubmitDataQuickLinks } from "src/components/SubmitDataQuickLinks";
+import { ExploreTopicsFourUp } from "src/components/ExploreTopicsFourUp";
 
 const HomePage = () => {
 
@@ -79,6 +80,37 @@ const HomePage = () => {
       lid: "urn--nasa--pds--context--instrument--chemcam----libs---msl",
       title: "Chemistry Camera Laser Induced Breakdown Spectrometer (ChemCam)",
       url: "/instruments/urn--nasa--pds--context--instrument--chemcam----libs---msl/data"
+    },
+  ];
+
+  const toolsAndServices = [
+    {
+      description: "Purus tellus lorem urna faucibus lectus viverra egestas. Pulvinar fermentum sed bibendum sed dui.",
+      image: "/assets/images/cards/tools/search-tools.jpg",
+      imageDescription: "",
+      title: "Search Tools",
+      url: "",
+    },
+    {
+      description: "Turpis ipsum ac feugiat dictum nunc nisl, vestibulum. Euismod aliquet elementum volutpat ullamcorper facilisi.",
+      image: "/assets/images/cards/tools/analysis-tools.jpg",
+      imageDescription: "",
+      title: "Analysis Tools",
+      url: "",
+    },
+    {
+      description: "Ultrices mi diam fames at feugiat. Sociis nec morbi in amet, eu semper eros odio.",
+      image: "/assets/images/cards/tools/visualization-tools.jpg",
+      imageDescription: "",
+      title: "Visualization Tools",
+      url: "",
+    },
+    {
+      description: "Lacus non vitae scelerisque at tristique aliquet. At hac tortor gravida ipsum ullamcorper turpis ac, sit sed.",
+      image: "/assets/images/cards/tools/api-services.jpg",
+      imageDescription: "",
+      title: "API Services",
+      url: "",
     },
   ];
 
@@ -164,6 +196,30 @@ const HomePage = () => {
       title={"Explore our Data Archive"}
     />
     <SubmitDataQuickLinks />
+    <ExploreTopicsFourUp
+      title="Explore Tools and Services"
+      jumpLinkLabel="More About Tools & Services"
+      jumpLinkUrl="/tools"
+      content={
+        <Grid container spacing={"12px"}>
+          {
+            toolsAndServices.map( (tool) => {
+              return <>
+                <Grid item xs={12} sm={6} md={4} lg={3}>
+                  <MediaCard 
+                    description={tool.description}
+                    image={tool.image}
+                    imageDescription={tool.imageDescription}
+                    title={tool.title}
+                    url={tool.url}
+                  />
+                </Grid>
+              </>
+            })
+          }
+        </Grid>
+      }
+    />
   </>;
 };
 
