@@ -2,6 +2,7 @@ import { Grid, Stack } from "@mui/material";
 import { Card, LinkCard, MediaCard } from "@nasapds/wds-react";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
 import { ExploreTopicsSixUp } from "src/components/ExploreTopicsSixUp";
+import { SubmitDataQuickLinks } from "src/components/SubmitDataQuickLinks";
 
 const HomePage = () => {
 
@@ -160,6 +161,7 @@ const HomePage = () => {
       tabsDescription="Explore the PDS Data Archive by browsing data by the categories they are orgnized within."
       title={"Explore our Data Archive"}
     />
+    <SubmitDataQuickLinks />
   </>;
 };
 
