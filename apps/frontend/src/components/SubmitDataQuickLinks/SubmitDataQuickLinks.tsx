@@ -16,12 +16,12 @@ export const SubmitDataQuickLinks = () => {
         <QuickLinksBar
           title="Submitting Data to PDS?"
           primaryLinks={[
-            { label: "PDS Standards", url: "" },
-            { label: "Submission Guidelines", url: "" },
-            { label: "Proposal Guidelines", url: "" }, 
+            { label: "PDS Standards", url: "https://pds.nasa.gov/datastandards/about/" },
+            { label: "Submission Guidelines", url: "https://pds.nasa.gov/home/providers/" },
+            { label: "Proposal Guidelines", url: "https://pds.nasa.gov/home/proposers/" }, 
           ]}
           secondaryLinks={[
-            { label: "More Resources", url: "" },
+            { label: "More Resources", url: "https://pds.nasa.gov/datastandards/documents/", urlType:"external" },
           ]}
         />
       </Container>
