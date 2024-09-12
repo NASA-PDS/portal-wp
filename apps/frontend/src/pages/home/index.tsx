@@ -89,28 +89,28 @@ const HomePage = () => {
       image: "/assets/images/cards/tools/search-tools.jpg",
       imageDescription: "",
       title: "Search Tools",
-      url: "",
+      url: "/search/service_category:Search?rows=20&sort=relevance&page=1",
     },
     {
       description: "Turpis ipsum ac feugiat dictum nunc nisl, vestibulum. Euismod aliquet elementum volutpat ullamcorper facilisi.",
       image: "/assets/images/cards/tools/analysis-tools.jpg",
       imageDescription: "",
       title: "Analysis Tools",
-      url: "",
+      url: "/search/service_category:Analysis?rows=20&sort=relevance&page=1",
     },
     {
       description: "Ultrices mi diam fames at feugiat. Sociis nec morbi in amet, eu semper eros odio.",
       image: "/assets/images/cards/tools/visualization-tools.jpg",
       imageDescription: "",
       title: "Visualization Tools",
-      url: "",
+      url: "/search/service_category:Visualization?rows=20&sort=relevance&page=1",
     },
     {
       description: "Lacus non vitae scelerisque at tristique aliquet. At hac tortor gravida ipsum ullamcorper turpis ac, sit sed.",
       image: "/assets/images/cards/tools/api-services.jpg",
       imageDescription: "",
       title: "API Services",
-      url: "",
+      url: "/search/service_interface_type:API?rows=20&sort=relevance&page=1",
     },
   ];
 
