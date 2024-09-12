@@ -92,7 +92,7 @@ const HomePage = () => {
         {
           label: "Investigations",
           content: <>
-            <Stack direction={"row"} gap={"12px"}>
+            <Stack direction={"row"} spacing={"12px"} style={{overflowX: "scroll", scrollSnapType: "x mandatory"}}>
               {
                 investigations.map( (investigation) => {
                   return <>
@@ -103,7 +103,8 @@ const HomePage = () => {
                       maxWidth={204} 
                       title={investigation.title}
                       url={investigation.url} 
-                      width={204} 
+                      width={204}
+                      style={{scrollSnapAlign: "start"}}
                     />
                   </>
                 })
@@ -115,7 +116,7 @@ const HomePage = () => {
         {
           label: "Instruments",
           content: <>
-          <Stack direction={"row"} gap={"12px"}>
+          <Stack direction={"row"} spacing={"12px"} style={{overflowX: "scroll", scrollSnapType: "x mandatory"}}>
             {
               instruments.map( (instrument) => {
                 return <>
@@ -126,7 +127,8 @@ const HomePage = () => {
                     maxWidth={204} 
                     title={instrument.title}
                     url={instrument.url} 
-                    width={204} 
+                    width={204}
+                    style={{scrollSnapAlign: "start"}}
                   />
                 </>
               })
