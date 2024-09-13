@@ -124,7 +124,7 @@ const HomePage = () => {
         {
           label: "Investigations",
           content: <>
-            <Stack direction={"row"} spacing={"12px"} style={{overflowX: "scroll", scrollSnapType: "x mandatory"}}>
+            <Stack direction={"row"} spacing={"12px"} style={{overflowX: "scroll", scrollSnapType: "x mandatory"}} display={{md: "none"}}>
               {
                 investigations.map( (investigation) => {
                   return <>
@@ -141,38 +141,9 @@ const HomePage = () => {
                   </>
                 })
               }
-              <LinkCard title={"More Investigations"} url={"/investigations"} />
+              <LinkCard title={"More Investigations"} url={"/investigations"} width={"204px"}/>
             </Stack>
-          </>
-        },
-        {
-          label: "Instruments",
-          content: <>
-          <Stack direction={"row"} spacing={"12px"} style={{overflowX: "scroll", scrollSnapType: "x mandatory"}}>
-            {
-              instruments.map( (instrument) => {
-                return <>
-                  <Card 
-                    height={250}
-                    image={instrument.image}
-                    imageDescription={instrument.imageDescription}
-                    maxWidth={204} 
-                    title={instrument.title}
-                    url={instrument.url} 
-                    width={204}
-                    style={{scrollSnapAlign: "start"}}
-                  />
-                </>
-              })
-            }
-            <LinkCard title={"More Instruments"} url={"/instruments"} />
-          </Stack>
-        </>
-        },
-        {
-          label: "Investigations (Grid)",
-          content: <>
-            <Grid container spacing={"12px"}>
+            <Grid container spacing={"12px"} display={{xs: "none", md: "flex"}}>
               {
                 investigations.map( (investigation) => {
                   return <>
@@ -187,13 +158,54 @@ const HomePage = () => {
                   </>
                 })
               }
-              <Grid item xs={12} sm={6} md={4} lg={2}><LinkCard title={"More Investigations"} url={"/investigations"} /></Grid>
+              <Grid item md={4} lg={2}><LinkCard title={"More Investigations"} url={"/investigations"} /></Grid>
             </Grid>
           </>
         },
+        {
+          label: "Instruments",
+          content: <>
+            <Stack direction={"row"} spacing={"12px"} style={{overflowX: "scroll", scrollSnapType: "x mandatory"}} display={{md: "none"}}>
+              {
+                instruments.map( (instrument) => {
+                  return <>
+                    <Card 
+                      height={250}
+                      image={instrument.image}
+                      imageDescription={instrument.imageDescription}
+                      maxWidth={204} 
+                      title={instrument.title}
+                      url={instrument.url} 
+                      width={204}
+                      style={{scrollSnapAlign: "start"}}
+                    />
+                  </>
+                })
+              }
+              <LinkCard title={"More Instruments"} url={"/instruments"} width={"204px"}/>
+            </Stack>
+            <Grid container spacing={"12px"} display={{xs: "none", md: "flex"}}>
+              {
+                instruments.map( (instrument) => {
+                  return <>
+                    <Grid item xs={12} sm={6} md={4} lg={2}>
+                      <MediaCard 
+                        image={instrument.image}
+                        imageDescription={instrument.imageDescription}
+                        title={instrument.title}
+                        url={instrument.url}
+                      />
+                    </Grid>
+                  </>
+                })
+              }
+              <Grid item md={4} lg={2}><LinkCard title={"More Instruments"} url={"/instruments"} /></Grid>
+            </Grid>
+          </>
+        }
       ]}
       tabsDescription="Explore the PDS Data Archive by browsing data by the categories they are orgnized within."
-      title={"Explore our Data Archive"}
+      title={"Explore our Data Archive"} 
     />
     <SubmitDataQuickLinks />
     <ExploreTopicsFourUp
@@ -201,24 +213,43 @@ const HomePage = () => {
       jumpLinkLabel="More About Tools & Services"
       jumpLinkUrl="https://pds.nasa.gov/tools/about/"
       jumpLinkType={"external"}
-      content={
-        <Grid container spacing={"12px"}>
-          {
-            toolsAndServices.map( (tool) => {
-              return <>
-                <Grid item xs={12} sm={6} md={4} lg={3}>
-                  <MediaCard 
-                    description={tool.description}
+      content={ <>
+          <Stack direction={"row"} spacing={"12px"} style={{overflowX: "scroll", scrollSnapType: "x mandatory"}} display={{md: "none"}}>
+            {
+              toolsAndServices.map( (tool) => {
+                return <>
+                  <Card 
+                    height={250}
                     image={tool.image}
                     imageDescription={tool.imageDescription}
+                    maxWidth={204} 
                     title={tool.title}
-                    url={tool.url}
+                    url={tool.url} 
+                    width={204}
+                    style={{scrollSnapAlign: "start"}}
                   />
-                </Grid>
-              </>
-            })
-          }
-        </Grid>
+                </>
+              })
+            }
+            </Stack>
+          <Grid container spacing={"12px"} display={{xs: "none", md: "flex"}}>
+            {
+              toolsAndServices.map( (tool) => {
+                return <>
+                  <Grid item xs={12} sm={6} md={4} lg={3}>
+                    <MediaCard 
+                      description={tool.description}
+                      image={tool.image}
+                      imageDescription={tool.imageDescription}
+                      title={tool.title}
+                      url={tool.url}
+                    />
+                  </Grid>
+                </>
+              })
+            }
+          </Grid>
+        </>
       }
     />
   </>;
