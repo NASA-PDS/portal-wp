@@ -1,4 +1,5 @@
 import {
+    IdentifierNameDoc,
     SolrSearchResponse,
     SolrIdentifierNameResponse,
     SearchResultDoc,
@@ -142,4 +143,36 @@ export const isOptionChecked = (
 
     return isOptionChecked;
 };
+
+export const mapFilterIdsToName = (ids: string[], names: IdentifierNameDoc[]) => {
+    const filtersMap: { name: string; identifier: string }[] = [];
+
+    ids.forEach((id, index) => {
+      if (index % 2 == 0) {
+        const urnSplit = id.split("::")[0];
+        const nameDoc = names.find((name) => name.identifier === urnSplit);
+
+        if (nameDoc) {
+          let name: string = "";
+
+          if (nameDoc.investigation_name) {
+            name = nameDoc.investigation_name[0];
+          }
+          if (nameDoc.instrument_name) {
+            name = nameDoc.instrument_name[0];
+          }
+          if (nameDoc.target_name) {
+            name = nameDoc.target_name[0];
+          }
+
+          filtersMap.push({
+            name,
+            identifier: id,
+          });
+        }
+      }
+    });
+
+    return filtersMap;
+  };
 

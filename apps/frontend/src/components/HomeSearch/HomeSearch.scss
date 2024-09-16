@@ -1,0 +1,49 @@
+.pds-home-search-container {
+    background-color: var(--pds-secondary-blue-s1);
+    color: var(--pds-primary-white);
+    padding: 30px 256px 30px 256px;
+}
+
+.MuiButtonBase-root.MuiButton-root.pds-search-searchButton.wds-button-cta{
+    margin-left: 12px;
+    height: 52px;
+    text-transform: none;
+}
+
+.searchBarContainer{
+    display: flex;
+}
+
+.pds-home-page-search-bar{
+    width: 100%;
+    height: 52px;
+    background-color: var(--pds-primary-white);
+}
+
+.pds-home-page-search-bar .MuiInputBase-root.MuiOutlinedInput-root{
+    height: 52px;
+}
+
+.pds-home-page-filter-container {
+    text-align: left;
+}
+
+.pds-home-page-filters-container {
+    display: flex;
+ }
+
+.pds-home-page-filter-textfield .MuiInputBase-root.MuiInput-root.MuiInput-underline.Mui-focused::after {
+    border-bottom: 2px solid #F6F6F6;
+ }
+ 
+ .pds-home-page-filter-textfield .MuiInputBase-root.MuiInput-root.MuiInput-underline {
+    height: 29px;
+ }
+ 
+ .pds-home-page-filter-textfield.MuiFormControl-root.MuiTextField-root {
+    padding-bottom: 11px;
+ }
+
+ .pds-home-page-filter-textfield .MuiList-root.MuiList-padding.MuiMenu-list {
+    padding-top: 0;
+ }
