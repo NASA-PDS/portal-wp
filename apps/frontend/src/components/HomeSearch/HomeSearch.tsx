@@ -610,6 +610,7 @@ export const HomeSearch = () => {
         <Box>
           {selectedFilters.map((filter) => (
             <Chip
+              sx={{ backgroundColor: "white" }}
               key={filter.value}
               label={getFilterName(filter.value, filter.parentFilterName)}
               onDelete={() =>

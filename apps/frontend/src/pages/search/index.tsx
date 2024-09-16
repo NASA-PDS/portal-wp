@@ -103,6 +103,7 @@ const SearchPage = () => {
   const [resultFilters, setResultFilters] = useState("");
   const [parsedFilters, setParsedFilters] = useState<FilterProps[]>([]);
   const [areResultsExpanded, setAreResultsExpanded] = useState(false);
+  const [isEmptyState, setIsEmptyState] = useState(true);
 
   const doFilterMap = (
     filterIdsData: SolrIdentifierNameResponse,
@@ -247,36 +248,44 @@ const SearchPage = () => {
     sort: string,
     filters: string
   ) => {
-    let url =
-      solrEndpoint +
-      "?wt=json&q=" +
-      searchText +
-      "&rows=" +
-      rows +
-      "&start=" +
-      start +
-      filterDefault;
+    if (searchText !== "" || filters.length > 0) {
+      setIsEmptyState(false);
 
-    if (sort !== "relevance") {
-      url = url + "&sort=title " + sort;
+      let url =
+        solrEndpoint +
+        "?wt=json&q=" +
+        searchText +
+        "&rows=" +
+        rows +
+        "&start=" +
+        start +
+        filterDefault;
+
+      if (sort !== "relevance") {
+        url = url + "&sort=title " + sort;
+      }
+
+      if (filters.length > 0) {
+        const formattedFilters = formatFilterQueries(filters);
+
+        url = url + formattedFilters;
+      }
+
+      setIsLoading(true);
+
+      const response = await fetch(url);
+      const data = await response.json();
+      const formattedResults = formatSearchResults(data);
+
+      setSearchResults(formattedResults);
+      setPaginationCount(calculatePaginationCount(formattedResults));
+
+      parseFilters(searchText, filters);
+    } else {
+      setIsLoading(true);
+      setIsEmptyState(true);
+      parseFilters(searchText, filters);
     }
-
-    if (filters.length > 0) {
-      const formattedFilters = formatFilterQueries(filters);
-
-      url = url + formattedFilters;
-    }
-
-    setIsLoading(true);
-
-    const response = await fetch(url);
-    const data = await response.json();
-    const formattedResults = formatSearchResults(data);
-
-    setSearchResults(formattedResults);
-    setPaginationCount(calculatePaginationCount(formattedResults));
-
-    parseFilters(searchText, filters);
   };
 
   const handleSearchInputValueChange = (
@@ -531,46 +540,51 @@ const SearchPage = () => {
   };
 
   useEffect(() => {
-    if (params.searchText) {
-      searchInputRef.current = params.searchText;
+    let searchText = params.searchText;
+    if (!searchText) {
+      searchText = "";
+    }
+    searchInputRef.current = searchText;
 
-      let page = 1;
-      let start = 0;
-      let rows = 20;
-      let sort = "relevance";
-      let filters = "";
+    let page = 1;
+    let start = 0;
+    let rows = 20;
+    let sort = "relevance";
+    let filters = "";
 
-      const rowsParam = Number(searchParams.get("rows"));
-      if (rowsParam) {
-        rows = rowsParam;
-        setResultRows(rows);
-      }
+    const rowsParam = Number(searchParams.get("rows"));
+    if (rowsParam) {
+      rows = rowsParam;
+      setResultRows(rows);
+    }
 
-      const paginationPageParam = Number(searchParams.get("page"));
-      if (paginationPageParam) {
-        setPaginationPage(paginationPageParam);
-        page = paginationPageParam;
-        start = calculateStartValue(page, rows);
-      } else {
-        setPaginationPage(1);
-      }
-
-      const sortParam = searchParams.get("sort");
-      if (sortParam) {
-        sort = sortParam;
-        setResultSort(sort);
-      }
-
-      const filtersParam = searchParams.get("filters");
-      if (filtersParam) {
-        filters = filtersParam;
-        setResultFilters(filters);
-      } else {
-        setResultFilters(filters);
-      }
-
-      doSearch(params.searchText, start, rows, sort, filters);
+    const paginationPageParam = Number(searchParams.get("page"));
+    if (paginationPageParam) {
+      setPaginationPage(paginationPageParam);
+      page = paginationPageParam;
+      start = calculateStartValue(page, rows);
     } else {
+      setPaginationPage(1);
+    }
+
+    const sortParam = searchParams.get("sort");
+    if (sortParam) {
+      sort = sortParam;
+      setResultSort(sort);
+    }
+
+    const filtersParam = searchParams.get("filters");
+    if (filtersParam) {
+      filters = filtersParam;
+      setResultFilters(filters);
+    } else {
+      setResultFilters(filters);
+    }
+
+    console.log("do search");
+    doSearch(searchText, start, rows, sort, filters);
+
+    if (!params.searchText) {
       setSearchResults(null);
     }
   }, [params.searchText, searchParams]);
@@ -776,8 +790,9 @@ const SearchPage = () => {
               ) : (
                 <></>
               )}
+
               {/* Search Results Content */}
-              {searchResults ? (
+              {searchResults || isEmptyState ? (
                 <Container
                   maxWidth={"xl"}
                   sx={{
@@ -785,8 +800,8 @@ const SearchPage = () => {
                   }}
                 >
                   {/*Results Label */}
-                  {searchResults.response.numFound > 0 ||
-                  resultFilters.length > 0 ? (
+                  {(searchResults && searchResults.response.numFound > 0) ||
+                  (searchResults && resultFilters.length > 0) ? (
                     <Box
                       sx={{
                         display: { xs: "none", md: "block" },
@@ -835,8 +850,9 @@ const SearchPage = () => {
                     <></>
                   )}
 
-                  {searchResults.response.numFound > 0 ||
-                  resultFilters.length > 0 ? (
+                  {(searchResults && searchResults.response.numFound > 0) ||
+                  (searchResults && resultFilters.length > 0) ||
+                  isEmptyState ? (
                     <Grid
                       container
                       spacing={4}
@@ -854,7 +870,8 @@ const SearchPage = () => {
                         </Typography>
                       </Grid>
                       <Grid item xs={12} sm={12} md={9}>
-                        {searchResults.response.docs.length > 0 ? (
+                        {searchResults &&
+                        searchResults.response.docs.length > 0 ? (
                           searchResults.response.docs.map((doc) => (
                             <Box>
                               {getDocType(doc) === "investigation" ? (
