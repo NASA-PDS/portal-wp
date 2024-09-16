@@ -462,11 +462,8 @@ const SearchPage = () => {
   const parseFilters = (originalSearchText: string, filters: string) => {
     const filterIdsUrl =
       solrEndpoint + "?q=" + originalSearchText + getFiltersQuery;
-
     const investigationsUrl = investigationNamesEndpoint;
-
     const instrumentsUrl = instrumentNamesEndpoint;
-
     const targetsUrl = targetNamesEndpoint;
 
     fetch(filterIdsUrl) // api for the get request
@@ -1268,19 +1265,49 @@ const SearchPage = () => {
                               )}
                             </Box>
                           ))
-                        ) : (
+                        ) : searchResults ? (
                           <Box className="pds-search-empty-container">
                             <br />
-                            <Typography variant="h3" weight="bold">
-                              No Results Found
+                            <Typography
+                              variant="h3"
+                              weight="bold"
+                              className="pds-search-empty-icon-div"
+                            >
+                              <IconSearch />
+                              &nbsp;No Results Found.
                             </Typography>
+                            <br />
+
                             <Typography variant="h4" weight="regular">
                               You may want to try using different keywords,
-                              checking for typos, or adjusting your filters
+                              checking for typos, or adjusting your filters.
                             </Typography>
                             <br />
                             <Typography variant="h4" weight="regular">
                               Not the results you expected?{" "}
+                              <a href={feedbackEmail} target="_top">
+                                Give feedback
+                              </a>
+                            </Typography>
+                          </Box>
+                        ) : (
+                          <Box className="pds-search-empty-container">
+                            <br />
+                            <Typography
+                              variant="h3"
+                              weight="bold"
+                              className="pds-search-empty-icon-div"
+                            >
+                              <IconSearch />
+                              &nbsp;Start a search
+                            </Typography>
+                            <Typography variant="h4" weight="regular">
+                              Start by using the search box or by selecting
+                              filters to see relevant results.
+                            </Typography>
+                            <br />
+                            <Typography variant="h4" weight="regular">
+                              How can we improve your search experience?{" "}
                               <a href={feedbackEmail} target="_top">
                                 Give feedback
                               </a>
@@ -1294,6 +1321,11 @@ const SearchPage = () => {
                   )}
                 </Container>
               ) : (
+                <></>
+              )}
+              {searchResults &&
+              searchResults.response.numFound === 0 &&
+              resultFilters.length === 0 ? (
                 <Container
                   maxWidth={"xl"}
                   sx={{
@@ -1308,39 +1340,11 @@ const SearchPage = () => {
                       className="pds-search-empty-icon-div"
                     >
                       <IconSearch />
-                      &nbsp;Enter a search query to show results
+                      &nbsp;No matching results found
                     </Typography>
                     <Typography variant="h4" weight="regular">
                       You may want to try using different keywords, checking for
-                      typos, or adjusting your filters
-                    </Typography>
-                    <br />
-                    <Typography variant="h4" weight="regular">
-                      Not the results you expected?{" "}
-                      <a href={feedbackEmail} target="_top">
-                        Give feedback
-                      </a>
-                    </Typography>
-                  </Box>
-                </Container>
-              )}
-              {searchResults &&
-              searchResults.response.numFound === 0 &&
-              resultFilters.length === 0 ? (
-                <Container
-                  maxWidth={"xl"}
-                  sx={{
-                    paddingY: "24px",
-                  }}
-                >
-                  <Box className="pds-search-empty-container">
-                    <br />
-                    <Typography variant="h3" weight="bold">
-                      No Results Found
-                    </Typography>
-                    <Typography variant="h4" weight="regular">
-                      You may want to try using different keywords, checking for
-                      typos, or adjusting your filters
+                      typos, or adjusting your filters.
                     </Typography>
                     <br />
                     <Typography variant="h4" weight="regular">
