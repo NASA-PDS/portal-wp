@@ -1,5 +1,5 @@
 import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
-import { Box, InputAdornment } from "@mui/material";
+import { Box, InputAdornment, ListSubheader } from "@mui/material";
 import {
   Button,
   Chip,
@@ -27,6 +27,7 @@ import "./HomeSearch.scss";
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
+  autoFocus: false,
   PaperProps: {
     style: {
       maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
@@ -147,19 +148,19 @@ export const HomeSearch = () => {
   };
 
   const resetInvestigationFilters = () => {
-    const targets: Filter[] = [];
-    for (let i = 0; i < 200 && i < allTargetFilters.length; i++) {
-      targets.push(allTargetFilters[i]);
+    const investigations: Filter[] = [];
+    for (let i = 0; i < 200 && i < allInvestigationFilters.length; i++) {
+      investigations.push(allInvestigationFilters[i]);
     }
-    setTargetFilters(targets);
+    setInvestigationFilters(investigations);
   };
 
   const resetInstrumentFilters = () => {
-    const targets: Filter[] = [];
-    for (let i = 0; i < 200 && i < allTargetFilters.length; i++) {
-      targets.push(allTargetFilters[i]);
+    const instruments: Filter[] = [];
+    for (let i = 0; i < 200 && i < allInstrumentFilters.length; i++) {
+      instruments.push(allInstrumentFilters[i]);
     }
-    setTargetFilters(targets);
+    setInstrumentFilters(instruments);
   };
 
   const onTargetSubFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -182,7 +183,7 @@ export const HomeSearch = () => {
     setInvestigationSubFilter(event.target.value);
 
     if (value.length > 1) {
-      const updatedFilters = getUpdatedFilters("targets", value);
+      const updatedFilters = getUpdatedFilters("investigations", value);
       setInvestigationFilters(updatedFilters);
     }
     if (value.length === 0) {
@@ -197,7 +198,7 @@ export const HomeSearch = () => {
     setInstrumentSubFilter(value);
 
     if (value.length > 1) {
-      const updatedFilters = getUpdatedFilters("targets", value);
+      const updatedFilters = getUpdatedFilters("instruments", value);
       setInstrumentFilters(updatedFilters);
     }
     if (value.length === 0) {
@@ -639,15 +640,12 @@ export const HomeSearch = () => {
                 displayEmpty
                 inputProps={{ "aria-label": "Without label" }}
               >
-                <MenuItem
-                  onKeyDown={(e) => e.stopPropagation()}
-                  className="pds-home-page-textfield-menu-item"
-                >
+                <ListSubheader>
                   <TextField
                     className="pds-home-page-filter-textfield"
-                    value={targetSubFilter}
-                    variant="standard"
-                    onChange={onTargetSubFilterChange}
+                    autoFocus
+                    placeholder="Type to search..."
+                    fullWidth
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -655,8 +653,16 @@ export const HomeSearch = () => {
                         </InputAdornment>
                       ),
                     }}
+                    onChange={onTargetSubFilterChange}
+                    onKeyDown={(e) => {
+                      if (e.key !== "Escape") {
+                        e.stopPropagation();
+                      }
+                    }}
+                    value={targetSubFilter}
+                    variant="standard"
                   />
-                </MenuItem>
+                </ListSubheader>
 
                 {targetFilters.map((filter) => (
                   <MenuItem key={filter.value} value={filter.value}>
@@ -692,15 +698,12 @@ export const HomeSearch = () => {
                 displayEmpty
                 inputProps={{ "aria-label": "Without label" }}
               >
-                <MenuItem
-                  onKeyDown={(e) => e.stopPropagation()}
-                  className="pds-home-page-textfield-menu-item"
-                >
+                <ListSubheader>
                   <TextField
                     className="pds-home-page-filter-textfield"
-                    value={investigationSubFilter}
-                    variant="standard"
-                    onChange={onInvestigationSubFilterChange}
+                    autoFocus
+                    placeholder="Type to search..."
+                    fullWidth
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -708,8 +711,16 @@ export const HomeSearch = () => {
                         </InputAdornment>
                       ),
                     }}
+                    onChange={onInvestigationSubFilterChange}
+                    onKeyDown={(e) => {
+                      if (e.key !== "Escape") {
+                        e.stopPropagation();
+                      }
+                    }}
+                    value={investigationSubFilter}
+                    variant="standard"
                   />
-                </MenuItem>
+                </ListSubheader>
 
                 {investigationFilters.map((filter) => (
                   <MenuItem key={filter.value} value={filter.value}>
@@ -745,15 +756,12 @@ export const HomeSearch = () => {
                 displayEmpty
                 inputProps={{ "aria-label": "Without label" }}
               >
-                <MenuItem
-                  onKeyDown={(e) => e.stopPropagation()}
-                  className="pds-home-page-textfield-menu-item"
-                >
+                <ListSubheader>
                   <TextField
                     className="pds-home-page-filter-textfield"
-                    value={instrumentSubFilter}
-                    variant="standard"
-                    onChange={onInstrumentSubFilterChange}
+                    autoFocus
+                    placeholder="Type to search..."
+                    fullWidth
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -761,8 +769,16 @@ export const HomeSearch = () => {
                         </InputAdornment>
                       ),
                     }}
+                    onChange={onInstrumentSubFilterChange}
+                    onKeyDown={(e) => {
+                      if (e.key !== "Escape") {
+                        e.stopPropagation();
+                      }
+                    }}
+                    value={instrumentSubFilter}
+                    variant="standard"
                   />
-                </MenuItem>
+                </ListSubheader>
 
                 {instrumentFilters.map((filter) => (
                   <MenuItem key={filter.value} value={filter.value}>
