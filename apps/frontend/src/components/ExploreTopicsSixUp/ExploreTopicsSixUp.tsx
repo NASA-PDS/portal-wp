@@ -25,10 +25,7 @@ export const ExploreTopicsSixUp = ({
         className="pds-explore-topics-six-up-container"
         >
           <Typography variant="h2" weight="bold" className="pds-explore-topics-six-up-title">{title}</Typography>
-          <Tabs 
-            description={tabsDescription}
-            tabs={tabs}
-            ></Tabs>
+          <Tabs description={tabsDescription} tabs={tabs} />
       </Container>
     </Container>
   </>
