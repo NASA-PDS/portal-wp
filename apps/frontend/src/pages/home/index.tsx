@@ -240,13 +240,14 @@ const HomePage = () => {
               toolsAndServices.map( (tool) => {
                 return <>
                   <Grid item xs={12} sm={6} md={4} lg={3}>
-                    <MediaCard 
-                      description={tool.description}
-                      image={tool.image}
-                      imageDescription={tool.imageDescription}
-                      title={tool.title}
-                      url={tool.url}
-                    />
+                    <Link to={tool.url}>
+                      <MediaCard 
+                        description={tool.description}
+                        image={tool.image}
+                        imageDescription={tool.imageDescription}
+                        title={tool.title}
+                      />
+                    </Link>
                   </Grid>
                 </>
               })
