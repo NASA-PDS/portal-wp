@@ -142,24 +142,25 @@ const HomePage = () => {
                   </>
                 })
               }
-              <LinkCard title={"More Investigations"} url={"/investigations"} width={"204px"}/>
+              <Link to={"/investigations"}><ButtonCard title={"More Investigations"} width={"204px"}/></Link>
             </Stack>
             <Grid container spacing={"12px"} display={{xs: "none", md: "flex"}}>
               {
                 investigations.map( (investigation) => {
                   return <>
                     <Grid item xs={12} sm={6} md={4} lg={2}>
-                      <MediaCard 
-                        image={investigation.image}
-                        imageDescription={investigation.imageDescription}
-                        title={investigation.title}
-                        url={investigation.url}
-                      />
+                      <Link to={investigation.url}>
+                        <MediaCard 
+                          image={investigation.image}
+                          imageDescription={investigation.imageDescription}
+                          title={investigation.title}
+                        />
+                      </Link>
                     </Grid>
                   </>
                 })
               }
-              <Grid item md={4} lg={2}><LinkCard title={"More Investigations"} url={"/investigations"} /></Grid>
+              <Grid item md={4} lg={2}><Link to={"/investigations"}><ButtonCard title={"More Investigations"} /></Link></Grid>
             </Grid>
           </>
         },
@@ -183,24 +184,25 @@ const HomePage = () => {
                   </>
                 })
               }
-              <LinkCard title={"More Instruments"} url={"/instruments"} width={"204px"}/>
+              <Link to={"/instruments"}><ButtonCard title={"More Instruments"} width={"204px"}/></Link>
             </Stack>
             <Grid container spacing={"12px"} display={{xs: "none", md: "flex"}}>
               {
                 instruments.map( (instrument) => {
                   return <>
                     <Grid item xs={12} sm={6} md={4} lg={2}>
-                      <MediaCard 
-                        image={instrument.image}
-                        imageDescription={instrument.imageDescription}
-                        title={instrument.title}
-                        url={instrument.url}
-                      />
+                      <Link to={instrument.url}>
+                        <MediaCard 
+                          image={instrument.image}
+                          imageDescription={instrument.imageDescription}
+                          title={instrument.title}
+                        />
+                      </Link>
                     </Grid>
                   </>
                 })
               }
-              <Grid item md={4} lg={2}><LinkCard title={"More Instruments"} url={"/instruments"} /></Grid>
+              <Grid item md={4} lg={2}><Link to={"/instruments"}><ButtonCard title={"More Instruments"} /></Link></Grid>
             </Grid>
           </>
         }
