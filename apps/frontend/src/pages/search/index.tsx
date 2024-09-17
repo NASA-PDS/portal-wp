@@ -50,6 +50,7 @@ import {
   formatIdentifierNameResults,
   formatSearchResults,
   getDocType,
+  getUnmatchedFilters,
   isAllOptionsChecked,
   isOptionChecked,
   mapFilterIdsToName,
@@ -104,6 +105,9 @@ const SearchPage = () => {
   const [parsedFilters, setParsedFilters] = useState<FilterProps[]>([]);
   const [areResultsExpanded, setAreResultsExpanded] = useState(false);
   const [isEmptyState, setIsEmptyState] = useState(true);
+  const [unmatchedFilters, setUnmatchedFilters] = useState<
+    { name: string; identifier: string; parentName: string }[] | null
+  >(null);
 
   const doFilterMap = (
     filterIdsData: SolrIdentifierNameResponse,
@@ -154,6 +158,19 @@ const SearchPage = () => {
       targetFilterIds,
       targetNames
     );
+
+    if (originalFilters.length > 0) {
+      const unmatchedFilters = getUnmatchedFilters(
+        originalFilters,
+        investigationFilterOptions,
+        instrumentFilterOptions,
+        targetFilterOptions,
+        investigationNames,
+        instrumentNames,
+        targetNames
+      );
+      setUnmatchedFilters(unmatchedFilters);
+    }
 
     setPropsForFilter(
       investigationFilterOptions,
@@ -381,6 +398,29 @@ const SearchPage = () => {
 
   const handleCollapseAll = () => {
     setAreResultsExpanded(false);
+  };
+
+  const handleRemoveUnmatchedFiltersButtonClick = () => {
+    if (unmatchedFilters && unmatchedFilters.length > 0) {
+      const filtersToRemove: { value: string; name: string }[] = [];
+
+      unmatchedFilters.forEach((filter) => {
+        filtersToRemove.push({
+          value: filter.parentName,
+          name: filter.identifier,
+        });
+      });
+
+      const filters = removeFilters(filtersToRemove, resultFilters);
+
+      doNavigate(
+        searchInputRef.current,
+        resultRows.toString(),
+        resultSort,
+        "1",
+        filters
+      );
+    }
   };
 
   const removeFilter = (
@@ -1282,6 +1322,27 @@ const SearchPage = () => {
                               You may want to try using different keywords,
                               checking for typos, or adjusting your filters.
                             </Typography>
+
+                            {unmatchedFilters && unmatchedFilters.length > 0 ? (
+                              <Typography variant="h4" weight="regular">
+                                Filters{" "}
+                                {unmatchedFilters.map(
+                                  (filter) => filter.name + ", "
+                                )}{" "}
+                                are not related to your query.{" "}
+                                <MuiButton
+                                  onClick={
+                                    handleRemoveUnmatchedFiltersButtonClick
+                                  }
+                                >
+                                  Click here
+                                </MuiButton>{" "}
+                                to remove them.
+                              </Typography>
+                            ) : (
+                              <></>
+                            )}
+
                             <br />
                             <Typography variant="h4" weight="regular">
                               Not the results you expected?{" "}

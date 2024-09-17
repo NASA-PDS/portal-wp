@@ -104,6 +104,91 @@ export const getDocType = (doc: SearchResultDoc) => {
     return docType;
 };
 
+export const getUnmatchedFilters = (
+    originalFilters: string, 
+    investigationFilterOptions: { name: string; identifier: string; }[], 
+    instrumentFilterOptions: { name: string; identifier: string; }[], 
+    targetFilterOptions: { name: string; identifier: string; }[], 
+    investigationFilterIds: IdentifierNameDoc[], 
+    instrumentFilterIds: IdentifierNameDoc[], 
+    targetFilterIds: IdentifierNameDoc[] 
+) => {
+    const unmatchedFilters: { parentName: string, name: string; identifier: string }[] = [];
+    let options: { name: string; identifier: string }[] = [];
+    const fqs = originalFilters.split("+");
+
+    fqs.forEach((fq, index) => {
+        if (index % 2 === 0) {
+            if(fq === "target_ref"){
+                options = targetFilterOptions;
+            }
+            if(fq === "investigation_ref"){
+                options = investigationFilterOptions;
+            }
+            if(fq === "instrument_ref"){
+                options = instrumentFilterOptions;
+            }
+
+            let matchFound = false;
+            options.forEach((option) => {
+                if (fqs[index + 1] === option.identifier) {
+                    matchFound = true;
+                }
+            });
+
+            const name = getUnmatchedFilterName(fq, fqs[index + 1], investigationFilterIds, instrumentFilterIds, targetFilterIds);
+
+            if(matchFound === false){
+                unmatchedFilters.push({
+                    parentName: fq,
+                    identifier: fqs[index + 1],
+                    name
+                })
+            }
+        }
+    });
+
+    return unmatchedFilters;
+};
+
+const getUnmatchedFilterName = (
+    parentName: string, 
+    identifier: string, 
+    investigations: IdentifierNameDoc[], 
+    instruments: IdentifierNameDoc[], 
+    targets: IdentifierNameDoc[]
+) => {
+    let originals: IdentifierNameDoc[] = []
+    identifier = identifier.split("::")[0];
+
+    console.log('getUnmatchedFilterName')
+    if(parentName === "target_ref"){
+        originals = targets;
+    }
+    if(parentName === "investigation_ref"){
+        originals = investigations;
+    }
+    if(parentName === "instrument_ref"){
+        originals = instruments;
+    }
+
+    for(let i = 0; i < originals.length; i++){
+        if(originals[i].identifier === identifier){
+            if(parentName === "target_ref"){
+                return originals[i].target_name[0];
+            }
+            if(parentName === "investigation_ref"){
+                return originals[i].investigation_name[0];
+            }
+            if(parentName === "instrument_ref"){
+                return originals[i].instrument_name[0];
+            }
+        }
+    }
+
+    return "";
+}
+
 export const isAllOptionsChecked = (value: string, filters: string) => {
     let isChecked = true;
 
@@ -132,13 +217,13 @@ export const isOptionChecked = (
     if (filters && filters.length > 0) {
       const fqs = filters.split("+");
 
-      fqs.forEach((fq, index) => {
-        if (index % 2 === 0) {
-            if (fq === parentValue && fqs[index + 1] === identifier) {
-                isOptionChecked = true;
+        fqs.forEach((fq, index) => {
+            if (index % 2 === 0) {
+                if (fq === parentValue && fqs[index + 1] === identifier) {
+                    isOptionChecked = true;
+                }
             }
-        }
-      });
+        });
     }
 
     return isOptionChecked;
