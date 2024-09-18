@@ -81,14 +81,14 @@ export const HomeSearch = () => {
 
   const [selectedFilters, setSelectedFilters] = useState<SelectedFilter[]>([]);
 
-  const [selectedTargetFilters, setSelectedTargetFilters] = useState<string[]>(
-    []
-  );
+  const [selectedTargetFilters, setSelectedTargetFilters] = useState<string[]>([
+    "all",
+  ]);
   const [selectedInvestigationFilters, setSelectedInvestigationFilters] =
-    useState<string[]>([]);
+    useState<string[]>(["all"]);
   const [selectedInstrumentFilters, setSelectedInstrumentFilters] = useState<
     string[]
-  >([]);
+  >(["all"]);
 
   const [targetSubFilter, setTargetSubFilter] = useState("");
   const [investigationSubFilter, setInvestigationSubFilter] = useState("");
@@ -140,27 +140,15 @@ export const HomeSearch = () => {
   };
 
   const resetTargetFilters = () => {
-    const targets: Filter[] = [];
-    for (let i = 0; i < 200 && i < allTargetFilters.length; i++) {
-      targets.push(allTargetFilters[i]);
-    }
-    setTargetFilters(targets);
+    setTargetFilters(allTargetFilters);
   };
 
   const resetInvestigationFilters = () => {
-    const investigations: Filter[] = [];
-    for (let i = 0; i < 200 && i < allInvestigationFilters.length; i++) {
-      investigations.push(allInvestigationFilters[i]);
-    }
-    setInvestigationFilters(investigations);
+    setInvestigationFilters(allInvestigationFilters);
   };
 
   const resetInstrumentFilters = () => {
-    const instruments: Filter[] = [];
-    for (let i = 0; i < 200 && i < allInstrumentFilters.length; i++) {
-      instruments.push(allInstrumentFilters[i]);
-    }
-    setInstrumentFilters(instruments);
+    setInstrumentFilters(allInstrumentFilters);
   };
 
   const onTargetSubFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -207,6 +195,21 @@ export const HomeSearch = () => {
   };
 
   const handleFilterChange = (value: string[], parentFilterName: string) => {
+    if (value.includes("all")) {
+      if (value[value.length - 1] === "all") {
+        value = ["all"];
+      } else if (value[value.length - 1] !== "all") {
+        const index = value.indexOf("all");
+        if (index > -1) {
+          value.splice(index, 1);
+        }
+      }
+    } else {
+      if (value.length === 0) {
+        value = ["all"];
+      }
+    }
+
     if (parentFilterName === "targets") {
       setSelectedTargetFilters(value);
     }
@@ -219,16 +222,18 @@ export const HomeSearch = () => {
 
     const filtersToAdd: SelectedFilter[] = [];
     value.forEach((val) => {
-      const matches = selectedFilters.filter(
-        (filter) =>
-          filter.value == val && filter.parentFilterName === parentFilterName
-      );
-      if (matches.length === 0) {
-        filtersToAdd.push({
-          name: "",
-          value: val,
-          parentFilterName: parentFilterName,
-        });
+      if (val !== "all") {
+        const matches = selectedFilters.filter(
+          (filter) =>
+            filter.value == val && filter.parentFilterName === parentFilterName
+        );
+        if (matches.length === 0) {
+          filtersToAdd.push({
+            name: "",
+            value: val,
+            parentFilterName: parentFilterName,
+          });
+        }
       }
     });
 
@@ -305,21 +310,23 @@ export const HomeSearch = () => {
     let formattedFilters = "";
 
     filters.forEach((filter, index) => {
-      let key = "";
-      if (filter.parentFilterName === "investigations") {
-        key = "investigation_ref";
-      }
-      if (filter.parentFilterName === "instruments") {
-        key = "instrument_ref";
-      }
-      if (filter.parentFilterName === "targets") {
-        key = "target_ref";
-      }
+      if (filter.value !== "all") {
+        let key = "";
+        if (filter.parentFilterName === "investigations") {
+          key = "investigation_ref";
+        }
+        if (filter.parentFilterName === "instruments") {
+          key = "instrument_ref";
+        }
+        if (filter.parentFilterName === "targets") {
+          key = "target_ref";
+        }
 
-      if (index === 0) {
-        formattedFilters = key + "+" + filter.value;
-      } else {
-        formattedFilters = formattedFilters + "+" + key + "+" + filter.value;
+        if (index === 0) {
+          formattedFilters = key + "+" + filter.value;
+        } else {
+          formattedFilters = formattedFilters + "+" + key + "+" + filter.value;
+        }
       }
     });
 
@@ -454,6 +461,8 @@ export const HomeSearch = () => {
   };
 
   useEffect(() => {
+    searchInputRef.current = "";
+
     const investigationsUrl = investigationNamesEndpoint;
     const instrumentsUrl = instrumentNamesEndpoint;
     const targetsUrl = targetNamesEndpoint;
@@ -541,16 +550,27 @@ export const HomeSearch = () => {
                         value: filter.identifier,
                       })
                     );
+                    investigationFilters.splice(0, 0, {
+                      name: "All",
+                      value: "all",
+                    });
+
                     const instrumentFilters = instrumentFilterOptions.map(
                       (filter) => ({
                         name: filter.name,
                         value: filter.identifier,
                       })
                     );
+                    instrumentFilters.splice(0, 0, {
+                      name: "All",
+                      value: "all",
+                    });
+
                     const targetFilters = targetFilterOptions.map((filter) => ({
                       name: filter.name,
                       value: filter.identifier,
                     }));
+                    targetFilters.splice(0, 0, { name: "All", value: "all" });
 
                     console.log(
                       "investigationFilterOptions",
@@ -609,16 +629,20 @@ export const HomeSearch = () => {
         </Box>
 
         <Box>
-          {selectedFilters.map((filter) => (
-            <Chip
-              sx={{ backgroundColor: "white" }}
-              key={filter.value}
-              label={getFilterName(filter.value, filter.parentFilterName)}
-              onDelete={() =>
-                handleFilterChipDelete(filter.value, filter.parentFilterName)
-              }
-            />
-          ))}
+          {selectedFilters.map((filter) =>
+            filter.value !== "all" ? (
+              <Chip
+                sx={{ backgroundColor: "white" }}
+                key={filter.value}
+                label={getFilterName(filter.value, filter.parentFilterName)}
+                onDelete={() =>
+                  handleFilterChipDelete(filter.value, filter.parentFilterName)
+                }
+              />
+            ) : (
+              <></>
+            )
+          )}
         </Box>
 
         <Box className="pds-home-page-filters-container">
@@ -634,7 +658,9 @@ export const HomeSearch = () => {
                 value={selectedTargetFilters}
                 onChange={handleTargetFilterChange}
                 renderValue={(selected) =>
-                  selected.length === 0 ? "All" : selected.length + " Selected"
+                  selected.includes("all")
+                    ? "All"
+                    : selected.length + " Selected"
                 }
                 MenuProps={MenuProps}
                 displayEmpty
@@ -667,10 +693,10 @@ export const HomeSearch = () => {
                 {targetFilters.map((filter) => (
                   <MenuItem key={filter.value} value={filter.value}>
                     <Checkbox
-                      checked={
-                        filter.name === "All"
-                          ? true
-                          : selectedTargetFilters.includes(filter.value)
+                      checked={selectedTargetFilters.includes(filter.value)}
+                      disabled={
+                        filter.value === "all" &&
+                        selectedTargetFilters.includes(filter.value)
                       }
                     />
                     <ListItemText primary={filter.name} />
@@ -692,7 +718,9 @@ export const HomeSearch = () => {
                 value={selectedInvestigationFilters}
                 onChange={handleInvestigationFilterChange}
                 renderValue={(selected) =>
-                  selected.length === 0 ? "All" : selected.length + " Selected"
+                  selected.includes("all")
+                    ? "All"
+                    : selected.length + " Selected"
                 }
                 MenuProps={MenuProps}
                 displayEmpty
@@ -725,10 +753,12 @@ export const HomeSearch = () => {
                 {investigationFilters.map((filter) => (
                   <MenuItem key={filter.value} value={filter.value}>
                     <Checkbox
-                      checked={
-                        filter.name === "All"
-                          ? true
-                          : selectedInvestigationFilters.includes(filter.value)
+                      checked={selectedInvestigationFilters.includes(
+                        filter.value
+                      )}
+                      disabled={
+                        filter.value === "all" &&
+                        selectedInvestigationFilters.includes(filter.value)
                       }
                     />
                     <ListItemText primary={filter.name} />
@@ -750,7 +780,9 @@ export const HomeSearch = () => {
                 value={selectedInstrumentFilters}
                 onChange={handleInstrumentFilterChange}
                 renderValue={(selected) =>
-                  selected.length === 0 ? "All" : selected.length + " Selected"
+                  selected.includes("all")
+                    ? "All"
+                    : selected.length + " Selected"
                 }
                 MenuProps={MenuProps}
                 displayEmpty
@@ -783,10 +815,10 @@ export const HomeSearch = () => {
                 {instrumentFilters.map((filter) => (
                   <MenuItem key={filter.value} value={filter.value}>
                     <Checkbox
-                      checked={
-                        filter.name === "All"
-                          ? true
-                          : selectedInstrumentFilters.includes(filter.value)
+                      checked={selectedInstrumentFilters.includes(filter.value)}
+                      disabled={
+                        filter.value === "all" &&
+                        selectedInstrumentFilters.includes(filter.value)
                       }
                     />
                     <ListItemText primary={filter.name} />
