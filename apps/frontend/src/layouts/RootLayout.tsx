@@ -68,11 +68,6 @@ function RootLayout() {
       href: ""
     },
     {
-      id: "accessibility",
-      label: "Accessibility",
-      href: "https://www.nasa.gov/accessibility/"
-    },
-    {
       id: "",
       label: "Give Feedback",
       href: ""
@@ -109,6 +104,11 @@ function RootLayout() {
       id: "",
       label: "Contact PDS",
       href: ""
+    },
+    {
+      id: "accessibility",
+      label: "Accessibility",
+      href: "https://www.nasa.gov/accessibility/"
     },
   ];
 
