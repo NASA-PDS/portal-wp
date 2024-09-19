@@ -66,9 +66,10 @@ resource "aws_s3_bucket" "vite_app_bucket" {
 resource "aws_s3_object" "vite_app_files" {
   for_each = fileset("../apps/frontend/dist", "**")
 
-  bucket = aws_s3_bucket.vite_app_bucket.id
-  key    = each.value
-  source = "${path.module}/../apps/frontend/dist/${each.value}"
+  bucket      = aws_s3_bucket.vite_app_bucket.id
+  key         = each.value
+  source      = "${path.module}/../apps/frontend/dist/${each.value}"
+  source_hash = filesha256("${path.module}/../apps/frontend/dist/${each.value}")
 }
 
 
