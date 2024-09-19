@@ -1,9 +1,14 @@
-function Footer() {
-   return (
-      <footer style={{backgroundColor: "#000000", padding: '40px 40px', }}>
-        FOOTER
-      </footer>
-   )
+import { FooterProps, Footer } from "@nasapds/wds-react";
+
+function PortalFooter({
+  pageLastUpdated,
+  primaryLinks,
+  secondaryLinks
+}:FooterProps) {
+
+  return (
+    <Footer primaryLinks={primaryLinks} secondaryLinks={secondaryLinks} pageLastUpdated={pageLastUpdated}/>
+  )
 }
 
-export default Footer;
+export default PortalFooter;

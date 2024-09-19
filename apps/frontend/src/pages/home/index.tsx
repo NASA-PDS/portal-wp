@@ -231,6 +231,7 @@ const HomePage = () => {
                     width={204}
                     style={{scrollSnapAlign: "start"}}
                   />
+
                 </>
               })
             }
