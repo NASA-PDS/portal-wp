@@ -1,9 +1,16 @@
 import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
-import { Box, InputAdornment, ListSubheader } from "@mui/material";
+import {
+  Box,
+  Container,
+  Grid,
+  InputAdornment,
+  ListSubheader,
+} from "@mui/material";
 import {
   Button,
   Chip,
   IconSearch,
+  IconChevronDown,
   TextField,
   Typography,
 } from "@nasapds/wds-react";
@@ -30,8 +37,16 @@ const MenuProps = {
   autoFocus: false,
   PaperProps: {
     style: {
+      paddingTop: 0,
       maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
       width: 250,
+    },
+  },
+  sx: {
+    "& .MuiMenu-paper": {
+      "& .MuiList-root": {
+        paddingTop: 0,
+      },
     },
   },
 };
@@ -596,239 +611,304 @@ export const HomeSearch = () => {
   }, []);
 
   return (
-    <>
-      <Box className="pds-home-search-container">
-        <Typography variant="h3" weight="bold">
-          Search The Planetary Data System
-        </Typography>
+    <Container
+      className="pds-home-search-container"
+      maxWidth={false}
+      disableGutters
+    >
+      <Container
+        className="pds-home-search-container-inner"
+        maxWidth={"xl"}
+        sx={{
+          paddingY: "24px",
+        }}
+      >
+        <Grid
+          container
+          spacing={4}
+          direction="row"
+          columns={{ xs: 4, sm: 8, md: 12, lg: 12 }}
+        >
+          <Grid item xs={0} sm={0} md={0} lg={2}></Grid>
+          <Grid item xs={12} sm={12} md={12} lg={8}>
+            <Typography
+              className="pds-home-page-search-title"
+              variant="h3"
+              weight="bold"
+            >
+              Search The Planetary Data System
+            </Typography>
 
-        <Box className="searchBarContainer">
-          <TextField
-            variant="search"
-            className="pds-home-page-search-bar"
-            placeholder="Search PDS"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <IconSearch />
-                </InputAdornment>
-              ),
-            }}
-            onChange={handleSearchInputValueChange}
-            onKeyDown={handleKeyDown}
-            inputRef={searchInputRef}
-            defaultValue=""
-          />
-          <Button
-            variant={"cta"}
-            className="pds-search-searchButton"
-            onClick={handleSearchClick}
-          >
-            Search
-          </Button>
-        </Box>
-
-        <Box>
-          {selectedFilters.map((filter) =>
-            filter.value !== "all" ? (
-              <Chip
-                sx={{ backgroundColor: "white" }}
-                key={filter.value}
-                label={getFilterName(filter.value, filter.parentFilterName)}
-                onDelete={() =>
-                  handleFilterChipDelete(filter.value, filter.parentFilterName)
-                }
+            <Box className="pds-home-search-search-bar-container">
+              <TextField
+                variant="search"
+                className="pds-home-page-search-bar"
+                placeholder="Search the PDS archives"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <IconSearch />
+                    </InputAdornment>
+                  ),
+                }}
+                onChange={handleSearchInputValueChange}
+                onKeyDown={handleKeyDown}
+                inputRef={searchInputRef}
+                defaultValue=""
               />
-            ) : (
-              <></>
-            )
-          )}
-        </Box>
-
-        <Box className="pds-home-page-filters-container">
-          <Box className="pds-home-page-filter-container">
-            <Typography variant="h6" weight="semibold">
-              Planetary Bodies & Systems
-            </Typography>
-
-            <FormControl sx={{ m: 1, width: 300, backgroundColor: "#FFFFFF" }}>
-              <Select
-                name="targets"
-                multiple
-                value={selectedTargetFilters}
-                onChange={handleTargetFilterChange}
-                renderValue={(selected) =>
-                  selected.includes("all")
-                    ? "All"
-                    : selected.length + " Selected"
-                }
-                MenuProps={MenuProps}
-                displayEmpty
-                inputProps={{ "aria-label": "Without label" }}
+              <Button
+                variant={"cta"}
+                className="pds-search-searchButton"
+                onClick={handleSearchClick}
               >
-                <ListSubheader>
-                  <TextField
-                    className="pds-home-page-filter-textfield"
-                    autoFocus
-                    placeholder="Type to search..."
-                    fullWidth
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <IconSearch />
-                        </InputAdornment>
-                      ),
-                    }}
-                    onChange={onTargetSubFilterChange}
-                    onKeyDown={(e) => {
-                      if (e.key !== "Escape") {
-                        e.stopPropagation();
-                      }
-                    }}
-                    value={targetSubFilter}
-                    variant="standard"
+                Search
+              </Button>
+            </Box>
+
+            <Box>
+              {selectedFilters.map((filter) =>
+                filter.value !== "all" ? (
+                  <Chip
+                    sx={{ backgroundColor: "white" }}
+                    key={filter.value}
+                    label={getFilterName(filter.value, filter.parentFilterName)}
+                    onDelete={() =>
+                      handleFilterChipDelete(
+                        filter.value,
+                        filter.parentFilterName
+                      )
+                    }
                   />
-                </ListSubheader>
+                ) : (
+                  <></>
+                )
+              )}
+            </Box>
+          </Grid>
+          <Grid item xs={0} sm={0} md={0} lg={2}></Grid>
+        </Grid>
 
-                {targetFilters.map((filter) => (
-                  <MenuItem key={filter.value} value={filter.value}>
-                    <Checkbox
-                      checked={selectedTargetFilters.includes(filter.value)}
-                      disabled={
-                        filter.value === "all" &&
-                        selectedTargetFilters.includes(filter.value)
-                      }
+        <Grid
+          container
+          spacing={4}
+          direction="row"
+          columns={{ xs: 4, sm: 8, md: 12, lg: 12 }}
+        >
+          <Grid
+            item
+            xs={0}
+            sm={0}
+            md={0}
+            lg={2}
+            sx={{
+              display: { xs: "none", lg: "block" },
+            }}
+          ></Grid>
+          <Grid item xs={4} sm={4} md={4} lg={2}>
+            <Box className="pds-home-page-filter-container">
+              <Typography variant="h6" weight="semibold">
+                Planetary Bodies & Systems
+              </Typography>
+
+              <FormControl className="pds-home-page-search-form-control">
+                <Select
+                  className="pds-home-page-select"
+                  name="targets"
+                  multiple
+                  value={selectedTargetFilters}
+                  onChange={handleTargetFilterChange}
+                  renderValue={(selected) =>
+                    selected.includes("all")
+                      ? "All"
+                      : selected.length + " Selected"
+                  }
+                  MenuProps={MenuProps}
+                  displayEmpty
+                  inputProps={{ "aria-label": "Without label" }}
+                  IconComponent={IconChevronDown}
+                >
+                  <ListSubheader className="pds-home-page-filter-container">
+                    <TextField
+                      className="pds-home-page-filter-textfield"
+                      autoFocus
+                      placeholder="Type to search..."
+                      fullWidth
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <IconSearch />
+                          </InputAdornment>
+                        ),
+                      }}
+                      onChange={onTargetSubFilterChange}
+                      onKeyDown={(e) => {
+                        if (e.key !== "Escape") {
+                          e.stopPropagation();
+                        }
+                      }}
+                      value={targetSubFilter}
+                      variant="standard"
                     />
-                    <ListItemText primary={filter.name} />
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
+                  </ListSubheader>
 
-          <Box className="pds-home-page-filter-container">
-            <Typography variant="h6" weight="semibold">
-              Investigations
-            </Typography>
+                  {targetFilters.map((filter) => (
+                    <MenuItem key={filter.value} value={filter.value}>
+                      <Checkbox
+                        checked={selectedTargetFilters.includes(filter.value)}
+                        disabled={
+                          filter.value === "all" &&
+                          selectedTargetFilters.includes(filter.value)
+                        }
+                      />
+                      <ListItemText primary={filter.name} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+          </Grid>
+          <Grid item xs={4} sm={4} md={4} lg={2}>
+            <Box className="pds-home-page-filter-container">
+              <Typography variant="h6" weight="semibold">
+                Investigations
+              </Typography>
 
-            <FormControl sx={{ m: 1, width: 300, backgroundColor: "#FFFFFF" }}>
-              <Select
-                name="investigations"
-                multiple
-                value={selectedInvestigationFilters}
-                onChange={handleInvestigationFilterChange}
-                renderValue={(selected) =>
-                  selected.includes("all")
-                    ? "All"
-                    : selected.length + " Selected"
-                }
-                MenuProps={MenuProps}
-                displayEmpty
-                inputProps={{ "aria-label": "Without label" }}
-              >
-                <ListSubheader>
-                  <TextField
-                    className="pds-home-page-filter-textfield"
-                    autoFocus
-                    placeholder="Type to search..."
-                    fullWidth
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <IconSearch />
-                        </InputAdornment>
-                      ),
-                    }}
-                    onChange={onInvestigationSubFilterChange}
-                    onKeyDown={(e) => {
-                      if (e.key !== "Escape") {
-                        e.stopPropagation();
-                      }
-                    }}
-                    value={investigationSubFilter}
-                    variant="standard"
-                  />
-                </ListSubheader>
-
-                {investigationFilters.map((filter) => (
-                  <MenuItem key={filter.value} value={filter.value}>
-                    <Checkbox
-                      checked={selectedInvestigationFilters.includes(
-                        filter.value
-                      )}
-                      disabled={
-                        filter.value === "all" &&
-                        selectedInvestigationFilters.includes(filter.value)
-                      }
+              <FormControl className="pds-home-page-search-form-control">
+                <Select
+                  className="pds-home-page-select"
+                  name="investigations"
+                  multiple
+                  value={selectedInvestigationFilters}
+                  onChange={handleInvestigationFilterChange}
+                  renderValue={(selected) =>
+                    selected.includes("all")
+                      ? "All"
+                      : selected.length + " Selected"
+                  }
+                  MenuProps={MenuProps}
+                  displayEmpty
+                  inputProps={{ "aria-label": "Without label" }}
+                  IconComponent={IconChevronDown}
+                >
+                  <ListSubheader className="pds-home-page-filter-container">
+                    <TextField
+                      className="pds-home-page-filter-textfield"
+                      autoFocus
+                      placeholder="Type to search..."
+                      fullWidth
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <IconSearch />
+                          </InputAdornment>
+                        ),
+                      }}
+                      onChange={onInvestigationSubFilterChange}
+                      onKeyDown={(e) => {
+                        if (e.key !== "Escape") {
+                          e.stopPropagation();
+                        }
+                      }}
+                      value={investigationSubFilter}
+                      variant="standard"
                     />
-                    <ListItemText primary={filter.name} />
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
+                  </ListSubheader>
 
-          <Box className="pds-home-page-filter-container">
-            <Typography variant="h6" weight="semibold">
-              Instruments
-            </Typography>
+                  {investigationFilters.map((filter) => (
+                    <MenuItem key={filter.value} value={filter.value}>
+                      <Checkbox
+                        checked={selectedInvestigationFilters.includes(
+                          filter.value
+                        )}
+                        disabled={
+                          filter.value === "all" &&
+                          selectedInvestigationFilters.includes(filter.value)
+                        }
+                      />
+                      <ListItemText primary={filter.name} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+          </Grid>
+          <Grid item xs={4} sm={4} md={4} lg={2}>
+            <Box className="pds-home-page-filter-container">
+              <Typography variant="h6" weight="semibold">
+                Instruments
+              </Typography>
 
-            <FormControl sx={{ m: 1, width: 300, backgroundColor: "#FFFFFF" }}>
-              <Select
-                name="instruments"
-                multiple
-                value={selectedInstrumentFilters}
-                onChange={handleInstrumentFilterChange}
-                renderValue={(selected) =>
-                  selected.includes("all")
-                    ? "All"
-                    : selected.length + " Selected"
-                }
-                MenuProps={MenuProps}
-                displayEmpty
-                inputProps={{ "aria-label": "Without label" }}
-              >
-                <ListSubheader>
-                  <TextField
-                    className="pds-home-page-filter-textfield"
-                    autoFocus
-                    placeholder="Type to search..."
-                    fullWidth
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <IconSearch />
-                        </InputAdornment>
-                      ),
-                    }}
-                    onChange={onInstrumentSubFilterChange}
-                    onKeyDown={(e) => {
-                      if (e.key !== "Escape") {
-                        e.stopPropagation();
-                      }
-                    }}
-                    value={instrumentSubFilter}
-                    variant="standard"
-                  />
-                </ListSubheader>
-
-                {instrumentFilters.map((filter) => (
-                  <MenuItem key={filter.value} value={filter.value}>
-                    <Checkbox
-                      checked={selectedInstrumentFilters.includes(filter.value)}
-                      disabled={
-                        filter.value === "all" &&
-                        selectedInstrumentFilters.includes(filter.value)
-                      }
+              <FormControl className="pds-home-page-search-form-control">
+                <Select
+                  className="pds-home-page-select"
+                  name="instruments"
+                  multiple
+                  value={selectedInstrumentFilters}
+                  onChange={handleInstrumentFilterChange}
+                  renderValue={(selected) =>
+                    selected.includes("all")
+                      ? "All"
+                      : selected.length + " Selected"
+                  }
+                  MenuProps={MenuProps}
+                  displayEmpty
+                  inputProps={{ "aria-label": "Without label" }}
+                  IconComponent={IconChevronDown}
+                >
+                  <ListSubheader className="pds-home-page-filter-container">
+                    <TextField
+                      className="pds-home-page-filter-textfield"
+                      autoFocus
+                      placeholder="Type to search..."
+                      fullWidth
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <IconSearch />
+                          </InputAdornment>
+                        ),
+                      }}
+                      onChange={onInstrumentSubFilterChange}
+                      onKeyDown={(e) => {
+                        if (e.key !== "Escape") {
+                          e.stopPropagation();
+                        }
+                      }}
+                      value={instrumentSubFilter}
+                      variant="standard"
                     />
-                    <ListItemText primary={filter.name} />
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
-        </Box>
-      </Box>
-    </>
+                  </ListSubheader>
+
+                  {instrumentFilters.map((filter) => (
+                    <MenuItem key={filter.value} value={filter.value}>
+                      <Checkbox
+                        checked={selectedInstrumentFilters.includes(
+                          filter.value
+                        )}
+                        disabled={
+                          filter.value === "all" &&
+                          selectedInstrumentFilters.includes(filter.value)
+                        }
+                      />
+                      <ListItemText primary={filter.name} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+          </Grid>
+          <Grid
+            item
+            xs={0}
+            sm={0}
+            md={0}
+            lg={2}
+            sx={{
+              display: { xs: "none", lg: "block" },
+            }}
+          ></Grid>
+        </Grid>
+      </Container>
+    </Container>
   );
 };
