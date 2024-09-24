@@ -1,12 +1,8 @@
-import { Grid, Stack } from "@mui/material";
-import { Card, MediaCard } from "@nasapds/wds-react";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
 import { ExploreTopicsSixUp, ExploreTopicsSixUpProps } from "src/components/ExploreTopicsSixUp";
 import { SubmitDataQuickLinks } from "src/components/SubmitDataQuickLinks";
-import { ExploreTopicsFourUp } from "src/components/ExploreTopicsFourUp";
-import { Link } from "react-router-dom";
+import { ExploreTopicsFourUp, ExploreTopicsFourUpProps } from "src/components/ExploreTopicsFourUp";
 import { HomeSearch } from "src/components/HomeSearch/HomeSearch";
-
 
 const HomePage = () => {
 
@@ -105,36 +101,42 @@ const HomePage = () => {
     ]
   };
 
-  const toolsAndServices = [
-    {
-      description: "Purus tellus lorem urna faucibus lectus viverra egestas. Pulvinar fermentum sed bibendum sed dui.",
-      image: "/assets/images/cards/tools/search-tools.jpg",
-      imageDescription: "",
-      title: "Search Tools",
-      url: "/search/service_category:Search?rows=20&sort=relevance&page=1",
-    },
-    {
-      description: "Turpis ipsum ac feugiat dictum nunc nisl, vestibulum. Euismod aliquet elementum volutpat ullamcorper facilisi.",
-      image: "/assets/images/cards/tools/analysis-tools.jpg",
-      imageDescription: "",
-      title: "Analysis Tools",
-      url: "/search/service_category:Analysis?rows=20&sort=relevance&page=1",
-    },
-    {
-      description: "Ultrices mi diam fames at feugiat. Sociis nec morbi in amet, eu semper eros odio.",
-      image: "/assets/images/cards/tools/visualization-tools.jpg",
-      imageDescription: "",
-      title: "Visualization Tools",
-      url: "/search/service_category:Visualization?rows=20&sort=relevance&page=1",
-    },
-    {
-      description: "Lacus non vitae scelerisque at tristique aliquet. At hac tortor gravida ipsum ullamcorper turpis ac, sit sed.",
-      image: "/assets/images/cards/tools/api-services.jpg",
-      imageDescription: "",
-      title: "API Services",
-      url: "/search/service_interface_type:API?rows=20&sort=relevance&page=1",
-    },
-  ];
+  const exploreTopicsFourUpProps:ExploreTopicsFourUpProps = {
+    title: "Explore Tools and Services",
+    jumpLinkLabel: "More About Tools & Services",
+    jumpLinkUrl: "https://pds.nasa.gov/tools/about/",
+    jumpLinkType: "external",
+    cards: [
+      {
+        description: "Purus tellus lorem urna faucibus lectus viverra egestas. Pulvinar fermentum sed bibendum sed dui.",
+        image: "/assets/images/cards/tools/search-tools.jpg",
+        imageDescription: "",
+        title: "Search Tools",
+        url: "/search/service_category:Search?rows=20&sort=relevance&page=1",
+      },
+      {
+        description: "Turpis ipsum ac feugiat dictum nunc nisl, vestibulum. Euismod aliquet elementum volutpat ullamcorper facilisi.",
+        image: "/assets/images/cards/tools/analysis-tools.jpg",
+        imageDescription: "",
+        title: "Analysis Tools",
+        url: "/search/service_category:Analysis?rows=20&sort=relevance&page=1",
+      },
+      {
+        description: "Ultrices mi diam fames at feugiat. Sociis nec morbi in amet, eu semper eros odio.",
+        image: "/assets/images/cards/tools/visualization-tools.jpg",
+        imageDescription: "",
+        title: "Visualization Tools",
+        url: "/search/service_category:Visualization?rows=20&sort=relevance&page=1",
+      },
+      {
+        description: "Lacus non vitae scelerisque at tristique aliquet. At hac tortor gravida ipsum ullamcorper turpis ac, sit sed.",
+        image: "/assets/images/cards/tools/api-services.jpg",
+        imageDescription: "",
+        title: "API Services",
+        url: "/search/service_interface_type:API?rows=20&sort=relevance&page=1",
+      },
+    ]
+  };
 
   return <>
     <DocumentMeta
@@ -144,52 +146,7 @@ const HomePage = () => {
     <HomeSearch />
     <ExploreTopicsSixUp {...exploreTopicsSixUpPropx} />
     <SubmitDataQuickLinks />
-    <ExploreTopicsFourUp
-      title="Explore Tools and Services"
-      jumpLinkLabel="More About Tools & Services"
-      jumpLinkUrl="https://pds.nasa.gov/tools/about/"
-      jumpLinkType={"external"}
-      content={ <>
-          <Stack direction={"row"} spacing={"12px"} style={{overflowX: "scroll", scrollSnapType: "x mandatory"}} display={{md: "none"}}>
-            {
-              toolsAndServices.map( (tool) => {
-                return <>
-                  <Card 
-                    height={250}
-                    image={tool.image}
-                    imageDescription={tool.imageDescription}
-                    maxWidth={204} 
-                    title={tool.title}
-                    url={tool.url} 
-                    width={204}
-                    style={{scrollSnapAlign: "start"}}
-                  />
-
-                </>
-              })
-            }
-            </Stack>
-          <Grid container spacing={"12px"} display={{xs: "none", md: "flex"}}>
-            {
-              toolsAndServices.map( (tool) => {
-                return <>
-                  <Grid item xs={12} sm={6} md={4} lg={3}>
-                    <Link to={tool.url}>
-                      <MediaCard 
-                        description={tool.description}
-                        image={tool.image}
-                        imageDescription={tool.imageDescription}
-                        title={tool.title}
-                      />
-                    </Link>
-                  </Grid>
-                </>
-              })
-            }
-          </Grid>
-        </>
-      }
-    />
+    <ExploreTopicsFourUp {...exploreTopicsFourUpProps} />
   </>;
 };
 
