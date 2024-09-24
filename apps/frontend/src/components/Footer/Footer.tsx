@@ -1,4 +1,4 @@
-import { FooterLink, FooterProps, Footer } from "@nasapds/wds-react";
+import { FooterLink, Footer } from "@nasapds/wds-react";
 
 function PortalFooter() {
 
