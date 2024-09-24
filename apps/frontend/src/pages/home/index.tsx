@@ -10,7 +10,7 @@ import { HomeSearch } from "src/components/HomeSearch/HomeSearch";
 
 const HomePage = () => {
 
-  const exploreSixUpTabs:ExploreTopicsSixUpProps = {
+  const exploreTopicsSixUpPropx:ExploreTopicsSixUpProps = {
     tabsDescription: "Explore the PDS Data Archive by browsing data by the categories they are orgnized within.",
     title: "Explore our Data Archive",
     tabs: [
@@ -142,7 +142,7 @@ const HomePage = () => {
       description={ "The Planetary Data Systems Homepage" }
     />
     <HomeSearch />
-    <ExploreTopicsSixUp {...exploreSixUpTabs} />
+    <ExploreTopicsSixUp {...exploreTopicsSixUpPropx} />
     <SubmitDataQuickLinks />
     <ExploreTopicsFourUp
       title="Explore Tools and Services"
