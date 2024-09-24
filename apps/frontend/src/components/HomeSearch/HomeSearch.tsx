@@ -17,7 +17,7 @@ import {
 import {
   IdentifierNameDoc,
   SolrIdentifierNameResponse,
-} from "../../types/solarSearchResponse";
+} from "../../types/solrSearchResponse";
 import {
   createSearchParams,
   generatePath,
@@ -425,54 +425,8 @@ export const HomeSearch = () => {
     setSelectedFilters(newSelectedFilters);
   };
 
-  const titleIncludesSubFilter = (
-    titleString: string,
-    subFilterString: string
-  ) => {
-    let isIncluded = false;
-
-    if (
-      titleString.toLowerCase().includes(subFilterString.toLowerCase()) ||
-      titleString.toLowerCase() === "All"
-    ) {
-      isIncluded = true;
-    }
-
-    return isIncluded;
-  };
-
   const formatFilterDataResults = (data: SolrIdentifierNameResponse) => {
     return data;
-  };
-
-  const formatIdentifierNameResults = (data: SolrIdentifierNameResponse) => {
-    const docs = data.response.docs;
-    const filters: Filter[] = [];
-
-    docs.forEach((doc) => {
-      let name = "";
-      let value = "";
-      if (doc.instrument_name) {
-        name = doc.instrument_name[0];
-      }
-      if (doc.investigation_name) {
-        name = doc.investigation_name[0];
-      }
-      if (doc.target_name) {
-        name = doc.target_name[0];
-      }
-
-      if (doc.identifier) {
-        value = doc.identifier;
-      }
-
-      filters.push({
-        name,
-        value,
-      });
-    });
-
-    return filters;
   };
 
   useEffect(() => {
@@ -486,17 +440,14 @@ export const HomeSearch = () => {
     fetch(investigationsUrl)
       .then((investigationsResponse) => investigationsResponse.json())
       .then((investigationsData) => {
-        //const formattedInvestigationsData = formatIdentifierNameResults(investigationsData);
 
         fetch(instrumentsUrl)
           .then((instrumentsResponse) => instrumentsResponse.json())
           .then((instrumentsData) => {
-            //const formattedInstrumentsData = formatIdentifierNameResults(instrumentsData);
 
             fetch(targetsUrl)
               .then((targetsResponse) => targetsResponse.json())
               .then((targetsData) => {
-                //const formattedTargetsData = formatIdentifierNameResults(targetsData);
 
                 fetch(filtersUrl)
                   .then((filterResponse) => filterResponse.json())
@@ -714,6 +665,7 @@ export const HomeSearch = () => {
                 <Select
                   className="pds-home-page-select"
                   name="targets"
+                  size="small"
                   multiple
                   value={selectedTargetFilters}
                   onChange={handleTargetFilterChange}
@@ -777,6 +729,7 @@ export const HomeSearch = () => {
                 <Select
                   className="pds-home-page-select"
                   name="investigations"
+                  size="small"
                   multiple
                   value={selectedInvestigationFilters}
                   onChange={handleInvestigationFilterChange}
@@ -842,6 +795,7 @@ export const HomeSearch = () => {
                 <Select
                   className="pds-home-page-select"
                   name="instruments"
+                  size="small"
                   multiple
                   value={selectedInstrumentFilters}
                   onChange={handleInstrumentFilterChange}
