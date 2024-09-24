@@ -59,6 +59,7 @@ import "./search.css";
 
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
+import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
 
 const feedbackEmail = "mailto:example@example.com";
 const solrEndpoint = "https://pds.nasa.gov/services/search/search";
@@ -628,6 +629,10 @@ const SearchPage = () => {
 
   return (
     <>
+      <DocumentMeta
+        title={ "Search" }
+        description={ "Planetary Data System Search Page" }
+      />
       <StyledEngineProvider injectFirst>
         <Container maxWidth={false} disableGutters sx={{ textAlign: "left" }}>
           {/* Result Counter & Search Bar*/}
