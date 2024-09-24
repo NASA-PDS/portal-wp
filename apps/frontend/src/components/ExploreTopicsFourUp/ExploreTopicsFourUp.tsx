@@ -34,8 +34,8 @@ export const ExploreTopicsFourUp = ({
           </MuiStack>
           <Stack direction={"row"} spacing={"12px"} style={{overflowX: "scroll", scrollSnapType: "x mandatory"}} display={{md: "none"}}>
             {
-              cards.map( (card) => {
-                return <>
+              cards.map( (card, cardIndex) => {
+                return (
                   <Card 
                     height={250}
                     image={card.image}
@@ -45,17 +45,17 @@ export const ExploreTopicsFourUp = ({
                     url={card.url} 
                     width={204}
                     style={{scrollSnapAlign: "start"}}
+                    key={cardIndex}
                   />
-
-                </>
+                )
               })
             }
-            </Stack>
+          </Stack>
           <Grid container spacing={"12px"} display={{xs: "none", md: "flex"}}>
             {
-              cards.map( (card) => {
-                return <>
-                  <Grid item xs={12} sm={6} md={4} lg={3}>
+              cards.map( (card, cardIndex) => {
+                return (
+                  <Grid item xs={12} sm={6} md={4} lg={3} key={cardIndex}>
                     <Link to={card.url}>
                       <MediaCard 
                         description={card.description}
@@ -65,7 +65,7 @@ export const ExploreTopicsFourUp = ({
                       />
                     </Link>
                   </Grid>
-                </>
+                )
               })
             }
           </Grid>

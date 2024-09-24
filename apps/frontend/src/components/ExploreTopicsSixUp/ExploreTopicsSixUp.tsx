@@ -33,7 +33,7 @@ export const ExploreTopicsSixUp = ({
                   <Stack direction={"row"} spacing={"12px"} style={{overflowX: "scroll", scrollSnapType: "x mandatory"}} display={{md: "none"}}>
                     {
                       tab.content.cards.map( (card, cardIndex) => {
-                        return <>
+                        return (
                           <Card 
                             height={250}
                             image={card.image}
@@ -45,7 +45,7 @@ export const ExploreTopicsSixUp = ({
                             style={{scrollSnapAlign: "start"}}
                             key={cardIndex}
                           />
-                        </>
+                        )
                       })
                     }
                     <Link to={tab.content.jumpLinkUrl}><ButtonCard title={tab.content.jumpLinkLabel} width={"204px"}/></Link>
@@ -53,7 +53,7 @@ export const ExploreTopicsSixUp = ({
                   <Grid container spacing={"12px"} display={{xs: "none", md: "flex"}}>
                     {
                       tab.content.cards.map( (card, cardIndex) => {
-                        return <>
+                        return (
                           <Grid item xs={12} sm={6} md={4} lg={2} key={cardIndex}>
                             <Link to={card.url}>
                               <MediaCard 
@@ -63,7 +63,7 @@ export const ExploreTopicsSixUp = ({
                               />
                             </Link>
                           </Grid>
-                        </>
+                        )
                       })
                     }
                     <Grid item md={4} lg={2}><Link to={tab.content.jumpLinkUrl}><ButtonCard title={tab.content.jumpLinkLabel} /></Link></Grid>
