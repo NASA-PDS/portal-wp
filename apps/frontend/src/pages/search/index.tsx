@@ -50,8 +50,10 @@ import {
   formatIdentifierNameResults,
   formatSearchResults,
   getDocType,
+  getUnmatchedFilters,
   isAllOptionsChecked,
   isOptionChecked,
+  mapFilterIdsToName,
 } from "./searchUtils";
 import "./search.css";
 
@@ -102,38 +104,10 @@ const SearchPage = () => {
   const [resultFilters, setResultFilters] = useState("");
   const [parsedFilters, setParsedFilters] = useState<FilterProps[]>([]);
   const [areResultsExpanded, setAreResultsExpanded] = useState(false);
-
-  const mapFilterIdsToName = (ids: string[], names: IdentifierNameDoc[]) => {
-    const filtersMap: { name: string; identifier: string }[] = [];
-
-    ids.forEach((id, index) => {
-      if (index % 2 == 0) {
-        const urnSplit = id.split("::")[0];
-        const nameDoc = names.find((name) => name.identifier === urnSplit);
-
-        if (nameDoc) {
-          let name: string = "";
-
-          if (nameDoc.investigation_name) {
-            name = nameDoc.investigation_name[0];
-          }
-          if (nameDoc.instrument_name) {
-            name = nameDoc.instrument_name[0];
-          }
-          if (nameDoc.target_name) {
-            name = nameDoc.target_name[0];
-          }
-
-          filtersMap.push({
-            name,
-            identifier: id,
-          });
-        }
-      }
-    });
-
-    return filtersMap;
-  };
+  const [isEmptyState, setIsEmptyState] = useState(true);
+  const [unmatchedFilters, setUnmatchedFilters] = useState<
+    { name: string; identifier: string; parentName: string }[] | null
+  >(null);
 
   const doFilterMap = (
     filterIdsData: SolrIdentifierNameResponse,
@@ -184,6 +158,19 @@ const SearchPage = () => {
       targetFilterIds,
       targetNames
     );
+
+    if (originalFilters.length > 0) {
+      const unmatchedFilters = getUnmatchedFilters(
+        originalFilters,
+        investigationFilterOptions,
+        instrumentFilterOptions,
+        targetFilterOptions,
+        investigationNames,
+        instrumentNames,
+        targetNames
+      );
+      setUnmatchedFilters(unmatchedFilters);
+    }
 
     setPropsForFilter(
       investigationFilterOptions,
@@ -278,36 +265,44 @@ const SearchPage = () => {
     sort: string,
     filters: string
   ) => {
-    let url =
-      solrEndpoint +
-      "?wt=json&q=" +
-      searchText +
-      "&rows=" +
-      rows +
-      "&start=" +
-      start +
-      filterDefault;
+    if (searchText !== "" || filters.length > 0) {
+      setIsEmptyState(false);
 
-    if (sort !== "relevance") {
-      url = url + "&sort=title " + sort;
+      let url =
+        solrEndpoint +
+        "?wt=json&q=" +
+        searchText +
+        "&rows=" +
+        rows +
+        "&start=" +
+        start +
+        filterDefault;
+
+      if (sort !== "relevance") {
+        url = url + "&sort=title " + sort;
+      }
+
+      if (filters.length > 0) {
+        const formattedFilters = formatFilterQueries(filters);
+
+        url = url + formattedFilters;
+      }
+
+      setIsLoading(true);
+
+      const response = await fetch(url);
+      const data = await response.json();
+      const formattedResults = formatSearchResults(data);
+
+      setSearchResults(formattedResults);
+      setPaginationCount(calculatePaginationCount(formattedResults));
+
+      parseFilters(searchText, filters);
+    } else {
+      setIsLoading(true);
+      setIsEmptyState(true);
+      parseFilters(searchText, filters);
     }
-
-    if (filters.length > 0) {
-      const formattedFilters = formatFilterQueries(filters);
-
-      url = url + formattedFilters;
-    }
-
-    setIsLoading(true);
-
-    const response = await fetch(url);
-    const data = await response.json();
-    const formattedResults = formatSearchResults(data);
-
-    setSearchResults(formattedResults);
-    setPaginationCount(calculatePaginationCount(formattedResults));
-
-    parseFilters(searchText, filters);
   };
 
   const handleSearchInputValueChange = (
@@ -405,6 +400,29 @@ const SearchPage = () => {
     setAreResultsExpanded(false);
   };
 
+  const handleRemoveUnmatchedFiltersButtonClick = () => {
+    if (unmatchedFilters && unmatchedFilters.length > 0) {
+      const filtersToRemove: { value: string; name: string }[] = [];
+
+      unmatchedFilters.forEach((filter) => {
+        filtersToRemove.push({
+          value: filter.parentName,
+          name: filter.identifier,
+        });
+      });
+
+      const filters = removeFilters(filtersToRemove, resultFilters);
+
+      doNavigate(
+        searchInputRef.current,
+        resultRows.toString(),
+        resultSort,
+        "1",
+        filters
+      );
+    }
+  };
+
   const removeFilter = (
     value: string,
     name: string,
@@ -484,11 +502,8 @@ const SearchPage = () => {
   const parseFilters = (originalSearchText: string, filters: string) => {
     const filterIdsUrl =
       solrEndpoint + "?q=" + originalSearchText + getFiltersQuery;
-
     const investigationsUrl = investigationNamesEndpoint;
-
     const instrumentsUrl = instrumentNamesEndpoint;
-
     const targetsUrl = targetNamesEndpoint;
 
     fetch(filterIdsUrl) // api for the get request
@@ -562,46 +577,51 @@ const SearchPage = () => {
   };
 
   useEffect(() => {
-    if (params.searchText) {
-      searchInputRef.current = params.searchText;
+    let searchText = params.searchText;
+    if (!searchText) {
+      searchText = "";
+    }
+    searchInputRef.current = searchText;
 
-      let page = 1;
-      let start = 0;
-      let rows = 20;
-      let sort = "relevance";
-      let filters = "";
+    let page = 1;
+    let start = 0;
+    let rows = 20;
+    let sort = "relevance";
+    let filters = "";
 
-      const rowsParam = Number(searchParams.get("rows"));
-      if (rowsParam) {
-        rows = rowsParam;
-        setResultRows(rows);
-      }
+    const rowsParam = Number(searchParams.get("rows"));
+    if (rowsParam) {
+      rows = rowsParam;
+      setResultRows(rows);
+    }
 
-      const paginationPageParam = Number(searchParams.get("page"));
-      if (paginationPageParam) {
-        setPaginationPage(paginationPageParam);
-        page = paginationPageParam;
-        start = calculateStartValue(page, rows);
-      } else {
-        setPaginationPage(1);
-      }
-
-      const sortParam = searchParams.get("sort");
-      if (sortParam) {
-        sort = sortParam;
-        setResultSort(sort);
-      }
-
-      const filtersParam = searchParams.get("filters");
-      if (filtersParam) {
-        filters = filtersParam;
-        setResultFilters(filters);
-      } else {
-        setResultFilters(filters);
-      }
-
-      doSearch(params.searchText, start, rows, sort, filters);
+    const paginationPageParam = Number(searchParams.get("page"));
+    if (paginationPageParam) {
+      setPaginationPage(paginationPageParam);
+      page = paginationPageParam;
+      start = calculateStartValue(page, rows);
     } else {
+      setPaginationPage(1);
+    }
+
+    const sortParam = searchParams.get("sort");
+    if (sortParam) {
+      sort = sortParam;
+      setResultSort(sort);
+    }
+
+    const filtersParam = searchParams.get("filters");
+    if (filtersParam) {
+      filters = filtersParam;
+      setResultFilters(filters);
+    } else {
+      setResultFilters(filters);
+    }
+
+    console.log("do search");
+    doSearch(searchText, start, rows, sort, filters);
+
+    if (!params.searchText) {
       setSearchResults(null);
     }
   }, [params.searchText, searchParams]);
@@ -807,8 +827,9 @@ const SearchPage = () => {
               ) : (
                 <></>
               )}
+
               {/* Search Results Content */}
-              {searchResults ? (
+              {searchResults || isEmptyState ? (
                 <Container
                   maxWidth={"xl"}
                   sx={{
@@ -816,8 +837,8 @@ const SearchPage = () => {
                   }}
                 >
                   {/*Results Label */}
-                  {searchResults.response.numFound > 0 ||
-                  resultFilters.length > 0 ? (
+                  {(searchResults && searchResults.response.numFound > 0) ||
+                  (searchResults && resultFilters.length > 0) ? (
                     <Box
                       sx={{
                         display: { xs: "none", md: "block" },
@@ -866,8 +887,9 @@ const SearchPage = () => {
                     <></>
                   )}
 
-                  {searchResults.response.numFound > 0 ||
-                  resultFilters.length > 0 ? (
+                  {(searchResults && searchResults.response.numFound > 0) ||
+                  (searchResults && resultFilters.length > 0) ||
+                  isEmptyState ? (
                     <Grid
                       container
                       spacing={4}
@@ -885,7 +907,8 @@ const SearchPage = () => {
                         </Typography>
                       </Grid>
                       <Grid item xs={12} sm={12} md={9}>
-                        {searchResults.response.docs.length > 0 ? (
+                        {searchResults &&
+                        searchResults.response.docs.length > 0 ? (
                           searchResults.response.docs.map((doc) => (
                             <Box>
                               {getDocType(doc) === "investigation" ? (
@@ -1282,19 +1305,70 @@ const SearchPage = () => {
                               )}
                             </Box>
                           ))
-                        ) : (
+                        ) : searchResults ? (
                           <Box className="pds-search-empty-container">
                             <br />
-                            <Typography variant="h3" weight="bold">
-                              No Results Found
+                            <Typography
+                              variant="h3"
+                              weight="bold"
+                              className="pds-search-empty-icon-div"
+                            >
+                              <IconSearch />
+                              &nbsp;No Results Found.
                             </Typography>
+                            <br />
+
                             <Typography variant="h4" weight="regular">
                               You may want to try using different keywords,
-                              checking for typos, or adjusting your filters
+                              checking for typos, or adjusting your filters.
                             </Typography>
+
+                            {unmatchedFilters && unmatchedFilters.length > 0 ? (
+                              <Typography variant="h4" weight="regular">
+                                Filters{" "}
+                                {unmatchedFilters.map(
+                                  (filter) => filter.name + ", "
+                                )}{" "}
+                                are not related to your query.{" "}
+                                <MuiButton
+                                  onClick={
+                                    handleRemoveUnmatchedFiltersButtonClick
+                                  }
+                                >
+                                  Click here
+                                </MuiButton>{" "}
+                                to remove them.
+                              </Typography>
+                            ) : (
+                              <></>
+                            )}
+
                             <br />
                             <Typography variant="h4" weight="regular">
                               Not the results you expected?{" "}
+                              <a href={feedbackEmail} target="_top">
+                                Give feedback
+                              </a>
+                            </Typography>
+                          </Box>
+                        ) : (
+                          <Box className="pds-search-empty-container">
+                            <br />
+                            <Typography
+                              variant="h3"
+                              weight="bold"
+                              className="pds-search-empty-icon-div"
+                            >
+                              <IconSearch />
+                              &nbsp;Start a search
+                            </Typography>
+                            <Typography variant="h4" weight="regular">
+                              Start by using the search box or by selecting
+                              filters to see relevant results.
+                            </Typography>
+                            <br />
+                            <Typography variant="h4" weight="regular">
+                              How can we improve your search experience?{" "}
                               <a href={feedbackEmail} target="_top">
                                 Give feedback
                               </a>
@@ -1308,6 +1382,11 @@ const SearchPage = () => {
                   )}
                 </Container>
               ) : (
+                <></>
+              )}
+              {searchResults &&
+              searchResults.response.numFound === 0 &&
+              resultFilters.length === 0 ? (
                 <Container
                   maxWidth={"xl"}
                   sx={{
@@ -1322,39 +1401,11 @@ const SearchPage = () => {
                       className="pds-search-empty-icon-div"
                     >
                       <IconSearch />
-                      &nbsp;Enter a search query to show results
+                      &nbsp;No matching results found
                     </Typography>
                     <Typography variant="h4" weight="regular">
                       You may want to try using different keywords, checking for
-                      typos, or adjusting your filters
-                    </Typography>
-                    <br />
-                    <Typography variant="h4" weight="regular">
-                      Not the results you expected?{" "}
-                      <a href={feedbackEmail} target="_top">
-                        Give feedback
-                      </a>
-                    </Typography>
-                  </Box>
-                </Container>
-              )}
-              {searchResults &&
-              searchResults.response.numFound === 0 &&
-              resultFilters.length === 0 ? (
-                <Container
-                  maxWidth={"xl"}
-                  sx={{
-                    paddingY: "24px",
-                  }}
-                >
-                  <Box className="pds-search-empty-container">
-                    <br />
-                    <Typography variant="h3" weight="bold">
-                      No Results Found
-                    </Typography>
-                    <Typography variant="h4" weight="regular">
-                      You may want to try using different keywords, checking for
-                      typos, or adjusting your filters
+                      typos, or adjusting your filters.
                     </Typography>
                     <br />
                     <Typography variant="h4" weight="regular">

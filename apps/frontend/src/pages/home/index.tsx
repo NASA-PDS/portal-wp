@@ -5,6 +5,8 @@ import { ExploreTopicsSixUp } from "src/components/ExploreTopicsSixUp";
 import { SubmitDataQuickLinks } from "src/components/SubmitDataQuickLinks";
 import { ExploreTopicsFourUp } from "src/components/ExploreTopicsFourUp";
 import { Link } from "react-router-dom";
+import { HomeSearch } from "src/components/HomeSearch/HomeSearch";
+
 
 const HomePage = () => {
 
@@ -120,6 +122,7 @@ const HomePage = () => {
       title={ "Homepage" }
       description={ "The Planetary Data Systems Homepage" }
     />
+    <HomeSearch />
     <ExploreTopicsSixUp
       tabs={[
         {
