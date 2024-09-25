@@ -58,17 +58,36 @@ resource "aws_s3_bucket" "vite_app_bucket" {
   bucket = "pds-portal-demo"
 }
 
+
+
 # S3 Uploading
 # ============
 #
 # After building the project with npm we upload the files from `dist`.
 
+locals {
+  content_type_map = {
+    "css"   = "text/css"
+    "html"  = "text/html"
+    "jpg"   = "image/jpeg"
+    "js"    = "application/javascript"
+    "png"   = "image/png"
+    "svg"   = "image/svg+xml"
+    "woff"  = "font/woff"
+    "woff2" = "font/woff2"
+  }
+}
+
 resource "aws_s3_object" "vite_app_files" {
   for_each = fileset("../apps/frontend/dist", "**")
 
-  bucket = aws_s3_bucket.vite_app_bucket.id
-  key    = each.value
-  source = "${path.module}/../apps/frontend/dist/${each.value}"
+  bucket      = aws_s3_bucket.vite_app_bucket.id
+  key         = each.value
+  source      = "${path.module}/../apps/frontend/dist/${each.value}"
+  source_hash = filesha256("${path.module}/../apps/frontend/dist/${each.value}")
+  content_type = lookup(
+    local.content_type_map, regex("([^.]+)$", "${each.value}")[0], "application/octet-stream"
+  )
 }
 
 
