@@ -3,6 +3,7 @@ import { ExploreTopicsSixUp, ExploreTopicsSixUpProps } from "src/components/Expl
 import { SubmitDataQuickLinks } from "src/components/SubmitDataQuickLinks";
 import { ExploreTopicsFourUp, ExploreTopicsFourUpProps } from "src/components/ExploreTopicsFourUp";
 import { HomeSearch } from "src/components/HomeSearch/HomeSearch";
+import { Hero } from "src/components/Hero/Hero";
 
 const HomePage = () => {
 
@@ -143,6 +144,16 @@ const HomePage = () => {
       title={ "Homepage" }
       description={ "The Planetary Data Systems Homepage" }
     />
+     <Hero
+        title={"American Geophysical Union"}
+        primaryTitle={"Find us at AGU24"}
+        text={
+          "Come see us at the 2023 American Geophysical Union Fall Meeting, December 11 - 15 in San Francisco."
+        }
+        imageSrc={"/hero.png"}
+        buttonLink={"/"}
+        buttonText={"More information"}
+      />
     <HomeSearch />
     <ExploreTopicsSixUp {...exploreTopicsSixUpPropx} />
     <SubmitDataQuickLinks />
