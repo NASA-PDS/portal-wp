@@ -3,8 +3,8 @@ import Footer from "../components/Footer/Footer";
 import { Outlet } from "react-router-dom";
 import { ScrollRestoration } from "react-router-dom";
 
-
 function RootLayout() {
+
   return (
     <>
       <Header />
