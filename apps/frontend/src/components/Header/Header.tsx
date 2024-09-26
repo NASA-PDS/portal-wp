@@ -81,6 +81,7 @@ function PortalHeader() {
         navItems={navItems}
         title={"Planetary Data System"}
         titleLink={"/"} 
+        searchEndpoint="/search/"
       />
    )
 }
