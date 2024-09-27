@@ -55,9 +55,23 @@ provider "aws" {
 #    terraform apply
 
 resource "aws_s3_bucket" "vite_app_bucket" {
-  bucket = "pds-portal-demo"
+  bucket = "pds-portal-wp-${data.aws_ssm_parameter.venue.value}"
+
+  tags = {
+    Alfa = "en"
+    Bravo = data.aws_ssm_parameter.venue.value
+    Charlie = "portal-wp"
+    pds_node = "PDS_ENG"
+  }
 }
 
+resource "aws_ssm_parameter" "portal_wp_bucket_name" {
+  name  = "/pds/portal-wp/s3-bucket"
+  description = "S3 bucket hosting the deployed code of the portal-wp application."
+  type  = "String"
+  overwrite   = true
+  value = aws_s3_bucket.vite_app_bucket.bucket
+}
 
 
 # S3 Uploading
@@ -78,6 +92,8 @@ locals {
   }
 }
 
+# At least for now, we will use, not use terraform to deploy the data into the bucket
+# I am leaving the section in the terraform script though.
 resource "aws_s3_object" "vite_app_files" {
   for_each = fileset("../apps/frontend/dist", "**")
 
@@ -113,7 +129,7 @@ resource "aws_s3_bucket_policy" "vite_app_bucket_policy" {
             "Resource": "${aws_s3_bucket.vite_app_bucket.arn}/*",
             "Condition": {
                 "StringEquals": {
-                  "AWS:SourceArn": "arn:aws:cloudfront::441083951559:distribution/E18VQ4K51WT0LV"
+                  "AWS:SourceArn": ${data.aws-ssm_parameter.cloudfront_dist_arn.value}
                 }
             }
         }
