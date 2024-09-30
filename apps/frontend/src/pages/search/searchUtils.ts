@@ -88,8 +88,20 @@ export const getDocType = (doc: SearchResultDoc) => {
             ) {
                 docType = "instrument";
             }
+            if (
+                doc.data_class &&
+                doc.data_class[0].toLowerCase() === "instrument_host"
+            ) {
+                docType = "instrument_host";
+            }
+            if (doc.data_class && doc.data_class[0].toLowerCase() === "telescope") {
+                docType = "telescope";
+            }
             if (doc.data_class && doc.data_class[0].toLowerCase() === "target") {
                 docType = "target";
+            }
+            if (doc.data_class && doc.data_class[0].toLowerCase() === "facility") {
+                docType = "facility";
             }
             /*
             if (
