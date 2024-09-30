@@ -5,6 +5,7 @@ import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: "portal/",
   envDir: ".env",
   plugins: [
     react(),
@@ -32,9 +33,12 @@ export default defineConfig({
   server: {
     proxy: {
       "^/api/search/1/": {
-        target: "http://localhost:8080/",
+        target: "https://pds.mcp.nasa.gov/",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/search\/1/i, ''),
+      },
+      "^/assets/": {
+        target: "http://localhost:5173/portal/",
+        changeOrigin: true,
       }
     }
   },
