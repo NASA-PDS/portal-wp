@@ -1,7 +1,7 @@
 import { Header } from "@nasapds/wds-react";
 import { NavItems } from "@nasapds/wds-react";
 
-const navItems:NavItems[] = [
+const navItems: NavItems[] = [
   {
     id: "find-data",
     label: "Find Data",
@@ -16,7 +16,7 @@ const navItems:NavItems[] = [
         id: "data-search",
         label: "Search",
         href: "/portal/search",
-      }
+      },
     ],
   },
   {
@@ -76,14 +76,14 @@ const navItems:NavItems[] = [
 ];
 
 function PortalHeader() {
-   return (
-      <Header 
-        navItems={navItems}
-        title={"Planetary Data System"}
-        titleLink={"/"} 
-        searchEndpoint="/search/"
-      />
-   )
+  return (
+    <Header
+      navItems={navItems}
+      title={"Planetary Data System"}
+      titleLink={"/"}
+      searchEndpoint="/portal/search/"
+    />
+  );
 }
 
 export default PortalHeader;
