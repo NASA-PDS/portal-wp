@@ -10,12 +10,12 @@ const navItems:NavItems[] = [
       {
         id: "find-data-investigations",
         label: "Investigations",
-        href: "/investigations",
+        href: "/portal/investigations",
       },
       {
         id: "data-search",
         label: "Search",
-        href: "/search",
+        href: "/portal/search",
       }
     ],
   },
