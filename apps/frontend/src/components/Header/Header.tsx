@@ -73,6 +73,11 @@ const navItems:NavItems[] = [
     label: "About",
     href: "/about",
   },
+  {
+    id: "give-feedback",
+    label: "Give Feedback",
+    href: "mailto:pds-operator@jpl.nasa.gov",
+  },
 ];
 
 function PortalHeader() {
