@@ -177,6 +177,80 @@ To run the frontend service, follow these steps:
 
    Open a browser and navigate to, https://localhost:5173
 
+## Manual Deployments
+
+To create a build to be deployed to AWS, follow the steps below.
+
+### Prerequisite: Install Node or Node Version Manager
+
+The `frontend` service relies on Node.js. The minimum version of Node.js that is needed is specified in [apps/frontend/.nvmrc](apps/frontend/.nvmrc). For developers that work on multiple projects relying on different versions of Node.js, we recommend installing [Node Version Manager (nvm)](https://github.com/nvm-sh/nvm). `nvm` helps faciliate easily switching between different versions of node for a given shell environment.
+
+
+### I. Build frontend service dependencies
+
+#### WDS
+
+  1. Using Git, clone the `wds` repository and switch to the `develop` branch — https://github.com/NASA-PDS/wds
+  2. If you installed [`nvm`](#install-node-or-node-version-manager), open a ***new*** terminal window, navigate to the folder containing the `wds` repo, and set up Node.js for this terminal session:
+
+      ```
+      wds % nvm use
+      Found '/Users/<your_username>/Projects/PDS/Engineering Node/Repos/wds/.nvmrc' with version <lts/iron>
+      Now using node v20.16.0 (npm v10.8.1)
+      ```
+  3. Run `npm clean-install` (See notes about differences between `npm install` and `npm clean-install`)
+  4. Run `npm run build:css`
+  5. Run `npm run build:icons`
+  6. Run `npm link` to add the `@nasapds/wds` package to your local list of packages.
+  7. Run `npm list -g`, if you see `@nasapds/wds` in the list, it was published locally successfully (note the path on your machine will point to the location of the `wds` repo on your machine):
+      ```
+      wds % npm list -g
+      /Users/<your_username>/.nvm/versions/node/v20.16.0/lib
+      ├── @nasapds/wds@0.0.1 -> ./../../../../../Projects/PDS/Engineering Node/Repos/wds-clean
+      ├── corepack@0.28.2
+      └── npm@10.8.1
+      ```
+
+#### WDS-REACT
+
+  1. Using Git, clone the `wds-react` repository and switch to the `develop` branch — https://github.com/NASA-PDS/wds-react
+  2. If you installed [`nvm`](#install-node-or-node-version-manager), open a ***new*** terminal window, navigate to the folder containing the `wds-react` repo, and set up Node.js for this terminal session:
+
+      ```
+      wds-react % nvm use
+      Found '/Users/<your_username>/Projects/PDS/Engineering Node/Repos/wds-react/.nvmrc' with version <lts/iron>
+      Now using node v20.16.0 (npm v10.8.1)
+      ```
+  3. Run `npm clean-install` (See notes about differences between `npm install` and `npm clean-install`)
+  4. Run `npm link @nasapds/wds` to link to the `wds` package we previously published locally.
+  5. Run `npm run build-lib`
+  6. Run `npm run build-icons`
+  7. Run `npm link` to add the `@nasapds/wds-react` package to your local list of packages.
+  8. Run `npm list -g`, if you see `@nasapds/wds-react` in the list, it was published locally successfully (note the path on your machine will point to the location of the `wds-react` repo on your machine):
+      ```
+      wds-react % npm list -g
+      /Users/<your_username>/.nvm/versions/node/v20.16.0/lib
+      ├── @nasapds/wds-react@0.1.0 -> ./../../../../../Projects/PDS/Engineering Node/Repos/wds-react
+      ├── @nasapds/wds@0.0.1 -> ./../../../../../Projects/PDS/Engineering Node/Repos/wds
+      ├── corepack@0.28.2
+      └── npm@10.8.1
+      ```
+ 
+### II. Build portal codebase for manual deployment
+
+  1. Using Git, clone the `portal-wp` repository and switch to the `develop` branch — https://github.com/NASA-PDS/portal-wp
+  2. If you installed [`nvm`](#install-node-or-node-version-manager), open a ***new*** terminal window, navigate to the folder containing the `portal-wp` repo, and from there navigate to `apps/frontend` and set up Node.js for this terminal session:
+
+      ```
+      frontend % nvm use
+      Found '/Users/<your_username>/Projects/PDS/Engineering Node/Repos/portal-wp/apps/frontend/.nvmrc' with version <lts/iron>
+      Now using node v20.16.0 (npm v10.8.1)
+      ```
+  3. Run `npm clean-install` (See notes about differences between `npm install` and `npm clean-install`)
+  4. Run `npm link @nasapds/wds-react` to link to the `wds-react` package we previously published locally.
+  5. Run `npm run build` to create a build of the portal-wp code
+  6. Upload the contents of `apps/frontend/dist` to the S3 bucket mentioned in the wiki.
+
 ## Usage
 
 TBD
