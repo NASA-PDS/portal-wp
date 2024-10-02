@@ -69,38 +69,6 @@ export const selectLatestInvestigationVersion = createSelector( [selectInvestiga
 
 });
 
-/**
- * A memoized redux selector that efficiently returns the latest, and filtered list of investigations.
- * @returns {Investigation[]} A filtered, latest list of investigations
- */
-/*export const selectFilteredInvestigations = createSelector([selectLatestVersionInvestigations, selectSearchFilters], (latestInvestigations:Investigation[], searchFilters) => {
-
-  // Sort investigations alphabetically by title
-  latestInvestigations.sort( (a:Investigation,b:Investigation) => {
-    if( a[PDS4_INFO_MODEL.INVESTIGATION.NAME].toLowerCase() < b[PDS4_INFO_MODEL.INVESTIGATION.NAME].toLowerCase() ) {
-      return -1
-    } else if( a[PDS4_INFO_MODEL.INVESTIGATION.NAME].toLowerCase() > b[PDS4_INFO_MODEL.INVESTIGATION.NAME].toLowerCase() ) {
-      return 1
-    }
-    return 0;
-  });
-
-  if( searchFilters === undefined ) {
-    return latestInvestigations;
-  }
-
-  return latestInvestigations.filter(
-    (item) => {
-      return (
-        item[PDS4_INFO_MODEL.INVESTIGATION.NAME].toLowerCase().includes(searchFilters?.freeText || "")
-        &&
-        ( searchFilters.type === undefined || searchFilters.type === INVESTIGATION_TYPE.ALL || item[PDS4_INFO_MODEL.INVESTIGATION.TYPE] === searchFilters.type )
-      )
-    }
-  );
-
-});*/
-
 export const selectFilteredInvestigations = createSelector(
   [ selectLatestVersionInvestigations, selectLatestVersionTargets, selectLatestVersionInstruments, selectSearchFilters ],
   ( latestInvestigations, latestTargets, latestInstruments, searchFilters ) => {
