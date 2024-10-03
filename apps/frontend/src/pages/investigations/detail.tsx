@@ -10,18 +10,17 @@ import { selectLatestInvestigationVersion } from "src/state/selectors";
 import { connect } from "react-redux";
 import { Instrument, InstrumentHost, Investigation, Target } from "src/types";
 import { selectLatestInstrumentHostsForInvestigation } from "src/state/selectors/instrumentHost";
-import { selectLatestInstrumentsForInstrumentHost } from "src/state/selectors/instruments";
+import { selectLatestInstrumentsForInstrumentHost } from "src/state/selectors";
 import { selectLatestTargetsForInstrumentHost } from "src/state/selectors/targets";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
 import { Box, Breadcrumbs, Button, Container, Divider, Grid, Link as AnchorLink, Stack, Tab, Tabs, Typography, IconButton } from "@mui/material";
 import InvestigationStatus from "src/components/InvestigationStatus/InvestigationStatus";
 import StatsList from "src/components/StatsList/StatsList";
 
-import FeaturedInstrumentLinkListItem from "src/components/FeaturedListItems/FeaturedInstrumentLinkListItem";
 import FeaturedTargetLinkListItem from "src/components/FeaturedListItems/FeaturedTargetLinkListItem";
 import FeaturedToolLinkListItem from "src/components/FeaturedListItems/FeaturedToolLinkListItem";
 import FeaturedResourceLinkListItem from "src/components/FeaturedListItems/FeaturedResourcesLinkListItem";
-import { Loader } from "@nasapds/wds-react";
+import { FeaturedLink, FeaturedLinkDetails, FeaturedLinkDetailsVariant, Loader } from "@nasapds/wds-react";
 import { Bundle } from "src/types/bundle";
 import { ArrowForward } from "@mui/icons-material";
 

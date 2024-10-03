@@ -18,7 +18,7 @@ import {
   setFreeTextSearchFilter,
   setInstrumentTypeSearchFilter
 } from "src/state/slices/instrumentsSlice";
-import { selectFilteredInstruments } from "src/state/selectors/instruments";
+import { selectFilteredInstruments } from "src/state/selectors";
 import { getData, dataRequiresFetchOrUpdate, dataReady } from "src/state/slices/dataManagerSlice";
 import { useAppDispatch, useAppSelector } from "src/state/hooks";
 import { connect } from "react-redux";
