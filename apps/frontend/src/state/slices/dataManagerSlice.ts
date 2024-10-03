@@ -4,7 +4,7 @@ import { getTargets } from './targetsSlice';
 import { getInstrumentHosts } from './instrumentHostsSlice';
 import { getInstruments } from './instrumentsSlice';
 import { instrumentDataReady, investigationDataReady } from '../selectors';
-import { targetDataReady } from '../selectors/targets';
+import { targetDataReady } from '../selectors';
 import { instrumentHostDataReady } from '../selectors/instrumentHost';
 
 type DataManagerState = {
