@@ -6,7 +6,6 @@ import {
   Grid,
   InputAdornment,
   Link,
-  Menu,
   MenuItem,
   Select,
   SelectChangeEvent,
