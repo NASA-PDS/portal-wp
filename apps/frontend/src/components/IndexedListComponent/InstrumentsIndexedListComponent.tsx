@@ -4,7 +4,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import { generatePath, useLocation, useNavigate } from "react-router-dom";
 import { Instrument } from "src/types/instrument.d";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
-import { selectLatestInstrumentHostsForInstrument } from "src/state/selectors/instrumentHost";
+import { selectLatestInstrumentHostsForInstrument } from "src/state/selectors";
 import { RootState, store } from "src/state/store";
 import { InstrumentHost } from "src/types/instrumentHost";
 import { convertLogicalIdentifier, LID_FORMAT } from "src/utils/strings";

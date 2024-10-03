@@ -9,8 +9,11 @@ import { RootState } from "src/state/store";
 import { selectLatestInvestigationVersion } from "src/state/selectors";
 import { connect } from "react-redux";
 import { Instrument, InstrumentHost, Investigation, Target } from "src/types";
-import { selectLatestInstrumentHostsForInvestigation } from "src/state/selectors/instrumentHost";
-import { selectLatestInstrumentsForInstrumentHost, selectLatestTargetsForInstrumentHost } from "src/state/selectors";
+import { 
+  selectLatestInstrumentHostsForInvestigation,
+  selectLatestInstrumentsForInstrumentHost, 
+  selectLatestTargetsForInstrumentHost,
+} from "src/state/selectors";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
 import { Box, Breadcrumbs, Button, Container, Divider, Grid, Link as AnchorLink, Stack, Tab, Tabs, Typography, IconButton } from "@mui/material";
 import InvestigationStatus from "src/components/InvestigationStatus/InvestigationStatus";

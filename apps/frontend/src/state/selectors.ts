@@ -3,15 +3,21 @@ import { INVESTIGATION_TYPE, Investigation } from "src/types/investigation.d";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { RootState } from "src/state/store";
 import { InstrumentItems } from "src/state/slices/instrumentsSlice";
+import { InstrumentHostItems } from "src/state/slices/instrumentHostsSlice";
 import { InvestigationItems } from "src/state/slices/investigationsSlice";
 import { TargetItems } from "src/state/slices/targetsSlice";
-import { selectLatestVersionInstrumentHosts } from "./selectors/instrumentHost";
 import { Instrument, INSTRUMENT_TYPE } from "src/types/instrument.d";
+import { InstrumentHost } from "src/types/instrumentHost";
 import { Target } from "src/types/target";
+
 
 
 export const instrumentDataReady = (state:RootState):boolean => {
   return state.instruments.status === 'succeeded';
+};
+
+export const instrumentHostDataReady = (state:RootState):boolean => {
+  return state.instrumentHosts.status === 'succeeded';
 };
 
 export const investigationDataReady = (state:RootState):boolean => {
@@ -23,7 +29,7 @@ export const targetDataReady = (state:RootState):boolean => {
 };
 
 /**
- * A redux selector to retrieve instrument data stored in our redux state.
+ * A redux selector to retrieve all instruments stored in our redux state.
  * @param {RootState} state The redux state of type RootState
  * @returns {InstrumentItems} An data structure containing the current state of versioned instruments
  */
@@ -32,7 +38,7 @@ const selectInstruments = (state:RootState): InstrumentItems => {
 };
 
 /**
- * A redux selector to retrieve instrument data stored in our redux state.
+ * A redux selector to retrieve an instrument stored in our redux state.
  * @param {RootState} state The redux state of type RootState
  * @param {string} lid The lid of the instrument that needs to be returned
  * @returns {Object<[key: string]: Instrument>} A hash array of instrument versions
@@ -40,6 +46,25 @@ const selectInstruments = (state:RootState): InstrumentItems => {
 const selectInstrument = (state:RootState, lid:string):{[key:string]: Instrument} => {
   return state.instruments.items[lid];
 }
+
+/**
+ * A redux selector to retrieve all instrument hosts stored in our redux state.
+ * @param {RootState} state The redux state of type RootState
+ * @returns {InstrumentHostItems} A data structure containing the current state of versioned instrument hosts
+ */
+const selectInstrumentHosts = (state:RootState): InstrumentHostItems => {
+  return state.instrumentHosts.items;
+};
+
+/**
+ * A redux selector to retrieve an instrument host stored in our redux state.
+ * @param {RootState} state The redux state of type RootState
+ * @returns {InstrumentHostItems} A data structure containing the current state of versioned instrument hosts
+ */
+const selectInstrumentHost = (state:RootState, lid:string) => {
+  return state.instrumentHosts.items[lid];
+};
+
 
 /**
  * A redux selector to retrieve investigation data stored in our redux state.
@@ -110,6 +135,25 @@ export const selectLatestVersionInstruments = createSelector([selectInstruments]
 });
 
 /**
+ * A memoized redux selector that efficiently returns the latest list of instrument hosts.
+ * @returns {InstrumentHost[]} A list of the latest instrument hosts.
+ */
+export const selectLatestVersionInstrumentHosts = createSelector([selectInstrumentHosts], (instrumentHosts) => {
+
+  const latestInstrumentHost:InstrumentHost[] = [];
+  
+  // Find the latest version of each instrument and store it in an array
+  let latestVersion:string = "";
+  Object.keys(instrumentHosts).forEach( (lid) => {
+    latestVersion = Object.keys(instrumentHosts[lid]).sort().reverse()[0];
+    latestInstrumentHost.push( instrumentHosts[lid][latestVersion] );
+  });
+
+  return latestInstrumentHost;
+
+});
+
+/**
  * A memoized redux selector that efficiently returns the latest list of investigations.
  * @returns {Investigation[]} A list of the latest investigations.
  */
@@ -160,6 +204,15 @@ export const selectLatestInstrumentVersion = createSelector( [selectInstrument],
 
 });
 
+export const selectLatestInstrumentHostVersion = createSelector( [selectInstrumentHost], (instrumentHostVersions) => {
+
+  // Find the latest version of the instrument
+  const latestVersion:string = Object.keys(instrumentHostVersions).sort().reverse()[0];
+
+  return instrumentHostVersions[latestVersion];
+
+});
+
 /**
  * A memoized redux selector that efficiently returns the latest list of investigations.
  * @returns {Investigation[]} A list of the latest investigations.
@@ -193,6 +246,34 @@ export const selectLatestInstrumentsForInstrumentHost = createSelector(
   }
 );
 
+export const selectLatestInstrumentHostsForInvestigation = createSelector(
+  [
+    selectLatestVersionInstrumentHosts,
+    (_, instrumentHostLids) => instrumentHostLids
+  ],
+  (latestInstrumentHosts, instrumentHostLids) => {
+    return latestInstrumentHosts.filter(
+      (instrumentHost) => {
+        return instrumentHostLids?.includes(instrumentHost[PDS4_INFO_MODEL.LID])
+      }
+    );
+  }
+);
+
+export const selectLatestInstrumentHostsForInstrument = createSelector(
+  [
+    selectLatestVersionInstrumentHosts,
+    (_, instrumentHostLids) => instrumentHostLids
+  ],
+  (latestInstrumentHosts, instrumentHostLids) => {
+    return latestInstrumentHosts.filter(
+      (instrumentHost) => {
+        return instrumentHostLids?.includes(instrumentHost[PDS4_INFO_MODEL.LID])
+      }
+    );
+  }
+);
+
 /**
  * A memoized redux selector that returns a list of targets based on the
  * provided list of instrument hosts
@@ -218,77 +299,94 @@ export const selectLatestTargetsForInstrumentHost = createSelector(
 * @returns {Instrument[]} A filtered, latest list of instruments.
 */
 export const selectFilteredInstruments = createSelector(
- [
-   selectLatestVersionInstruments,
-   selectLatestVersionInstrumentHosts,
-   selectLatestVersionTargets,
-   selectInstrumentDirectorySearchFilters], 
- (
-   latestInstruments,
-   latestInstrumentHosts,
-   latestTargets,
-   searchFilters
- ) => {
+  [
+    selectLatestVersionInstruments,
+    selectLatestVersionInstrumentHosts,
+    selectLatestVersionTargets,
+    selectInstrumentDirectorySearchFilters], 
+  (
+    latestInstruments,
+    latestInstrumentHosts,
+    latestTargets,
+    searchFilters
+  ) => {
 
-   let filteredInstruments = latestInstruments;
+    let filteredInstruments = latestInstruments;
 
-   // Search Filters are undefined, so return full list of investigations
-   if( searchFilters !== undefined ) {
+    // Search Filters are undefined, so return full list of investigations
+    if( searchFilters !== undefined ) {
+ 
+      if( searchFilters.freeText !== undefined ) {
 
-     if( searchFilters.freeText !== undefined ) {
+        /* let filteredInvestigations = latestInvestigations;
+        filteredInvestigations = filteredInvestigations.filter(
+          (investigation) => {
+            return (
+              investigation[PDS4_INFO_MODEL.TITLE].toLowerCase().includes(searchFilters?.freeText.toLowerCase())
+            )
+          }
+        );
+ 
+        let filteredInstrumentHosts = latestInstrumentHosts;
+        filteredInstrumentHosts = filteredInstrumentHosts.filter(
+          (instrumentHost) => {
+            return (
+              true
+            )
+          }
+        )
+        */
+      }
 
-       /* let filteredInvestigations = latestInvestigations;
-       filteredInvestigations = filteredInvestigations.filter(
-         (investigation) => {
-           return (
-             investigation[PDS4_INFO_MODEL.TITLE].toLowerCase().includes(searchFilters?.freeText.toLowerCase())
-           )
-         }
-       );
+      filteredInstruments = filteredInstruments.filter(
+        (instrument) => {
+          return (
+            (
+              searchFilters.freeText === undefined 
+              || instrument[PDS4_INFO_MODEL.TITLE].toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
+              || instrument[PDS4_INFO_MODEL.LID].toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
+            )
+            &&
+            ( 
+              searchFilters.type === undefined 
+              || searchFilters.type === INSTRUMENT_TYPE.ALL 
+              || instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE].includes(searchFilters.type)
+            )
+          )
+        }
+      );
 
-       let filteredInstrumentHosts = latestInstrumentHosts;
-       filteredInstrumentHosts = filteredInstrumentHosts.filter(
-         (instrumentHost) => {
-           return (
-             true
-           )
-         }
-       )
-       */
-     }
+    }
 
-     filteredInstruments = filteredInstruments.filter(
-       (instrument) => {
-         return (
-           (
-             searchFilters.freeText === undefined 
-             || instrument[PDS4_INFO_MODEL.TITLE].toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
-             || instrument[PDS4_INFO_MODEL.LID].toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
-           )
-           &&
-           ( 
-             searchFilters.type === undefined 
-             || searchFilters.type === INSTRUMENT_TYPE.ALL 
-             || instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE].includes(searchFilters.type)
-           )
-         )
-       }
-     );
-
-   }
-
-   // Sort instruments alphabetically by title
-   return filteredInstruments.sort( (a:Instrument,b:Instrument) => {
-     if( a[PDS4_INFO_MODEL.INSTRUMENT.NAME].toLowerCase() < b[PDS4_INFO_MODEL.INSTRUMENT.NAME].toLowerCase() ) {
-       return -1
-     } else if( a[PDS4_INFO_MODEL.INSTRUMENT.NAME].toLowerCase() > b[PDS4_INFO_MODEL.INSTRUMENT.NAME].toLowerCase() ) {
-       return 1
-     }
-     return 0;
-   });
-
- }
+    // Sort instruments alphabetically by title
+    return filteredInstruments.sort( (a:Instrument,b:Instrument) => {
+      if( a[PDS4_INFO_MODEL.INSTRUMENT.NAME].toLowerCase() < b[PDS4_INFO_MODEL.INSTRUMENT.NAME].toLowerCase() ) {
+        return -1
+      } else if( a[PDS4_INFO_MODEL.INSTRUMENT.NAME].toLowerCase() > b[PDS4_INFO_MODEL.INSTRUMENT.NAME].toLowerCase() ) {
+        return 1
+      }
+      return 0;
+    });
+  }
 );
+
+/**
+ * A memoized redux selector that efficiently returns the latest, and filtered list of instrument hosts.
+ * @returns {InstrumentHost[]} A filtered, latest list of instrument hosts
+ */
+export const selectFilteredInstrumentHosts = createSelector([selectLatestVersionInstrumentHosts], (latestInstrumentHosts:InstrumentHost[]) => {
+ 
+  // Sort instrument hosts alphabetically by title
+  latestInstrumentHosts.sort( (a:InstrumentHost,b:InstrumentHost) => {
+    if( a[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME].toLowerCase() < b[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME].toLowerCase() ) {
+      return -1
+    } else if( a[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME].toLowerCase() > b[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME].toLowerCase() ) {
+      return 1
+    }
+    return 0;
+  });
+
+});
 
 export const selectFilteredInvestigations = createSelector(
   [ selectLatestVersionInvestigations, selectLatestVersionTargets, selectLatestVersionInstruments, selectInvestigationDirectorySearchFilters ],

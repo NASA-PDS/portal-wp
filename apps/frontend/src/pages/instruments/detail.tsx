@@ -14,8 +14,7 @@ import { IconArrowFilledDown, Loader } from "@nasapds/wds-react";
 import InvestigationStatus from "src/components/InvestigationStatus/InvestigationStatus";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { Stats, StatsList } from "src/components/StatsList/StatsList";
-import { selectLatestInstrumentHostVersion } from "src/state/selectors/instrumentHost";
-import { selectLatestInvestigationVersion } from "src/state/selectors";
+import { selectLatestInstrumentHostVersion, selectLatestInvestigationVersion } from "src/state/selectors";
 import FeaturedDataBundleLinkListItem from "src/components/FeaturedListItems/FeaturedDataBundleLinkListItem";
 import { ArrowOutward } from "@mui/icons-material";
 

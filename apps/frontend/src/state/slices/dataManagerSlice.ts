@@ -3,9 +3,7 @@ import { getInvestigations } from './investigationsSlice';
 import { getTargets } from './targetsSlice';
 import { getInstrumentHosts } from './instrumentHostsSlice';
 import { getInstruments } from './instrumentsSlice';
-import { instrumentDataReady, investigationDataReady } from '../selectors';
-import { targetDataReady } from '../selectors';
-import { instrumentHostDataReady } from '../selectors/instrumentHost';
+import { instrumentDataReady, instrumentHostDataReady, investigationDataReady, targetDataReady } from '../selectors';
 
 type DataManagerState = {
   lastUpdated:number | undefined
