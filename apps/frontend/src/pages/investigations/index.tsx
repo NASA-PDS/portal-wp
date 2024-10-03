@@ -17,7 +17,7 @@ import {
   setFreeTextSearchFilter,
   setInvestigationTypeSearchFilter
 } from "src/state/slices/investigationsSlice";
-import { selectFilteredInvestigations } from "src/state/selectors/investigations";
+import { selectFilteredInvestigations } from "src/state/selectors";
 import { getData, dataRequiresFetchOrUpdate, dataReady } from "src/state/slices/dataManagerSlice";
 import { useAppDispatch, useAppSelector } from "src/state/hooks";
 import { connect } from "react-redux";

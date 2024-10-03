@@ -3,7 +3,7 @@ import { getInvestigations } from './investigationsSlice';
 import { getTargets } from './targetsSlice';
 import { getInstrumentHosts } from './instrumentHostsSlice';
 import { getInstruments } from './instrumentsSlice';
-import { investigationDataReady } from '../selectors/investigations';
+import { investigationDataReady } from '../selectors';
 import { targetDataReady } from '../selectors/targets';
 import { instrumentHostDataReady } from '../selectors/instrumentHost';
 import { instrumentDataReady } from '../selectors/instruments';

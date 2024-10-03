@@ -6,7 +6,7 @@ import { convertLogicalIdentifier, LID_FORMAT } from "src/utils/strings";
 import { getData } from "src/state/slices/dataManagerSlice";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { RootState } from "src/state/store";
-import { selectLatestInvestigationVersion } from "src/state/selectors/investigations";
+import { selectLatestInvestigationVersion } from "src/state/selectors";
 import { connect } from "react-redux";
 import { Instrument, InstrumentHost, Investigation, Target } from "src/types";
 import { selectLatestInstrumentHostsForInvestigation } from "src/state/selectors/instrumentHost";

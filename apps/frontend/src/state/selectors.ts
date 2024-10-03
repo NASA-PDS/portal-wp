@@ -3,8 +3,8 @@ import { INVESTIGATION_TYPE, Investigation } from "src/types/investigation.d";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { RootState } from "src/state/store";
 import { InvestigationItems } from "src/state/slices/investigationsSlice";
-import { selectLatestVersionTargets } from "./targets";
-import { selectLatestVersionInstruments } from "./instruments";
+import { selectLatestVersionTargets } from "./selectors/targets";
+import { selectLatestVersionInstruments } from "./selectors/instruments";
 import { Instrument } from "src/types/instrument.d";
 
 export const investigationDataReady = (state:RootState):boolean => {
