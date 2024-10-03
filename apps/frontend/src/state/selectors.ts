@@ -302,40 +302,61 @@ export const selectFilteredInstruments = createSelector(
   [
     selectLatestVersionInstruments,
     selectLatestVersionInstrumentHosts,
+    selectLatestVersionInvestigations,
     selectLatestVersionTargets,
     selectInstrumentDirectorySearchFilters], 
   (
     latestInstruments,
     latestInstrumentHosts,
+    latestInvestigations,
     latestTargets,
     searchFilters
   ) => {
 
+    const searchText = searchFilters?.freeText.toLowerCase() || "";
     let filteredInstruments = latestInstruments;
 
     // Search Filters are undefined, so return full list of investigations
     if( searchFilters !== undefined ) {
  
+      let filteredInvestigations:string[] = [];
+      let filteredTargets:string[] = [];
+      let filteredInstrumentHosts:string[] = [];
+
       if( searchFilters.freeText !== undefined ) {
 
-        /* let filteredInvestigations = latestInvestigations;
-        filteredInvestigations = filteredInvestigations.filter(
+        // Get Investigations that match the search term
+        filteredInvestigations = latestInvestigations.filter(
           (investigation) => {
             return (
-              investigation[PDS4_INFO_MODEL.TITLE].toLowerCase().includes(searchFilters?.freeText.toLowerCase())
+              investigation[PDS4_INFO_MODEL.TITLE].toLowerCase().includes(searchText)
+              ||
+              investigation[PDS4_INFO_MODEL.LID].toLowerCase().includes(searchText)
             )
           }
-        );
- 
-        let filteredInstrumentHosts = latestInstrumentHosts;
-        filteredInstrumentHosts = filteredInstrumentHosts.filter(
-          (instrumentHost) => {
+        ).map( (investigation) => { return investigation[PDS4_INFO_MODEL.LID]});
+
+        filteredTargets = latestTargets.filter(
+          (target) => {
             return (
-              true
+              target[PDS4_INFO_MODEL.TITLE].toLowerCase().includes(searchText)
+              ||
+              target[PDS4_INFO_MODEL.LID].toLowerCase().includes(searchText)
             )
           }
-        )
-        */
+        ).map( (target) => { return target[PDS4_INFO_MODEL.LID]})
+
+        filteredInstrumentHosts = latestInstrumentHosts.filter( (instrumentHost) => {
+          return (
+            instrumentHost[PDS4_INFO_MODEL.REF_LID_TARGET]?.filter( (instrumentHostTarget) => {
+              return filteredTargets.includes(instrumentHostTarget);
+            }).length > 0
+            ||
+            instrumentHost[PDS4_INFO_MODEL.REF_LID_INVESTIGATION]?.filter( (instrumentHostInvestigation) => {
+              return filteredInvestigations.includes(instrumentHostInvestigation);
+            }).length > 0
+          )
+        }).map( (instrumentHost) => { return instrumentHost[PDS4_INFO_MODEL.LID]});
       }
 
       filteredInstruments = filteredInstruments.filter(
@@ -343,8 +364,9 @@ export const selectFilteredInstruments = createSelector(
           return (
             (
               searchFilters.freeText === undefined 
-              || instrument[PDS4_INFO_MODEL.TITLE].toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
-              || instrument[PDS4_INFO_MODEL.LID].toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
+              || instrument[PDS4_INFO_MODEL.TITLE].toLowerCase().includes(searchText || "")
+              || instrument[PDS4_INFO_MODEL.LID].toLowerCase().includes(searchText || "")
+              || instrument[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST].some( (lid) => filteredInstrumentHosts.includes(lid) )
             )
             &&
             ( 
