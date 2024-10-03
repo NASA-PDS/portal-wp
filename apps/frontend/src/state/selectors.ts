@@ -404,7 +404,7 @@ export const selectFilteredInvestigations = createSelector(
         // Get LIDS for targets that match free-text search filter
         foundTargetLids = latestTargets.filter( (target) => {
           return (
-            target[PDS4_INFO_MODEL.TARGET.NAME]?.toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
+            target[PDS4_INFO_MODEL.TITLE]?.toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
             ||
             target[PDS4_INFO_MODEL.LID]?.toLowerCase().includes(searchFilters?.freeText.toLowerCase() || "")
           )
@@ -485,9 +485,9 @@ export const selectFilteredTargets = createSelector([selectLatestVersionTargets]
   
   // Sort targets alphabetically by title
   return latestTargets.sort( (a:Target,b:Target) => {
-    if( a[PDS4_INFO_MODEL.TARGET.NAME].toLowerCase() < b[PDS4_INFO_MODEL.TARGET.NAME].toLowerCase() ) {
+    if( a[PDS4_INFO_MODEL.TITLE].toLowerCase() < b[PDS4_INFO_MODEL.TITLE].toLowerCase() ) {
       return -1
-    } else if( a[PDS4_INFO_MODEL.TARGET.NAME].toLowerCase() > b[PDS4_INFO_MODEL.TARGET.NAME].toLowerCase() ) {
+    } else if( a[PDS4_INFO_MODEL.TITLE].toLowerCase() > b[PDS4_INFO_MODEL.TITLE].toLowerCase() ) {
       return 1
     }
     return 0;

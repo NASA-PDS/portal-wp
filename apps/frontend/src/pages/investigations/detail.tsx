@@ -849,7 +849,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                     lid={target[PDS4_INFO_MODEL.LID]}
                                     primaryAction={ () => {} }
                                     tags={['Tag Label 1', 'Tag Label 2', 'Tag label with a very long title']}
-                                    title={target[PDS4_INFO_MODEL.TARGET.NAME]}
+                                    title={target[PDS4_INFO_MODEL.TITLE]}
                                     type={target[PDS4_INFO_MODEL.TARGET.TYPE]}
                                   />
                         })
@@ -1155,9 +1155,9 @@ const mapStateToProps = (state:RootState, ownProps:{investigationLid:string, tab
         // Get related targets
         targets[index] = selectLatestTargetsForInstrumentHost(state, instrumentHost[PDS4_INFO_MODEL.REF_LID_TARGET])
                           .sort( (a:Target, b:Target) => {
-                            if( a[PDS4_INFO_MODEL.TARGET.NAME].toLowerCase() < b[PDS4_INFO_MODEL.TARGET.NAME].toLowerCase() ) {
+                            if( a[PDS4_INFO_MODEL.TITLE].toLowerCase() < b[PDS4_INFO_MODEL.TITLE].toLowerCase() ) {
                               return -1
-                            } else if( a[PDS4_INFO_MODEL.TARGET.NAME].toLowerCase() > b[PDS4_INFO_MODEL.TARGET.NAME].toLowerCase() ) {
+                            } else if( a[PDS4_INFO_MODEL.TITLE].toLowerCase() > b[PDS4_INFO_MODEL.TITLE].toLowerCase() ) {
                               return 1
                             }
                             return 0;
