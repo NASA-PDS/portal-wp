@@ -13,6 +13,11 @@ const navItems:NavItems[] = [
         href: "/investigations",
       },
       {
+        id: "find-data-instruments",
+        label: "Instruments",
+        href: "/instruments",
+      },
+      {
         id: "data-search",
         label: "Search",
         href: "/search",

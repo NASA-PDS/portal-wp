@@ -22,6 +22,7 @@ import RootErrorBoundary from './pages/errors/RootErrorBoundary'
 //import SearchApp from './components/SearchApp/SearchApp';
 import './App.css';
 import InstrumentsLayout from "./layouts/InstrumentsLayout";
+import InstrumentsDirectoryPage from "./pages/instruments";
 import InstrumentDetailPage from "./pages/instruments/detail";
 
 const router = createBrowserRouter([
@@ -54,6 +55,10 @@ const router = createBrowserRouter([
         path: "instruments",
         Component: InstrumentsLayout,
         children: [
+          {
+            index: true,
+            element: <InstrumentsDirectoryPage />,
+          },
           {
             path: ":instrumentLid/:tabLabel",
             element: <InstrumentDetailPage />
