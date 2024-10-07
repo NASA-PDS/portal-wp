@@ -68,7 +68,7 @@ function PortalFooter() {
     {
       id: "",
       label: "Give Feedback",
-      href: ""
+      href: "mailto:pds-operator@jpl.nasa.gov"
     },
   ];
 

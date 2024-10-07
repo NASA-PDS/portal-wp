@@ -105,7 +105,7 @@ const router = createBrowserRouter([
       }
     ]
   }
-])
+], { basename: "/portal/"})
 
 function App() {
   return (

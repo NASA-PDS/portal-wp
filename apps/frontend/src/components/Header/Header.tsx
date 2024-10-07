@@ -1,7 +1,7 @@
 import { Header } from "@nasapds/wds-react";
 import { NavItems } from "@nasapds/wds-react";
 
-const navItems:NavItems[] = [
+const navItems: NavItems[] = [
   {
     id: "find-data",
     label: "Find Data",
@@ -10,7 +10,7 @@ const navItems:NavItems[] = [
       {
         id: "find-data-investigations",
         label: "Investigations",
-        href: "/investigations",
+        href: import.meta.env.BASE_URL + "investigations",
       },
       {
         id: "find-data-instruments",
@@ -20,8 +20,8 @@ const navItems:NavItems[] = [
       {
         id: "data-search",
         label: "Search",
-        href: "/search",
-      }
+        href: import.meta.env.BASE_URL + "search",
+      },
     ],
   },
   {
@@ -78,16 +78,22 @@ const navItems:NavItems[] = [
     label: "About",
     href: "/about",
   },
+  {
+    id: "give-feedback",
+    label: "Give Feedback",
+    href: "mailto:pds-operator@jpl.nasa.gov",
+  },
 ];
 
 function PortalHeader() {
-   return (
-      <Header 
-        navItems={navItems}
-        title={"Planetary Data System"}
-        titleLink={"/"} 
-      />
-   )
+  return (
+    <Header
+      navItems={navItems}
+      title={"Planetary Data System"}
+      titleLink={import.meta.env.BASE_URL}
+      searchEndpoint={import.meta.env.BASE_URL + "search/"}
+    />
+  );
 }
 
 export default PortalHeader;

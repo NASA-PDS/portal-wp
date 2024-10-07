@@ -5,7 +5,6 @@ import {
   Container,
   Grid,
   InputAdornment,
-  Link,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -30,6 +29,7 @@ import InvestigationsIndexedListComponent from "src/components/IndexedListCompon
 import { ExpandMore } from "@mui/icons-material";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
 import { useDebouncedCallback } from "use-debounce";
+import { Link } from "react-router-dom";
 
 type InvestigationsDirectoryPageComponentProps = {
   dataFetched: boolean;
@@ -134,7 +134,7 @@ export const InvestigationsDirectoryPageComponent = (props:InvestigationsDirecto
                 width: "fit-content"
               }}
             >
-              <Link underline="hover" color="inherit" href="/" style={linkStyles}>
+              <Link to="/" style={linkStyles}>
                 Home
               </Link>
               <Typography variant="h6" weight="regular" component={"span"} style={{ color: "white" }}>Investigations</Typography>
