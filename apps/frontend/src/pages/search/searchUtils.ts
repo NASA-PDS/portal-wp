@@ -30,6 +30,8 @@ export const formatFilterQueries = (filters: string) => {
                 filterName +
                 ':"' +
                 filterValue +
+                '" OR identifier:"' + 
+                filterValue +
                 '"';
         }
     });
