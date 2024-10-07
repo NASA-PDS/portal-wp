@@ -24,11 +24,12 @@ import { RootState } from "src/state/store";
 import { Loader, Typography } from "@nasapds/wds-react";
 import { TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import CloseIcon from "@mui/icons-material/Close";
+//import CloseIcon from "@mui/icons-material/Close";
 import { Instrument, INSTRUMENT_TYPE } from "src/types/instrument.d";
 import InstrumentsIndexedListComponent from "src/components/IndexedListComponent/InstrumentsIndexedListComponent";
 import { ExpandMore } from "@mui/icons-material";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
+import { useDebouncedCallback } from "use-debounce";
 
 type InstrumentsDirectoryPageComponentProps = {
   dataFetched: boolean;
@@ -75,19 +76,28 @@ export const InstrumentsDirectoryPageComponent = (props:InstrumentsDirectoryPage
     paddingY: "4px",
   };
 
+  const debouncedFreeTextFilter = useDebouncedCallback(
+    // function
+    (value:string) => {
+      dispatch(setFreeTextSearchFilter(value))
+    },
+    // delay in ms
+    250
+  );
+
   const handleFreeTextSearchFilterChange = (event:React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(setFreeTextSearchFilter(event.target.value))
+    debouncedFreeTextFilter(event.target.value);
   };
 
-  const handleFreeTextSearchFilterReset = () => {
+  /* const handleFreeTextSearchFilterReset = () => {
     dispatch(setFreeTextSearchFilter(""));
-  }
+  } */
 
   const handleInstrumentTypeFilterChange = (event:SelectChangeEvent) => {
     console.log("handleInstrumentTypeFilterChange event:", event);
     dispatch(setInstrumentTypeSearchFilter(event.target.value as INSTRUMENT_TYPE));
   }
-
+ 
   return (
     <>
       <DocumentMeta
@@ -168,7 +178,7 @@ export const InstrumentsDirectoryPageComponent = (props:InstrumentsDirectoryPage
                             <SearchIcon />
                           </InputAdornment>
                         ),
-                        endAdornment: searchFilters?.freeText && (
+                        /* endAdornment: searchFilters?.freeText && (
                           <InputAdornment
                             position="end"
                             onClick={handleFreeTextSearchFilterReset}
@@ -178,7 +188,7 @@ export const InstrumentsDirectoryPageComponent = (props:InstrumentsDirectoryPage
                           >
                             <CloseIcon />
                           </InputAdornment>
-                        ),
+                        ), */
                       }}
                       fullWidth
                       onChange={handleFreeTextSearchFilterChange}
@@ -225,9 +235,7 @@ export const InstrumentsDirectoryPageComponent = (props:InstrumentsDirectoryPage
             </Box>
             {
               latestInstruments.length > 0 ? (
-                <InstrumentsIndexedListComponent
-                  instruments={latestInstruments}
-                />
+                <InstrumentsIndexedListComponent instruments={latestInstruments} />
               ) : (
                 <>
                   {searchFilters === undefined ? (
