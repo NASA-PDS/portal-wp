@@ -10,12 +10,12 @@ const navItems: NavItems[] = [
       {
         id: "find-data-investigations",
         label: "Investigations",
-        href: "/portal/investigations",
+        href: import.meta.env.BASE_URL + "investigations",
       },
       {
         id: "data-search",
         label: "Search",
-        href: "/portal/search",
+        href: import.meta.env.BASE_URL + "search",
       },
     ],
   },
@@ -85,8 +85,8 @@ function PortalHeader() {
     <Header
       navItems={navItems}
       title={"Planetary Data System"}
-      titleLink={"/"}
-      searchEndpoint="/portal/search/"
+      titleLink={import.meta.env.BASE_URL}
+      searchEndpoint={import.meta.env.BASE_URL + "search/"}
     />
   );
 }

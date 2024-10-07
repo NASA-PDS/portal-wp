@@ -5,7 +5,6 @@ import {
   Container,
   Grid,
   InputAdornment,
-  Link,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -30,6 +29,7 @@ import { Investigation, INVESTIGATION_TYPE } from "src/types/investigation.d";
 import InvestigationsIndexedListComponent from "src/components/IndexedListComponent/InvestigationsIndexedListComponent";
 import { ExpandMore } from "@mui/icons-material";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
+import { Link } from "react-router-dom";
 
 type InvestigationsDirectoryPageComponentProps = {
   dataFetched: boolean;
@@ -125,7 +125,7 @@ export const InvestigationsDirectoryPageComponent = (props:InvestigationsDirecto
                 width: "fit-content"
               }}
             >
-              <Link underline="hover" color="inherit" href="/" style={linkStyles}>
+              <Link to="/" style={linkStyles}>
                 Home
               </Link>
               <Typography style={{ color: "white" }}>Investigations</Typography>
