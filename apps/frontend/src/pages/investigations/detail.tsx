@@ -2,26 +2,27 @@ import { SyntheticEvent, useCallback, useEffect, useRef, useState } from "react"
 
 import { generatePath, Link, useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "src/state/hooks";
-import { convertLogicalIdentifier, LID_FORMAT } from "src/utils/strings";
+import { convertLogicalIdentifier, ellipsisText, LID_FORMAT } from "src/utils/strings";
 import { getData } from "src/state/slices/dataManagerSlice";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { RootState } from "src/state/store";
-import { selectLatestInvestigationVersion } from "src/state/selectors/investigations";
+import { selectLatestInvestigationVersion } from "src/state/selectors";
 import { connect } from "react-redux";
 import { Instrument, InstrumentHost, Investigation, Target } from "src/types";
-import { selectLatestInstrumentHostsForInvestigation } from "src/state/selectors/instrumentHost";
-import { selectLatestInstrumentsForInstrumentHost } from "src/state/selectors/instruments";
-import { selectLatestTargetsForInstrumentHost } from "src/state/selectors/targets";
+import { 
+  selectLatestInstrumentHostsForInvestigation,
+  selectLatestInstrumentsForInstrumentHost, 
+  selectLatestTargetsForInstrumentHost,
+} from "src/state/selectors";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
 import { Box, Breadcrumbs, Button, Container, Divider, Grid, Link as AnchorLink, Stack, Tab, Tabs, Typography, IconButton } from "@mui/material";
 import InvestigationStatus from "src/components/InvestigationStatus/InvestigationStatus";
 import StatsList from "src/components/StatsList/StatsList";
 
-import FeaturedInstrumentLinkListItem from "src/components/FeaturedListItems/FeaturedInstrumentLinkListItem";
 import FeaturedTargetLinkListItem from "src/components/FeaturedListItems/FeaturedTargetLinkListItem";
 import FeaturedToolLinkListItem from "src/components/FeaturedListItems/FeaturedToolLinkListItem";
 import FeaturedResourceLinkListItem from "src/components/FeaturedListItems/FeaturedResourcesLinkListItem";
-import { Loader } from "@nasapds/wds-react";
+import { FeaturedLink, FeaturedLinkDetails, FeaturedLinkDetailsVariant, Loader } from "@nasapds/wds-react";
 import { Bundle } from "src/types/bundle";
 import { ArrowForward } from "@mui/icons-material";
 
@@ -243,12 +244,12 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
             investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION]
   }
 
-  const getRelatedInstrumentBundles = (lid:string) => {
+  /* const getRelatedInstrumentBundles = (lid:string) => {
     return bundles.current[selectedInstrumentHost].filter( (bundle) => {
       const foundInstrument = bundle[PDS4_INFO_MODEL.OBSERVING_SYSTEM_COMPONENTS].some( (component) => component.id === lid);
       return foundInstrument
     });
-  };
+  }; */
 
   const handleTabChange = (event: SyntheticEvent) => {
     const newTabIndex = parseInt(event.currentTarget.getAttribute("data-tab-index") || "0");
@@ -267,9 +268,9 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
     }
   };
 
-  const instrumentListItemPrimaryAction = (params:InstrumentDetailPathParams) => {
+  const getInstrumentDetailPagePath = (params:InstrumentDetailPathParams) => {
     params.lid = convertLogicalIdentifier(params.lid,LID_FORMAT.URL_FRIENDLY);
-    navigate( generatePath("/instruments/:lid/data", params) );
+    return generatePath("/instruments/:lid/data", params);
   };
 
   const fetchBundles = useCallback( async (abortController:AbortController) => {
@@ -532,9 +533,9 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                   <Tab label="Instruments" data-tab-index={0} {...a11yProps(0)} disableRipple disableTouchRipple />
                   <Tab label="Overview" data-tab-index={1} {...a11yProps(1)} disableRipple disableTouchRipple />
                   {/* Hidden for the time being as these aren't part of the Phase 1 MVP
-                  <Tab label="Targets" {...a11yProps(2)} disableRipple disableTouchRipple />
-                  <Tab label="Tools" {...a11yProps(3)} disableRipple disableTouchRipple />
-                  <Tab label="Resources" {...a11yProps(4)} disableRipple disableTouchRipple />
+                  <Tab label="Targets" data-tab-index={2} {...a11yProps(2)} disableRipple disableTouchRipple />
+                  <Tab label="Tools" data-tab-index={3} {...a11yProps(3)} disableRipple disableTouchRipple />
+                  <Tab label="Resources" data-tab-index={4} {...a11yProps(4)} disableRipple disableTouchRipple />
                   */}
                 </Tabs>
               </Box>
@@ -627,13 +628,67 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                               {
                                 instruments[selectedInstrumentHost].map( (instrument:Instrument) => {
                                   if( instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]?.includes(instrumentType) ) {
-                                    return <FeaturedInstrumentLinkListItem
-                                      key={instrument[PDS4_INFO_MODEL.LID]}
-                                      description={instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION].toString()}
-                                      primaryAction={ () => instrumentListItemPrimaryAction({ lid: instrument[PDS4_INFO_MODEL.LID] }) }
-                                      title={instrument[PDS4_INFO_MODEL.TITLE]}
-                                      bundles={getRelatedInstrumentBundles(instrument[PDS4_INFO_MODEL.LID])}
-                                    />
+                                    return <>
+                                      <FeaturedLink 
+                                        description={ellipsisText(instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION], 256)}
+                                        primaryLink={getInstrumentDetailPagePath({ lid: instrument[PDS4_INFO_MODEL.LID] })}
+                                        primaryLinkLabel="View Instruments and Data"
+                                        title={instrument[PDS4_INFO_MODEL.TITLE]}
+                                      >
+                                        {/*<FeaturedLinkDetails
+                                          variant={FeaturedLinkDetailsVariant.INSTRUMENT}
+                                          instrumentType={instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]}
+                                          investigation={{value:investigation[PDS4_INFO_MODEL.TITLE]}}
+                                          lid={{value:instrument[PDS4_INFO_MODEL.LID]}}
+                                          startDate={{value: ""}}
+                                          stopDate={{value: ""}}
+                                          tags={['label']}
+                                        />*/}
+                                        <FeaturedLinkDetails
+                                          variant={FeaturedLinkDetailsVariant.BUNDLE_LIST}
+                                          bundleGroups={
+                                            [
+                                              {
+                                                title: "Calibrated Data Products",
+                                                items: [
+                                                  {
+                                                    title: "Lorem ipsum dolor sit amet, et nostrud sunt labore reprehenderit consequat",
+                                                    description: "Lorem ipsum dolor sit amet, laboris non magna enim ea cupidatat tempor Lorem tempor aute. Mollit commodo in adipisicing fugiat ut tempor consequat officia exercitation velit esse pariatur quis excepteur ea duis occaecat dolore aute.",
+                                                    link: "https://localhost/...."
+                                                  },
+                                                  {
+                                                    title: "Lorem ipsum dolor sit amet, et nostrud sunt labore reprehenderit consequat",
+                                                    description: "Lorem ipsum dolor sit amet, laboris non magna enim ea cupidatat tempor Lorem tempor aute. Mollit commodo in adipisicing fugiat ut tempor consequat officia exercitation velit esse pariatur quis excepteur ea duis occaecat dolore aute.",
+                                                    link: "https://localhost/...."
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                title: "Raw Data Products",
+                                                items: [
+                                                  {
+                                                    title: "Lorem ipsum dolor sit amet, amet voluptate id id nulla nisi.",
+                                                    description: "Lorem ipsum dolor sit amet, laboris non magna enim ea cupidatat tempor Lorem tempor aute. Mollit commodo in adipisicing fugiat ut tempor consequat officia exercitation velit esse pariatur quis excepteur ea duis occaecat dolore aute.",
+                                                    link: "https://localhost/...."
+                                                  },
+                                                  {
+                                                    title: "Lorem ipsum dolor sit amet, pariatur laborum sunt cillum exercitation culpa nulla",
+                                                    description: "Lorem ipsum dolor sit amet, laboris non magna enim ea cupidatat tempor Lorem tempor aute. Mollit commodo in adipisicing fugiat ut tempor consequat officia exercitation velit esse pariatur quis excepteur ea duis occaecat dolore aute.",
+                                                    link: "https://localhost/...."
+                                                  },
+                                                  {
+                                                    title: "Ad ullamco laborum laboris aute",
+                                                    description: "Lorem ipsum dolor sit amet, laboris non magna enim ea cupidatat tempor Lorem tempor aute. Mollit commodo in adipisicing fugiat ut tempor consequat officia exercitation velit esse pariatur quis excepteur ea duis occaecat dolore aute.",
+                                                    link: "https://localhost/...."
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        >
+                                        </FeaturedLinkDetails>
+                                      </FeaturedLink>
+                                    </>
                                   }
                                 })
                               }
@@ -848,7 +903,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                     lid={target[PDS4_INFO_MODEL.LID]}
                                     primaryAction={ () => {} }
                                     tags={['Tag Label 1', 'Tag Label 2', 'Tag label with a very long title']}
-                                    title={target[PDS4_INFO_MODEL.TARGET.NAME]}
+                                    title={target[PDS4_INFO_MODEL.TITLE]}
                                     type={target[PDS4_INFO_MODEL.TARGET.TYPE]}
                                   />
                         })
@@ -1154,9 +1209,9 @@ const mapStateToProps = (state:RootState, ownProps:{investigationLid:string, tab
         // Get related targets
         targets[index] = selectLatestTargetsForInstrumentHost(state, instrumentHost[PDS4_INFO_MODEL.REF_LID_TARGET])
                           .sort( (a:Target, b:Target) => {
-                            if( a[PDS4_INFO_MODEL.TARGET.NAME].toLowerCase() < b[PDS4_INFO_MODEL.TARGET.NAME].toLowerCase() ) {
+                            if( a[PDS4_INFO_MODEL.TITLE].toLowerCase() < b[PDS4_INFO_MODEL.TITLE].toLowerCase() ) {
                               return -1
-                            } else if( a[PDS4_INFO_MODEL.TARGET.NAME].toLowerCase() > b[PDS4_INFO_MODEL.TARGET.NAME].toLowerCase() ) {
+                            } else if( a[PDS4_INFO_MODEL.TITLE].toLowerCase() > b[PDS4_INFO_MODEL.TITLE].toLowerCase() ) {
                               return 1
                             }
                             return 0;
