@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {Box, Container, Divider, Link, MenuItem, Select, Typography as OldTypography } from "@mui/material";
+import {Box, Container, Divider, Link, MenuItem, Select } from "@mui/material";
 import Grid from '@mui/material/Unstable_Grid2';
 import { generatePath, useLocation, useNavigate } from "react-router-dom";
 import { Instrument } from "src/types/instrument.d";
