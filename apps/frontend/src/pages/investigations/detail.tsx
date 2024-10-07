@@ -2,7 +2,7 @@ import { SyntheticEvent, useCallback, useEffect, useRef, useState } from "react"
 
 import { generatePath, Link, useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "src/state/hooks";
-import { convertLogicalIdentifier, LID_FORMAT } from "src/utils/strings";
+import { convertLogicalIdentifier, ellipsisText, LID_FORMAT } from "src/utils/strings";
 import { getData } from "src/state/slices/dataManagerSlice";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { RootState } from "src/state/store";
@@ -244,12 +244,12 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
             investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION]
   }
 
-  const getRelatedInstrumentBundles = (lid:string) => {
+  /* const getRelatedInstrumentBundles = (lid:string) => {
     return bundles.current[selectedInstrumentHost].filter( (bundle) => {
       const foundInstrument = bundle[PDS4_INFO_MODEL.OBSERVING_SYSTEM_COMPONENTS].some( (component) => component.id === lid);
       return foundInstrument
     });
-  };
+  }; */
 
   const handleTabChange = (event: SyntheticEvent) => {
     const newTabIndex = parseInt(event.currentTarget.getAttribute("data-tab-index") || "0");
@@ -268,9 +268,9 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
     }
   };
 
-  const instrumentListItemPrimaryAction = (params:InstrumentDetailPathParams) => {
+  const getInstrumentDetailPagePath = (params:InstrumentDetailPathParams) => {
     params.lid = convertLogicalIdentifier(params.lid,LID_FORMAT.URL_FRIENDLY);
-    navigate( generatePath("/instruments/:lid/data", params) );
+    return generatePath("/instruments/:lid/data", params);
   };
 
   const fetchBundles = useCallback( async (abortController:AbortController) => {
@@ -628,13 +628,67 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                               {
                                 instruments[selectedInstrumentHost].map( (instrument:Instrument) => {
                                   if( instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]?.includes(instrumentType) ) {
-                                    return <FeaturedInstrumentLinkListItem
-                                      key={instrument[PDS4_INFO_MODEL.LID]}
-                                      description={instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION].toString()}
-                                      primaryAction={ () => instrumentListItemPrimaryAction({ lid: instrument[PDS4_INFO_MODEL.LID] }) }
-                                      title={instrument[PDS4_INFO_MODEL.TITLE]}
-                                      bundles={getRelatedInstrumentBundles(instrument[PDS4_INFO_MODEL.LID])}
-                                    />
+                                    return <>
+                                      <FeaturedLink 
+                                        description={ellipsisText(instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION], 256)}
+                                        primaryLink={getInstrumentDetailPagePath({ lid: instrument[PDS4_INFO_MODEL.LID] })}
+                                        primaryLinkLabel="View Instruments and Data"
+                                        title={instrument[PDS4_INFO_MODEL.TITLE]}
+                                      >
+                                        {/*<FeaturedLinkDetails
+                                          variant={FeaturedLinkDetailsVariant.INSTRUMENT}
+                                          instrumentType={instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]}
+                                          investigation={{value:investigation[PDS4_INFO_MODEL.TITLE]}}
+                                          lid={{value:instrument[PDS4_INFO_MODEL.LID]}}
+                                          startDate={{value: ""}}
+                                          stopDate={{value: ""}}
+                                          tags={['label']}
+                                        />*/}
+                                        <FeaturedLinkDetails
+                                          variant={FeaturedLinkDetailsVariant.BUNDLE_LIST}
+                                          bundleGroups={
+                                            [
+                                              {
+                                                title: "Calibrated Data Products",
+                                                items: [
+                                                  {
+                                                    title: "Lorem ipsum dolor sit amet, et nostrud sunt labore reprehenderit consequat",
+                                                    description: "Lorem ipsum dolor sit amet, laboris non magna enim ea cupidatat tempor Lorem tempor aute. Mollit commodo in adipisicing fugiat ut tempor consequat officia exercitation velit esse pariatur quis excepteur ea duis occaecat dolore aute.",
+                                                    link: "https://localhost/...."
+                                                  },
+                                                  {
+                                                    title: "Lorem ipsum dolor sit amet, et nostrud sunt labore reprehenderit consequat",
+                                                    description: "Lorem ipsum dolor sit amet, laboris non magna enim ea cupidatat tempor Lorem tempor aute. Mollit commodo in adipisicing fugiat ut tempor consequat officia exercitation velit esse pariatur quis excepteur ea duis occaecat dolore aute.",
+                                                    link: "https://localhost/...."
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                title: "Raw Data Products",
+                                                items: [
+                                                  {
+                                                    title: "Lorem ipsum dolor sit amet, amet voluptate id id nulla nisi.",
+                                                    description: "Lorem ipsum dolor sit amet, laboris non magna enim ea cupidatat tempor Lorem tempor aute. Mollit commodo in adipisicing fugiat ut tempor consequat officia exercitation velit esse pariatur quis excepteur ea duis occaecat dolore aute.",
+                                                    link: "https://localhost/...."
+                                                  },
+                                                  {
+                                                    title: "Lorem ipsum dolor sit amet, pariatur laborum sunt cillum exercitation culpa nulla",
+                                                    description: "Lorem ipsum dolor sit amet, laboris non magna enim ea cupidatat tempor Lorem tempor aute. Mollit commodo in adipisicing fugiat ut tempor consequat officia exercitation velit esse pariatur quis excepteur ea duis occaecat dolore aute.",
+                                                    link: "https://localhost/...."
+                                                  },
+                                                  {
+                                                    title: "Ad ullamco laborum laboris aute",
+                                                    description: "Lorem ipsum dolor sit amet, laboris non magna enim ea cupidatat tempor Lorem tempor aute. Mollit commodo in adipisicing fugiat ut tempor consequat officia exercitation velit esse pariatur quis excepteur ea duis occaecat dolore aute.",
+                                                    link: "https://localhost/...."
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        >
+                                        </FeaturedLinkDetails>
+                                      </FeaturedLink>
+                                    </>
                                   }
                                 })
                               }
