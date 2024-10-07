@@ -209,7 +209,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
 
     instruments[selectedInstrumentHost].forEach( (instrument:Instrument) => {
 
-      if( instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE] !== undefined && instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE].length !== 0 ) {
+      if( instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE].length !== 0 ) {
 
         instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE].forEach( (instrumentType:string) => {
           if( !instrumentTypesArr.includes(instrumentType) ) {
@@ -217,10 +217,18 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
           }
         });
 
-      } else {
-        instrumentTypesArr.push("other");
       }
-        
+
+      if( instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE].length !== 0 ) {
+
+        instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE].forEach( (instrumentType:string) => {
+          if( !instrumentTypesArr.includes(instrumentType) ) {
+            instrumentTypesArr.push(instrumentType);
+          }
+        });
+
+      }
+
       instrumentTypesArr.sort( (a:string, b:string) => {
         if( a.toLowerCase() < b.toLowerCase() ) {
           return -1
@@ -229,10 +237,10 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
         }
         return 0;
       });
-    
+      
       
     });
-
+    
     setInstrumentTypes(instrumentTypesArr);
     
   }, [instrumentHosts.length, instruments, selectedInstrumentHost]);
@@ -313,6 +321,10 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
         const temp = (await response.json());
 
         bundles.current[index] = temp.data;
+
+        if( import.meta.env.DEV ) {
+          console.log(bundles.current);
+        }
 
         return response;
 
@@ -627,7 +639,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                               </Typography>
                               {
                                 instruments[selectedInstrumentHost].map( (instrument:Instrument) => {
-                                  if( instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]?.includes(instrumentType) ) {
+                                  if( instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE]?.includes(instrumentType) || instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]?.includes(instrumentType) ) {
                                     return <>
                                       <FeaturedLink 
                                         description={ellipsisText(instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION], 256)}
