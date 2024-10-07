@@ -24,7 +24,7 @@ import { RootState } from "src/state/store";
 import { Loader, Typography } from "@nasapds/wds-react";
 import { TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import CloseIcon from "@mui/icons-material/Close";
+//import CloseIcon from "@mui/icons-material/Close";
 import { Investigation, INVESTIGATION_TYPE } from "src/types/investigation.d";
 import InvestigationsIndexedListComponent from "src/components/IndexedListComponent/InvestigationsIndexedListComponent";
 import { ExpandMore } from "@mui/icons-material";

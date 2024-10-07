@@ -196,7 +196,6 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
             instruments.length > 0 && OTHER_CHARS.map((character, index) => {
 
               const indexedInstruments = getItemsByIndex(instruments, character);
-              const indexedInstrumentsCount = Object.keys(indexedInstruments).length;
 
               return (
                 <React.Fragment key={"instruments_hash" + index}>
