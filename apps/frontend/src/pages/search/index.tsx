@@ -630,8 +630,8 @@ const SearchPage = () => {
   return (
     <>
       <DocumentMeta
-        title={ "Search" }
-        description={ "Planetary Data System Search Page" }
+        title={"Search"}
+        description={"Planetary Data System Search Page"}
       />
       <StyledEngineProvider injectFirst>
         <Container maxWidth={false} disableGutters sx={{ textAlign: "left" }}>
@@ -916,104 +916,6 @@ const SearchPage = () => {
                         searchResults.response.docs.length > 0 ? (
                           searchResults.response.docs.map((doc) => (
                             <Box>
-                              {getDocType(doc) === "investigation" ? (
-                                <FeaturedLink
-                                  title={doc.title}
-                                  description={
-                                    doc.investigation_description
-                                      ? doc.investigation_description[0]
-                                      : doc.instrument_host_description
-                                      ? doc.instrument_host_description[0]
-                                      : "-"
-                                  }
-                                  primaryLink="/"
-                                  startExpanded={areResultsExpanded}
-                                  columns={[
-                                    {
-                                      horizontalAlign: "center",
-                                      data: "Investigation",
-                                      verticalAlign: "center",
-                                      width: 1,
-                                    },
-                                  ]}
-                                >
-                                  <FeaturedLinkDetails
-                                    variant={
-                                      FeaturedLinkDetailsVariant.INVESTIGATION
-                                    }
-                                    instrumentHostTitles={
-                                      doc.instrument_host_name
-                                        ? doc.instrument_host_name
-                                        : ["-"]
-                                    }
-                                    lid={{ value: doc.identifier }}
-                                    startDate={
-                                      doc.investigation_start_date
-                                        ? {
-                                            value:
-                                              doc.investigation_start_date[0],
-                                          }
-                                        : { value: "-" }
-                                    }
-                                    stopDate={
-                                      doc.investigation_stop_date
-                                        ? {
-                                            value:
-                                              doc.investigation_stop_date[0],
-                                          }
-                                        : { value: "-" }
-                                    }
-                                  />
-                                </FeaturedLink>
-                              ) : (
-                                <></>
-                              )}
-
-                              {getDocType(doc) === "instrument" ? (
-                                <FeaturedLink
-                                  title={doc.title}
-                                  description={
-                                    doc.instrument_description
-                                      ? doc.instrument_description[0]
-                                      : "-"
-                                  }
-                                  primaryLink="/"
-                                  startExpanded={areResultsExpanded}
-                                  columns={[
-                                    {
-                                      horizontalAlign: "center",
-                                      data: "Instrument",
-                                      verticalAlign: "center",
-                                      width: 1,
-                                    },
-                                  ]}
-                                >
-                                  <FeaturedLinkDetails
-                                    variant={
-                                      FeaturedLinkDetailsVariant.INSTRUMENT
-                                    }
-                                    instrumentType={
-                                      doc["form-instrument-type"]
-                                        ? doc["form-instrument-type"]
-                                        : ["-"]
-                                    }
-                                    lid={{ value: doc.identifier }}
-                                    startDate={{ value: "-" }}
-                                    stopDate={{ value: "-" }}
-                                    investigation={
-                                      doc["form-instrument-host"]
-                                        ? {
-                                            value:
-                                              doc["form-instrument-host"][0],
-                                          }
-                                        : { value: "-" }
-                                    }
-                                  />
-                                </FeaturedLink>
-                              ) : (
-                                <></>
-                              )}
-
                               {getDocType(doc) === "databundle" ? (
                                 <FeaturedLink
                                   title={doc.title}
@@ -1150,6 +1052,251 @@ const SearchPage = () => {
                                 <></>
                               )}
 
+                              {getDocType(doc) === "dataset" ? (
+                                <FeaturedLink
+                                  title={doc.title}
+                                  description={
+                                    doc.description ? doc.description[0] : "-"
+                                  }
+                                  primaryLink="/"
+                                  startExpanded={areResultsExpanded}
+                                  columns={[
+                                    {
+                                      horizontalAlign: "center",
+                                      data: "Data Set",
+                                      verticalAlign: "center",
+                                      width: 1,
+                                    },
+                                  ]}
+                                >
+                                  <FeaturedLinkDetails
+                                    disciplineName={{ value: "?????" }}
+                                    doi={{ value: doc.search_id }}
+                                    investigation={
+                                      doc.investigation_name
+                                        ? { value: doc.investigation_name[0] }
+                                        : { value: "-" }
+                                    }
+                                    processingLevel={{ value: "?????" }}
+                                    target={
+                                      doc["form-target"]
+                                        ? { value: doc["form-target"][0] }
+                                        : { value: "-" }
+                                    }
+                                    variant={
+                                      FeaturedLinkDetailsVariant.DATA_SET
+                                    }
+                                  />
+                                </FeaturedLink>
+                              ) : (
+                                <></>
+                              )}
+
+                              {getDocType(doc) === "facility" ? (
+                                <FeaturedLink
+                                  title={doc.title}
+                                  description={
+                                    doc.instrument_description
+                                      ? doc.instrument_description[0]
+                                      : "-"
+                                  }
+                                  primaryLink="/"
+                                  startExpanded={areResultsExpanded}
+                                  columns={[
+                                    {
+                                      horizontalAlign: "center",
+                                      data: "Facility",
+                                      verticalAlign: "center",
+                                      width: 1,
+                                    },
+                                  ]}
+                                >
+                                  <FeaturedLinkDetails
+                                    variant={
+                                      FeaturedLinkDetailsVariant.FACILITY
+                                    }
+                                    country={{ value: doc.identifier }}
+                                    lid={{ value: doc.identifier }}
+                                    telescopes={["-"]}
+                                    type={{ value: "-" }}
+                                  />
+                                </FeaturedLink>
+                              ) : (
+                                <></>
+                              )}
+
+                              {getDocType(doc) === "instrument" ? (
+                                <FeaturedLink
+                                  title={doc.title}
+                                  description={
+                                    doc.instrument_description
+                                      ? doc.instrument_description[0]
+                                      : "-"
+                                  }
+                                  primaryLink="/"
+                                  startExpanded={areResultsExpanded}
+                                  columns={[
+                                    {
+                                      horizontalAlign: "center",
+                                      data: "Instrument",
+                                      verticalAlign: "center",
+                                      width: 1,
+                                    },
+                                  ]}
+                                >
+                                  <FeaturedLinkDetails
+                                    variant={
+                                      FeaturedLinkDetailsVariant.INSTRUMENT
+                                    }
+                                    instrumentType={
+                                      doc["form-instrument-type"]
+                                        ? doc["form-instrument-type"]
+                                        : ["-"]
+                                    }
+                                    lid={{ value: doc.identifier }}
+                                    startDate={{ value: "-" }}
+                                    stopDate={{ value: "-" }}
+                                    investigation={
+                                      doc["form-instrument-host"]
+                                        ? {
+                                            value:
+                                              doc["form-instrument-host"][0],
+                                          }
+                                        : { value: "-" }
+                                    }
+                                  />
+                                </FeaturedLink>
+                              ) : (
+                                <></>
+                              )}
+
+                              {getDocType(doc) === "instrument_host" ? (
+                                <FeaturedLink
+                                  title={doc.title}
+                                  description={
+                                    doc.instrument_description
+                                      ? doc.instrument_description[0]
+                                      : "-"
+                                  }
+                                  primaryLink="/"
+                                  startExpanded={areResultsExpanded}
+                                  columns={[
+                                    {
+                                      horizontalAlign: "center",
+                                      data: "Instrument Host",
+                                      verticalAlign: "center",
+                                      width: 1,
+                                    },
+                                  ]}
+                                >
+                                  <FeaturedLinkDetails
+                                    variant={
+                                      FeaturedLinkDetailsVariant.INSTRUMENT_HOST
+                                    }
+                                    lid={{ value: doc.identifier }}
+                                    investigation={
+                                      doc["form-instrument-host"]
+                                        ? {
+                                            value:
+                                              doc["form-instrument-host"][0],
+                                          }
+                                        : { value: "-" }
+                                    }
+                                    instruments={
+                                      doc.service_category
+                                        ? doc.service_category
+                                        : ["-"]
+                                    }
+                                  />
+                                </FeaturedLink>
+                              ) : (
+                                <></>
+                              )}
+
+                              {getDocType(doc) === "investigation" ? (
+                                <FeaturedLink
+                                  title={doc.title}
+                                  description={
+                                    doc.investigation_description
+                                      ? doc.investigation_description[0]
+                                      : doc.instrument_host_description
+                                      ? doc.instrument_host_description[0]
+                                      : "-"
+                                  }
+                                  primaryLink="/"
+                                  startExpanded={areResultsExpanded}
+                                  columns={[
+                                    {
+                                      horizontalAlign: "center",
+                                      data: "Investigation",
+                                      verticalAlign: "center",
+                                      width: 1,
+                                    },
+                                  ]}
+                                >
+                                  <FeaturedLinkDetails
+                                    variant={
+                                      FeaturedLinkDetailsVariant.INVESTIGATION
+                                    }
+                                    instrumentHostTitles={
+                                      doc.instrument_host_name
+                                        ? doc.instrument_host_name
+                                        : ["-"]
+                                    }
+                                    lid={{ value: doc.identifier }}
+                                    startDate={
+                                      doc.investigation_start_date
+                                        ? {
+                                            value:
+                                              doc.investigation_start_date[0],
+                                          }
+                                        : { value: "-" }
+                                    }
+                                    stopDate={
+                                      doc.investigation_stop_date
+                                        ? {
+                                            value:
+                                              doc.investigation_stop_date[0],
+                                          }
+                                        : { value: "-" }
+                                    }
+                                  />
+                                </FeaturedLink>
+                              ) : (
+                                <></>
+                              )}
+
+                              {getDocType(doc) === "resource" ? (
+                                <FeaturedLink
+                                  title={doc.title}
+                                  description={
+                                    doc.description ? doc.description[0] : "-"
+                                  }
+                                  primaryLink="/"
+                                  startExpanded={areResultsExpanded}
+                                  columns={[
+                                    {
+                                      horizontalAlign: "center",
+                                      data: "Resource",
+                                      verticalAlign: "center",
+                                      width: 1,
+                                    },
+                                  ]}
+                                >
+                                  <FeaturedLinkDetails
+                                    variant={
+                                      FeaturedLinkDetailsVariant.RESOURCE
+                                    }
+                                    format={{ value: "" }}
+                                    size={{ value: "" }}
+                                    version={{ value: "" }}
+                                    year={{ value: "" }}
+                                  />
+                                </FeaturedLink>
+                              ) : (
+                                <></>
+                              )}
+
                               {getDocType(doc) === "target" ? (
                                 <FeaturedLink
                                   title={doc.title}
@@ -1175,6 +1322,40 @@ const SearchPage = () => {
                                       doc.target_type ? doc.target_type : ["-"]
                                     }
                                     variant={FeaturedLinkDetailsVariant.TARGET}
+                                  />
+                                </FeaturedLink>
+                              ) : (
+                                <></>
+                              )}
+
+                              {getDocType(doc) === "telescope" ? (
+                                <FeaturedLink
+                                  title={doc.title}
+                                  description={
+                                    doc.description ? doc.description[0] : "-"
+                                  }
+                                  primaryLink="/"
+                                  startExpanded={areResultsExpanded}
+                                  columns={[
+                                    {
+                                      horizontalAlign: "center",
+                                      data: "Telescope",
+                                      verticalAlign: "center",
+                                      width: 1,
+                                    },
+                                  ]}
+                                >
+                                  <FeaturedLinkDetails
+                                    lid={{ value: doc.identifier }}
+                                    instruments={
+                                      doc.service_category
+                                        ? doc.service_category
+                                        : ["-"]
+                                    }
+                                    facility={{ value: "-" }}
+                                    variant={
+                                      FeaturedLinkDetailsVariant.TELESCOPE
+                                    }
                                   />
                                 </FeaturedLink>
                               ) : (
@@ -1220,77 +1401,6 @@ const SearchPage = () => {
                                         : { value: "-" }
                                     }
                                     variant={FeaturedLinkDetailsVariant.TOOL}
-                                  />
-                                </FeaturedLink>
-                              ) : (
-                                <></>
-                              )}
-
-                              {getDocType(doc) === "resource" ? (
-                                <FeaturedLink
-                                  title={doc.title}
-                                  description={
-                                    doc.description ? doc.description[0] : "-"
-                                  }
-                                  primaryLink="/"
-                                  startExpanded={areResultsExpanded}
-                                  columns={[
-                                    {
-                                      horizontalAlign: "center",
-                                      data: "Resource",
-                                      verticalAlign: "center",
-                                      width: 1,
-                                    },
-                                  ]}
-                                >
-                                  <FeaturedLinkDetails
-                                    variant={
-                                      FeaturedLinkDetailsVariant.RESOURCE
-                                    }
-                                    format={{ value: "" }}
-                                    size={{ value: "" }}
-                                    version={{ value: "" }}
-                                    year={{ value: "" }}
-                                  />
-                                </FeaturedLink>
-                              ) : (
-                                <></>
-                              )}
-
-                              {getDocType(doc) === "dataset" ? (
-                                <FeaturedLink
-                                  title={doc.title}
-                                  description={
-                                    doc.description ? doc.description[0] : "-"
-                                  }
-                                  primaryLink="/"
-                                  startExpanded={areResultsExpanded}
-                                  columns={[
-                                    {
-                                      horizontalAlign: "center",
-                                      data: "Data Set",
-                                      verticalAlign: "center",
-                                      width: 1,
-                                    },
-                                  ]}
-                                >
-                                  <FeaturedLinkDetails
-                                    disciplineName={{ value: "?????" }}
-                                    doi={{ value: doc.search_id }}
-                                    investigation={
-                                      doc.investigation_name
-                                        ? { value: doc.investigation_name[0] }
-                                        : { value: "-" }
-                                    }
-                                    processingLevel={{ value: "?????" }}
-                                    target={
-                                      doc["form-target"]
-                                        ? { value: doc["form-target"][0] }
-                                        : { value: "-" }
-                                    }
-                                    variant={
-                                      FeaturedLinkDetailsVariant.DATA_SET
-                                    }
                                   />
                                 </FeaturedLink>
                               ) : (
