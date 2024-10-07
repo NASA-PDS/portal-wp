@@ -34,8 +34,15 @@ const getItemsByIndex = (
 };
 
 function getAffiliatedSpacecraft(state:RootState, instrument:Instrument) {
+
   return selectLatestInstrumentHostsForInstrument(state, instrument[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST])?.reduce(
-    (accumulator, item:InstrumentHost) => { return accumulator === "" ? accumulator += item[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME] : accumulator += ", ".concat(item[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME]) }, ''
+    (accumulator, item:InstrumentHost) => { 
+      if( item[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME] !== "null" )
+        return accumulator === "" ? accumulator += item[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME] : accumulator += ", ".concat(item[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME]) 
+      else
+        return ""
+    },
+    ''
   )
 }
 
@@ -210,7 +217,7 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
                           columns={[
                             {
                               horizontalAlign: "center",
-                              data: instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE].join(", "),
+                              data: instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE][0] !== "null" ? instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE].join(", ") : "",
                               verticalAlign: "center",
                               width: 1
                             },
@@ -269,7 +276,7 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
                           columns={[
                             {
                               horizontalAlign: "center",
-                              data: instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE].join(", "),
+                              data: instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE][0] !== "null" ? instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE].join(", ") : "",
                               verticalAlign: "center",
                               width: 1
                             },
