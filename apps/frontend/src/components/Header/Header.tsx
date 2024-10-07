@@ -15,7 +15,7 @@ const navItems: NavItems[] = [
       {
         id: "find-data-instruments",
         label: "Instruments",
-        href: "/instruments",
+        href: import.meta.env.BASE_URL + "instruments",
       },
       {
         id: "data-search",
