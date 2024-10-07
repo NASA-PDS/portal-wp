@@ -33,7 +33,15 @@ export const getTargets = createAsyncThunk(
   TARGET_ACTIONS.GET_TARGETS,
   async (_:void, thunkAPI) => {
     
-    let queryUrl = '/api/search/1/products?q=(lid like "urn:nasa:pds:context:target:*")&limit=9999'
+    let queryUrl = '/api/search/1/products?q=(';
+    queryUrl    += 'product_class eq "Product_Context" AND ('
+    queryUrl    += 'lid LIKE "urn:nasa:pds:context:target:*" ';
+    queryUrl    += 'OR lid LIKE "urn:esa:psa:context:target:*" ';
+    queryUrl    += 'OR lid LIKE "urn:jaxa:darts:context:target:*" ';
+    queryUrl    += 'OR lid LIKE "urn:isro:isda:context:target:*" ';
+    queryUrl    += 'OR lid LIKE "urn:kari:kpds:context:target:*")';
+    queryUrl    += ')&limit=9999';
+
     const config = {
       headers: {
         "Accept": "application/json",

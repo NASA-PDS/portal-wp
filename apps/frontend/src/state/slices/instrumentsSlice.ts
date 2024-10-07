@@ -40,7 +40,15 @@ export const getInstruments = createAsyncThunk(
   INSTRUMENT_ACTIONS.GET_INSTRUMENTS,
   async (_:void, thunkAPI) => {
 
-    let queryUrl = '/api/search/1/products?q=(lid like "urn:nasa:pds:context:instrument:*")&limit=9999'
+    let queryUrl = '/api/search/1/products?q=(';
+    queryUrl    += 'product_class eq "Product_Context" AND ('
+    queryUrl    += 'lid LIKE "urn:nasa:pds:context:instrument:*" ';
+    queryUrl    += 'OR lid LIKE "urn:esa:psa:context:instrument:*" ';
+    queryUrl    += 'OR lid LIKE "urn:jaxa:darts:context:instrument:*" ';
+    queryUrl    += 'OR lid LIKE "urn:isro:isda:context:instrument:*" ';
+    queryUrl    += 'OR lid LIKE "urn:kari:kpds:context:instrument:*")';
+    queryUrl    += ')&limit=9999';
+
     const config = {
       headers: {
         "Accept": "application/json",
