@@ -41,7 +41,15 @@ export const getInvestigations = createAsyncThunk(
   INVESTIGATION_ACTIONS.GET_INVESTIGATIONS,
   async (_:void, thunkAPI) => {
 
-    let queryUrl = '/api/search/1/products?q=(lid like "urn:nasa:pds:context:investigation:*")&limit=9999'
+    let queryUrl = '/api/search/1/products?q=(';
+    queryUrl    += 'product_class eq "Product_Context" AND ('
+    queryUrl    += 'lid LIKE "urn:nasa:pds:context:investigation:*" ';
+    queryUrl    += 'OR lid LIKE "urn:esa:psa:context:investigation:*" ';
+    queryUrl    += 'OR lid LIKE "urn:jaxa:darts:context:investigation:*" ';
+    queryUrl    += 'OR lid LIKE "urn:isro:isda:context:investigation:*" ';
+    queryUrl    += 'OR lid LIKE "urn:kari:kpds:context:investigation:*")';
+    queryUrl    += ')&limit=9999';
+
     const config = {
       headers: {
         "Accept": "application/json",

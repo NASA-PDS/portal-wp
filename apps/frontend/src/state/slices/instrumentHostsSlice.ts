@@ -33,7 +33,15 @@ export const getInstrumentHosts = createAsyncThunk(
   INSTRUMENT_HOST_ACTIONS.GET_INSTRUMENT_HOSTS,
   async (_:void, thunkAPI) => {
     
-    let queryUrl = '/api/search/1/products?q=(lid like "urn:nasa:pds:context:instrument_host:*")&limit=9999'
+    let queryUrl = '/api/search/1/products?q=(';
+    queryUrl    += 'product_class eq "Product_Context" AND ('
+    queryUrl    += 'lid LIKE "urn:nasa:pds:context:instrument_host:*" ';
+    queryUrl    += 'OR lid LIKE "urn:esa:psa:context:instrument_host:*" ';
+    queryUrl    += 'OR lid LIKE "urn:jaxa:darts:context:instrument_host:*" ';
+    queryUrl    += 'OR lid LIKE "urn:isro:isda:context:instrument_host:*" ';
+    queryUrl    += 'OR lid LIKE "urn:kari:kpds:context:instrument_host:*")';
+    queryUrl    += ')&limit=9999';
+
     const config = {
       headers: {
         "Accept": "application/json",
@@ -47,6 +55,7 @@ export const getInstrumentHosts = createAsyncThunk(
       PDS4_INFO_MODEL.REF_LID_INSTRUMENT,
       PDS4_INFO_MODEL.REF_LID_INVESTIGATION,
       PDS4_INFO_MODEL.REF_LID_TARGET,
+      PDS4_INFO_MODEL.TITLE,
       PDS4_INFO_MODEL.VID,
       PDS4_INFO_MODEL.INSTRUMENT_HOST.DESCRIPTION,
       PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME,
@@ -109,6 +118,7 @@ const instrumentHostsSlice = createSlice({
         instrumentHost[PDS4_INFO_MODEL.REF_LID_INSTRUMENT] = source[PDS4_INFO_MODEL.REF_LID_INSTRUMENT];
         instrumentHost[PDS4_INFO_MODEL.REF_LID_INVESTIGATION] = source[PDS4_INFO_MODEL.REF_LID_INVESTIGATION];
         instrumentHost[PDS4_INFO_MODEL.REF_LID_TARGET] = source[PDS4_INFO_MODEL.REF_LID_TARGET];
+        instrumentHost[PDS4_INFO_MODEL.TITLE] = source[PDS4_INFO_MODEL.TITLE];
         instrumentHost[PDS4_INFO_MODEL.VID] = source[PDS4_INFO_MODEL.VID][0];
         instrumentHost[PDS4_INFO_MODEL.INSTRUMENT_HOST.DESCRIPTION] = source[PDS4_INFO_MODEL.INSTRUMENT_HOST.DESCRIPTION] ? source[PDS4_INFO_MODEL.INSTRUMENT_HOST.DESCRIPTION][0] : "";
         instrumentHost[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME] = source[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME] ? source[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME][0] : ""

@@ -2,29 +2,30 @@ import React, { useEffect, useState } from "react";
 import {Box, Container, Divider, Link, MenuItem, Select } from "@mui/material";
 import Grid from '@mui/material/Unstable_Grid2';
 import { generatePath, useLocation, useNavigate } from "react-router-dom";
-import { Investigation } from "src/types/investigation.d";
+import { Instrument } from "src/types/instrument.d";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
-import { selectLatestInstrumentHostsForInvestigation } from "src/state/selectors";
+import { selectLatestInstrumentHostsForInstrument } from "src/state/selectors";
 import { RootState, store } from "src/state/store";
+import { InstrumentHost } from "src/types/instrumentHost";
 import { convertLogicalIdentifier, LID_FORMAT } from "src/utils/strings";
 import { ExpandMore } from "@mui/icons-material";
 import { FeaturedLink, FeaturedLinkDetails, FeaturedLinkDetailsVariant, Typography } from "@nasapds/wds-react";
 
-type InvestigationsIndexedListComponentProps = {
-  investigations: Investigation[];
+type InstrumentsIndexedListComponentProps = {
+  instruments: Instrument[];
 };
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 const OTHER_CHARS = "0123456789".split("");
 
-type InvestigationDetailPathParams = {
+type InstrumentDetailPathParams = {
   lid:string;
 }
 
 const getItemsByIndex = (
-  arr: Investigation[],
+  arr: Instrument[],
   index: string
-): Investigation[] => {
+): Instrument[] => {
   return arr.filter((item) => {
     return item[PDS4_INFO_MODEL.TITLE]
       .toUpperCase()
@@ -32,25 +33,31 @@ const getItemsByIndex = (
   });
 };
 
-function getAffiliatedSpacecraft(state:RootState, investigation:Investigation) {
-  const instrumentHostTitles = selectLatestInstrumentHostsForInvestigation(state, investigation[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST])?.map(
-    (instrumentHost) => instrumentHost[PDS4_INFO_MODEL.TITLE]
+function getAffiliatedSpacecraft(state:RootState, instrument:Instrument) {
+
+  return selectLatestInstrumentHostsForInstrument(state, instrument[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST])?.reduce(
+    (accumulator, item:InstrumentHost) => { 
+      if( item[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME] !== "null" )
+        return accumulator === "" ? accumulator += item[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME] : accumulator += ", ".concat(item[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME]) 
+      else
+        return ""
+    },
+    ''
   )
-  return instrumentHostTitles;
 }
 
-function InvestigationsIndexedListComponent(props:InvestigationsIndexedListComponentProps) {
+function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentProps) {
 
-  const investigations = props.investigations;
+  const instruments = props.instruments;
   const navigate = useNavigate();
   const location = useLocation();
   const state = store.getState();
 
   const [indexValue, setIndexValue] = useState(location.hash.replace("#",""));
 
-  const investigationListItemPrimaryPath = (params:InvestigationDetailPathParams) => {
+  const instrumentListItemPrimaryPath = (params:InstrumentDetailPathParams) => {
     params.lid = convertLogicalIdentifier(params.lid,LID_FORMAT.URL_FRIENDLY);
-    return generateLinkPath("/investigations/:lid/instruments", params);
+    return generateLinkPath("/instruments/:lid/data", params);
   };
 
   const scrollToIndex = (id:string) => {
@@ -80,14 +87,14 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
     <>
       <Box sx={{textAlign:"center"}} display={{ xs: "none", md: "block"}}>
         {
-          investigations.length > 0 && ALPHABET.map((letter) => {
+          instruments.length > 0 && ALPHABET.map((letter) => {
 
-            const indexedInvestigations = getItemsByIndex(investigations, letter);
-            const indexedInvestigationsCount = Object.keys(indexedInvestigations).length;
-            const anchorName = indexedInvestigationsCount > 0 ? "#" + letter : undefined;
-            const anchorColor = indexedInvestigationsCount > 0 ? "#1976d2" : "#959599";
+            const indexedInstruments = getItemsByIndex(instruments, letter);
+            const indexedInstrumentsCount = Object.keys(indexedInstruments).length;
+            const anchorName = indexedInstrumentsCount > 0 ? "#" + letter : undefined;
+            const anchorColor = indexedInstrumentsCount > 0 ? "#1976d2" : "#959599";
 
-            return indexedInvestigationsCount >= 0 ? (
+            return indexedInstrumentsCount >= 0 ? (
               <Link
                 sx={{
                   color: anchorColor,
@@ -101,7 +108,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                     paddingRight: "10px",
                   }}
                 >
-                {letter}
+                  {letter}
                 </Typography>
               </Link>
             ) : (
@@ -149,13 +156,13 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
             Select an index
           </MenuItem>
           {
-            investigations.length > 0 && ALPHABET.map((letter) => {
+            instruments.length > 0 && ALPHABET.map((letter) => {
   
-              const indexedInvestigations = getItemsByIndex(investigations, letter);
-              const indexedInvestigationsCount = Object.keys(indexedInvestigations).length;
+              const indexedInstruments = getItemsByIndex(instruments, letter);
+              const indexedInstrumentsCount = Object.keys(indexedInstruments).length;
 
               return (
-                <MenuItem value={letter} disabled={indexedInvestigationsCount === 0} key={"menu_letter_" + letter}>
+                <MenuItem value={letter} disabled={indexedInstrumentsCount === 0} key={"menu_letter_" + letter}>
                   {letter}
                 </MenuItem>
               )
@@ -186,41 +193,42 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
         </Grid>
         <Box>
           {
-            investigations.length > 0 && OTHER_CHARS.map((character, index) => {
+            instruments.length > 0 && OTHER_CHARS.map((character, index) => {
 
-              const indexedInvestigations = getItemsByIndex(investigations, character);
+              const indexedInstruments = getItemsByIndex(instruments, character);
 
               return (
-                <React.Fragment key={"investigations_hash" + index}>
-                  {indexedInvestigations.map(
-                    (investigation: Investigation, investigationIndex) => {
+                <React.Fragment key={"instruments_hash" + index}>
+                  {indexedInstruments.map(
+                    (instrument: Instrument, instrumentIndex) => {
                       return (
                          <FeaturedLink
-                          description={investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION]}
-                          title={ investigation[PDS4_INFO_MODEL.TITLE] }
-                          primaryLink={ investigationListItemPrimaryPath({ lid: investigation.lid }) }
+                          description={instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION]}
+                          title={ instrument[PDS4_INFO_MODEL.TITLE] }
+                          primaryLink={ instrumentListItemPrimaryPath({ lid: instrument.lid }) }
                           columns={[
                             {
                               horizontalAlign: "center",
-                              data: investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE],
+                              data: instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE][0] !== "null" ? instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE].join(", ") : "",
                               verticalAlign: "center",
                               width: 1
                             },
                             {
                               horizontalAlign: "center",
-                              data: getAffiliatedSpacecraft(state, investigation).join(", "),
+                              data: getAffiliatedSpacecraft(state, instrument),
                               verticalAlign: "center",
                               width: 2
                             }
                           ]}
-                          key={"investigation_" + investigationIndex}
+                          key={"instrument_" + instrumentIndex}
                         >
                           <FeaturedLinkDetails 
-                            instrumentHostTitles={getAffiliatedSpacecraft(state, investigation)}
-                            lid={{value: investigation[PDS4_INFO_MODEL.LID], link: investigationListItemPrimaryPath({ lid: investigation.lid })}}
-                            startDate={{value:investigation[PDS4_INFO_MODEL.INVESTIGATION.START_DATE]}}
-                            stopDate={{value:investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE]}}
-                            variant={FeaturedLinkDetailsVariant.INVESTIGATION}
+                            instrumentType={instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]}
+                            investigation={{value:""}}
+                            lid={{value: instrument[PDS4_INFO_MODEL.LID], link: instrumentListItemPrimaryPath({ lid: instrument.lid })}}
+                            startDate={{value:""}}
+                            stopDate={{value:""}}
+                            variant={FeaturedLinkDetailsVariant.INSTRUMENT}
                           />
                         </FeaturedLink>
                       );
@@ -231,18 +239,18 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
             })
           }
           {
-            investigations.length > 0 && ALPHABET.map((letter) => {
+            instruments.length > 0 && ALPHABET.map((letter) => {
 
-              const indexedInvestigations = getItemsByIndex(investigations, letter);
-              const indexedInvestigationsCount = Object.keys(indexedInvestigations).length;
+              const indexedInstruments = getItemsByIndex(instruments, letter);
+              const indexedInstrumentsCount = Object.keys(indexedInstruments).length;
 
               return (
-                <React.Fragment key={"investigations_" + letter}>
+                <React.Fragment key={"instruments_" + letter}>
                   { <Typography variant="h2" weight="bold"
                         sx={{
                           paddingRight: "10px",
                           paddingTop: "15px",
-                          color: indexedInvestigationsCount
+                          color: indexedInstrumentsCount
                             ? "#000000"
                             : "#959599",
                         }}
@@ -250,35 +258,36 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                         <a id={letter}>{letter}</a>
                       </Typography>
                   }
-                  { indexedInvestigations.map(
-                    (investigation: Investigation, investigationIndex) => {
+                  { indexedInstruments.map(
+                    (instrument: Instrument, instrumentIndex) => {
                       return (
                         <FeaturedLink
-                          description={investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION]}
-                          title={ investigation[PDS4_INFO_MODEL.TITLE] }
-                          primaryLink={ investigationListItemPrimaryPath({ lid: investigation.lid }) }
+                          description={instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION]}
+                          title={ instrument[PDS4_INFO_MODEL.TITLE] }
+                          primaryLink={ instrumentListItemPrimaryPath({ lid: instrument.lid }) }
                           columns={[
                             {
                               horizontalAlign: "center",
-                              data: investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE],
+                              data: instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE][0] !== "null" ? instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE].join(", ") : "",
                               verticalAlign: "center",
                               width: 1
                             },
                             {
                               horizontalAlign: "center",
-                              data: getAffiliatedSpacecraft(state, investigation).join(", "),
+                              data: getAffiliatedSpacecraft(state, instrument),
                               verticalAlign: "center",
                               width: 2
                             }
                           ]}
-                          key={"investigation_" + investigationIndex}
+                          key={"instrument_" + instrumentIndex}
                         >
                           <FeaturedLinkDetails 
-                            instrumentHostTitles={getAffiliatedSpacecraft(state,investigation)}
-                            lid={{value: investigation[PDS4_INFO_MODEL.LID], link: investigationListItemPrimaryPath({ lid: investigation.lid })}}
-                            startDate={{value: investigation[PDS4_INFO_MODEL.INVESTIGATION.START_DATE]}}
-                            stopDate={{value:investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE]}}
-                            variant={FeaturedLinkDetailsVariant.INVESTIGATION}
+                            instrumentType={instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]}
+                            investigation={{value:""}}
+                            lid={{value: instrument[PDS4_INFO_MODEL.LID], link: instrumentListItemPrimaryPath({ lid: instrument.lid })}}
+                            startDate={{value:""}}
+                            stopDate={{value:""}}
+                            variant={FeaturedLinkDetailsVariant.INSTRUMENT}
                           />
                         </FeaturedLink>
                       );
@@ -294,4 +303,4 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
   );
 }
 
-export default InvestigationsIndexedListComponent;
+export default InstrumentsIndexedListComponent;

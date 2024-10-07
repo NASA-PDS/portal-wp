@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
-import { Instrument } from "src/types/instrument.d";
+import { Instrument, INSTRUMENT_TYPE } from "src/types/instrument.d";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 
 enum INSTRUMENT_ACTIONS {
@@ -14,15 +14,22 @@ export type InstrumentItems = {
   } 
 };
 
+export type InstrumentDirectorySearchFilterState = {
+  freeText:string,
+  type:INSTRUMENT_TYPE,
+}
+
 export type InstrumentsState = {
   error: string | null | undefined
   items: InstrumentItems
+  searchFilters: InstrumentDirectorySearchFilterState | undefined
   status: 'idle' | 'pending' | 'succeeded' | 'failed'
 };
 
 const initialState:InstrumentsState = {
   error: null,
   items: <InstrumentItems>{},
+  searchFilters: undefined,
   status: 'idle',
 };
 
@@ -33,7 +40,15 @@ export const getInstruments = createAsyncThunk(
   INSTRUMENT_ACTIONS.GET_INSTRUMENTS,
   async (_:void, thunkAPI) => {
 
-    let queryUrl = '/api/search/1/products?q=(lid like "urn:nasa:pds:context:instrument:*")&limit=9999'
+    let queryUrl = '/api/search/1/products?q=(';
+    queryUrl    += 'product_class eq "Product_Context" AND ('
+    queryUrl    += 'lid LIKE "urn:nasa:pds:context:instrument:*" ';
+    queryUrl    += 'OR lid LIKE "urn:esa:psa:context:instrument:*" ';
+    queryUrl    += 'OR lid LIKE "urn:jaxa:darts:context:instrument:*" ';
+    queryUrl    += 'OR lid LIKE "urn:isro:isda:context:instrument:*" ';
+    queryUrl    += 'OR lid LIKE "urn:kari:kpds:context:instrument:*")';
+    queryUrl    += ')&limit=9999';
+
     const config = {
       headers: {
         "Accept": "application/json",
@@ -79,7 +94,20 @@ export const getInstruments = createAsyncThunk(
 const instrumentsSlice = createSlice({
   name: "instruments",
   initialState,
-  reducers: {},
+  reducers: {
+    setFreeTextSearchFilter: (state, action:PayloadAction<string>) => {
+      if( state.searchFilters === undefined ) {
+        state.searchFilters = <InstrumentDirectorySearchFilterState>{}
+      }
+      state.searchFilters.freeText = action.payload;
+    },
+    setInstrumentTypeSearchFilter: (state, action:PayloadAction<INSTRUMENT_TYPE>) => {
+      if( state.searchFilters === undefined ) {
+        state.searchFilters = <InstrumentDirectorySearchFilterState>{}
+      }
+      state.searchFilters.type = action.payload;
+    }
+  },
   extraReducers: (builder) => {
     
     builder.addCase(getInstruments.pending, (state, _action) => {
@@ -135,4 +163,5 @@ const instrumentsSlice = createSlice({
   }
 });
 
+export const { setFreeTextSearchFilter, setInstrumentTypeSearchFilter } = instrumentsSlice.actions;
 export default instrumentsSlice.reducer;

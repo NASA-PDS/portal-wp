@@ -7,15 +7,14 @@ import { useCallback, useEffect, useState } from "react";
 import { getData } from "src/state/slices/dataManagerSlice";
 import { useAppDispatch, useAppSelector } from "src/state/hooks";
 import { RootState } from "src/state/store";
-import { selectLatestInstrumentVersion } from "src/state/selectors/instruments";
+import { selectLatestInstrumentVersion } from "src/state/selectors";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
 import { Box, Breadcrumbs, Container, Divider, Grid, Link as AnchorLink, Tab, Tabs, Typography, Stack, Button, IconButton } from "@mui/material";
 import { IconArrowFilledDown, Loader } from "@nasapds/wds-react";
 import InvestigationStatus from "src/components/InvestigationStatus/InvestigationStatus";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { Stats, StatsList } from "src/components/StatsList/StatsList";
-import { selectLatestInstrumentHostVersion } from "src/state/selectors/instrumentHost";
-import { selectLatestInvestigationVersion } from "src/state/selectors/investigations";
+import { selectLatestInstrumentHostVersion, selectLatestInvestigationVersion } from "src/state/selectors";
 import FeaturedDataBundleLinkListItem from "src/components/FeaturedListItems/FeaturedDataBundleLinkListItem";
 import { ArrowOutward } from "@mui/icons-material";
 

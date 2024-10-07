@@ -150,7 +150,7 @@ const HomePage = () => {
         text={
           "Come see us at the 2023 American Geophysical Union Fall Meeting, December 11 - 15 in San Francisco."
         }
-        imageSrc={"/hero.png"}
+        imageSrc={"/assets/images/homepage-hero.png"}
         buttonLink={"/"}
         buttonText={"More information"}
       />
