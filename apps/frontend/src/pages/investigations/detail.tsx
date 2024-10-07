@@ -533,9 +533,9 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                   <Tab label="Instruments" data-tab-index={0} {...a11yProps(0)} disableRipple disableTouchRipple />
                   <Tab label="Overview" data-tab-index={1} {...a11yProps(1)} disableRipple disableTouchRipple />
                   {/* Hidden for the time being as these aren't part of the Phase 1 MVP
-                  <Tab label="Targets" {...a11yProps(2)} disableRipple disableTouchRipple />
-                  <Tab label="Tools" {...a11yProps(3)} disableRipple disableTouchRipple />
-                  <Tab label="Resources" {...a11yProps(4)} disableRipple disableTouchRipple />
+                  <Tab label="Targets" data-tab-index={2} {...a11yProps(2)} disableRipple disableTouchRipple />
+                  <Tab label="Tools" data-tab-index={3} {...a11yProps(3)} disableRipple disableTouchRipple />
+                  <Tab label="Resources" data-tab-index={4} {...a11yProps(4)} disableRipple disableTouchRipple />
                   */}
                 </Tabs>
               </Box>
