@@ -87,49 +87,6 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
     <>
       <Box sx={{textAlign:"center"}} display={{ xs: "none", md: "block"}}>
         {
-          (
-            instruments.some((instrument) => {
-              return "0123456789".includes(instrument[PDS4_INFO_MODEL.TITLE].substring(0,1))
-            }) && (
-              <Link
-                sx={{
-                  fontFamily: "Inter",
-                  fontSize: "29px",
-                  fontWeight: "700",
-                  lineHeight: "29px",
-                  paddingRight: "10px",
-                  color: "#1976d2",
-                }}
-                href={"#hash"}
-                key={"letter_hash"}
-                underline="none"
-              >
-                #
-              </Link>
-            )
-          ) || (
-            instruments.some((instrument) => {
-              return !"0123456789".includes(instrument[PDS4_INFO_MODEL.TITLE].substring(0,1))
-            }) && (
-              <Link
-                sx={{
-                  fontFamily: "Inter",
-                  fontSize: "29px",
-                  fontWeight: "700",
-                  lineHeight: "29px",
-                  paddingRight: "10px",
-                  color: "#959599",
-                }}
-                href={"#hash"}
-                key={"letter_hash"}
-                underline="none"
-              >
-                #
-              </Link>
-            )
-          )
-        }
-        {
           instruments.length > 0 && ALPHABET.map((letter) => {
 
             const indexedInstruments = getItemsByIndex(instruments, letter);
@@ -159,6 +116,7 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
                 style={{
                   paddingRight: "10px",
                 }}
+                key={"letter_" + letter}
               >
                 {letter}
               </Typography>
@@ -197,25 +155,6 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
           <MenuItem value={indexValue}>
             Select an index
           </MenuItem>
-          {
-            (
-              instruments.some((instrument) => {
-                return "0123456789".includes(instrument[PDS4_INFO_MODEL.TITLE].substring(0,1))
-              }) && (
-                <MenuItem value={"hash"}>
-                  {"#"}
-                </MenuItem>
-              )
-            ) || (
-              instruments.some((instrument) => {
-                return !"0123456789".includes(instrument[PDS4_INFO_MODEL.TITLE].substring(0,1))
-              }) && (
-                <MenuItem value={"hash"} disabled={true}>
-                  {"#"}
-                </MenuItem>
-              )
-            )
-          }
           {
             instruments.length > 0 && ALPHABET.map((letter) => {
   
@@ -261,22 +200,6 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
 
               return (
                 <React.Fragment key={"instruments_hash" + index}>
-                  { indexedInstrumentsCount > 0 ? 
-                    <>
-                      <Typography variant="h2" weight="bold" component={"h2"}
-                        sx={{
-                          paddingRight: "10px",
-                          paddingTop: "15px",
-                          color: indexedInstrumentsCount
-                            ? "#000000"
-                            : "#959599",
-                        }}
-                      >
-                        <a id={"hash"}>#</a>
-                      </Typography>
-                      <br />
-                    </> : <></>
-                  }
                   {indexedInstruments.map(
                     (instrument: Instrument, instrumentIndex) => {
                       return (

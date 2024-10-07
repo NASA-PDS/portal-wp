@@ -164,11 +164,10 @@ export const InstrumentsDirectoryPageComponent = (props:InstrumentsDirectoryPage
                       Search for Instruments
                     </Typography>
                     <TextField
-                      id="outlined-basic"
+                      id="freeTextSearchFilterTextField"
                       placeholder="Search based on Name, Investigation, or Targets"
                       variant="outlined"
                       type="search"
-                      value={searchFilters?.freeText || ""}
                       InputProps={{
                         sx: {
                           borderRadius: "2px",

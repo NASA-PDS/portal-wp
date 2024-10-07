@@ -382,13 +382,16 @@ export const selectFilteredInstruments = createSelector(
 
     // Sort instruments alphabetically by title
     return filteredInstruments.sort( (a:Instrument,b:Instrument) => {
-      if( a[PDS4_INFO_MODEL.INSTRUMENT.NAME].toLowerCase() < b[PDS4_INFO_MODEL.INSTRUMENT.NAME].toLowerCase() ) {
+      const instrumentA = a[PDS4_INFO_MODEL.TITLE].toLowerCase();
+      const instrumentB = b[PDS4_INFO_MODEL.TITLE].toLowerCase();
+      if( instrumentA < instrumentB ) {
         return -1
-      } else if( a[PDS4_INFO_MODEL.INSTRUMENT.NAME].toLowerCase() > b[PDS4_INFO_MODEL.INSTRUMENT.NAME].toLowerCase() ) {
+      } else if( instrumentA > instrumentB ) {
         return 1
       }
       return 0;
     });
+
   }
 );
 
