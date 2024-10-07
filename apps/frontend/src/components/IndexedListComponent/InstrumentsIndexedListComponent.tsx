@@ -223,11 +223,8 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
                           key={"instrument_" + instrumentIndex}
                         >
                           <FeaturedLinkDetails 
-                            instrumentType={instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]}
                             investigation={{value:""}}
                             lid={{value: instrument[PDS4_INFO_MODEL.LID], link: instrumentListItemPrimaryPath({ lid: instrument.lid })}}
-                            startDate={{value:""}}
-                            stopDate={{value:""}}
                             variant={FeaturedLinkDetailsVariant.INSTRUMENT}
                           />
                         </FeaturedLink>
@@ -282,11 +279,8 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
                           key={"instrument_" + instrumentIndex}
                         >
                           <FeaturedLinkDetails 
-                            instrumentType={instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]}
                             investigation={{value:""}}
                             lid={{value: instrument[PDS4_INFO_MODEL.LID], link: instrumentListItemPrimaryPath({ lid: instrument.lid })}}
-                            startDate={{value:""}}
-                            stopDate={{value:""}}
                             variant={FeaturedLinkDetailsVariant.INSTRUMENT}
                           />
                         </FeaturedLink>

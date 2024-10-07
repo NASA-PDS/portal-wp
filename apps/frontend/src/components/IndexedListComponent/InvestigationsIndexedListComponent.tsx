@@ -221,6 +221,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                             startDate={{value:investigation[PDS4_INFO_MODEL.INVESTIGATION.START_DATE]}}
                             stopDate={{value:investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE]}}
                             variant={FeaturedLinkDetailsVariant.INVESTIGATION}
+                            investigationType={[investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE]]}
                           />
                         </FeaturedLink>
                       );
@@ -279,6 +280,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                             startDate={{value: investigation[PDS4_INFO_MODEL.INVESTIGATION.START_DATE]}}
                             stopDate={{value:investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE]}}
                             variant={FeaturedLinkDetailsVariant.INVESTIGATION}
+                            investigationType={[investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE]]}
                           />
                         </FeaturedLink>
                       );
