@@ -6,7 +6,6 @@ import { Investigation } from "src/types/investigation.d";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { selectLatestInstrumentHostsForInvestigation } from "src/state/selectors";
 import { RootState, store } from "src/state/store";
-import { InstrumentHost } from "src/types/instrumentHost";
 import { convertLogicalIdentifier, LID_FORMAT } from "src/utils/strings";
 import { ExpandMore } from "@mui/icons-material";
 import { FeaturedLink, FeaturedLinkDetails, FeaturedLinkDetailsVariant, Typography } from "@nasapds/wds-react";
@@ -34,12 +33,6 @@ const getItemsByIndex = (
 };
 
 function getAffiliatedSpacecraft(state:RootState, investigation:Investigation) {
-  return selectLatestInstrumentHostsForInvestigation(state, investigation[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST])?.reduce(
-    (accumulator, item:InstrumentHost) => { return accumulator === "" ? accumulator += item[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME] : accumulator += ", ".concat(item[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME]) }, ''
-  )
-}
-
-function getAffiliatedSpacecraft2(state:RootState, investigation:Investigation) {
   const instrumentHostTitles = selectLatestInstrumentHostsForInvestigation(state, investigation[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST])?.map(
     (instrumentHost) => instrumentHost[PDS4_INFO_MODEL.TITLE]
   )
@@ -215,7 +208,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                             },
                             {
                               horizontalAlign: "center",
-                              data: getAffiliatedSpacecraft(state, investigation),
+                              data: getAffiliatedSpacecraft(state, investigation).join(", "),
                               verticalAlign: "center",
                               width: 2
                             }
@@ -223,7 +216,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                           key={"investigation_" + investigationIndex}
                         >
                           <FeaturedLinkDetails 
-                            instrumentHostTitles={getAffiliatedSpacecraft2(state,investigation)}
+                            instrumentHostTitles={getAffiliatedSpacecraft(state, investigation)}
                             lid={{value: investigation[PDS4_INFO_MODEL.LID], link: investigationListItemPrimaryPath({ lid: investigation.lid })}}
                             startDate={{value:investigation[PDS4_INFO_MODEL.INVESTIGATION.START_DATE]}}
                             stopDate={{value:investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE]}}
@@ -273,7 +266,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                             },
                             {
                               horizontalAlign: "center",
-                              data: getAffiliatedSpacecraft(state, investigation),
+                              data: getAffiliatedSpacecraft(state, investigation).join(", "),
                               verticalAlign: "center",
                               width: 2
                             }
@@ -281,7 +274,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                           key={"investigation_" + investigationIndex}
                         >
                           <FeaturedLinkDetails 
-                            instrumentHostTitles={getAffiliatedSpacecraft2(state,investigation)}
+                            instrumentHostTitles={getAffiliatedSpacecraft(state,investigation)}
                             lid={{value: investigation[PDS4_INFO_MODEL.LID], link: investigationListItemPrimaryPath({ lid: investigation.lid })}}
                             startDate={{value: investigation[PDS4_INFO_MODEL.INVESTIGATION.START_DATE]}}
                             stopDate={{value:investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE]}}
