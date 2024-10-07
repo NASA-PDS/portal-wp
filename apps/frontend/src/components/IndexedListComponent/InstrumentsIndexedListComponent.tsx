@@ -140,50 +140,37 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
             return indexedInstrumentsCount >= 0 ? (
               <Link
                 sx={{
-                  fontFamily: "Inter",
-                  fontSize: "29px",
-                  fontWeight: "700",
-                  lineHeight: "29px",
-                  paddingRight: "10px",
                   color: anchorColor,
                 }}
                 href={anchorName}
                 key={"letter_" + letter}
                 underline="none"
               >
-                {letter}
+                <Typography variant="h2" weight="bold" component={"span"}
+                  style={{
+                    paddingRight: "10px",
+                  }}
+                >
+                  {letter}
+                </Typography>
               </Link>
             ) : (
-              <OldTypography
-                sx={{
-                  fontFamily: "Inter",
-                  fontSize: "29px",
-                  fontWeight: "700",
-                  lineHeight: "29px",
+              <Typography variant="h2" weight="bold" component={"span"}
+                style={{
                   paddingRight: "10px",
                 }}
               >
                 {letter}
-              </OldTypography>
+              </Typography>
             );
           })
         }
       </Box>
       <Box display={{ xs:"block", md:"none"}}>
         <Divider sx={{marginBottom:"16px"}}/>
-        <OldTypography
-          sx={{
-            color: "black",
-            fontSize: "14px",
-            fontFamily: "Inter",
-            fontWeight: "600",
-            lineHeight: "19px",
-            wordWrap: "break-word",
-            mb: "4px"
-          }}
-        >
+        <Typography variant="h6" weight="semibold" sx={{ color: "#17171B" }} component="span">
           Scroll to
-        </OldTypography>
+        </Typography>
         <Select
           value={indexValue}
           onChange={(event) => { event.preventDefault(); scrollToIndex(event.target.value); }}
@@ -276,13 +263,8 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
                 <React.Fragment key={"instruments_hash" + index}>
                   { indexedInstrumentsCount > 0 ? 
                     <>
-                      <OldTypography
-                        variant="h3"
+                      <Typography variant="h2" weight="bold" component={"h2"}
                         sx={{
-                          fontFamily: "Inter",
-                          fontSize: "29px",
-                          fontWeight: "700",
-                          lineHeight: "29px",
                           paddingRight: "10px",
                           paddingTop: "15px",
                           color: indexedInstrumentsCount
@@ -291,7 +273,7 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
                         }}
                       >
                         <a id={"hash"}>#</a>
-                      </OldTypography>
+                      </Typography>
                       <br />
                     </> : <></>
                   }
@@ -341,22 +323,17 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
 
               return (
                 <React.Fragment key={"instruments_" + letter}>
-                  { <OldTypography
-                        variant="h3"
+                  { <Typography variant="h2" weight="bold"
                         sx={{
-                          fontFamily: "Inter",
-                          fontSize: "29px",
-                          fontWeight: "700",
-                          lineHeight: "29px",
                           paddingRight: "10px",
-                          paddingY: "15px",
+                          paddingTop: "15px",
                           color: indexedInstrumentsCount
                             ? "#000000"
                             : "#959599",
                         }}
                       >
                         <a id={letter}>{letter}</a>
-                      </OldTypography>
+                      </Typography>
                   }
                   { indexedInstruments.map(
                     (instrument: Instrument) => {

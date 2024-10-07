@@ -10,7 +10,6 @@ import {
   Select,
   SelectChangeEvent,
   Stack,
-  Typography,
 } from "@mui/material";
 import {
   InstrumentDirectorySearchFilterState,
@@ -22,7 +21,7 @@ import { getData, dataRequiresFetchOrUpdate, dataReady } from "src/state/slices/
 import { useAppDispatch, useAppSelector } from "src/state/hooks";
 import { connect } from "react-redux";
 import { RootState } from "src/state/store";
-import { Loader } from "@nasapds/wds-react";
+import { Loader, Typography } from "@nasapds/wds-react";
 import { TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
@@ -129,20 +128,11 @@ export const InstrumentsDirectoryPageComponent = (props:InstrumentsDirectoryPage
               <Link underline="hover" color="inherit" href="/" style={linkStyles}>
                 Home
               </Link>
-              <Typography style={{ color: "white" }}>Instruments</Typography>
+              <Typography variant="h6" weight="regular" component={"span"} style={{ color: "white" }}>Instruments</Typography>
             </Breadcrumbs>
-            <Typography
-              variant="h1"
-              style={{
-                color: "white",
-                padding: "0px",
-                paddingTop: "30px",
-                fontSize: "72px",
-                fontWeight: "700",
-              }}
-            >
-              Instruments
-            </Typography>
+            <Box style={{ color: "white", padding: "50px 0px 0px 0px" }}>
+              <Typography variant="display4" weight="bold" component={"h1"}>Instruments</Typography>
+            </Box>
           </Container>
         </Container>
         {/* Main Content */}
@@ -156,18 +146,11 @@ export const InstrumentsDirectoryPageComponent = (props:InstrumentsDirectoryPage
             }}
           >
             <Box sx={{ paddingBottom: "25px" }}>
-              <Grid container spacing={4} sx={{ height: "100%" }} alignItems="center" direction="row">
+              <Grid container spacing={4} sx={{ height: "100%" }} alignItems="flex-start" direction="row">
                 <Grid item md={1} />
                 <Grid item xs={12} md={7}>
-                  <Stack direction={"column"} spacing={0.5}>
-                    <Typography
-                      sx={{
-                        fontFamily: "Inter",
-                        fontSize: "14px",
-                        fontWeight: "600",
-                        color: "#17171B",
-                      }}
-                    >
+                  <Stack direction={"column"} spacing={"4px"}>
+                    <Typography variant="h6" weight="semibold" sx={{ color: "#17171B" }} component="span">
                       Search for Instruments
                     </Typography>
                     <TextField
@@ -203,48 +186,40 @@ export const InstrumentsDirectoryPageComponent = (props:InstrumentsDirectoryPage
                   </Stack>
                 </Grid>
                 <Grid item xs={12} md={2}>
-                  <Typography
-                    sx={{
-                      color: "black",
-                      fontSize: "14px",
-                      fontFamily: "Inter",
-                      fontWeight: "600",
-                      lineHeight: "19px",
-                      wordWrap: "break-word",
-                      mb: "4px"
-                    }}
-                  >
-                    Instrument Type
-                  </Typography>
-                  <Select
-                    value={searchFilters?.type || INSTRUMENT_TYPE.ALL}
-                    onChange={handleInstrumentTypeFilterChange}
-                    fullWidth
-                    IconComponent={ExpandMore}
-                    sx={{
-                      borderRadius: "5px",
-                      borderWidth: "2px",
-                      borderColor: "#D1D1D1",
-                      ".MuiSelect-select": {
-                        py: "10px",
-                        px: "16px",
-                      },
-                      ".MuiSelect-nativeInput": {
-                        color: "#2E2E32",
-                        fontSize: "14px",
-                        fontFamily: "Public Sans",
-                        fontWeight: "400",
-                        lineHeight: "20px",
-                        wordWrap: "break-word",
-                      },
-                    }}
-                  >
-                    {
-                      Object.entries(INSTRUMENT_TYPE).map( (entry, index) => {
-                        return <MenuItem value={entry[1]} key={index}>{entry[1]}</MenuItem>
-                      })
-                    }
-                  </Select>
+                  <Stack direction={"column"} spacing={"4px"}>
+                    <Typography variant="h6" weight="semibold" sx={{ color: "#17171B" }} component={"span"}>
+                      Instrument Type
+                    </Typography>
+                    <Select
+                      value={searchFilters?.type || INSTRUMENT_TYPE.ALL}
+                      onChange={handleInstrumentTypeFilterChange}
+                      fullWidth
+                      IconComponent={ExpandMore}
+                      sx={{
+                        borderRadius: "5px",
+                        borderWidth: "2px",
+                        borderColor: "#D1D1D1",
+                        ".MuiSelect-select": {
+                          py: "10px",
+                          px: "16px",
+                        },
+                        ".MuiSelect-nativeInput": {
+                          color: "#2E2E32",
+                          fontSize: "14px",
+                          fontFamily: "Public Sans",
+                          fontWeight: "400",
+                          lineHeight: "20px",
+                          wordWrap: "break-word",
+                        },
+                      }}
+                    >
+                      {
+                        Object.entries(INSTRUMENT_TYPE).map( (entry, index) => {
+                          return <MenuItem value={entry[1]} key={index}>{entry[1]}</MenuItem>
+                        })
+                      }
+                    </Select>
+                  </Stack>
                 </Grid>
               </Grid>
             </Box>
@@ -257,11 +232,13 @@ export const InstrumentsDirectoryPageComponent = (props:InstrumentsDirectoryPage
                 <>
                   {searchFilters === undefined ? (
                     <Box sx={{ paddingBottom: "25px", textAlign: "center" }}>
-                      <Typography>No instruments found.</Typography>
+                      <Typography variant="body2" weight="regular">
+                        No instruments found.
+                      </Typography>
                     </Box>
                   ) : (
                     <Box sx={{ paddingBottom: "25px", textAlign: "center" }}>
-                      <Typography>
+                      <Typography variant="body2" weight="regular">
                         No instruments found based on the provided search filters.
                       </Typography>
                     </Box>
