@@ -223,7 +223,7 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
               const indexedInstrumentsCount = Object.keys(indexedInstruments).length;
 
               return (
-                <MenuItem value={letter} disabled={indexedInstrumentsCount === 0}>
+                <MenuItem value={letter} disabled={indexedInstrumentsCount === 0} key={"menu_letter_" + letter}>
                   {letter}
                 </MenuItem>
               )
@@ -278,7 +278,7 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
                     </> : <></>
                   }
                   {indexedInstruments.map(
-                    (instrument: Instrument) => {
+                    (instrument: Instrument, instrumentIndex) => {
                       return (
                          <FeaturedLink
                           description={instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION]}
@@ -298,6 +298,7 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
                               width: 2
                             }
                           ]}
+                          key={"instrument_" + instrumentIndex}
                         >
                           <FeaturedLinkDetails 
                             instrumentType={instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]}
@@ -336,7 +337,7 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
                       </Typography>
                   }
                   { indexedInstruments.map(
-                    (instrument: Instrument) => {
+                    (instrument: Instrument, instrumentIndex) => {
                       return (
                         <FeaturedLink
                           description={instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION]}
@@ -356,6 +357,7 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
                               width: 2
                             }
                           ]}
+                          key={"instrument_" + instrumentIndex}
                         >
                           <FeaturedLinkDetails 
                             instrumentType={instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]}
