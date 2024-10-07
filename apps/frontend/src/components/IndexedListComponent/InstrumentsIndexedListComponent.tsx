@@ -46,13 +46,6 @@ function getAffiliatedSpacecraft(state:RootState, instrument:Instrument) {
   )
 }
 
-function getAffiliatedSpacecraft2(state:RootState, instrument:Instrument) {
-  const instrumentHostTitles = selectLatestInstrumentHostsForInstrument(state, instrument[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST])?.map(
-    (instrumentHost) => instrumentHost[PDS4_INFO_MODEL.TITLE]
-  )
-  return instrumentHostTitles;
-}
-
 function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentProps) {
 
   const instruments = props.instruments;
