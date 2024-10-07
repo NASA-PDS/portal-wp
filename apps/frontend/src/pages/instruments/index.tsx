@@ -65,7 +65,7 @@ export const InstrumentsDirectoryPageComponent = (props:InstrumentsDirectoryPage
     // Cleanup function
     return () => {};
 
-  }, [status, dispatch, dataManagerState, error]);
+  }, []);
 
   const linkStyles = {
     color: "white",
