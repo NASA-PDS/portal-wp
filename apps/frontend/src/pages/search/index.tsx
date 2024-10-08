@@ -66,8 +66,6 @@ const feedbackEmail = "mailto:example@example.com";
 const solrEndpoint = "https://pdscloud-internal-lb-1618002203.us-west-2.elb.amazonaws.com/services/search/search"
 const getFiltersQuery =
   "&rows=0&facet=on&facet.field=investigation_ref&facet.field=instrument_ref&facet.field=target_ref&facet.field=page_type&wt=json&facet.limit=-1";
-const filterDefault =
-  "&fq=-product_class:Product_Attribute_Definition&fq=-product_class:Product_Class_Definition&fq=-product_class:Product_Target_PDS3&fq=-product_class:Product_Instrument_PDS3&fq=-product_class:Product_Instrument_Host_PDS3&fq=-product_class:Product_Mission_PDS3&fq=-collection_type:schema&fq=-data_class:resource";
 const investigationNamesEndpoint =
   solrEndpoint +
   "?wt=json&q=data_class:Investigation&fl=investigation_name,identifier&rows=10000";
@@ -297,16 +295,15 @@ const SearchPage = () => {
 
       let url =
         solrEndpoint +
-        "?wt=json&q=" +
-        searchText +
+        "?wt=json&qt=keyword&q=" +
+        encodeURIComponent(searchText) +
         "&rows=" +
-        rows +
+        encodeURIComponent(rows) +
         "&start=" +
-        start +
-        filterDefault;
+        encodeURIComponent(start)
 
       if (sort !== "relevance") {
-        url = url + "&sort=title " + sort;
+        url = url + "&sort=title " + encodeURIComponent(sort);
       }
 
       if (filters.length > 0) {
