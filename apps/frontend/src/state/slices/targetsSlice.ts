@@ -33,7 +33,15 @@ export const getTargets = createAsyncThunk(
   TARGET_ACTIONS.GET_TARGETS,
   async (_:void, thunkAPI) => {
     
-    let queryUrl = '/api/search/1/products?q=(lid like "urn:nasa:pds:context:target:*")&limit=9999'
+    let queryUrl = '/api/search/1/products?q=(';
+    queryUrl    += 'product_class eq "Product_Context" AND ('
+    queryUrl    += 'lid LIKE "urn:nasa:pds:context:target:*" ';
+    queryUrl    += 'OR lid LIKE "urn:esa:psa:context:target:*" ';
+    queryUrl    += 'OR lid LIKE "urn:jaxa:darts:context:target:*" ';
+    queryUrl    += 'OR lid LIKE "urn:isro:isda:context:target:*" ';
+    queryUrl    += 'OR lid LIKE "urn:kari:kpds:context:target:*")';
+    queryUrl    += ')&limit=9999';
+
     const config = {
       headers: {
         "Accept": "application/json",
@@ -44,6 +52,7 @@ export const getTargets = createAsyncThunk(
     const fields = [
       PDS4_INFO_MODEL.LID,
       PDS4_INFO_MODEL.LIDVID,
+      PDS4_INFO_MODEL.TITLE,
       PDS4_INFO_MODEL.VID,
       PDS4_INFO_MODEL.TARGET.DESCRIPTION,
       PDS4_INFO_MODEL.TARGET.NAME,
@@ -103,6 +112,7 @@ const targetsSlice = createSlice({
         const target:Target = <Target>{};
         target[PDS4_INFO_MODEL.LID] = source[PDS4_INFO_MODEL.LID][0];
         target[PDS4_INFO_MODEL.LIDVID] = source[PDS4_INFO_MODEL.LIDVID][0];
+        target[PDS4_INFO_MODEL.TITLE] = source[PDS4_INFO_MODEL.TITLE][0];
         target[PDS4_INFO_MODEL.VID] = source[PDS4_INFO_MODEL.VID][0];
         target[PDS4_INFO_MODEL.TARGET.DESCRIPTION] = source[PDS4_INFO_MODEL.TARGET.DESCRIPTION] ? source[PDS4_INFO_MODEL.TARGET.DESCRIPTION] : "";
         target[PDS4_INFO_MODEL.TARGET.NAME] = source[PDS4_INFO_MODEL.TARGET.NAME] ? source[PDS4_INFO_MODEL.TARGET.NAME][0] : "";

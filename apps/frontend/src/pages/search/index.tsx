@@ -61,6 +61,7 @@ import "./search.css";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
+import { convertLogicalIdentifier, LID_FORMAT } from "src/utils/strings";
 
 const feedbackEmail = "mailto:example@example.com";
 const solrEndpoint = "https://pdscloud-internal-lb-1618002203.us-west-2.elb.amazonaws.com/services/search/search"
@@ -963,21 +964,16 @@ const SearchPage = () => {
                                         : { value: "-" }
                                     }
                                     investigation={
-                                      doc["form-investigation"]
+                                      doc.investigation_name
                                         ? {
-                                            value: doc["form-investigation"][0],
+                                            value: doc.investigation_name[0],
                                           }
                                         : { value: "-" }
                                     }
-                                    instrumentType={[""]}
                                     processingLevel={
                                       doc.primary_result_processing_level
-                                        ? {
-                                            value:
-                                              doc
-                                                .primary_result_processing_level[0],
-                                          }
-                                        : { value: "-" }
+                                        ? doc.primary_result_processing_level
+                                        : ["-"]
                                     }
                                     lid={{ value: doc.identifier }}
                                     startDate={
@@ -996,6 +992,11 @@ const SearchPage = () => {
                                               doc.observation_stop_date_time[0],
                                           }
                                         : { value: "-" }
+                                    }
+                                    disciplineName={
+                                      doc.primary_result_purpose
+                                        ? doc.primary_result_purpose
+                                        : ["-"]
                                     }
                                     variant={
                                       FeaturedLinkDetailsVariant.DATA_BUNDLE
@@ -1024,7 +1025,11 @@ const SearchPage = () => {
                                   ]}
                                 >
                                   <FeaturedLinkDetails
-                                    doi={{ value: doc.search_id }}
+                                    doi={
+                                      doc.citation_doi
+                                        ? { value: doc.citation_doi[0] }
+                                        : { value: "-" }
+                                    }
                                     investigation={
                                       doc.investigation_name
                                         ? { value: doc.investigation_name[0] }
@@ -1032,21 +1037,13 @@ const SearchPage = () => {
                                     }
                                     disciplineName={
                                       doc.primary_result_discipline_name
-                                        ? {
-                                            value:
-                                              doc
-                                                .primary_result_discipline_name[0],
-                                          }
-                                        : { value: "-" }
+                                        ? doc.primary_result_discipline_name
+                                        : ["-"]
                                     }
                                     processingLevel={
                                       doc.primary_result_processing_level
-                                        ? {
-                                            value:
-                                              doc
-                                                .primary_result_processing_level[0],
-                                          }
-                                        : { value: "-" }
+                                        ? doc.primary_result_processing_level
+                                        : ["-"]
                                     }
                                     lid={{ value: doc.identifier }}
                                     startDate={
@@ -1093,14 +1090,22 @@ const SearchPage = () => {
                                   ]}
                                 >
                                   <FeaturedLinkDetails
-                                    disciplineName={{ value: "?????" }}
+                                    disciplineName={
+                                      doc.instrument_type
+                                        ? doc.instrument_type
+                                        : ["-"]
+                                    }
                                     doi={{ value: doc.search_id }}
                                     investigation={
                                       doc.investigation_name
                                         ? { value: doc.investigation_name[0] }
                                         : { value: "-" }
                                     }
-                                    processingLevel={{ value: "?????" }}
+                                    processingLevel={
+                                      doc.primary_result_processing_level
+                                        ? doc.primary_result_processing_level
+                                        : ["-"]
+                                    }
                                     target={
                                       doc["form-target"]
                                         ? { value: doc["form-target"][0] }
@@ -1119,8 +1124,8 @@ const SearchPage = () => {
                                 <FeaturedLink
                                   title={doc.title}
                                   description={
-                                    doc.instrument_description
-                                      ? doc.instrument_description[0]
+                                    doc.facility_description
+                                      ? doc.facility_description[0]
                                       : "-"
                                   }
                                   primaryLink="/"
@@ -1138,10 +1143,18 @@ const SearchPage = () => {
                                     variant={
                                       FeaturedLinkDetailsVariant.FACILITY
                                     }
-                                    country={{ value: doc.identifier }}
+                                    country={
+                                      doc.facility_country
+                                        ? doc.facility_country
+                                        : ["-"]
+                                    }
                                     lid={{ value: doc.identifier }}
                                     telescopes={["-"]}
-                                    type={{ value: "-" }}
+                                    type={
+                                      doc.facility_type
+                                        ? doc.facility_type
+                                        : ["-"]
+                                    }
                                   />
                                 </FeaturedLink>
                               ) : (
@@ -1171,14 +1184,15 @@ const SearchPage = () => {
                                     variant={
                                       FeaturedLinkDetailsVariant.INSTRUMENT
                                     }
-                                    instrumentType={
-                                      doc["form-instrument-type"]
-                                        ? doc["form-instrument-type"]
-                                        : ["-"]
-                                    }
-                                    lid={{ value: doc.identifier }}
-                                    startDate={{ value: "-" }}
-                                    stopDate={{ value: "-" }}
+                                    lid={{
+                                      value: doc.identifier,
+                                      link:
+                                        "/investigations/" +
+                                        convertLogicalIdentifier(
+                                          doc.identifier,
+                                          LID_FORMAT.URL_FRIENDLY
+                                        ),
+                                    }}
                                     investigation={
                                       doc["form-instrument-host"]
                                         ? {
@@ -1197,8 +1211,8 @@ const SearchPage = () => {
                                 <FeaturedLink
                                   title={doc.title}
                                   description={
-                                    doc.instrument_description
-                                      ? doc.instrument_description[0]
+                                    doc.instrument_host_description
+                                      ? doc.instrument_host_description[0]
                                       : "-"
                                   }
                                   primaryLink="/"
@@ -1226,8 +1240,8 @@ const SearchPage = () => {
                                         : { value: "-" }
                                     }
                                     instruments={
-                                      doc.service_category
-                                        ? doc.service_category
+                                      doc.instrument_name
+                                        ? doc.instrument_name
                                         : ["-"]
                                     }
                                   />
@@ -1266,7 +1280,15 @@ const SearchPage = () => {
                                         ? doc.instrument_host_name
                                         : ["-"]
                                     }
-                                    lid={{ value: doc.identifier }}
+                                    lid={{
+                                      value: doc.identifier,
+                                      link:
+                                        "/investigations/" +
+                                        convertLogicalIdentifier(
+                                          doc.identifier,
+                                          LID_FORMAT.URL_FRIENDLY
+                                        ),
+                                    }}
                                     startDate={
                                       doc.investigation_start_date
                                         ? {
@@ -1282,6 +1304,11 @@ const SearchPage = () => {
                                               doc.investigation_stop_date[0],
                                           }
                                         : { value: "-" }
+                                    }
+                                    investigationType={
+                                      doc.investigation_type
+                                        ? doc.investigation_type
+                                        : ["-"]
                                     }
                                   />
                                 </FeaturedLink>
@@ -1355,7 +1382,9 @@ const SearchPage = () => {
                                 <FeaturedLink
                                   title={doc.title}
                                   description={
-                                    doc.description ? doc.description[0] : "-"
+                                    doc.telescope_description
+                                      ? doc.telescope_description[0]
+                                      : "-"
                                   }
                                   primaryLink="/"
                                   startExpanded={areResultsExpanded}
@@ -1371,11 +1400,11 @@ const SearchPage = () => {
                                   <FeaturedLinkDetails
                                     lid={{ value: doc.identifier }}
                                     instruments={
-                                      doc.service_category
-                                        ? doc.service_category
+                                      doc.telescope_aperture
+                                        ? doc.telescope_aperture
                                         : ["-"]
                                     }
-                                    facility={{ value: "-" }}
+                                    facility={["-"]}
                                     variant={
                                       FeaturedLinkDetailsVariant.TELESCOPE
                                     }

@@ -97,6 +97,16 @@ type SearchResultDoc = {
     'form-target'?: string[];
     target_description?: string[];
     instrument_host_description?: string[];
+    investigation_type: string[];
+    primary_result_purpose: string[];
+    node_id: string[];
+    instrument_type: string[];
+    facility_country: string[];
+    facility_type: string[];
+    facility_description: string[];
+    telescope_description: string[];
+    telescope_aperture: string[];
+    instrument_name: string[];
 }
 
 type IdentifierNameDoc = {
