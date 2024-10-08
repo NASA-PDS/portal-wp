@@ -23,7 +23,7 @@ import FeaturedTargetLinkListItem from "src/components/FeaturedListItems/Feature
 import FeaturedToolLinkListItem from "src/components/FeaturedListItems/FeaturedToolLinkListItem";
 import FeaturedResourceLinkListItem from "src/components/FeaturedListItems/FeaturedResourcesLinkListItem";
 import { FeaturedLink, FeaturedLinkDetails, FeaturedLinkDetailsVariant, Loader } from "@nasapds/wds-react";
-import { Bundle } from "src/types/bundle";
+import { Collection } from "src/types/collection";
 import { ArrowForward } from "@mui/icons-material";
 
 const InvestigationDetailPage = () => {
@@ -113,7 +113,9 @@ const TABS = [
 const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
 
   const {instrumentHosts, instruments, investigation, status, tabLabel, targets } = props;
-  const bundles = useRef<Array<Array<Bundle>>>([]);
+  const collections = useRef<Array<Array<Collection>>>([]);
+  const collectionsFetched = useRef<Array<boolean>>([]);
+  const [collectionsReady, setCollectionsReady] = useState(false);
   const [instrumentTypes, setInstrumentTypes] = useState<string[]>([]);
   const [selectedInstrumentHost, setSelectedInstrumentHost] = useState<number>(0);
   const [value, setValue] = useState(TABS.findIndex( (tab) => tab == tabLabel?.toLowerCase()));
@@ -238,7 +240,6 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
         return 0;
       });
       
-      
     });
     
     setInstrumentTypes(instrumentTypesArr);
@@ -252,12 +253,21 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
             investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION]
   }
 
-  /* const getRelatedInstrumentBundles = (lid:string) => {
-    return bundles.current[selectedInstrumentHost].filter( (bundle) => {
-      const foundInstrument = bundle[PDS4_INFO_MODEL.OBSERVING_SYSTEM_COMPONENTS].some( (component) => component.id === lid);
-      return foundInstrument
-    });
-  }; */
+  const getRelatedInstrumentCollections = (lid:string) => {
+
+    let relatedCollections:Collection[] = [];
+
+    if( collections.current[selectedInstrumentHost] !== undefined && collections.current[selectedInstrumentHost].length > 0 ) {
+
+      relatedCollections = collections.current[selectedInstrumentHost].filter( (collection:Collection) => {
+        return collection[PDS4_INFO_MODEL.REF_LID_INSTRUMENT].some( (ref_lid) => ref_lid === lid);
+      });
+
+    }
+
+    return relatedCollections;
+
+  };
 
   const handleTabChange = (event: SyntheticEvent) => {
     const newTabIndex = parseInt(event.currentTarget.getAttribute("data-tab-index") || "0");
@@ -281,14 +291,16 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
     return generatePath("/instruments/:lid/data", params);
   };
 
-  const fetchBundles = useCallback( async (abortController:AbortController) => {
+  const fetchCollections = useCallback( async (abortController:AbortController) => {
 
-    bundles.current = new Array( instrumentHosts.length ).fill([]);
+    collections.current = new Array( instrumentHosts.length ).fill([]);
+    collectionsFetched.current = new Array( instrumentHosts.length ).fill(false);
 
     return Promise.all(
+
       instrumentHosts.map( async (instrumentHost:InstrumentHost, index:number) => {
         const lid = instrumentHost[PDS4_INFO_MODEL.LID];
-        let query = '/api/search/1/products?q=(pds:Internal_Reference.pds:lid_reference eq "' + lid + '" and product_class eq "Product_Bundle")';
+        let query = '/api/search/1/products?q=(product_class EQ "Product_Collection" AND pds:Collection.pds:collection_type eq "Data" AND pds:Internal_Reference.pds:lid_reference EQ "' + lid + '")';
         const config = {
           headers: {
             "Accept": "application/json",
@@ -298,11 +310,18 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
         };
 
         const fields = [
+          PDS4_INFO_MODEL.COLLECTION.DESCRIPTION,
+          PDS4_INFO_MODEL.COLLECTION.TYPE,
           PDS4_INFO_MODEL.LID,
-          PDS4_INFO_MODEL.OBSERVING_SYSTEM_COMPONENTS,
+          PDS4_INFO_MODEL.REF_LID_INSTRUMENT,
+          PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST,
+          PDS4_INFO_MODEL.REF_LID_INVESTIGATION,
+          PDS4_INFO_MODEL.REF_LID_TARGET,
+          PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL,
+          PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME,
+          PDS4_INFO_MODEL.START_DATE_TIME,
+          PDS4_INFO_MODEL.STOP_DATE_TIME,
           PDS4_INFO_MODEL.TITLE,
-          PDS4_INFO_MODEL.BUNDLE.DESCRIPTION,
-          PDS4_INFO_MODEL.BUNDLE.TYPE
         ];
     
         // Add the specific fields that should be returned
@@ -314,32 +333,41 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
 
         if( import.meta.env.DEV ) {
           // Output query URL to help with debugging only in DEV mode
-          console.info("Bundle Query: ", query)
+          console.info("Collection Query: ", query)
         }
 
         const response = await fetch(query, config);
         const temp = (await response.json());
 
-        bundles.current[index] = temp.data;
+        let collectionData = [];
+        collectionData = temp.data.map( (sourceData:{"summary":object, "properties":Collection}) => {
+          return sourceData["properties"];
+        })
+        
+        collections.current[index] = collectionData;
+        collectionsFetched.current[index] = true;
+
+        setCollectionsReady(collectionsFetched.current.some( (collectionFetchStatus) => collectionFetchStatus ));
 
         if( import.meta.env.DEV ) {
-          console.log(bundles.current);
+          console.log(`Collection data for ${lid}`, collectionData);
         }
 
         return response;
 
       })
     );
-  }, [bundles, instrumentHosts]);
+  }, [collections, instrumentHosts]);
 
   useEffect(() => {
 
     if (status === "succeeded") {
+      initInstrumentTypes();
       const abortController = new AbortController();
-      fetchBundles(abortController);
+      fetchCollections(abortController);
     }
 
-  }, [status, fetchBundles]);
+  }, [status]);
 
   useEffect( () => {
     initInstrumentTypes();
@@ -356,14 +384,14 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
         description={ investigation.title + "Investigation Details." }
       />
       {
-        (status === 'idle' || status === 'pending' )
+        (status === 'idle' || status === 'pending' || !collectionsReady )
         &&
         <Box sx={{ padding: "40px" }}>
           <Loader />
         </Box>
       }
       {
-        status === 'succeeded'
+        status === 'succeeded' && collectionsReady
         && 
         <Container maxWidth={false} disableGutters>
           {/* Page Intro */}
@@ -658,7 +686,8 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                         />*/}
                                         <FeaturedLinkDetails
                                           variant={FeaturedLinkDetailsVariant.BUNDLE_LIST}
-                                          bundleGroups={
+                                          bundleGroups={ getRelatedInstrumentCollections(instrument[PDS4_INFO_MODEL.LID]) }
+                                          /* bundleGroups={
                                             [
                                               {
                                                 title: "Calibrated Data Products",
@@ -696,7 +725,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                                 ]
                                               }
                                             ]
-                                          }
+                                          } */
                                         >
                                         </FeaturedLinkDetails>
                                       </FeaturedLink>
