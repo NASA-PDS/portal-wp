@@ -29,6 +29,12 @@ export const PDS4_INFO_MODEL = {
   /** The Observing System Component class describes one or more subsystems used to collect data. */
   OBSERVING_SYSTEM_COMPONENTS: "observing_system_components",
 
+  /** The start_date_time attribute provides the date and time appropriate to the beginning of the product being labeled. */
+  START_DATE_TIME: "start_date_time",
+
+  /** The stop_date_time attribute provides the date and time appropriate to the end of the product being labeled. */
+  STOP_DATE_TIME: "stop_date_time",
+
   /** 
    * The title attribute provides a short, descriptive text string suitable for
    * use as a title or brief description in a display or listing of products.
@@ -67,12 +73,42 @@ export const PDS4_INFO_MODEL = {
 
   },
 
+  /**
+   * The Citation_Information class provides specific fields often used in citing the 
+   * product in journal articles, abstract services, and other reference contexts.
+   */
+  CITATION_INFORMATION: {
+
+    /**
+     * The doi attribute provides the Digital Object Identifier for an object, 
+     * assigned by the appropriate DOI System Registration Agency. 
+     */
+    DOI: "pds:Citation_Information.pds:doi",
+
+  },
+
+  /** The Collection class provides a description of a set of products. */
+  COLLECTION: {
+
+    /**
+     * The description attribute provides a statement, picture in words, 
+     * or account that describes or is otherwise relevant to the object. 
+     */
+    DESCRIPTION: "pds:Collection.pds:description",
+
+    /**
+     * The collection_type attribute provides a classification for the collection.
+     */
+    TYPE: "pds:Collection.pds:collection_type",
+
+  },
+
   /** The Type_List_Area allows the insertion of a Type List. */
   CTLI_TYPE_LIST: {
 
     /** The type attribute classifies the instrument according to its function. */
     TYPE: "ctli:Type_List.ctli:type",
-    
+
   },
 
   /** The identification area consists of attributes that identify and name an object. */
@@ -161,6 +197,26 @@ export const PDS4_INFO_MODEL = {
 
     /** The processing_level attribute provides a broad classification of data processing level. */
     PROCESSING_LEVEL: "pds:Primary_Result_Summary.pds:processing_level"
+  },
+
+  /**
+   * The Science_Facets class contains the science-related search facets. 
+   * It is optional and may be repeated if an product has facets related to, for example, 
+   * two different disciplines (as defined by the discipline_name facet). 
+   * Note that Science_Facets was modeled with Discipline_Facets as a component and 
+   * Discipline_Facets was modeled with Group_Facet1 and Group_Facet2 as components. 
+   * This dependency hierarchy was flattened and only Science_Facets exists in the schema.
+   */
+  SCIENCE_FACETS: {
+
+    /**
+     * The discipline_name attribute describes the observing discipline (as opposed 
+     * to a PDS Discipline Node Name, though the concepts and values are similar). 
+     * Some of these values are, with respect to the PDS Nodes, inter-disciplinary and 
+     * should be used when they are applicable in perference to the more restrictive values.
+     */
+    DISCIPLINE_NAME: "pds:Science_Facets.pds:discipline_name",
+
   },
 
   /** The Target class provides a description of a physical object that is the object of data collection. */
