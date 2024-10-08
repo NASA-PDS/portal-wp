@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
-import { Instrument, INSTRUMENT_TYPE } from "src/types/instrument.d";
+import { Instrument, INSTRUMENT_TYPE } from "src/types/instrument";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 
 enum INSTRUMENT_ACTIONS {

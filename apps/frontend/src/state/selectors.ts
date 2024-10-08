@@ -1,12 +1,12 @@
 import { createSelector } from "@reduxjs/toolkit";
-import { INVESTIGATION_TYPE, Investigation } from "src/types/investigation.d";
+import { INVESTIGATION_TYPE, Investigation } from "src/types/investigation";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { RootState } from "src/state/store";
 import { InstrumentItems } from "src/state/slices/instrumentsSlice";
 import { InstrumentHostItems } from "src/state/slices/instrumentHostsSlice";
 import { InvestigationItems } from "src/state/slices/investigationsSlice";
 import { TargetItems } from "src/state/slices/targetsSlice";
-import { Instrument, INSTRUMENT_TYPE } from "src/types/instrument.d";
+import { Instrument, INSTRUMENT_TYPE } from "src/types/instrument";
 import { InstrumentHost } from "src/types/instrumentHost";
 import { Target } from "src/types/target";
 

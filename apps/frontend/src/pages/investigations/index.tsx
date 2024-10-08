@@ -24,7 +24,7 @@ import { Loader, Typography } from "@nasapds/wds-react";
 import { TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 //import CloseIcon from "@mui/icons-material/Close";
-import { Investigation, INVESTIGATION_TYPE } from "src/types/investigation.d";
+import { Investigation, INVESTIGATION_TYPE } from "src/types/investigation";
 import InvestigationsIndexedListComponent from "src/components/IndexedListComponent/InvestigationsIndexedListComponent";
 import { ExpandMore } from "@mui/icons-material";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
