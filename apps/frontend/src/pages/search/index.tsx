@@ -61,10 +61,9 @@ import "./search.css";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
-import { convertLogicalIdentifier, LID_FORMAT } from "src/utils/strings";
 
 const feedbackEmail = "mailto:example@example.com";
-const solrEndpoint = "https://pdscloud-internal-lb-1618002203.us-west-2.elb.amazonaws.com/services/search/search"
+const solrEndpoint = "https://pds.nasa.gov/services/search/search";
 const getFiltersQuery =
   "&rows=0&facet=on&facet.field=investigation_ref&facet.field=instrument_ref&facet.field=target_ref&facet.field=page_type&wt=json&facet.limit=-1";
 const investigationNamesEndpoint =
@@ -1186,12 +1185,6 @@ const SearchPage = () => {
                                     }
                                     lid={{
                                       value: doc.identifier,
-                                      link:
-                                        "/investigations/" +
-                                        convertLogicalIdentifier(
-                                          doc.identifier,
-                                          LID_FORMAT.URL_FRIENDLY
-                                        ),
                                     }}
                                     investigation={
                                       doc["form-instrument-host"]
@@ -1282,12 +1275,6 @@ const SearchPage = () => {
                                     }
                                     lid={{
                                       value: doc.identifier,
-                                      link:
-                                        "/investigations/" +
-                                        convertLogicalIdentifier(
-                                          doc.identifier,
-                                          LID_FORMAT.URL_FRIENDLY
-                                        ),
                                     }}
                                     startDate={
                                       doc.investigation_start_date

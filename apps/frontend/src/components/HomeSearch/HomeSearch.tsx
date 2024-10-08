@@ -51,7 +51,7 @@ const MenuProps = {
   },
 };
 
-const solrEndpoint = "https://pdscloud-internal-lb-1618002203.us-west-2.elb.amazonaws.com/services/search/search"
+const solrEndpoint = "https://pds.nasa.gov/services/search/search";
 const getFiltersQuery =
   solrEndpoint +
   "?q=*&rows=0&facet=on&facet.field=investigation_ref&facet.field=instrument_ref&facet.field=target_ref&facet.field=page_type&wt=json&facet.limit=-1";
