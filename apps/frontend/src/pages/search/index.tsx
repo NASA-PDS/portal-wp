@@ -54,20 +54,18 @@ import {
   isAllOptionsChecked,
   isOptionChecked,
   mapFilterIdsToName,
+  mapPageType
 } from "./searchUtils";
 import "./search.css";
 
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
-import { convertLogicalIdentifier, LID_FORMAT } from "src/utils/strings";
 
 const feedbackEmail = "mailto:example@example.com";
 const solrEndpoint = "https://pds.nasa.gov/services/search/search";
 const getFiltersQuery =
-  "&rows=0&facet=on&facet.field=investigation_ref&facet.field=instrument_ref&facet.field=target_ref&wt=json&facet.limit=-1";
-const filterDefault =
-  "&fq=-product_class:Product_Attribute_Definition&fq=-product_class:Product_Class_Definition&fq=-product_class:Product_Target_PDS3&fq=-product_class:Product_Instrument_PDS3&fq=-product_class:Product_Instrument_Host_PDS3&fq=-product_class:Product_Mission_PDS3&fq=-collection_type:schema&fq=-data_class:resource";
+  "&rows=0&facet=on&facet.field=investigation_ref&facet.field=instrument_ref&facet.field=target_ref&facet.field=page_type&wt=json&facet.limit=-1";
 const investigationNamesEndpoint =
   solrEndpoint +
   "?wt=json&q=data_class:Investigation&fl=investigation_name,identifier&rows=10000";
@@ -121,6 +119,7 @@ const SearchPage = () => {
     let investigationFilterIds: string[] = [];
     let instrumentFilterIds: string[] = [];
     let targetFilterIds: string[] = [];
+    let pageTypeFilterIds: string[] = [];
 
     if (
       filterIdsData.facet_counts.facet_fields.investigation_ref &&
@@ -142,6 +141,12 @@ const SearchPage = () => {
     ) {
       targetFilterIds = filterIdsData.facet_counts.facet_fields.target_ref;
     }
+    if(
+      filterIdsData.facet_counts.facet_fields.page_type &&
+      filterIdsData.facet_counts.facet_fields.page_type.length > 0
+    ){
+      pageTypeFilterIds = filterIdsData.facet_counts.facet_fields.page_type;
+    }
 
     const investigationNames: IdentifierNameDoc[] =
       investigationsData.response.docs;
@@ -160,6 +165,9 @@ const SearchPage = () => {
       targetFilterIds,
       targetNames
     );
+    const pageTypeFilterOptions = mapPageType(
+      pageTypeFilterIds
+    )
 
     if (originalFilters.length > 0) {
       const unmatchedFilters = getUnmatchedFilters(
@@ -178,6 +186,7 @@ const SearchPage = () => {
       investigationFilterOptions,
       instrumentFilterOptions,
       targetFilterOptions,
+      pageTypeFilterOptions,
       originalFilters
     );
   };
@@ -186,9 +195,23 @@ const SearchPage = () => {
     investigationFilterOptions: { name: string; identifier: string }[],
     instrumentFilterOptions: { name: string; identifier: string }[],
     targetFilterOptions: { name: string; identifier: string }[],
+    pageTypeFilterOptions: { name: string; identifier: string }[],
     originalFilters: string
   ) => {
     const filters: FilterProps[] = [];
+
+    const pageTypeFilter = {
+      displayTitle: "Page Type",
+      title: "facet_page_type",
+      value: "page_type",
+      options: parseFilterOptions(
+        pageTypeFilterOptions,
+        originalFilters,
+        "page_type"
+      ),
+      onChecked: handleFilterChecked,
+    };
+    filters.push(pageTypeFilter);
 
     const investigationFilter = {
       displayTitle: "Investigations",
@@ -272,16 +295,15 @@ const SearchPage = () => {
 
       let url =
         solrEndpoint +
-        "?wt=json&q=" +
-        searchText +
+        "?wt=json&qt=keyword&q=" +
+        encodeURIComponent(searchText) +
         "&rows=" +
-        rows +
+        encodeURIComponent(rows) +
         "&start=" +
-        start +
-        filterDefault;
+        encodeURIComponent(start)
 
       if (sort !== "relevance") {
-        url = url + "&sort=title " + sort;
+        url = url + "&sort=title " + encodeURIComponent(sort);
       }
 
       if (filters.length > 0) {
@@ -1163,12 +1185,6 @@ const SearchPage = () => {
                                     }
                                     lid={{
                                       value: doc.identifier,
-                                      link:
-                                        "/investigations/" +
-                                        convertLogicalIdentifier(
-                                          doc.identifier,
-                                          LID_FORMAT.URL_FRIENDLY
-                                        ),
                                     }}
                                     investigation={
                                       doc["form-instrument-host"]
@@ -1259,12 +1275,6 @@ const SearchPage = () => {
                                     }
                                     lid={{
                                       value: doc.identifier,
-                                      link:
-                                        "/investigations/" +
-                                        convertLogicalIdentifier(
-                                          doc.identifier,
-                                          LID_FORMAT.URL_FRIENDLY
-                                        ),
                                     }}
                                     startDate={
                                       doc.investigation_start_date

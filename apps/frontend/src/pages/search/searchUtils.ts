@@ -249,7 +249,7 @@ export const mapFilterIdsToName = (ids: string[], names: IdentifierNameDoc[]) =>
     ids.forEach((id, index) => {
       if (index % 2 == 0) {
         const urnSplit = id.split("::")[0];
-        const nameDoc = names.find((name) => name.identifier === urnSplit);
+        const nameDoc = names.find((name) => name.identifier[0] === urnSplit);
 
         if (nameDoc) {
           let name: string = "";
@@ -273,5 +273,21 @@ export const mapFilterIdsToName = (ids: string[], names: IdentifierNameDoc[]) =>
     });
 
     return filtersMap;
-  };
+};
+
+export const mapPageType = (ids: string[]) => {
+    const filtersMap: { name: string; identifier: string }[] = [];
+        ids.forEach((id, index) => {
+            if (index % 2 == 0) {
+                filtersMap.push({
+                    name: id,
+                    identifier: id,
+                });
+            }
+    });
+
+    return filtersMap;
+};
+
+  
 

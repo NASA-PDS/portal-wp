@@ -27,6 +27,7 @@ type Facetfields = {
     facet_primary_result_purpose: (number | string)[];
     facet_primary_result_processing_level: string[];
 
+    page_type: string[];
     investigation_ref: string[];
     target_ref: string[];
     instrument_ref: string[];
