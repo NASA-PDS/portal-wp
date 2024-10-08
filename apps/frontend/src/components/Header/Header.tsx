@@ -27,7 +27,7 @@ const navItems: NavItems[] = [
   {
     id: "tools",
     label: "Tools",
-    href: "/tools",
+    href: "https://pds.nasa.gov/tools/tool-registry/",
   },
   {
     id: "data-standards",
@@ -36,25 +36,25 @@ const navItems: NavItems[] = [
     items: [
       {
         id: "data-standards-link-1",
-        label: "Data Standards Link 1",
-        href: "/data-standards/data-standards-link-1",
+        label: "PDS Data Standards Home",
+        href: "https://pds.nasa.gov/datastandards/about",
       },
       {
         id: "data-standards-link-2",
-        label: "Data Standards Link 2",
-        href: "/data-standards/data-standards-link-2",
+        label: "PDS4 Documents",
+        href: "https://pds.nasa.gov/datastandards/documents",
       },
       {
         id: "data-standards-link-3",
-        label: "Data Standards Link 3",
-        href: "/data-standards/data-standards-link-3",
+        label: "PDS Data Standards Training",
+        href: "https://pds.nasa.gov/datastandards/training/",
       },
     ],
   },
   {
     id: "submit-data",
     label: "Submit Data",
-    href: "/submit-data",
+    href: "https://pds.nasa.gov/home/providers/",
   },
   {
     id: "training",
@@ -63,20 +63,30 @@ const navItems: NavItems[] = [
     items: [
       {
         id: "training-link-1",
-        label: "Training Link 1",
-        href: "/training/training-link-1",
+        label: "Information for Data Proposers",
+        href: "https://pds.nasa.gov/home/proposers/",
       },
       {
         id: "training-link-2",
-        label: "Training Link 2",
-        href: "/training/training-link-2",
+        label: "Archiving Formats",
+        href: "https://pds.nasa.gov/datastandards/documents/archiving/",
+      },
+      {
+        id: "training-link-3",
+        label: "Citing PDS4 Data",
+        href: "https://pds.nasa.gov/datastandards/citing/",
+      },
+      {
+        id: "training-link-4",
+        label: "How-to Guides",
+        href: "https://pds.nasa.gov/datastandards/citing/#how-to-guides",
       },
     ],
   },
   {
     id: "about",
     label: "About",
-    href: "/about",
+    href: "https://pds.nasa.gov/home/about/",
   },
   {
     id: "give-feedback",
