@@ -47,15 +47,16 @@ export const PDS4_INFO_MODEL = {
     ALTERNATE_ID: "pds:Alias.pds:alternate_id",
     
     /** The alternate _title attribute provides an alternate title for the product. */
-    ALTERNATE_TITLE: "pds:Alias.pds:alternate_title"
+    ALTERNATE_TITLE: "pds:Alias.pds:alternate_title",
 
   },
 
+  /** The Bundle class describes a collection of collections. */
   BUNDLE: {
 
     /**
-     * The description attribute provides a statement, picture in words, or account
-     * that describes or is otherwise relevant to the object. 
+     * The description attribute provides a statement, picture in words, 
+     * or account that describes or is otherwise relevant to the object. 
      */
     DESCRIPTION: "pds:Bundle.pds:description",
 
@@ -66,14 +67,21 @@ export const PDS4_INFO_MODEL = {
 
   },
 
+  /** The Type_List_Area allows the insertion of a Type List. */
   CTLI_TYPE_LIST: {
+
+    /** The type attribute classifies the instrument according to its function. */
     TYPE: "ctli:Type_List.ctli:type",
+    
   },
 
   /** The identification area consists of attributes that identify and name an object. */
   IDENTIFICATION_AREA: {
 
-    /** The title attribute provides a short, descriptive text string suitable use as a title or brief description in display or listing of products. */
+    /** 
+     * The title attribute provides a short, descriptive text string suitable use as a 
+     * title or brief description in display or listing of products.
+     */
     TITLE: "pds:Identification_Area.pds:title",
       
     /** The version_id attribute provides the version of the product, expressed in the PDS [m.n] notation. */
@@ -81,22 +89,52 @@ export const PDS4_INFO_MODEL = {
 
   },
 
+  /** The Instrument class provides a description of a physical object that collects data. */
   INSTRUMENT: {
+
+    /**
+     * The description attribute provides a statement, picture in words, 
+     * or account that describes or is otherwise relevant to the object. 
+     */
     DESCRIPTION: "pds:Instrument.pds:description",
+
+    /** The name attribute provides a word or combination of words by which the object is known. */
     NAME: "pds:Instrument.pds:name",
-    TYPE: "pds:Instrument.pds:type"
+
+    /** The type attribute classifies the instrument according to its function.  */
+    TYPE: "pds:Instrument.pds:type",
+
   },
   
+  /** The Instrument Host class provides a description of the physical object upon which an instrument is mounted. */
   INSTRUMENT_HOST: {
+
+    /**
+     * The description attribute provides a statement, picture in words, 
+     * or account that describes or is otherwise relevant to the object. 
+     */
     DESCRIPTION: "pds:Instrument_Host.pds:description",
+
+    /** The name attribute provides a word or combination of words by which the object is known. */
     NAME: "pds:Instrument_Host.pds:name",
+
+    /**
+     * The type attribute classifies the instrument host. When more than one value is correct, 
+     * the value with the finest granularity should be selected. That is, choose "rover" rather 
+     * than "spacecraft" when both would be correct since rover more narrowly defines the 
+     * type of instrument host. 
+     */
     TYPE: "pds:Instrument_Host.pds:type",
+
   },
 
   /** A set of experiments and/or observations with a clearly defined purpose. */
   INVESTIGATION: {
 
-    /** The description attribute provides a statement, picture in words, or account that describes or is otherwise relevant to the object. */
+    /**
+     * The description attribute provides a statement, picture in words, 
+     * or account that describes or is otherwise relevant to the object. 
+     */
     DESCRIPTION: "pds:Investigation.pds:description",
   
     /** The name attribute provides a word or combination of words by which the object is known. */
@@ -112,12 +150,34 @@ export const PDS4_INFO_MODEL = {
   
     /** The type attribute classifies the investigation according to its scope. */
     TYPE: "pds:Investigation.pds:type",
+    
   },
 
+  /** 
+   * The Primary_Result_Summary class provides a high-level description of the types of 
+   * products included in the collection or bundle
+   */
+  PRIMARY_RESULT_SUMMARY: {
+
+    /** The processing_level attribute provides a broad classification of data processing level. */
+    PROCESSING_LEVEL: "pds:Primary_Result_Summary.pds:processing_level"
+  },
+
+  /** The Target class provides a description of a physical object that is the object of data collection. */
   TARGET: {
+
+    /**
+     * The description attribute provides a statement, picture in words, 
+     * or account that describes or is otherwise relevant to the object. 
+     */
     DESCRIPTION: "pds:Target.pds:description",
+
+    /** The name attribute provides a word or combination of words by which the object is known. */
     NAME: "pds:Target.pds:name",
+
+    /** The type attribute classifies a target according to its size and properties. */
     TYPE: "pds:Target.pds:type",
+
   },
 
 } as const;
