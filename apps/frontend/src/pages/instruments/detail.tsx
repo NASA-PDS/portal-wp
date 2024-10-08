@@ -648,10 +648,10 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                       fontWeight: '400',
                       lineHeight: "27px",
                       wordWrap: 'break-word'
-                    }} style={{ paddingBottom: "24px" }}
-                      dangerouslySetInnerHTML={{
-                        __html: instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION]
-                      }}>
+                      }}
+                      style={{ paddingBottom: "24px" }}
+                    >
+                      {instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION]}
                     </Typography>
                   </Grid>
                   <Grid item lg={1} display={{ xs: "none", sm: "none", lg: "block"}}>

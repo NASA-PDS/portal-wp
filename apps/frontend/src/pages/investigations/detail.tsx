@@ -788,9 +788,8 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                       lineHeight: "27px",
                       wordWrap: 'break-word'
                     }} style={{ paddingBottom: "24px" }}
-                      dangerouslySetInnerHTML={{
-                        __html: getInvestigationSummary()
-                      }}>
+                      >
+                        {getInvestigationSummary()}
                     </Typography>
                     <Typography sx={{
                       color: 'black',
