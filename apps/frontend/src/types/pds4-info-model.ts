@@ -219,6 +219,22 @@ export const PDS4_INFO_MODEL = {
 
   },
 
+  /**
+   * The Table_Delimited_Source_Product_External class defines a table that references many 
+   * source products (products containing input data for the creation of this product) outside 
+   * the PDS4 Registry that have a common reference_type, doi, curating facility, and/or description. 
+   * At least one of doi or curating facility must be provided for each source product.
+   */
+  SOURCE_PRODUCT_EXTERNAL: {
+
+    /** 
+     * The DOI attribute provides the Digital Object Identifier for an object, 
+     * assigned by the appropriate DOI System Registration Agency.
+     */
+    DOI: "pds:Source_Product_External.pds:doi",
+
+  },
+
   /** The Target class provides a description of a physical object that is the object of data collection. */
   TARGET: {
 

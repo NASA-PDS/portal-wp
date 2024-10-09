@@ -1,4 +1,4 @@
-import { SyntheticEvent, useCallback, useEffect, useRef, useState } from "react";
+import React, { SyntheticEvent, useCallback, useEffect, useRef, useState } from "react";
 
 import { generatePath, Link, useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "src/state/hooks";
@@ -19,12 +19,13 @@ import { Box, Breadcrumbs, Button, Container, Divider, Grid, Link as AnchorLink,
 import InvestigationStatus from "src/components/InvestigationStatus/InvestigationStatus";
 import StatsList from "src/components/StatsList/StatsList";
 
-import FeaturedTargetLinkListItem from "src/components/FeaturedListItems/FeaturedTargetLinkListItem";
+/* import FeaturedTargetLinkListItem from "src/components/FeaturedListItems/FeaturedTargetLinkListItem";
 import FeaturedToolLinkListItem from "src/components/FeaturedListItems/FeaturedToolLinkListItem";
-import FeaturedResourceLinkListItem from "src/components/FeaturedListItems/FeaturedResourcesLinkListItem";
-import { FeaturedLink, FeaturedLinkDetails, FeaturedLinkDetailsVariant, Loader, Typography } from "@nasapds/wds-react";
+import FeaturedResourceLinkListItem from "src/components/FeaturedListItems/FeaturedResourcesLinkListItem"; */
+import { DATA_COLLECTION_GROUP_TITLE, DataCollectionGroup, FeaturedLink, FeaturedLinkDetails, FeaturedLinkDetailsVariant, Loader, Typography } from "@nasapds/wds-react";
 import { Collection } from "src/types/collection";
 import { ArrowForward } from "@mui/icons-material";
+import { distinct } from "src/utils/arrays";
 
 const InvestigationDetailPage = () => {
 
@@ -112,7 +113,7 @@ const TABS = [
 
 const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
 
-  const {instrumentHosts, instruments, investigation, status, tabLabel, targets } = props;
+  const {instrumentHosts, instruments, investigation, status, tabLabel } = props;
   const collections = useRef<Array<Array<Collection>>>([]);
   const collectionsFetched = useRef<Array<boolean>>([]);
   const [collectionsReady, setCollectionsReady] = useState(false);
@@ -242,19 +243,59 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
             investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION]
   }
 
-  const getRelatedInstrumentCollections = (lid:string) => {
+  const getRelatedInstrumentCollections = (lid:string):Array<DataCollectionGroup> => {
 
-    let relatedCollections:Collection[] = [];
 
     if( collections.current[selectedInstrumentHost] !== undefined && collections.current[selectedInstrumentHost].length > 0 ) {
 
-      relatedCollections = collections.current[selectedInstrumentHost].filter( (collection:Collection) => {
+      // Get the list of collections that match the supplied instrument LID
+      const relatedCollections:Collection[] = collections.current[selectedInstrumentHost].filter( (collection:Collection) => {
         return collection[PDS4_INFO_MODEL.REF_LID_INSTRUMENT].some( (ref_lid) => ref_lid === lid);
       });
 
+      // Using the list of related collections, generate a distinct list of their processing levels
+      let processingLevels:string[] = [];
+      if( relatedCollections.length > 0 ) {
+
+        processingLevels = distinct( relatedCollections.flatMap( (collection) => collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL]) );
+        //.map( (processingLevel) => processingLevel.toUpperCase().replace(" ", "_")).sort();
+
+        if( processingLevels.length === 0 ) {
+          processingLevels = ["UNKNOWN"]
+        }
+
+        const collectionGroups:DataCollectionGroup[] = [];
+        processingLevels.map( (processingLevel) => {
+          const collections = relatedCollections.filter( (collection) => {
+            return collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].includes(processingLevel);
+          })
+          const collectionGroup:DataCollectionGroup = {
+            title: DATA_COLLECTION_GROUP_TITLE[processingLevel.toUpperCase().replace(" ", "_") as keyof typeof DATA_COLLECTION_GROUP_TITLE],
+            items: collections.map( (collection) => {
+              return {
+                title: collection[PDS4_INFO_MODEL.TITLE],
+                description: collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] !== "null" ? collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] : "No Description Provided.",
+                link: collection[PDS4_INFO_MODEL.SOURCE_PRODUCT_EXTERNAL.DOI] !== "null" ? `https://doi.org/${collection[PDS4_INFO_MODEL.SOURCE_PRODUCT_EXTERNAL.DOI]}` : undefined
+              }
+            })
+            /* items: [
+              {
+                title: "Lorem ipsum dolor sit amet, et nostrud sunt labore reprehenderit consequat",
+                description: "Lorem ipsum dolor sit amet, laboris non magna enim ea cupidatat tempor Lorem tempor aute. Mollit commodo in adipisicing fugiat ut tempor consequat officia exercitation velit esse pariatur quis excepteur ea duis occaecat dolore aute.",
+                link: "https://localhost/...."
+              }
+            ] */
+          };
+          collectionGroups.push(collectionGroup);
+        })
+
+        return collectionGroups;
+
+      }
+
     }
 
-    return relatedCollections;
+    return []
 
   };
 
@@ -289,7 +330,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
 
       instrumentHosts.map( async (instrumentHost:InstrumentHost, index:number) => {
         const lid = instrumentHost[PDS4_INFO_MODEL.LID];
-        let query = '/api/search/1/products?q=(product_class EQ "Product_Collection" AND pds:Collection.pds:collection_type eq "Data" AND pds:Internal_Reference.pds:lid_reference EQ "' + lid + '")';
+        let query = '/api/search/1/products?q=(product_class EQ "Product_Collection" AND pds:Collection.pds:collection_type EQ "Data" AND pds:Internal_Reference.pds:lid_reference EQ "' + lid + '")';
         const config = {
           headers: {
             "Accept": "application/json",
@@ -308,6 +349,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
           PDS4_INFO_MODEL.REF_LID_TARGET,
           PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL,
           PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME,
+          PDS4_INFO_MODEL.SOURCE_PRODUCT_EXTERNAL.DOI,
           PDS4_INFO_MODEL.START_DATE_TIME,
           PDS4_INFO_MODEL.STOP_DATE_TIME,
           PDS4_INFO_MODEL.TITLE,
@@ -330,13 +372,33 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
 
         let collectionData = [];
         collectionData = temp.data.map( (sourceData:{"summary":object, "properties":Collection}) => {
-          return sourceData["properties"];
+          const source = sourceData["properties"];
+          const collection:Collection = {
+            [PDS4_INFO_MODEL.COLLECTION.DESCRIPTION]: source[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION][0],
+            [PDS4_INFO_MODEL.COLLECTION.TYPE]: source[PDS4_INFO_MODEL.COLLECTION.TYPE][0],
+            [PDS4_INFO_MODEL.LID]: source[PDS4_INFO_MODEL.LID][0],
+            [PDS4_INFO_MODEL.REF_LID_INSTRUMENT]: source[PDS4_INFO_MODEL.REF_LID_INSTRUMENT],
+            [PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST]: source[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST],
+            [PDS4_INFO_MODEL.REF_LID_INVESTIGATION]: source[PDS4_INFO_MODEL.REF_LID_INVESTIGATION],
+            [PDS4_INFO_MODEL.REF_LID_TARGET]: source[PDS4_INFO_MODEL.REF_LID_TARGET],
+            [PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL]: source[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL],
+            [PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME]: source[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME],
+            [PDS4_INFO_MODEL.SOURCE_PRODUCT_EXTERNAL.DOI]: source[PDS4_INFO_MODEL.SOURCE_PRODUCT_EXTERNAL.DOI][0],
+            [PDS4_INFO_MODEL.START_DATE_TIME]: source[PDS4_INFO_MODEL.START_DATE_TIME][0],
+            [PDS4_INFO_MODEL.STOP_DATE_TIME]: source[PDS4_INFO_MODEL.STOP_DATE_TIME][0],
+            [PDS4_INFO_MODEL.TITLE]: source[PDS4_INFO_MODEL.TITLE][0],
+          }
+          return collection;
         })
         
         collections.current[index] = collectionData;
         collectionsFetched.current[index] = true;
 
-        setCollectionsReady(collectionsFetched.current.some( (collectionFetchStatus) => collectionFetchStatus ));
+        // add a delay so that the page rendering doesn't try to fetch collections before they are ready.
+        setTimeout(
+          () => { setCollectionsReady(collectionsFetched.current.some( (collectionFetchStatus) => collectionFetchStatus )) },
+          750
+        );
 
         if( import.meta.env.DEV ) {
           console.log(`Collection data for ${lid}`, collectionData);
@@ -643,47 +705,8 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                           tags={['label']}
                                         />*/}
                                         <FeaturedLinkDetails
-                                          variant={FeaturedLinkDetailsVariant.BUNDLE_LIST}
-                                          bundleGroups={ getRelatedInstrumentCollections(instrument[PDS4_INFO_MODEL.LID]) }
-                                          /* bundleGroups={
-                                            [
-                                              {
-                                                title: "Calibrated Data Products",
-                                                items: [
-                                                  {
-                                                    title: "Lorem ipsum dolor sit amet, et nostrud sunt labore reprehenderit consequat",
-                                                    description: "Lorem ipsum dolor sit amet, laboris non magna enim ea cupidatat tempor Lorem tempor aute. Mollit commodo in adipisicing fugiat ut tempor consequat officia exercitation velit esse pariatur quis excepteur ea duis occaecat dolore aute.",
-                                                    link: "https://localhost/...."
-                                                  },
-                                                  {
-                                                    title: "Lorem ipsum dolor sit amet, et nostrud sunt labore reprehenderit consequat",
-                                                    description: "Lorem ipsum dolor sit amet, laboris non magna enim ea cupidatat tempor Lorem tempor aute. Mollit commodo in adipisicing fugiat ut tempor consequat officia exercitation velit esse pariatur quis excepteur ea duis occaecat dolore aute.",
-                                                    link: "https://localhost/...."
-                                                  }
-                                                ]
-                                              },
-                                              {
-                                                title: "Raw Data Products",
-                                                items: [
-                                                  {
-                                                    title: "Lorem ipsum dolor sit amet, amet voluptate id id nulla nisi.",
-                                                    description: "Lorem ipsum dolor sit amet, laboris non magna enim ea cupidatat tempor Lorem tempor aute. Mollit commodo in adipisicing fugiat ut tempor consequat officia exercitation velit esse pariatur quis excepteur ea duis occaecat dolore aute.",
-                                                    link: "https://localhost/...."
-                                                  },
-                                                  {
-                                                    title: "Lorem ipsum dolor sit amet, pariatur laborum sunt cillum exercitation culpa nulla",
-                                                    description: "Lorem ipsum dolor sit amet, laboris non magna enim ea cupidatat tempor Lorem tempor aute. Mollit commodo in adipisicing fugiat ut tempor consequat officia exercitation velit esse pariatur quis excepteur ea duis occaecat dolore aute.",
-                                                    link: "https://localhost/...."
-                                                  },
-                                                  {
-                                                    title: "Ad ullamco laborum laboris aute",
-                                                    description: "Lorem ipsum dolor sit amet, laboris non magna enim ea cupidatat tempor Lorem tempor aute. Mollit commodo in adipisicing fugiat ut tempor consequat officia exercitation velit esse pariatur quis excepteur ea duis occaecat dolore aute.",
-                                                    link: "https://localhost/...."
-                                                  }
-                                                ]
-                                              }
-                                            ]
-                                          } */
+                                          variant={FeaturedLinkDetailsVariant.DATA_COLLECTION_LIST}
+                                          collectionGroups={ getRelatedInstrumentCollections(instrument[PDS4_INFO_MODEL.LID]) }
                                         >
                                         </FeaturedLinkDetails>
                                       </FeaturedLink>
