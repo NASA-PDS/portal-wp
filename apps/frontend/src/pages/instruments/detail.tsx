@@ -596,14 +596,17 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                                       <FeaturedLink
                                         description={collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] !== "null" ? collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] : "No Description Provided."}
                                         title={collection[PDS4_INFO_MODEL.TITLE]}
-                                        primaryLink={collection[PDS4_INFO_MODEL.SOURCE_PRODUCT_EXTERNAL.DOI] !== "null" ? `https://doi.org/${collection[PDS4_INFO_MODEL.SOURCE_PRODUCT_EXTERNAL.DOI]}` : ""}
+                                        primaryLink={"https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])}
                                       >
                                         <FeaturedLinkDetails 
                                           doi={{value: collection[PDS4_INFO_MODEL.SOURCE_PRODUCT_EXTERNAL.DOI] !== "null" ? collection[PDS4_INFO_MODEL.SOURCE_PRODUCT_EXTERNAL.DOI] : "-", link: collection[PDS4_INFO_MODEL.SOURCE_PRODUCT_EXTERNAL.DOI] !== "null" ? `https://doi.org/${collection[PDS4_INFO_MODEL.SOURCE_PRODUCT_EXTERNAL.DOI]}` : undefined}}
                                           investigation={{value: investigation[PDS4_INFO_MODEL.TITLE], link: getInvestigationPath(investigation[PDS4_INFO_MODEL.LID])}}
                                           disciplineName={collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME][0] !== "null" ? collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME] : []}
                                           processingLevel={collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL]}
-                                          lid={{value: collection[PDS4_INFO_MODEL.LID]}}
+                                          lid={{
+                                              value: collection[PDS4_INFO_MODEL.LID],
+                                              link: "https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])
+                                          }}
                                           startDate={{value: collection[PDS4_INFO_MODEL.TIME_COORDINATES.START_DATE_TIME]}}
                                           stopDate={{value: collection[PDS4_INFO_MODEL.TIME_COORDINATES.STOP_DATE_TIME]}}
                                           variant={FeaturedLinkDetailsVariant.DATA_COLLECTION}

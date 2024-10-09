@@ -272,19 +272,14 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
           const collectionGroup:DataCollectionGroup = {
             title: DATA_COLLECTION_GROUP_TITLE[processingLevel.toUpperCase().replace(" ", "_") as keyof typeof DATA_COLLECTION_GROUP_TITLE],
             items: collections.map( (collection) => {
+
               return {
                 title: collection[PDS4_INFO_MODEL.TITLE],
                 description: collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] !== "null" ? collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] : "No Description Provided.",
-                link: collection[PDS4_INFO_MODEL.SOURCE_PRODUCT_EXTERNAL.DOI] !== "null" ? `https://doi.org/${collection[PDS4_INFO_MODEL.SOURCE_PRODUCT_EXTERNAL.DOI]}` : undefined
+                link: "https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])
               }
             })
-            /* items: [
-              {
-                title: "Lorem ipsum dolor sit amet, et nostrud sunt labore reprehenderit consequat",
-                description: "Lorem ipsum dolor sit amet, laboris non magna enim ea cupidatat tempor Lorem tempor aute. Mollit commodo in adipisicing fugiat ut tempor consequat officia exercitation velit esse pariatur quis excepteur ea duis occaecat dolore aute.",
-                link: "https://localhost/...."
-              }
-            ] */
+
           };
           collectionGroups.push(collectionGroup);
         })
@@ -696,15 +691,6 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                         primaryLinkLabel="View Instruments and Data"
                                         title={instrument[PDS4_INFO_MODEL.TITLE]}
                                       >
-                                        {/*<FeaturedLinkDetails
-                                          variant={FeaturedLinkDetailsVariant.INSTRUMENT}
-                                          instrumentType={instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]}
-                                          investigation={{value:investigation[PDS4_INFO_MODEL.TITLE]}}
-                                          lid={{value:instrument[PDS4_INFO_MODEL.LID]}}
-                                          startDate={{value: ""}}
-                                          stopDate={{value: ""}}
-                                          tags={['label']}
-                                        />*/}
                                         <FeaturedLinkDetails
                                           variant={FeaturedLinkDetailsVariant.DATA_COLLECTION_LIST}
                                           collectionGroups={ getRelatedInstrumentCollections(instrument[PDS4_INFO_MODEL.LID]) }
