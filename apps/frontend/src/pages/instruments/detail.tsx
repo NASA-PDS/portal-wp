@@ -295,7 +295,8 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
               </Grid>
             </Container>
           </Container>
-          <Container
+          {/* Quick Action Bar */}
+          {/* <Container
             maxWidth={false}
             disableGutters
             sx={{
@@ -304,7 +305,6 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
               backgroundColor: "#F6F6F6"
             }}
           >
-            {/* Quick Action Bar */}
             <Container
               maxWidth={"xl"}
               disableGutters
@@ -314,7 +314,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
             >
               <Grid container>
                 <Grid item lg={1} display={{ xs: "none", sm: "none", lg: "block"}}>
-                  { /* Column Gutter */ } 
+                  &nbsp;
                 </Grid>
                 <Grid item lg={10}>
                   <Stack direction={{ xs: 'column', sm: 'row' }} gap={"16px"}>
@@ -395,12 +395,11 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                   </Stack>
                 </Grid>
                 <Grid item lg={1} display={{ xs: "none", sm: "none", lg: "block"}}>
-                  { /* Column Gutter */ } 
+                  &nbsp;
                 </Grid>
               </Grid>
             </Container>
-
-          </Container>
+          </Container> */}
           {/* Main Content Body */}
           <Container
             maxWidth={false}
