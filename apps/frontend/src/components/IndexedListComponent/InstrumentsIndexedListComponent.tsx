@@ -4,7 +4,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import { generatePath, useLocation, useNavigate } from "react-router-dom";
 import { Instrument } from "src/types/instrument";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
-import { selectLatestInstrumentHostsForInstrument } from "src/state/selectors";
+import { selectLatestInstrumentHostsForInstrument, selectLatestInstrumentHostVersion, selectLatestInvestigationVersion } from "src/state/selectors";
 import { RootState, store } from "src/state/store";
 import { InstrumentHost } from "src/types/instrumentHost";
 import { convertLogicalIdentifier, LID_FORMAT } from "src/utils/strings";
@@ -67,6 +67,27 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
 
   const generateLinkPath = (template:string, params:{[key:string]:string}) => {
     return generatePath(template, params)
+  }
+
+  const getInvestigationName = (instrument:Instrument):string => {
+
+    if( instrument[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST] !== undefined 
+          && instrument[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST][0] !== "null" 
+          && instrument[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST][0] !== "urn:nasa:pds:context:instrument_host:unk.unk"
+      ) {
+
+      const instrumentHost = selectLatestInstrumentHostVersion(state, instrument[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST][0]);
+
+      if( instrumentHost[PDS4_INFO_MODEL.REF_LID_INVESTIGATION] !== undefined 
+          && instrumentHost[PDS4_INFO_MODEL.REF_LID_INVESTIGATION][0] !== "null"
+        ) {
+          const investigation = selectLatestInvestigationVersion(state, instrumentHost[PDS4_INFO_MODEL.REF_LID_INVESTIGATION][0]);
+          return investigation[PDS4_INFO_MODEL.TITLE];
+        }
+    }
+
+    return "Not available at this time.";
+
   }
 
   useEffect( () => {
@@ -223,7 +244,7 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
                           key={"instrument_" + instrumentIndex}
                         >
                           <FeaturedLinkDetails 
-                            investigation={{value:""}}
+                            investigation={{value:getInvestigationName(instrument)}}
                             lid={{value: instrument[PDS4_INFO_MODEL.LID], link: instrumentListItemPrimaryPath({ lid: instrument.lid })}}
                             variant={FeaturedLinkDetailsVariant.INSTRUMENT}
                           />
@@ -279,7 +300,7 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
                           key={"instrument_" + instrumentIndex}
                         >
                           <FeaturedLinkDetails 
-                            investigation={{value:""}}
+                            investigation={{value:getInvestigationName(instrument)}}
                             lid={{value: instrument[PDS4_INFO_MODEL.LID], link: instrumentListItemPrimaryPath({ lid: instrument.lid })}}
                             variant={FeaturedLinkDetailsVariant.INSTRUMENT}
                           />
