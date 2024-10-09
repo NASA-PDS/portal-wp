@@ -2,6 +2,7 @@ import { PDS4_INFO_MODEL } from "./pds4-info-model";
 
 export type Collection = {
 
+  [PDS4_INFO_MODEL.CITATION_INFORMATION.DOI]:string;
   [PDS4_INFO_MODEL.COLLECTION.DESCRIPTION]:string;
   [PDS4_INFO_MODEL.COLLECTION.TYPE]:string;
   [PDS4_INFO_MODEL.LID]:string;

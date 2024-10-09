@@ -47,6 +47,7 @@ const fetchBundles = async (instrumentLid:string, abortController:AbortControlle
   };
 
   const fields = [
+    PDS4_INFO_MODEL.CITATION_INFORMATION.DOI,
     PDS4_INFO_MODEL.COLLECTION.DESCRIPTION,
     PDS4_INFO_MODEL.COLLECTION.TYPE,
     PDS4_INFO_MODEL.LID,
@@ -84,6 +85,7 @@ const fetchBundles = async (instrumentLid:string, abortController:AbortControlle
   collectionData = temp.data.map( (sourceData:{"summary":object, "properties":Collection}) => {
     const source = sourceData["properties"];
     const collection:Collection = {
+      [PDS4_INFO_MODEL.CITATION_INFORMATION.DOI]: source[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI][0],
       [PDS4_INFO_MODEL.COLLECTION.DESCRIPTION]: source[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION][0],
       [PDS4_INFO_MODEL.COLLECTION.TYPE]: source[PDS4_INFO_MODEL.COLLECTION.TYPE][0],
       [PDS4_INFO_MODEL.LID]: source[PDS4_INFO_MODEL.LID][0],
@@ -599,7 +601,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                                         primaryLink={"https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])}
                                       >
                                         <FeaturedLinkDetails 
-                                          doi={{value: collection[PDS4_INFO_MODEL.SOURCE_PRODUCT_EXTERNAL.DOI] !== "null" ? collection[PDS4_INFO_MODEL.SOURCE_PRODUCT_EXTERNAL.DOI] : "-", link: collection[PDS4_INFO_MODEL.SOURCE_PRODUCT_EXTERNAL.DOI] !== "null" ? `https://doi.org/${collection[PDS4_INFO_MODEL.SOURCE_PRODUCT_EXTERNAL.DOI]}` : undefined}}
+                                          doi={{value: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] !== "null" ? collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] : "-", link: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] !== "null" ? `https://doi.org/${collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI]}` : undefined}}
                                           investigation={{value: investigation[PDS4_INFO_MODEL.TITLE], link: getInvestigationPath(investigation[PDS4_INFO_MODEL.LID])}}
                                           disciplineName={collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME][0] !== "null" ? collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME] : []}
                                           processingLevel={collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL]}
