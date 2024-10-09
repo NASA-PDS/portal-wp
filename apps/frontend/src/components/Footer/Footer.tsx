@@ -2,7 +2,7 @@ import { FooterLink, Footer } from "@nasapds/wds-react";
 
 function PortalFooter() {
 
-  const pageLastUpdated="Sept. 19, 2024"
+  const pageLastUpdated="Oct. 10, 2024"
 
   const primaryLinks:FooterLink[] = [
     {
