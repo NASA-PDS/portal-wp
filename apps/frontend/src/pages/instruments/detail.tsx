@@ -437,7 +437,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                         lineHeight: "19px",
                         letterSpacing: "0.25px",
                         wordWrap: 'break-word'
-                      }}>Instruments</OldTypography>
+                      }}>Data</OldTypography>
                       {
                         dataTypes.map(dataType => {
                           return (
