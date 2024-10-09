@@ -255,9 +255,10 @@ export const InstrumentsDirectoryPageComponent = (props:InstrumentsDirectoryPage
             }
           </Container>
         ) : (
-          <Box sx={{ padding: "40px" }}>
+          <Stack direction={"column"} spacing={"40px"} alignContent={"center"} alignItems={"center"} sx={{margin: "50px"}}>
             <Loader />
-          </Box>
+            <Typography variant="h4" weight="semibold" component="span">Fetching Instrument Information</Typography>
+          </Stack>
         )}
       </Container>
     </>

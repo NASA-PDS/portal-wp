@@ -254,9 +254,10 @@ export const InvestigationsDirectoryPageComponent = (props:InvestigationsDirecto
             }
           </Container>
         ) : (
-          <Box sx={{ padding: "40px" }}>
+          <Stack direction={"column"} spacing={"40px"} alignContent={"center"} alignItems={"center"} sx={{margin: "50px"}}>
             <Loader />
-          </Box>
+            <Typography variant="h4" weight="semibold" component="span">Fetching Investigation Information</Typography>
+          </Stack>
         )}
       </Container>
     </>
