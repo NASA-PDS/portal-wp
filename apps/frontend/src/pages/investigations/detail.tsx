@@ -369,6 +369,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
         collectionData = temp.data.map( (sourceData:{"summary":object, "properties":Collection}) => {
           const source = sourceData["properties"];
           const collection:Collection = {
+            [PDS4_INFO_MODEL.CITATION_INFORMATION.DOI]: source[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI][0],
             [PDS4_INFO_MODEL.COLLECTION.DESCRIPTION]: source[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION][0],
             [PDS4_INFO_MODEL.COLLECTION.TYPE]: source[PDS4_INFO_MODEL.COLLECTION.TYPE][0],
             [PDS4_INFO_MODEL.LID]: source[PDS4_INFO_MODEL.LID][0],
