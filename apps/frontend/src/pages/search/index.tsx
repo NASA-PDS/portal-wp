@@ -27,6 +27,7 @@ import {
 import {
   createSearchParams,
   generatePath,
+  Link as RouterLink,
   useNavigate,
   useParams,
   useSearchParams,
@@ -82,7 +83,6 @@ const targetNamesEndpoint =
   "?wt=json&q=data_class:Target&fl=target_name,identifier&rows=10000";
 
 const linkStyles = {
-  color: "white",
   fontFamily: "Inter",
   fontSize: "14px",
   fontWeight: "300",
@@ -732,22 +732,18 @@ const SearchPage = () => {
                   aria-label="breadcrumb"
                   maxItems={3}
                   sx={{
-                    backgroundColor: "rgba(23,23,27,0.17)",
+                    marginBottom: "18px",
+                    marginTop: "2px",
                     paddingY: "3px",
                     paddingX: "5px",
                     borderRadius: "3px",
                     width: "fit-content",
                   }}
                 >
-                  <Link
-                    underline="hover"
-                    color="inherit"
-                    href="/"
-                    style={linkStyles}
-                  >
+                  <RouterLink to="/" style={linkStyles}>
                     Home
-                  </Link>
-                  <Typography variant="h6" weight="regular">
+                  </RouterLink>
+                  <Typography variant="h6" weight="regular" component={"span"}>
                     Search
                   </Typography>
                 </Breadcrumbs>
