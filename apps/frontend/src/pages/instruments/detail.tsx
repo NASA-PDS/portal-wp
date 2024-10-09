@@ -182,18 +182,20 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
   const [collectionsReady, setCollectionsReady] = useState(false);
   const [value, setValue] = useState(TABS.findIndex( (tab) => tab == tabLabel?.toLowerCase()));
 
-  console.log("Collections", collections)
-
   const navigate = useNavigate();
+
+  const investigationIsEmpty = () => {
+    return Object.keys(investigation).length === 0;
+  }
 
   const stats:Stats[] = [
     {
       label: "Investigation",
-      value: investigation[PDS4_INFO_MODEL.TITLE]
+      value: investigation[PDS4_INFO_MODEL.TITLE] ? investigation[PDS4_INFO_MODEL.TITLE] : "Not available at this time"
     },
     {
       label: "Temporal Coverage",
-      value: investigation[PDS4_INFO_MODEL.INVESTIGATION.START_DATE]?.concat(" - ", investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE] !== "3000-01-01T00:00:00.000Z" ? investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE] : "(ongoing)")
+      value: investigation[PDS4_INFO_MODEL.INVESTIGATION.START_DATE]?.concat(" - ", investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE] !== "3000-01-01T00:00:00.000Z" ? investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE] : "(ongoing)") || "Not available at this time"
     }
   ];
 
@@ -254,7 +256,10 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
   }
 
   const getInvestigationPath = (investigationLid:string) => {
-    return '/investigations/' + convertLogicalIdentifier(investigationLid, LID_FORMAT.URL_FRIENDLY) + '/overview';
+    if( investigationLid !== undefined )
+      return '/investigations/' + convertLogicalIdentifier(investigationLid, LID_FORMAT.URL_FRIENDLY) + '/overview';
+    else
+      return ""
   }
 
   return (
@@ -602,7 +607,10 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                                       >
                                         <FeaturedLinkDetails 
                                           doi={{value: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] !== "null" ? collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] : "-", link: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] !== "null" ? `https://doi.org/${collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI]}` : undefined}}
-                                          investigation={{value: investigation[PDS4_INFO_MODEL.TITLE], link: getInvestigationPath(investigation[PDS4_INFO_MODEL.LID])}}
+                                          investigation={{
+                                            value: !investigationIsEmpty ? investigation[PDS4_INFO_MODEL.TITLE] : "Not available at this time",
+                                            link: !investigationIsEmpty ? getInvestigationPath(investigation[PDS4_INFO_MODEL.LID]) : undefined
+                                          }}
                                           disciplineName={collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME][0] !== "null" ? collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME] : []}
                                           processingLevel={collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL]}
                                           lid={{
@@ -734,8 +742,18 @@ const mapStateToProps = (state:RootState, ownProps:{collections:Collection[], in
 
   if( state.investigations.status === 'succeeded' ) {
     instrument = selectLatestInstrumentVersion(state, ownProps.instrumentLid);
-    instrumentHost = selectLatestInstrumentHostVersion(state, instrument[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST][0]);
-    investigation = selectLatestInvestigationVersion(state, instrumentHost[PDS4_INFO_MODEL.REF_LID_INVESTIGATION][0]);
+
+    if( instrument[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST] !== undefined && instrument[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST][0] !== "null" ) {
+      instrumentHost = selectLatestInstrumentHostVersion(state, instrument[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST][0]);
+
+      if( instrumentHost[PDS4_INFO_MODEL.REF_LID_INVESTIGATION] !== undefined 
+        && instrumentHost[PDS4_INFO_MODEL.REF_LID_INVESTIGATION][0] !== "null"
+        && instrumentHost[PDS4_INFO_MODEL.REF_LID_INVESTIGATION][0] !== "urn:nasa:pds:context:instrument_host:unk.unk"
+      ) {
+        investigation = selectLatestInvestigationVersion(state, instrumentHost[PDS4_INFO_MODEL.REF_LID_INVESTIGATION][0]);
+      }
+
+    }
   }
 
   return {
