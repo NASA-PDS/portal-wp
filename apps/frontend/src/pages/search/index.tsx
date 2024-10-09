@@ -700,10 +700,6 @@ const SearchPage = () => {
     return pdsIdViewer + identifier;
   };
 
-  const getInstrumentHostPath = (identifier: string) => {
-    return pdsIdViewer + identifier;
-  };
-
   return (
     <>
       <DocumentMeta
@@ -1345,8 +1341,12 @@ const SearchPage = () => {
                                       : "-"
                                   }
                                   primaryLink={
-                                    doc.identifier
-                                      ? getInstrumentHostPath(doc.identifier[0])
+                                    doc.identifier && doc.investigation_ref
+                                      ? getInvestigationPath(
+                                          doc.investigation_ref[0]
+                                        )
+                                      : doc.identifier && !doc.investigation_ref
+                                      ? doc.identifier[0]
                                       : "/"
                                   }
                                   startExpanded={areResultsExpanded}
@@ -1365,11 +1365,15 @@ const SearchPage = () => {
                                     }
                                     lid={{
                                       value: doc.identifier[0],
-                                      link: doc.identifier
-                                        ? getInstrumentHostPath(
-                                            doc.identifier[0]
-                                          )
-                                        : "/",
+                                      link:
+                                        doc.identifier && doc.investigation_ref
+                                          ? getInvestigationPath(
+                                              doc.investigation_ref[0]
+                                            )
+                                          : doc.identifier &&
+                                            !doc.investigation_ref
+                                          ? doc.identifier[0]
+                                          : "/",
                                     }}
                                     investigation={
                                       doc.investigation_name
