@@ -1206,7 +1206,8 @@ const SearchPage = () => {
                                         : { value: "-" }
                                     }
                                     investigation={
-                                      doc.investigation_name
+                                      doc.investigation_name &&
+                                      doc.investigation_ref
                                         ? {
                                             value: doc.investigation_name[0],
                                             link: doc.investigation_ref
@@ -1215,6 +1216,9 @@ const SearchPage = () => {
                                                 )
                                               : "/",
                                           }
+                                        : doc.investigation_name &&
+                                          !doc.investigation_ref
+                                        ? { value: doc.investigation_name[0] }
                                         : { value: "-" }
                                     }
                                     processingLevel={
