@@ -9,14 +9,13 @@ import { useAppDispatch, useAppSelector } from "src/state/hooks";
 import { RootState } from "src/state/store";
 import { selectLatestInstrumentVersion } from "src/state/selectors";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
-import { Box, Breadcrumbs, Container, Divider, Grid, Link as AnchorLink, Tab, Tabs, Typography, Stack, Button, IconButton } from "@mui/material";
-import { IconArrowFilledDown, Loader } from "@nasapds/wds-react";
+import { Box, Breadcrumbs, Container, Divider, Grid, Link as AnchorLink, Stack, Tab, Tabs, Typography as OldTypography } from "@mui/material";
+import { Loader, Typography } from "@nasapds/wds-react";
 import InvestigationStatus from "src/components/InvestigationStatus/InvestigationStatus";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { Stats, StatsList } from "src/components/StatsList/StatsList";
 import { selectLatestInstrumentHostVersion, selectLatestInvestigationVersion } from "src/state/selectors";
 import FeaturedDataBundleLinkListItem from "src/components/FeaturedListItems/FeaturedDataBundleLinkListItem";
-import { ArrowOutward } from "@mui/icons-material";
 
 
 interface InstrumentDetailBodyProps {
@@ -46,7 +45,7 @@ function CustomTabPanel(props: TabPanelProps) {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          {children}
         </Box>
       )}
     </div>
@@ -225,30 +224,23 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                     maxItems={3}
                     sx={{
                       backgroundColor: "rgba(23,23,27,0.17)",
+                      color: "#FFFFFF",
                       paddingY: "3px",
                       paddingX: "5px",
                       borderRadius: "3px",
                       width: "fit-content"
                     }}
-                    separator={<Typography sx={{
-                      color: 'white',
-                      fontSize: '0.875rem',
-                      fontFamily: 'Inter',
-                      fontWeight: '400',
-                      lineHeight: '19px',
-                      wordWrap: 'break-word'
-                    }}>/</Typography>}
+                    separator={<Typography variant="h6" weight="regular" component="span">/</Typography>}
                   >
-                    <Link color="inherit" to="/" style={styles.breadcrumbs.links}>
-                      Home
+                    <Link color="inherit" to="/">
+                      <Typography variant="h6" weight="regular" component="span" style={{ color: "white" }}>Home</Typography>
                     </Link>
-                    <Link color="inherit" to="/instruments/" style={styles.breadcrumbs.links}>
-                      Instruments
+                    <Link color="inherit" to="/instruments/">
+                      <Typography variant="h6" weight="regular" component="span" style={{ color: "white" }}>Instruments</Typography>
                     </Link>
-                    <Typography style={{ color: "white" }}>
-                      {instrument[PDS4_INFO_MODEL.TITLE]}
-                    </Typography>
+                    <Typography variant="h6" weight="regular" component="span">{instrument[PDS4_INFO_MODEL.TITLE]}</Typography>
                   </Breadcrumbs>
+
                   <Grid container alignItems={"flex-end"}>
                     <Grid item md={7} >
                       <Box
@@ -260,27 +252,12 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                         alt=""
                         src={"/assets/images/logos/".concat(instrument[PDS4_INFO_MODEL.LID]).concat(".png")}
                       />
-                      <Typography
-                        variant="h1"
-                        style={{
-                          color: "white",
-                          padding: "0px",
-                          paddingTop: "0px",
-                          fontSize: "72px",
-                          fontWeight: "700",
-                        }}
-                      >
-                        {instrument[PDS4_INFO_MODEL.TITLE]}
-                      </Typography>
-                      <Typography
-                        variant="subtitle1"
-                        sx={{
-                          color: "white",
-                          marginTop: "8px"
-                        }}
-                      >
-                        {instrument[PDS4_INFO_MODEL.TITLE]}
-                      </Typography>
+                      <Box style={{ color: "white", marginTop: "50px" }}>
+                        <Typography variant="display4" weight="bold" component={"h1"}>{instrument[PDS4_INFO_MODEL.TITLE]}</Typography>
+                      </Box>
+                      <Box style={{ color: "white", marginTop: "8px" }}>
+                        <Typography variant="h5" weight="regular" component="span">{instrument[PDS4_INFO_MODEL.TITLE]}</Typography>
+                      </Box>
                       <InvestigationStatus stopDate={investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE]} />
                     </Grid>
                     <Grid item md={1}></Grid>
@@ -459,7 +436,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                       position: "sticky",
                       top: "24px"
                     }}>
-                      <Typography sx={{
+                      <OldTypography sx={{
                         marginLeft: "10px",
                         marginBottom: "12px",
                         color: '#17171B',
@@ -470,7 +447,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                         lineHeight: "19px",
                         letterSpacing: "0.25px",
                         wordWrap: 'break-word'
-                      }}>Instruments</Typography>
+                      }}>Instruments</OldTypography>
                       {
                         dataTypes.map(dataType => {
                           return (
@@ -491,7 +468,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                                   opacity: 0,
                                   borderRightWidth: "2px",
                                 }} />
-                                <Typography sx={{
+                                <OldTypography sx={{
                                   marginLeft: "10px",
                                   color: '#17171B',
                                   fontSize: "12px",
@@ -500,7 +477,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                                   lineHeight: "12px",
                                   letterSpacing: "0.25px",
                                   wordWrap: 'break-word',
-                                }}>{dataType}</Typography>
+                                }}>{dataType}</OldTypography>
                               </Box>
                             </AnchorLink>
                           )
@@ -509,13 +486,13 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                     </Box>
                   </Grid>
                   <Grid item xs={12} lg={8}>
-                    <Typography>Raw Data is original data from an instrument. If compression, reformatting, packetization, or other translation has been applied to facilitate data transmission or storage, those processes will be reversed so that the archived data are in a PDS approved archive format. Derived Data are results that have been distilled from one or more calibrated data products (for example, maps, gravity or magnetic fields, or ring particle size distributions). Supplementary data, such as calibration tables or tables of viewing geometry, used to interpret observational data should also be classified as ‘derived’ data if not easily matched to one of the other categories.</Typography>
+                    <Typography variant="body3" weight="regular">Raw Data is original data from an instrument. If compression, reformatting, packetization, or other translation has been applied to facilitate data transmission or storage, those processes will be reversed so that the archived data are in a PDS approved archive format. Derived Data are results that have been distilled from one or more calibrated data products (for example, maps, gravity or magnetic fields, or ring particle size distributions). Supplementary data, such as calibration tables or tables of viewing geometry, used to interpret observational data should also be classified as ‘derived’ data if not easily matched to one of the other categories.</Typography>
                     <Stack sx={{marginTop: "32px"}}>
                       {
                         dataTypes.map( (dataType, index) => {
                           return (
                             <>
-                              <Typography sx={{
+                              <OldTypography sx={{
                                 textTransform: "capitalize",
                                 fontFamily: "Inter",
                                 fontSize: "1.375em",
@@ -528,7 +505,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                                 }
                               }} key={"instrumentType_" + index}>
                                 <a id={"title_" + dataType.toLowerCase()}>{dataType}</a>
-                              </Typography>
+                              </OldTypography>
                               {
                                 [{
                                   [PDS4_INFO_MODEL.LID]: "urn:nasa:pds:.....",
@@ -580,7 +557,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                       position: "sticky",
                       top: "20px"
                     }}>
-                      <Typography sx={{
+                      <OldTypography sx={{
                         marginLeft: "10px",
                         marginBottom: "12px",
                         color: '#17171B',
@@ -591,7 +568,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                         lineHeight: "19px",
                         letterSpacing: "0.25px",
                         wordWrap: 'break-word'
-                      }}>Overview</Typography>
+                      }}>Overview</OldTypography>
                       {
                         [{id:"overview-summary", label:"Summary"}].map(anchor => {
                           return (
@@ -612,7 +589,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                                   opacity: 0,
                                   borderRightWidth: "2px",
                                 }} />
-                                <Typography sx={{
+                                <OldTypography sx={{
                                   marginLeft: "10px",
                                   color: '#17171B',
                                   fontSize: "12px",
@@ -621,7 +598,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                                   lineHeight: "12px",
                                   letterSpacing: "0.25px",
                                   wordWrap: 'break-word',
-                                }}>{anchor.label}</Typography>
+                                }}>{anchor.label}</OldTypography>
                               </Box>
                             </AnchorLink>
                           )
@@ -631,16 +608,16 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                   </Grid>
                   <Grid item md={6}>
                     <a id="overview-summary">
-                      <Typography variant="h4" sx={{
+                      <OldTypography variant="h4" sx={{
                         color: 'black',
                         fontSize: "22px",
                         fontFamily: 'Inter',
                         fontWeight: '700',
                         lineHeight: "26px",
                         wordWrap: 'break-word'
-                      }}>Summary</Typography>
+                      }}>Summary</OldTypography>
                     </a>
-                    <Typography sx={{
+                    <OldTypography sx={{
                       color: 'black',
                       fontSize: "18px",
                       fontFamily: 'Public Sans',
@@ -651,7 +628,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                       style={{ paddingBottom: "24px" }}
                     >
                       {instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION]}
-                    </Typography>
+                    </OldTypography>
                   </Grid>
                   <Grid item lg={1} display={{ xs: "none", sm: "none", lg: "block"}}>
                     { /* Column Gutter */ } 
