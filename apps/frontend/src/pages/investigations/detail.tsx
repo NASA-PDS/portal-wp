@@ -129,14 +129,6 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
       value: investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE]
     },
     {
-      label: "Mission Phase",
-      value: "Lorem Ipsum"
-    },
-    {
-      label: "Version",
-      value: investigation.vid
-    },
-    {
       label: "Logical Identifier",
       value: investigation.lid,
       enableCopy: true
