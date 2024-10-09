@@ -8,7 +8,7 @@ function PortalFooter() {
     {
       id: "",
       label: "Home",
-      href: "https://pds-sit.mcp.nasa.gov/portal/"
+      href: "/"
     },
     {
       id: "",
@@ -18,7 +18,7 @@ function PortalFooter() {
     {
       id: "",
       label: "Find Data",
-      href: "https://pds-sit.mcp.nasa.gov/portal/search/"
+      href: "/search/"
     },
     {
       id: "",
