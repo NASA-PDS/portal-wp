@@ -59,7 +59,7 @@ type SearchResultDoc = {
     objectType: string;
     product_class: string[];
     data_product_type: string[];
-    file_ref_size: number[];
+    file_ref_size: string[];
     modification_date: string[];
     file_ref_name: string[];
     identifier: string;
@@ -107,6 +107,10 @@ type SearchResultDoc = {
     telescope_description: string[];
     telescope_aperture: string[];
     instrument_name: string[];
+    investigation_ref: string[];
+    citation_publication_year: string[];
+
+
 }
 
 type IdentifierNameDoc = {
