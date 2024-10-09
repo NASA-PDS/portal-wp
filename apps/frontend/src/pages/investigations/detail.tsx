@@ -335,6 +335,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
         };
 
         const fields = [
+          PDS4_INFO_MODEL.CITATION_INFORMATION.DOI,
           PDS4_INFO_MODEL.COLLECTION.DESCRIPTION,
           PDS4_INFO_MODEL.COLLECTION.TYPE,
           PDS4_INFO_MODEL.LID,
