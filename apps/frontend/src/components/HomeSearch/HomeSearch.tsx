@@ -23,7 +23,10 @@ import {
   generatePath,
   useNavigate,
 } from "react-router-dom";
-import { mapFilterIdsToName, mapPageType } from "../../pages/search/searchUtils";
+import {
+  mapFilterIdsToName,
+  mapPageType,
+} from "../../pages/search/searchUtils";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import ListItemText from "@mui/material/ListItemText";
@@ -54,16 +57,16 @@ const MenuProps = {
 const solrEndpoint = "https://pds.nasa.gov/services/search/search";
 const getFiltersQuery =
   solrEndpoint +
-  "?q=*&rows=0&facet=on&facet.field=investigation_ref&facet.field=instrument_ref&facet.field=target_ref&facet.field=page_type&wt=json&facet.limit=-1";
+  "?q=*&qt=keyword&rows=0&facet=on&facet.field=investigation_ref&facet.field=instrument_ref&facet.field=target_ref&facet.field=page_type&wt=json&facet.limit=-1";
 const investigationNamesEndpoint =
   solrEndpoint +
-  "?wt=json&q=data_class:Investigation&fl=investigation_name,identifier&rows=10000";
+  "?wt=json&qt=keyword&q=data_class:Investigation&fl=investigation_name,identifier&rows=10000";
 const instrumentNamesEndpoint =
   solrEndpoint +
-  "?wt=json&q=data_class:Instrument&fl=instrument_name,identifier&rows=10000";
+  "?wt=json&qt=keyword&q=data_class:Instrument&fl=instrument_name,identifier&rows=10000";
 const targetNamesEndpoint =
   solrEndpoint +
-  "?wt=json&q=data_class:Target&fl=target_name,identifier&rows=10000";
+  "?wt=json&qt=keyword&q=data_class:Target&fl=target_name,identifier&rows=10000";
 
 type Filter = {
   name: string;
@@ -87,9 +90,7 @@ export const HomeSearch = () => {
   const [allInstrumentFilters, setAllInstrumentFilters] = useState<Filter[]>(
     []
   );
-  const [allPageTypeFilters, setAllPageTypeFilters] = useState<Filter[]>(
-    []
-  );
+  const [allPageTypeFilters, setAllPageTypeFilters] = useState<Filter[]>([]);
 
   const [targetFilters, setTargetFilters] = useState<Filter[]>([]);
   const [investigationFilters, setInvestigationFilters] = useState<Filter[]>(
@@ -108,8 +109,9 @@ export const HomeSearch = () => {
   const [selectedInstrumentFilters, setSelectedInstrumentFilters] = useState<
     string[]
   >(["all"]);
-  const [selectedPageTypeFilters, setSelectedPageTypeFilters] =
-    useState<string[]>(["all"]);
+  const [selectedPageTypeFilters, setSelectedPageTypeFilters] = useState<
+    string[]
+  >(["all"]);
 
   const [targetSubFilter, setTargetSubFilter] = useState("");
   const [investigationSubFilter, setInvestigationSubFilter] = useState("");
@@ -230,9 +232,7 @@ export const HomeSearch = () => {
     }
   };
 
-  const onPageTypeSubFilterChange = (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
+  const onPageTypeSubFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setPageTypeSubFilter(value);
 
@@ -501,15 +501,12 @@ export const HomeSearch = () => {
     fetch(investigationsUrl)
       .then((investigationsResponse) => investigationsResponse.json())
       .then((investigationsData) => {
-
         fetch(instrumentsUrl)
           .then((instrumentsResponse) => instrumentsResponse.json())
           .then((instrumentsData) => {
-
             fetch(targetsUrl)
               .then((targetsResponse) => targetsResponse.json())
               .then((targetsData) => {
-
                 fetch(filtersUrl)
                   .then((filterResponse) => filterResponse.json())
                   .then((filtersData) => {
@@ -581,9 +578,8 @@ export const HomeSearch = () => {
                       targetFilterIds,
                       targetNames
                     );
-                    const pageTypeFilterOptions = mapPageType(
-                      pageTypeFilterIds
-                    );
+                    const pageTypeFilterOptions =
+                      mapPageType(pageTypeFilterIds);
 
                     const investigationFilters = investigationFilterOptions.map(
                       (filter) => ({
@@ -613,10 +609,12 @@ export const HomeSearch = () => {
                     }));
                     targetFilters.splice(0, 0, { name: "All", value: "all" });
 
-                    const pageTypeFilters = pageTypeFilterOptions.map((filter) => ({
-                      name: filter.name,
-                      value: filter.identifier,
-                    }));
+                    const pageTypeFilters = pageTypeFilterOptions.map(
+                      (filter) => ({
+                        name: filter.name,
+                        value: filter.identifier,
+                      })
+                    );
                     pageTypeFilters.splice(0, 0, { name: "All", value: "all" });
 
                     console.log(
@@ -986,9 +984,7 @@ export const HomeSearch = () => {
                   {pageTypeFilters.map((filter) => (
                     <MenuItem key={filter.value} value={filter.value}>
                       <Checkbox
-                        checked={selectedPageTypeFilters.includes(
-                          filter.value
-                        )}
+                        checked={selectedPageTypeFilters.includes(filter.value)}
                         disabled={
                           filter.value === "all" &&
                           selectedPageTypeFilters.includes(filter.value)
