@@ -15,14 +15,14 @@ import {
   selectLatestTargetsForInstrumentHost,
 } from "src/state/selectors";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
-import { Box, Breadcrumbs, Button, Container, Divider, Grid, Link as AnchorLink, Stack, Tab, Tabs, Typography, IconButton } from "@mui/material";
+import { Box, Breadcrumbs, Button, Container, Divider, Grid, Link as AnchorLink, Stack, Tab, Tabs, Typography as OldTypography, IconButton } from "@mui/material";
 import InvestigationStatus from "src/components/InvestigationStatus/InvestigationStatus";
 import StatsList from "src/components/StatsList/StatsList";
 
 import FeaturedTargetLinkListItem from "src/components/FeaturedListItems/FeaturedTargetLinkListItem";
 import FeaturedToolLinkListItem from "src/components/FeaturedListItems/FeaturedToolLinkListItem";
 import FeaturedResourceLinkListItem from "src/components/FeaturedListItems/FeaturedResourcesLinkListItem";
-import { FeaturedLink, FeaturedLinkDetails, FeaturedLinkDetailsVariant, Loader } from "@nasapds/wds-react";
+import { FeaturedLink, FeaturedLinkDetails, FeaturedLinkDetailsVariant, Loader, Typography } from "@nasapds/wds-react";
 import { Collection } from "src/types/collection";
 import { ArrowForward } from "@mui/icons-material";
 
@@ -88,7 +88,7 @@ function CustomTabPanel(props: TabPanelProps) {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          {children}
         </Box>
       )}
     </div>
@@ -143,17 +143,6 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
   ];
 
   const styles = {
-    breadcrumbs:{
-      links: {
-        color: "#FFFFFF",
-        fontFamily: "Inter",
-        fontSize: "14px",
-        fontWeight: "300",
-        lineHeight: "19px",
-        paddingY: "4px",
-        textDecoration: "none",
-      }
-    },
     button: {
       color: "#288BFF",
       backgroundColor: "#FFFFFF",
@@ -420,29 +409,21 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                 maxItems={3}
                 sx={{
                   backgroundColor: "rgba(23,23,27,0.17)",
+                  color: "#FFFFFF",
                   paddingY: "3px",
                   paddingX: "5px",
                   borderRadius: "3px",
                   width: "fit-content"
                 }}
-                separator={<Typography sx={{
-                  color: 'white',
-                  fontSize: '0.875rem',
-                  fontFamily: 'Inter',
-                  fontWeight: '400',
-                  lineHeight: '19px',
-                  wordWrap: 'break-word'
-                }}>/</Typography>}
+                separator={<Typography variant="h6" weight="regular" component="span">/</Typography>}
               >
-                <Link color="inherit" to="/" style={styles.breadcrumbs.links}>
-                  Home
+                <Link color="inherit" to="/">
+                  <Typography variant="h6" weight="regular" component="span" style={{ color: "white" }}>Home</Typography>
                 </Link>
-                <Link color="inherit" to="/investigations/" style={styles.breadcrumbs.links}>
-                  Investigations
+                <Link color="inherit" to="/investigations/">
+                  <Typography variant="h6" weight="regular" component="span" style={{ color: "white" }}>Investigations</Typography>
                 </Link>
-                <Typography style={{ color: "white" }}>
-                  {investigation[PDS4_INFO_MODEL.TITLE]}
-                </Typography>
+                <Typography variant="h6" weight="regular" component="span">{investigation[PDS4_INFO_MODEL.TITLE]}</Typography>
               </Breadcrumbs>
               <Grid container alignItems={"flex-end"}>
                 <Grid item md={7} >
@@ -455,28 +436,15 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                     alt=""
                     src={"/assets/images/logos/".concat(investigation[PDS4_INFO_MODEL.LID]).concat(".png")}
                   />
-                  <Typography
-                    variant="h1"
-                    style={{
-                      color: "white",
-                      padding: "0px",
-                      paddingTop: "0px",
-                      fontSize: "72px",
-                      fontWeight: "700",
-                    }}
-                  >
-                    {investigation[PDS4_INFO_MODEL.TITLE]}
-                  </Typography>
-                  <Typography
-                    variant="subtitle1"
-                    sx={{
-                      color: "white",
-                      marginTop: "8px"
-                    }}
-                  >
-                    {investigation[PDS4_INFO_MODEL.TITLE]}
-                  </Typography>
-                  <InvestigationStatus stopDate={investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE]} />
+                  <Box style={{ color: "white", marginTop: "50px" }}>
+                    <Typography variant="display4" weight="bold" component={"h1"}>{investigation[PDS4_INFO_MODEL.TITLE]}</Typography>
+                  </Box>
+                  <Box style={{ color: "white", marginTop: "8px" }}>
+                    <Typography variant="h5" weight="regular" component="span">{investigation[PDS4_INFO_MODEL.TITLE]}</Typography>
+                  </Box>
+                  <Box>
+                    <InvestigationStatus stopDate={investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE]} />
+                  </Box>
                 </Grid>
                 <Grid item md={1}></Grid>
                 <Grid item xs={12} md={4}>
@@ -504,17 +472,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
             >
               <Box>
                 <Box sx={{paddingBottom: "8px"}}>
-                  <Typography variant="overline" style={{ 
-                    color: "#000000",
-                    fontSize: "0.875em",
-                    fontWeight: 500,
-                    lineHeight: "131%",
-                    letterSpacing: "0.265rem",
-                    textTransform: "uppercase",
-                    wordWrap: "break-word",
-                  }}>
-                    Spacecraft
-                  </Typography>
+                  <Typography variant="label1" weight="medium" component="span" style={{ textTransform: "uppercase"}}>Spacecraft</Typography>
                 </Box>
                 <Stack
                   direction={{ xs: 'column', sm: 'row' }}
@@ -596,7 +554,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                       position: "sticky",
                       top: "24px"
                     }}>
-                      <Typography sx={{
+                      <OldTypography sx={{
                         marginLeft: "10px",
                         marginBottom: "12px",
                         color: '#17171B',
@@ -607,7 +565,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                         lineHeight: "19px",
                         letterSpacing: "0.25px",
                         wordWrap: 'break-word'
-                      }}>Instruments</Typography>
+                      }}>Instruments</OldTypography>
                       {
                         instrumentTypes.map(instrumentType => {
                           return (
@@ -628,7 +586,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                   opacity: 0,
                                   borderRightWidth: "2px",
                                 }} />
-                                <Typography sx={{
+                                <OldTypography sx={{
                                   marginLeft: "10px",
                                   color: '#17171B',
                                   fontSize: "12px",
@@ -637,7 +595,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                   lineHeight: "12px",
                                   letterSpacing: "0.25px",
                                   wordWrap: 'break-word',
-                                }}>{instrumentType}</Typography>
+                                }}>{instrumentType}</OldTypography>
                               </Box>
                             </AnchorLink>
                           )
@@ -651,7 +609,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                         instrumentTypes.map( (instrumentType, index) => {
                           return (
                             <>
-                              <Typography sx={{
+                              <OldTypography sx={{
                                 textTransform: "capitalize",
                                 fontFamily: "Inter",
                                 fontSize: "1.375em",
@@ -664,7 +622,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                 }
                               }} key={"instrumentType_" + index}>
                                 <a id={"title_" + instrumentType.toLowerCase()}>{instrumentType}</a>
-                              </Typography>
+                              </OldTypography>
                               {
                                 instruments[selectedInstrumentHost].map( (instrument:Instrument) => {
                                   if( instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE]?.includes(instrumentType) || instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]?.includes(instrumentType) ) {
@@ -749,7 +707,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                       position: "sticky",
                       top: "20px"
                     }}>
-                      <Typography sx={{
+                      <OldTypography sx={{
                         marginLeft: "10px",
                         marginBottom: "12px",
                         color: '#17171B',
@@ -760,7 +718,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                         lineHeight: "19px",
                         letterSpacing: "0.25px",
                         wordWrap: 'break-word'
-                      }}>Overview</Typography>
+                      }}>Overview</OldTypography>
                       {
                         [{id:"overview-summary", label:"Summary"}].map(anchor => {
                           return (
@@ -781,7 +739,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                   opacity: 0,
                                   borderRightWidth: "2px",
                                 }} />
-                                <Typography sx={{
+                                <OldTypography sx={{
                                   marginLeft: "10px",
                                   color: '#17171B',
                                   fontSize: "12px",
@@ -790,7 +748,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                   lineHeight: "12px",
                                   letterSpacing: "0.25px",
                                   wordWrap: 'break-word',
-                                }}>{anchor.label}</Typography>
+                                }}>{anchor.label}</OldTypography>
                               </Box>
                             </AnchorLink>
                           )
@@ -800,16 +758,16 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                   </Grid>
                   <Grid item md={6}>
                     <a id="overview-summary">
-                      <Typography variant="h4" sx={{
+                      <OldTypography variant="h4" sx={{
                         color: 'black',
                         fontSize: "22px",
                         fontFamily: 'Inter',
                         fontWeight: '700',
                         lineHeight: "26px",
                         wordWrap: 'break-word'
-                      }}>Summary</Typography>
+                      }}>Summary</OldTypography>
                     </a>
-                    <Typography sx={{
+                    <OldTypography sx={{
                       color: 'black',
                       fontSize: "18px",
                       fontFamily: 'Public Sans',
@@ -819,8 +777,8 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                     }} style={{ paddingBottom: "24px" }}
                       >
                         {getInvestigationSummary()}
-                    </Typography>
-                    <Typography sx={{
+                    </OldTypography>
+                    <OldTypography sx={{
                       color: 'black',
                       fontSize: "22px",
                       fontFamily: 'Inter',
@@ -829,12 +787,12 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                       wordWrap: 'break-word'
                     }}>
                       Looking for Data
-                    </Typography>
+                    </OldTypography>
                     <Stack direction="column" alignItems={"left"} gap={2} sx={{
                       paddingTop: "16px"
                     }}>
                       <Stack direction="row" alignItems={"center"} gap={1} onClick={ () => {} }>
-                        <Typography sx={{
+                        <OldTypography sx={{
                           color: 'black',
                           fontSize: 16,
                           fontFamily: 'Inter',
@@ -842,7 +800,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                           lineHeight: '20px',
                           wordWrap: "break-word"
                         }}
-                        >Instruments</Typography>
+                        >Instruments</OldTypography>
                         <IconButton
                           sx={{
                             "&:hover": {
@@ -866,7 +824,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                   </Grid>
                 </Grid>
               </CustomTabPanel>
-              <CustomTabPanel value={value} index={2}>
+              {/* <CustomTabPanel value={value} index={2}>
                 <Grid container>
                   <Grid item md={2} display={{ xs: "none", sm: "none", md: "block"}}>
                     <Box sx={{
@@ -874,7 +832,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                         position: "sticky",
                         top: "20px"
                     }}>
-                      <Typography sx={{
+                      <OldTypography sx={{
                         marginLeft: "10px",
                         marginBottom: "12px",
                         color: '#17171B',
@@ -885,7 +843,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                         lineHeight: "19px",
                         letterSpacing: "0.25px",
                         wordWrap: 'break-word'
-                      }}>Targets</Typography>
+                      }}>Targets</OldTypography>
                       {
                         [{id:"all-targets", label:"All Targets"}].map(anchor => {
                           return (
@@ -906,7 +864,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                   opacity: 0,
                                   borderRightWidth: "2px",
                                 }} />
-                                <Typography sx={{
+                                <OldTypography sx={{
                                   marginLeft: "10px",
                                   color: '#17171B',
                                   fontSize: "12px",
@@ -915,7 +873,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                   lineHeight: "12px",
                                   letterSpacing: "0.25px",
                                   wordWrap: 'break-word',
-                                }}>{anchor.label}</Typography>
+                                }}>{anchor.label}</OldTypography>
                               </Box>
                             </AnchorLink>
                           )
@@ -925,14 +883,14 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                   </Grid>
                   <Grid item md={10}>
                     <a id="all-targets">
-                      <Typography variant="h4" sx={{
+                      <OldTypography variant="h4" sx={{
                         color: 'black',
                         fontSize: "22px",
                         fontFamily: 'Inter',
                         fontWeight: '700',
                         lineHeight: "26px",
                         wordWrap: 'break-word'
-                      }}>All Targets</Typography>
+                      }}>All Targets</OldTypography>
                     </a>
                     {
                       instrumentHosts.length > 0 && targets[selectedInstrumentHost].length > 0 ? (
@@ -949,14 +907,14 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                         })
                       ) : (
                         <Box sx={{ paddingBottom: "25px", textAlign: "center"}}>
-                          <Typography>There are no targets related to this investigation.</Typography>
+                          <OldTypography>There are no targets related to this investigation.</OldTypography>
                         </Box>
                       )
                     }
                   </Grid>
                 </Grid>
-              </CustomTabPanel>
-              <CustomTabPanel value={value} index={3}>
+              </CustomTabPanel> */}
+              {/* <CustomTabPanel value={value} index={3}>
                 <Grid container>
                   <Grid item md={2} display={{ xs: "none", sm: "none", md: "block"}}>
                     <Box sx={{
@@ -964,7 +922,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                       position: "sticky",
                       top: "20px"
                     }}>
-                      <Typography sx={{
+                      <OldTypography sx={{
                         marginLeft: "10px",
                         marginBottom: "12px",
                         color: '#17171B',
@@ -975,7 +933,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                         lineHeight: "19px",
                         letterSpacing: "0.25px",
                         wordWrap: 'break-word'
-                      }}>Tools</Typography>
+                      }}>Tools</OldTypography>
                       {
                         
                         ["Tool Title 1", "Tool Title 2", "Tool Title 3"].map(tool => {
@@ -997,7 +955,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                   opacity: 0,
                                   borderRightWidth: "2px",
                                 }} />
-                                <Typography sx={{
+                                <OldTypography sx={{
                                   marginLeft: "10px",
                                   color: '#17171B',
                                   fontSize: "12px",
@@ -1006,7 +964,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                   lineHeight: "12px",
                                   letterSpacing: "0.25px",
                                   wordWrap: 'break-word',
-                                }}>{tool}</Typography>
+                                }}>{tool}</OldTypography>
                               </Box>
                             </AnchorLink>
                           )
@@ -1015,7 +973,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                     </Box>
                   </Grid>
                   <Grid item md={10}>
-                    <Typography variant='body1' sx={{paddingBottom: "32px"}}>The PDS maintains many tools enabling users to work with the data in our archive. Listed below are tools that can assist you when exploring the data holding for this investigation.</Typography>
+                    <OldTypography variant='body1' sx={{paddingBottom: "32px"}}>The PDS maintains many tools enabling users to work with the data in our archive. Listed below are tools that can assist you when exploring the data holding for this investigation.</OldTypography>
                     {
                       [
                         {
@@ -1057,8 +1015,8 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                     }
                   </Grid>
                 </Grid>
-              </CustomTabPanel>
-              <CustomTabPanel value={value} index={4}>
+              </CustomTabPanel> */}
+              {/* <CustomTabPanel value={value} index={4}>
                 <Container
                   maxWidth={"xl"}
                   sx={{
@@ -1083,7 +1041,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                       }}
                     >
                       <Grid item xs={7}>
-                        <Typography
+                        <OldTypography
                           variant="body1"
                           display="block"
                           color="#58585B"
@@ -1094,10 +1052,10 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                           }}
                         >
                           Name
-                        </Typography>
+                        </OldTypography>
                       </Grid>
                       <Grid item xs={1}>
-                        <Typography
+                        <OldTypography
                           variant="body1"
                           display="block"
                           color="#58585B"
@@ -1108,10 +1066,10 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                           }}
                         >
                           Version
-                        </Typography>
+                        </OldTypography>
                       </Grid>
                       <Grid item xs={1}>
-                        <Typography
+                        <OldTypography
                           variant="body1"
                           display="block"
                           color="#58585B"
@@ -1122,10 +1080,10 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                           }}
                         >
                           Year
-                        </Typography>
+                        </OldTypography>
                       </Grid>
                       <Grid item xs={1}>
-                        <Typography
+                        <OldTypography
                           variant="body1"
                           display="block"
                           color="#58585B"
@@ -1136,10 +1094,10 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                           }}
                         >
                           Size
-                        </Typography>
+                        </OldTypography>
                       </Grid>
                       <Grid item xs={1}>
-                        <Typography
+                        <OldTypography
                           variant="body1"
                           display="block"
                           color="#58585B"
@@ -1150,7 +1108,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                           }}
                         >
                           Format
-                        </Typography>
+                        </OldTypography>
                       </Grid>
                     </Grid>
                   </Box>
@@ -1209,7 +1167,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                     }
                   </Stack>
                 </Container>
-              </CustomTabPanel>
+              </CustomTabPanel> */}
             </Container>
           </Container>
         </Container>
