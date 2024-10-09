@@ -62,26 +62,20 @@ const HomePage = () => {
           jumpLinkUrl: "/instruments",
           cards: [
             {
-              image: "",
-              imageDescription: "",
-              lid: "",
-              title: "Near Infrared Camera (NIRCam)",
-              url: ""
+              image: "/assets/images/cards/instruments/urn--nasa--pds--context--instrument--lro---lroc.jpg",
+              imageDescription: "Artist concept of NASA's Lunar Reconnaissance Orbiter.",
+              lid: "urn--nasa--pds--context--instrument--lro---lroc",
+              title: "Lunar Reconnaissance Orbiter Camera For LRO (LROC)",
+              url: "/instruments/urn--nasa--pds--context--instrument--lro---lroc/data"
             },
             {
-              image: "/assets/images/cards/instruments/urn--nasa--pds--context--instrument--mars2020---sherloc.jpg",
-              imageDescription: "Picture of the Scanning Habitable Environments with Raman & Luminescence for Organics & Chemicals instrument in a clean room.",
-              lid: "urn--nasa--pds--context--instrument--mars2020---sherloc",
-              title: "Scanning Habitable Environments with Raman & Luminescence for Organics & Chemicals (SHERLOC)",
-              url: "/instruments/urn--nasa--pds--context--instrument--mars2020---sherloc/data"
+              image: "/assets/images/cards/instruments/urn--nasa--pds--context--instrument--hirise---mro.jpg",
+              imageDescription: "Front end of the HiRISE Telescopic Camera for Mars Reconnaissance Orbiter. NASA/JPL-Caltech/Ball Aerospace",
+              lid: "urn--nasa--pds--context--instrument--hirise---mro",
+              title: "High Resolution Imaging Science Experiment for MRO (HiRISE)",
+              url: "/instruments/urn--nasa--pds--context--instrument--hirise---mro/data"
             },
-            {
-              image: "/assets/images/cards/instruments/urn--nasa--pds--context--instrument--ovirs---orex.jpg",
-              imageDescription: "Picture of the OSIRIS-REx Visible and Infrared Spectrometer (OVIRS) instrument.",
-              lid: "urn--nasa--pds--context--instrument--ovirs---orex",
-              title: "OSIRIS-REx Visible and Infrared Spectrometer (OVIRS)",
-              url: "/instruments/urn--nasa--pds--context--instrument--ovirs---orex/data"
-            },
+            
             {
               image: "/assets/images/cards/instruments/urn--nasa--pds--context--instrument--mount----bigelow---1m54---mont4k.jpg",
               imageDescription: "Picture of the Mont4K CCD Imager instrument.",
@@ -90,11 +84,18 @@ const HomePage = () => {
               url: "/instruments/urn--nasa--pds--context--instrument--mount----bigelow---1m54---mont4k/data"
             },
             {
-              image: "/assets/images/cards/instruments/urn--nasa--pds--context--instrument--chemcam----libs---msl.jpg",
-              imageDescription: "Picture of the Chemistry Camera Laser Induced Breakdown Spectrometer (ChemCam) instrument.",
-              lid: "urn--nasa--pds--context--instrument--chemcam----libs---msl",
-              title: "Chemistry Camera Laser Induced Breakdown Spectrometer (ChemCam)",
-              url: "/instruments/urn--nasa--pds--context--instrument--chemcam----libs---msl/data"
+              image: "/assets/images/cards/instruments/urn--nasa--pds--context--instrument--mars2020---mastcamz.jpg",
+              imageDescription: "Mastcam-Z's Color Calibration Targets (lower right) as seen on Mars.",
+              lid: "urn--nasa--pds--context--instrument--mars2020---mastcamz",
+              title: "Mars 2020 Mastcam-Zoom Camera Instrument Suite (Mastcam-Z)",
+              url: "/instruments/urn--nasa--pds--context--instrument--mars2020---mastcamz/data"
+            },
+            {
+              image: "/assets/images/cards/instruments/urn--nasa--pds--context--instrument--ovirs---orex.jpg",
+              imageDescription: "Picture of the OSIRIS-REx Visible and Infrared Spectrometer (OVIRS) instrument.",
+              lid: "urn--nasa--pds--context--instrument--ovirs---orex",
+              title: "OSIRIS-REx Visible and Infrared Spectrometer (OVIRS)",
+              url: "/instruments/urn--nasa--pds--context--instrument--ovirs---orex/data"
             },
           ]
         }
@@ -145,14 +146,14 @@ const HomePage = () => {
       description={ "The Planetary Data Systems Homepage" }
     />
      <Hero
-        title={"American Geophysical Union"}
-        primaryTitle={"Find us at AGU24"}
+        title={"NASA Planetary Data System"}
+        primaryTitle={"New PDS Beta Site is Live"}
         text={
-          "Come see us at the 2023 American Geophysical Union Fall Meeting, December 11 - 15 in San Francisco."
+          "We are thrilled to announce the beta release of our newly redesigned NASA Planetary Data System (PDS) website! Please give us feedback to improve your experience"
         }
-        imageSrc={"/assets/images/homepage-hero.png"}
-        buttonLink={"/"}
-        buttonText={"More information"}
+        imageSrc={"/assets/images/homepage-hero.jpg"}
+        buttonLink={"mailto:pds-operator@jpl.nasa.gov"}
+        buttonText={"Give Feedback"}
       />
     <HomeSearch />
     <ExploreTopicsSixUp {...exploreTopicsSixUpPropx} />
