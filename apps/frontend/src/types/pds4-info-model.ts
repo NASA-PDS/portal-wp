@@ -252,4 +252,16 @@ export const PDS4_INFO_MODEL = {
 
   },
 
+  /**
+   * The Time_Coordinates class provides a list of time coordinates.
+   */
+  TIME_COORDINATES: {
+
+    /** The start_date_time attribute provides the date and time appropriate to the beginning of the product being labeled. */
+    START_DATE_TIME: "pds:Time_Coordinates.pds:start_date_time",
+
+    /** The stop_date_time attribute provides the date and time appropriate to the end of the product being labeled. */
+    STOP_DATE_TIME: "pds:Time_Coordinates.pds:stop_date_time",
+  },
+
 } as const;
