@@ -146,14 +146,14 @@ const HomePage = () => {
       description={ "The Planetary Data Systems Homepage" }
     />
      <Hero
-        title={"American Geophysical Union"}
-        primaryTitle={"Find us at AGU24"}
+        title={"NASA Planetary Data System"}
+        primaryTitle={"New PDS Beta Site is Live"}
         text={
-          "Come see us at the 2023 American Geophysical Union Fall Meeting, December 11 - 15 in San Francisco."
+          "We are thrilled to announce the beta release of our newly redesigned NASA Planetary Data System (PDS) website! Please give us feedback to improve your experience"
         }
-        imageSrc={"/assets/images/homepage-hero.png"}
-        buttonLink={"/"}
-        buttonText={"More information"}
+        imageSrc={"/assets/images/homepage-hero.jpg"}
+        buttonLink={"mailto:pds-operator@jpl.nasa.gov"}
+        buttonText={"Give Feedback"}
       />
     <HomeSearch />
     <ExploreTopicsSixUp {...exploreTopicsSixUpPropx} />

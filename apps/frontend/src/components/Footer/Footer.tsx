@@ -2,13 +2,13 @@ import { FooterLink, Footer } from "@nasapds/wds-react";
 
 function PortalFooter() {
 
-  const pageLastUpdated="Sept. 19, 2024"
+  const pageLastUpdated="Oct. 10, 2024"
 
   const primaryLinks:FooterLink[] = [
     {
       id: "",
       label: "Home",
-      href: "https://pds-sit.mcp.nasa.gov/portal/"
+      href: "/"
     },
     {
       id: "",
@@ -18,7 +18,7 @@ function PortalFooter() {
     {
       id: "",
       label: "Find Data",
-      href: "https://pds-sit.mcp.nasa.gov/portal/search/"
+      href: "/search/"
     },
     {
       id: "",
