@@ -568,7 +568,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                   <Grid item xs={12} lg={8}>
                     <Typography variant="body3" weight="regular">Raw Data is original data from an instrument. If compression, reformatting, packetization, or other translation has been applied to facilitate data transmission or storage, those processes will be reversed so that the archived data are in a PDS approved archive format. Derived Data are results that have been distilled from one or more calibrated data products (for example, maps, gravity or magnetic fields, or ring particle size distributions). Supplementary data, such as calibration tables or tables of viewing geometry, used to interpret observational data should also be classified as ‘derived’ data if not easily matched to one of the other categories.</Typography>
                     <Box style={{marginTop: "50px", display: collections.length === 0 ? "block" : "none"}} >
-                      <Typography variant="h4" weight="semibold" component={"span"}>No collections could be found for this instrument</Typography>
+                      <Typography variant="h4" weight="semibold" component={"span"}>No data collections available at this time. Please check back later or contact the <Link href="mailto:pds-operator@jpl.nasa.gov" style={{color: "#1C67E3"}}>PDS Help Desk</Link> for assistance.</Typography>
                     </Box>
                     
                     <Stack sx={{marginTop: "32px"}}>
