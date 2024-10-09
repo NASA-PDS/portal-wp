@@ -68,7 +68,6 @@ export const getDocType = (doc: SearchResultDoc) => {
         if (doc.product_class[0].toLowerCase() === "product_service") {
             docType = "tool";
         }
-        /*
         if (
             doc.product_class[0].toLowerCase() === "product_document" ||
             (doc.collection_type &&
@@ -76,7 +75,6 @@ export const getDocType = (doc: SearchResultDoc) => {
         ) {
             docType = "resource";
         }
-        */
         if (doc.product_class[0].toLowerCase() === "product_context") {
             if (
                 doc.data_class &&
