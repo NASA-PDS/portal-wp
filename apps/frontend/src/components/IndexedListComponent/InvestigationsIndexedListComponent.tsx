@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import {Box, Container, Divider, Link, MenuItem, Select } from "@mui/material";
 import Grid from '@mui/material/Unstable_Grid2';
 import { generatePath, useLocation, useNavigate } from "react-router-dom";
-import { Investigation } from "src/types/investigation.d";
+import { Investigation } from "src/types/investigation";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { selectLatestInstrumentHostsForInvestigation } from "src/state/selectors";
 import { RootState, store } from "src/state/store";

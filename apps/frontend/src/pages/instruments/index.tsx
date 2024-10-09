@@ -25,7 +25,7 @@ import { Loader, Typography } from "@nasapds/wds-react";
 import { TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 //import CloseIcon from "@mui/icons-material/Close";
-import { Instrument, INSTRUMENT_TYPE } from "src/types/instrument.d";
+import { Instrument, INSTRUMENT_TYPE } from "src/types/instrument";
 import InstrumentsIndexedListComponent from "src/components/IndexedListComponent/InstrumentsIndexedListComponent";
 import { ExpandMore } from "@mui/icons-material";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
@@ -255,9 +255,10 @@ export const InstrumentsDirectoryPageComponent = (props:InstrumentsDirectoryPage
             }
           </Container>
         ) : (
-          <Box sx={{ padding: "40px" }}>
+          <Stack direction={"column"} spacing={"40px"} alignContent={"center"} alignItems={"center"} sx={{margin: "50px"}}>
             <Loader />
-          </Box>
+            <Typography variant="h4" weight="semibold" component="span">Fetching Instrument Information</Typography>
+          </Stack>
         )}
       </Container>
     </>

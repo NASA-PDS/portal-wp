@@ -1,25 +1,26 @@
-import { Instrument, InstrumentHost, Investigation } from "src/types";
+import { Collection, Instrument, InstrumentHost, Investigation } from "src/types";
 
 import { connect } from "react-redux";
 import { generatePath, Link, useNavigate, useParams } from "react-router-dom";
 import { convertLogicalIdentifier, LID_FORMAT } from "src/utils/strings";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getData } from "src/state/slices/dataManagerSlice";
 import { useAppDispatch, useAppSelector } from "src/state/hooks";
 import { RootState } from "src/state/store";
 import { selectLatestInstrumentVersion } from "src/state/selectors";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
-import { Box, Breadcrumbs, Container, Divider, Grid, Link as AnchorLink, Tab, Tabs, Typography, Stack, Button, IconButton } from "@mui/material";
-import { IconArrowFilledDown, Loader } from "@nasapds/wds-react";
+import { Box, Breadcrumbs, Container, Divider, Grid, Link as AnchorLink, Stack, Tab, Tabs, Typography as OldTypography } from "@mui/material";
+import { DATA_COLLECTION_GROUP_TITLE, FeaturedLink, FeaturedLinkDetails, FeaturedLinkDetailsVariant, Loader, Typography } from "@nasapds/wds-react";
 import InvestigationStatus from "src/components/InvestigationStatus/InvestigationStatus";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { Stats, StatsList } from "src/components/StatsList/StatsList";
 import { selectLatestInstrumentHostVersion, selectLatestInvestigationVersion } from "src/state/selectors";
-import FeaturedDataBundleLinkListItem from "src/components/FeaturedListItems/FeaturedDataBundleLinkListItem";
-import { ArrowOutward } from "@mui/icons-material";
+import { distinct } from "src/utils/arrays";
+import React from "react";
 
 
 interface InstrumentDetailBodyProps {
+  collections:Collection[];
   instrument:Instrument;
   instrumentHost:InstrumentHost,
   investigation:Investigation,
@@ -31,6 +32,78 @@ interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
+}
+
+
+const fetchBundles = async (instrumentLid:string, abortController:AbortController) => {
+
+  let query = '/api/search/1/products?q=(product_class EQ "Product_Collection" AND pds:Collection.pds:collection_type EQ "Data" AND pds:Internal_Reference.pds:lid_reference EQ "' + instrumentLid + '")';
+  const config = {
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+    },
+    signal: abortController.signal
+  };
+
+  const fields = [
+    PDS4_INFO_MODEL.CITATION_INFORMATION.DOI,
+    PDS4_INFO_MODEL.COLLECTION.DESCRIPTION,
+    PDS4_INFO_MODEL.COLLECTION.TYPE,
+    PDS4_INFO_MODEL.LID,
+    PDS4_INFO_MODEL.REF_LID_INSTRUMENT,
+    PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST,
+    PDS4_INFO_MODEL.REF_LID_INVESTIGATION,
+    PDS4_INFO_MODEL.REF_LID_TARGET,
+    PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL,
+    PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME,
+    PDS4_INFO_MODEL.SOURCE_PRODUCT_EXTERNAL.DOI,
+    PDS4_INFO_MODEL.TIME_COORDINATES.START_DATE_TIME,
+    PDS4_INFO_MODEL.TIME_COORDINATES.STOP_DATE_TIME,
+    PDS4_INFO_MODEL.TITLE,
+  ];
+
+  // Add the specific fields that should be returned
+  query += "&fields=";
+  fields.forEach( (field, index) => {
+    query += field;
+    query += index < fields.length - 1 ? "," : "";
+  });
+
+  if( import.meta.env.DEV ) {
+    // Output query URL to help with debugging only in DEV mode
+    console.info("Collection Query: ", query)
+  }
+
+  const response = await fetch(query, config);
+  const temp = (await response.json());
+
+  console.log(`Data Rows fetched for ${instrumentLid}`, temp.data.length);
+  console.log(`Raw data fetched for ${instrumentLid}`, temp.data);
+
+  let collectionData = [];
+  collectionData = temp.data.map( (sourceData:{"summary":object, "properties":Collection}) => {
+    const source = sourceData["properties"];
+    const collection:Collection = {
+      [PDS4_INFO_MODEL.CITATION_INFORMATION.DOI]: source[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI][0],
+      [PDS4_INFO_MODEL.COLLECTION.DESCRIPTION]: source[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION][0],
+      [PDS4_INFO_MODEL.COLLECTION.TYPE]: source[PDS4_INFO_MODEL.COLLECTION.TYPE][0],
+      [PDS4_INFO_MODEL.LID]: source[PDS4_INFO_MODEL.LID][0],
+      [PDS4_INFO_MODEL.REF_LID_INSTRUMENT]: source[PDS4_INFO_MODEL.REF_LID_INSTRUMENT],
+      [PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST]: source[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST],
+      [PDS4_INFO_MODEL.REF_LID_INVESTIGATION]: source[PDS4_INFO_MODEL.REF_LID_INVESTIGATION],
+      [PDS4_INFO_MODEL.REF_LID_TARGET]: source[PDS4_INFO_MODEL.REF_LID_TARGET],
+      [PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL]: source[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL],
+      [PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME]: source[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME],
+      [PDS4_INFO_MODEL.SOURCE_PRODUCT_EXTERNAL.DOI]: source[PDS4_INFO_MODEL.SOURCE_PRODUCT_EXTERNAL.DOI][0],
+      [PDS4_INFO_MODEL.TIME_COORDINATES.START_DATE_TIME]: source[PDS4_INFO_MODEL.TIME_COORDINATES.START_DATE_TIME][0],
+      [PDS4_INFO_MODEL.TIME_COORDINATES.STOP_DATE_TIME]: source[PDS4_INFO_MODEL.TIME_COORDINATES.STOP_DATE_TIME][0],
+      [PDS4_INFO_MODEL.TITLE]: source[PDS4_INFO_MODEL.TITLE][0],
+    }
+    return collection;
+  })
+
+  return collectionData;
 }
 
 function CustomTabPanel(props: TabPanelProps) {
@@ -46,7 +119,7 @@ function CustomTabPanel(props: TabPanelProps) {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          {children}
         </Box>
       )}
     </div>
@@ -68,22 +141,35 @@ function a11yProps(index: number) {
 const InstrumentDetailPage = () => {
 
   const { instrumentLid, tabLabel } = useParams();
+  const [collections, setCollections] = useState<Collection[]>([]);
   const dispatch = useAppDispatch();
   const convertedInstrumentLid = convertLogicalIdentifier(instrumentLid !== undefined ? instrumentLid : "", LID_FORMAT.DEFAULT);
 
-  const dataManagerStatus = useAppSelector( (state) => { return state.dataManager.status } )
+  const status = useAppSelector( (state) => { return state.dataManager.status } )
 
   useEffect( () => {
 
-    if( dataManagerStatus === 'idle' ) {
+    if( status === 'idle' ) {
       dispatch( getData() );
     }
 
-  }, [dispatch, dataManagerStatus]);
+  });
+
+  useEffect( () => {
+
+    if( status === "succeeded" ) {
+      const abortController = new AbortController();
+      fetchBundles(convertedInstrumentLid, abortController).then( (response) => {
+        setCollections(response);
+      });
+
+    }
+
+  }, [status]);
 
   return (
     <>
-      <ConnectedComponent instrumentLid={convertedInstrumentLid} tabLabel={tabLabel ? tabLabel : "instruments"} />
+     <ConnectedComponent instrumentLid={convertedInstrumentLid} tabLabel={tabLabel ? tabLabel : "instruments"} collections={collections} />
     </>
   );
 
@@ -91,35 +177,29 @@ const InstrumentDetailPage = () => {
 
 const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
 
-  const {instrument, investigation, status, tabLabel } = props;
-  const [dataTypes, setDataTypes] = useState<string[]>([]);
+  const {collections, instrument, investigation, status, tabLabel } = props;
+  const [processingLevels, setProcessingLevels] = useState<string[]>([]);
+  const [collectionsReady, setCollectionsReady] = useState(false);
   const [value, setValue] = useState(TABS.findIndex( (tab) => tab == tabLabel?.toLowerCase()));
 
   const navigate = useNavigate();
 
+  const investigationIsEmpty = () => {
+    return Object.keys(investigation).length === 0;
+  }
+
   const stats:Stats[] = [
     {
       label: "Investigation",
-      value: investigation[PDS4_INFO_MODEL.TITLE]
+      value: investigation[PDS4_INFO_MODEL.TITLE] ? investigation[PDS4_INFO_MODEL.TITLE] : "Not available at this time"
     },
     {
       label: "Temporal Coverage",
-      value: investigation[PDS4_INFO_MODEL.INVESTIGATION.START_DATE]?.concat(" - ", investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE] !== "3000-01-01T00:00:00.000Z" ? investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE] : "(ongoing)")
+      value: investigation[PDS4_INFO_MODEL.INVESTIGATION.START_DATE]?.concat(" - ", investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE] !== "3000-01-01T00:00:00.000Z" ? investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE] : "(ongoing)") || "Not available at this time"
     }
   ];
 
   const styles = {
-    breadcrumbs:{
-      links: {
-        color: "#FFFFFF",
-        fontFamily: "Inter",
-        fontSize: "14px",
-        fontWeight: "300",
-        lineHeight: "19px",
-        paddingY: "4px",
-        textDecoration: "none",
-      }
-    },
     tabs: {
       ".MuiTab-root": {
         color: "#000000",
@@ -153,29 +233,34 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
     navigate( generatePath("/instruments/:lid/:tabLabel", params) );
   };
 
-  const initDataTypes = useCallback( () => {
-
-    const dataTypesArr:string[] = [
-      'Derived Data Products from Investigators ',
-      'Derived Data Products',
-      'Raw Data Products'
-    ];
-
-    setDataTypes(dataTypesArr);
-    
-  }, []);
-
   useEffect( () => {
     setValue(TABS.findIndex( (tab) => tab == tabLabel?.toLowerCase()));
   }, [tabLabel]);
 
   useEffect( () => {
 
-    if (status === "succeeded") {
-      initDataTypes();
+    let processingLevels:string[] = [];
+    if( collections.length > 0 ) {
+
+      processingLevels = distinct( collections.flatMap( (collection) => collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL]) );
+
     }
 
-  }, [status, initDataTypes]);
+    setProcessingLevels(processingLevels);
+    setCollectionsReady(true);
+
+  }, [collections]);
+
+  const getFriendlyProcessingLevelTitle = (processingLevel:string) => {
+    return DATA_COLLECTION_GROUP_TITLE[processingLevel.toUpperCase().replace(" ", "_") as keyof typeof DATA_COLLECTION_GROUP_TITLE];
+  }
+
+  const getInvestigationPath = (investigationLid:string) => {
+    if( investigationLid !== undefined )
+      return '/investigations/' + convertLogicalIdentifier(investigationLid, LID_FORMAT.URL_FRIENDLY) + '/overview';
+    else
+      return ""
+  }
 
   return (
     <>
@@ -184,14 +269,15 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
         description={ instrument.title + "Instrument details" }
       />
       {
-        (status === 'idle' || status === 'pending' )
+        (status === 'idle' || status === 'pending' || !collectionsReady)
         &&
-        <Box sx={{ padding: "40px" }}>
+        <Stack direction={"column"} spacing={"40px"} alignContent={"center"} alignItems={"center"} sx={{margin: "50px"}}>
           <Loader />
-        </Box>
+          <Typography variant="h4" weight="semibold" component="span">Fetching Instrument Information</Typography>
+        </Stack>
       }
       {
-        status === 'succeeded'
+        status === 'succeeded' && collectionsReady
         && 
         <Container maxWidth={false} disableGutters>
           {/* Page Intro */}
@@ -225,30 +311,23 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                     maxItems={3}
                     sx={{
                       backgroundColor: "rgba(23,23,27,0.17)",
+                      color: "#FFFFFF",
                       paddingY: "3px",
                       paddingX: "5px",
                       borderRadius: "3px",
                       width: "fit-content"
                     }}
-                    separator={<Typography sx={{
-                      color: 'white',
-                      fontSize: '0.875rem',
-                      fontFamily: 'Inter',
-                      fontWeight: '400',
-                      lineHeight: '19px',
-                      wordWrap: 'break-word'
-                    }}>/</Typography>}
+                    separator={<Typography variant="h6" weight="regular" component="span">/</Typography>}
                   >
-                    <Link color="inherit" to="/" style={styles.breadcrumbs.links}>
-                      Home
+                    <Link color="inherit" to="/">
+                      <Typography variant="h6" weight="regular" component="span" style={{ color: "white" }}>Home</Typography>
                     </Link>
-                    <Link color="inherit" to="/instruments/" style={styles.breadcrumbs.links}>
-                      Instruments
+                    <Link color="inherit" to="/instruments/">
+                      <Typography variant="h6" weight="regular" component="span" style={{ color: "white" }}>Instruments</Typography>
                     </Link>
-                    <Typography style={{ color: "white" }}>
-                      {instrument[PDS4_INFO_MODEL.TITLE]}
-                    </Typography>
+                    <Typography variant="h6" weight="regular" component="span">{instrument[PDS4_INFO_MODEL.TITLE]}</Typography>
                   </Breadcrumbs>
+
                   <Grid container alignItems={"flex-end"}>
                     <Grid item md={7} >
                       <Box
@@ -260,27 +339,12 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                         alt=""
                         src={"/assets/images/logos/".concat(instrument[PDS4_INFO_MODEL.LID]).concat(".png")}
                       />
-                      <Typography
-                        variant="h1"
-                        style={{
-                          color: "white",
-                          padding: "0px",
-                          paddingTop: "0px",
-                          fontSize: "72px",
-                          fontWeight: "700",
-                        }}
-                      >
-                        {instrument[PDS4_INFO_MODEL.TITLE]}
-                      </Typography>
-                      <Typography
-                        variant="subtitle1"
-                        sx={{
-                          color: "white",
-                          marginTop: "8px"
-                        }}
-                      >
-                        {instrument[PDS4_INFO_MODEL.TITLE]}
-                      </Typography>
+                      <Box style={{ color: "white", marginTop: "50px" }}>
+                        <Typography variant="display4" weight="bold" component={"h1"}>{instrument[PDS4_INFO_MODEL.TITLE]}</Typography>
+                      </Box>
+                      <Box style={{ color: "white", marginTop: "8px" }}>
+                        <Typography variant="h5" weight="regular" component="span">{instrument[PDS4_INFO_MODEL.TITLE]}</Typography>
+                      </Box>
                       <InvestigationStatus stopDate={investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE]} />
                     </Grid>
                     <Grid item md={1}></Grid>
@@ -295,7 +359,8 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
               </Grid>
             </Container>
           </Container>
-          <Container
+          {/* Quick Action Bar */}
+          {/* <Container
             maxWidth={false}
             disableGutters
             sx={{
@@ -304,7 +369,6 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
               backgroundColor: "#F6F6F6"
             }}
           >
-            {/* Quick Action Bar */}
             <Container
               maxWidth={"xl"}
               disableGutters
@@ -314,7 +378,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
             >
               <Grid container>
                 <Grid item lg={1} display={{ xs: "none", sm: "none", lg: "block"}}>
-                  { /* Column Gutter */ } 
+                  &nbsp;
                 </Grid>
                 <Grid item lg={10}>
                   <Stack direction={{ xs: 'column', sm: 'row' }} gap={"16px"}>
@@ -395,12 +459,11 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                   </Stack>
                 </Grid>
                 <Grid item lg={1} display={{ xs: "none", sm: "none", lg: "block"}}>
-                  { /* Column Gutter */ } 
+                  &nbsp;
                 </Grid>
               </Grid>
             </Container>
-
-          </Container>
+          </Container> */}
           {/* Main Content Body */}
           <Container
             maxWidth={false}
@@ -460,7 +523,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                       position: "sticky",
                       top: "24px"
                     }}>
-                      <Typography sx={{
+                      <OldTypography sx={{
                         marginLeft: "10px",
                         marginBottom: "12px",
                         color: '#17171B',
@@ -471,11 +534,11 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                         lineHeight: "19px",
                         letterSpacing: "0.25px",
                         wordWrap: 'break-word'
-                      }}>Instruments</Typography>
+                      }}>Data</OldTypography>
                       {
-                        dataTypes.map(dataType => {
+                        processingLevels.map(processingLevel => {
                           return (
-                            <AnchorLink href={"#title_" + dataType.toLowerCase()} sx={{
+                            <AnchorLink href={"#title_" + processingLevel.toLowerCase()} sx={{
                               textDecoration: "none",
                               "&:hover .MuiDivider-root": {
                                 backgroundColor: "#1C67E3",
@@ -492,7 +555,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                                   opacity: 0,
                                   borderRightWidth: "2px",
                                 }} />
-                                <Typography sx={{
+                                <OldTypography sx={{
                                   marginLeft: "10px",
                                   color: '#17171B',
                                   fontSize: "12px",
@@ -501,7 +564,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                                   lineHeight: "12px",
                                   letterSpacing: "0.25px",
                                   wordWrap: 'break-word',
-                                }}>{dataType}</Typography>
+                                }}>{getFriendlyProcessingLevelTitle(processingLevel)}</OldTypography>
                               </Box>
                             </AnchorLink>
                           )
@@ -510,13 +573,17 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                     </Box>
                   </Grid>
                   <Grid item xs={12} lg={8}>
-                    <Typography>Raw Data is original data from an instrument. If compression, reformatting, packetization, or other translation has been applied to facilitate data transmission or storage, those processes will be reversed so that the archived data are in a PDS approved archive format. Derived Data are results that have been distilled from one or more calibrated data products (for example, maps, gravity or magnetic fields, or ring particle size distributions). Supplementary data, such as calibration tables or tables of viewing geometry, used to interpret observational data should also be classified as ‘derived’ data if not easily matched to one of the other categories.</Typography>
+                    <Typography variant="body3" weight="regular">Raw Data is original data from an instrument. If compression, reformatting, packetization, or other translation has been applied to facilitate data transmission or storage, those processes will be reversed so that the archived data are in a PDS approved archive format. Derived Data are results that have been distilled from one or more calibrated data products (for example, maps, gravity or magnetic fields, or ring particle size distributions). Supplementary data, such as calibration tables or tables of viewing geometry, used to interpret observational data should also be classified as ‘derived’ data if not easily matched to one of the other categories.</Typography>
+                    <Box style={{marginTop: "50px", display: collections.length === 0 ? "block" : "none"}} >
+                      <Typography variant="h4" weight="semibold" component={"span"}>No data collections available at this time. Please check back later or contact the <Link to="mailto:pds-operator@jpl.nasa.gov" style={{color: "#1C67E3"}}>PDS Help Desk</Link> for assistance.</Typography>
+                    </Box>
+                    
                     <Stack sx={{marginTop: "32px"}}>
                       {
-                        dataTypes.map( (dataType, index) => {
+                        processingLevels.map( (processingLevel, index) => {
                           return (
                             <>
-                              <Typography sx={{
+                              <OldTypography sx={{
                                 textTransform: "capitalize",
                                 fontFamily: "Inter",
                                 fontSize: "1.375em",
@@ -528,35 +595,35 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                                   paddingTop: "50px"
                                 }
                               }} key={"instrumentType_" + index}>
-                                <a id={"title_" + dataType.toLowerCase()}>{dataType}</a>
-                              </Typography>
+                                <a id={"title_" + processingLevel.toLowerCase()}>{getFriendlyProcessingLevelTitle(processingLevel)}</a>
+                              </OldTypography>
                               {
-                                [{
-                                  [PDS4_INFO_MODEL.LID]: "urn:nasa:pds:.....",
-                                  [PDS4_INFO_MODEL.TITLE]: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-                                  [PDS4_INFO_MODEL.BUNDLE.DESCRIPTION]: "Nulla lobortis mi nunc, ut facilisis ipsum tincidunt vitae. Praesent a ipsum non enim facilisis consectetur sodales malesuada metus. Suspendisse potenti. Aenean iaculis orci at ultrices interdum.",
-                                  [PDS4_INFO_MODEL.BUNDLE.TYPE]: "Archive",
-                                },
-                                {
-                                  [PDS4_INFO_MODEL.LID]: "urn:nasa:pds:.....",
-                                  [PDS4_INFO_MODEL.TITLE]: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-                                  [PDS4_INFO_MODEL.BUNDLE.DESCRIPTION]: "Nulla lobortis mi nunc, ut facilisis ipsum tincidunt vitae. Praesent a ipsum non enim facilisis consectetur sodales malesuada metus. Suspendisse potenti. Aenean iaculis orci at ultrices interdum.",
-                                  [PDS4_INFO_MODEL.BUNDLE.TYPE]: "Archive",
-                                },
-                                {
-                                  [PDS4_INFO_MODEL.LID]: "urn:nasa:pds:.....",
-                                  [PDS4_INFO_MODEL.TITLE]: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-                                  [PDS4_INFO_MODEL.BUNDLE.DESCRIPTION]: "Nulla lobortis mi nunc, ut facilisis ipsum tincidunt vitae. Praesent a ipsum non enim facilisis consectetur sodales malesuada metus. Suspendisse potenti. Aenean iaculis orci at ultrices interdum.",
-                                  [PDS4_INFO_MODEL.BUNDLE.TYPE]: "Archive",
-                                }].map( (dataBundle) => {
-                                  return <FeaturedDataBundleLinkListItem 
-                                    lid={dataBundle[PDS4_INFO_MODEL.LID]}
-                                    title={dataBundle[PDS4_INFO_MODEL.TITLE]}
-                                    description={dataBundle[PDS4_INFO_MODEL.BUNDLE.DESCRIPTION]}
-                                    primaryAction={ () =>{} }
-                                    tags={[]}
-                                    type={dataBundle[PDS4_INFO_MODEL.BUNDLE.TYPE]}
-                                  />
+                                collections.map( (collection, index) => {
+                                  return <React.Fragment key={"collection_" + index}>
+                                      <FeaturedLink
+                                        description={collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] !== "null" ? collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] : "No Description Provided."}
+                                        title={collection[PDS4_INFO_MODEL.TITLE]}
+                                        primaryLink={"https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])}
+                                      >
+                                        <FeaturedLinkDetails 
+                                          doi={{value: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] !== "null" ? collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] : "-", link: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] !== "null" ? `https://doi.org/${collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI]}` : undefined}}
+                                          investigation={{
+                                            value: !investigationIsEmpty ? investigation[PDS4_INFO_MODEL.TITLE] : "Not available at this time",
+                                            link: !investigationIsEmpty ? getInvestigationPath(investigation[PDS4_INFO_MODEL.LID]) : undefined
+                                          }}
+                                          disciplineName={collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME][0] !== "null" ? collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME] : []}
+                                          processingLevel={collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL]}
+                                          lid={{
+                                              value: collection[PDS4_INFO_MODEL.LID],
+                                              link: "https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])
+                                          }}
+                                          startDate={{value: collection[PDS4_INFO_MODEL.TIME_COORDINATES.START_DATE_TIME]}}
+                                          stopDate={{value: collection[PDS4_INFO_MODEL.TIME_COORDINATES.STOP_DATE_TIME]}}
+                                          variant={FeaturedLinkDetailsVariant.DATA_COLLECTION}
+                                        />
+                                      </FeaturedLink>  
+                                    </React.Fragment>
+                                  
                                 })
                               }
                             </>
@@ -581,7 +648,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                       position: "sticky",
                       top: "20px"
                     }}>
-                      <Typography sx={{
+                      <OldTypography sx={{
                         marginLeft: "10px",
                         marginBottom: "12px",
                         color: '#17171B',
@@ -592,7 +659,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                         lineHeight: "19px",
                         letterSpacing: "0.25px",
                         wordWrap: 'break-word'
-                      }}>Overview</Typography>
+                      }}>Overview</OldTypography>
                       {
                         [{id:"overview-summary", label:"Summary"}].map(anchor => {
                           return (
@@ -613,7 +680,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                                   opacity: 0,
                                   borderRightWidth: "2px",
                                 }} />
-                                <Typography sx={{
+                                <OldTypography sx={{
                                   marginLeft: "10px",
                                   color: '#17171B',
                                   fontSize: "12px",
@@ -622,7 +689,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                                   lineHeight: "12px",
                                   letterSpacing: "0.25px",
                                   wordWrap: 'break-word',
-                                }}>{anchor.label}</Typography>
+                                }}>{anchor.label}</OldTypography>
                               </Box>
                             </AnchorLink>
                           )
@@ -632,27 +699,27 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                   </Grid>
                   <Grid item md={6}>
                     <a id="overview-summary">
-                      <Typography variant="h4" sx={{
+                      <OldTypography variant="h4" sx={{
                         color: 'black',
                         fontSize: "22px",
                         fontFamily: 'Inter',
                         fontWeight: '700',
                         lineHeight: "26px",
                         wordWrap: 'break-word'
-                      }}>Summary</Typography>
+                      }}>Summary</OldTypography>
                     </a>
-                    <Typography sx={{
+                    <OldTypography sx={{
                       color: 'black',
                       fontSize: "18px",
                       fontFamily: 'Public Sans',
                       fontWeight: '400',
                       lineHeight: "27px",
                       wordWrap: 'break-word'
-                    }} style={{ paddingBottom: "24px" }}
-                      dangerouslySetInnerHTML={{
-                        __html: instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION]
-                      }}>
-                    </Typography>
+                      }}
+                      style={{ paddingBottom: "24px" }}
+                    >
+                      {instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION]}
+                    </OldTypography>
                   </Grid>
                   <Grid item lg={1} display={{ xs: "none", sm: "none", lg: "block"}}>
                     { /* Column Gutter */ } 
@@ -667,27 +734,38 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
   );
 };
 
-const mapStateToProps = (state:RootState, ownProps:{instrumentLid:string, tabLabel:string}):InstrumentDetailBodyProps => {
+const mapStateToProps = (state:RootState, ownProps:{collections:Collection[], instrumentLid:string, tabLabel:string}):InstrumentDetailBodyProps => {
 
   let instrument:Instrument = Object();
   let investigation:Investigation = Object();
   let instrumentHost:InstrumentHost = Object();
 
   if( state.investigations.status === 'succeeded' ) {
-  
     instrument = selectLatestInstrumentVersion(state, ownProps.instrumentLid);
-    instrumentHost = selectLatestInstrumentHostVersion(state, instrument[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST][0]);
-    investigation = selectLatestInvestigationVersion(state, instrumentHost[PDS4_INFO_MODEL.REF_LID_INVESTIGATION][0]);
 
+    if( instrument[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST] !== undefined && instrument[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST][0] !== "null" ) {
+      instrumentHost = selectLatestInstrumentHostVersion(state, instrument[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST][0]);
+
+      if( instrumentHost[PDS4_INFO_MODEL.REF_LID_INVESTIGATION] !== undefined 
+        && instrumentHost[PDS4_INFO_MODEL.REF_LID_INVESTIGATION][0] !== "null"
+        && instrumentHost[PDS4_INFO_MODEL.REF_LID_INVESTIGATION][0] !== "urn:nasa:pds:context:instrument_host:unk.unk"
+      ) {
+        investigation = selectLatestInvestigationVersion(state, instrumentHost[PDS4_INFO_MODEL.REF_LID_INVESTIGATION][0]);
+      }
+
+    }
   }
 
   return {
+    collections: ownProps.collections,
     instrument: instrument,
     instrumentHost: instrumentHost,
     investigation: investigation,
     status: state.dataManager.status,
     tabLabel: ownProps.tabLabel
   }
+
 }
+
 const ConnectedComponent = connect(mapStateToProps)(InstrumentDetailBody);
 export default InstrumentDetailPage;

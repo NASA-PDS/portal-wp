@@ -24,7 +24,7 @@ import { Loader, Typography } from "@nasapds/wds-react";
 import { TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 //import CloseIcon from "@mui/icons-material/Close";
-import { Investigation, INVESTIGATION_TYPE } from "src/types/investigation.d";
+import { Investigation, INVESTIGATION_TYPE } from "src/types/investigation";
 import InvestigationsIndexedListComponent from "src/components/IndexedListComponent/InvestigationsIndexedListComponent";
 import { ExpandMore } from "@mui/icons-material";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
@@ -254,9 +254,10 @@ export const InvestigationsDirectoryPageComponent = (props:InvestigationsDirecto
             }
           </Container>
         ) : (
-          <Box sx={{ padding: "40px" }}>
+          <Stack direction={"column"} spacing={"40px"} alignContent={"center"} alignItems={"center"} sx={{margin: "50px"}}>
             <Loader />
-          </Box>
+            <Typography variant="h4" weight="semibold" component="span">Fetching Investigation Information</Typography>
+          </Stack>
         )}
       </Container>
     </>

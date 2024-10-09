@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
-import { Instrument, INSTRUMENT_TYPE } from "src/types/instrument.d";
+import { Instrument, INSTRUMENT_TYPE } from "src/types/instrument";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 
 enum INSTRUMENT_ACTIONS {
@@ -62,6 +62,7 @@ export const getInstruments = createAsyncThunk(
       PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST,
       PDS4_INFO_MODEL.TITLE,
       PDS4_INFO_MODEL.VID,
+      PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE,
       PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION,
       PDS4_INFO_MODEL.INSTRUMENT.NAME,
       PDS4_INFO_MODEL.INSTRUMENT.TYPE
@@ -136,9 +137,10 @@ const instrumentsSlice = createSlice({
         instrument[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST] = source[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST];
         instrument[PDS4_INFO_MODEL.TITLE] = source[PDS4_INFO_MODEL.TITLE][0];
         instrument[PDS4_INFO_MODEL.VID] = source[PDS4_INFO_MODEL.VID][0];
+        instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE] = source[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE] && source[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE][0] !== "null" ? source[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE] : [];
         instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION] = source[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION] ? source[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION][0] : "";
         instrument[PDS4_INFO_MODEL.INSTRUMENT.NAME] = source[PDS4_INFO_MODEL.INSTRUMENT.NAME] ? source[PDS4_INFO_MODEL.INSTRUMENT.NAME][0] : "";
-        instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE] = source[PDS4_INFO_MODEL.INSTRUMENT.TYPE] ? source[PDS4_INFO_MODEL.INSTRUMENT.TYPE] : [];
+        instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE] = source[PDS4_INFO_MODEL.INSTRUMENT.TYPE] && source[PDS4_INFO_MODEL.INSTRUMENT.TYPE][0] !== "null" ? source[PDS4_INFO_MODEL.INSTRUMENT.TYPE] : [];
 
         if( compiledItems[lid] === undefined ) {
           compiledItems[lid] = {};

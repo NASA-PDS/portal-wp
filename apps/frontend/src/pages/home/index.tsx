@@ -110,28 +110,28 @@ const HomePage = () => {
     jumpLinkType: "external",
     cards: [
       {
-        description: "Purus tellus lorem urna faucibus lectus viverra egestas. Pulvinar fermentum sed bibendum sed dui.",
+        description: "Search tools help users efficiently and easily find and access planetary science data",
         image: "/assets/images/cards/tools/search-tools.jpg",
         imageDescription: "",
         title: "Search Tools",
         url: "/search/service_category:Search?rows=20&sort=relevance&page=1",
       },
       {
-        description: "Turpis ipsum ac feugiat dictum nunc nisl, vestibulum. Euismod aliquet elementum volutpat ullamcorper facilisi.",
+        description: "Analysis tools enable users to process, visualize, and analyze planetary data for research purposes",
         image: "/assets/images/cards/tools/analysis-tools.jpg",
         imageDescription: "",
         title: "Analysis Tools",
         url: "/search/service_category:Analysis?rows=20&sort=relevance&page=1",
       },
       {
-        description: "Ultrices mi diam fames at feugiat. Sociis nec morbi in amet, eu semper eros odio.",
+        description: "Visualization tools allow users to create visual representations of planetary data for enhanced analysis",
         image: "/assets/images/cards/tools/visualization-tools.jpg",
         imageDescription: "",
         title: "Visualization Tools",
         url: "/search/service_category:Visualization?rows=20&sort=relevance&page=1",
       },
       {
-        description: "Lacus non vitae scelerisque at tristique aliquet. At hac tortor gravida ipsum ullamcorper turpis ac, sit sed.",
+        description: "API services provide programmatic access to planetary data, enabling automated retrieval and integration",
         image: "/assets/images/cards/tools/api-services.jpg",
         imageDescription: "",
         title: "API Services",

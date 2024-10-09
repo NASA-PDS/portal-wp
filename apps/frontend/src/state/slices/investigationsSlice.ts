@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
-import { Investigation, INVESTIGATION_TYPE } from "src/types/investigation.d";
+import { Investigation, INVESTIGATION_TYPE } from "src/types/investigation";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 
 enum INVESTIGATION_ACTIONS {
