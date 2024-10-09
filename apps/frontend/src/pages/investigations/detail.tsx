@@ -411,8 +411,12 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
 
     if (status === "succeeded") {
       initInstrumentTypes();
-      const abortController = new AbortController();
-      fetchCollections(abortController);
+      if( investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE].toUpperCase() === "MISSION") {
+        const abortController = new AbortController();
+        fetchCollections(abortController);
+      } else {
+        setCollectionsReady(true);
+      }
     }
 
   }, [status]);
@@ -665,6 +669,11 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                   </Grid>
                   <Grid item xs={12} md={10}>
                     <Stack>
+                      {
+                        instrumentTypes.length === 0 && <>
+                          <Typography variant="h4" weight="semibold" component={"span"}>No instruments available at this time. Please check back later or contact the <Link to="mailto:pds-operator@jpl.nasa.gov" style={{color: "#1C67E3"}}>PDS Help Desk</Link> for assistance.</Typography>
+                        </>
+                      }
                       {
                         instrumentTypes.map( (instrumentType, index) => {
                           return (
