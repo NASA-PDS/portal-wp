@@ -108,17 +108,6 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
   ];
 
   const styles = {
-    breadcrumbs:{
-      links: {
-        color: "#FFFFFF",
-        fontFamily: "Inter",
-        fontSize: "14px",
-        fontWeight: "300",
-        lineHeight: "19px",
-        paddingY: "4px",
-        textDecoration: "none",
-      }
-    },
     tabs: {
       ".MuiTab-root": {
         color: "#000000",
