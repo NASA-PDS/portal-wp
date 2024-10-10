@@ -241,8 +241,12 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
 
     let processingLevels:string[] = [];
     if( collections.length > 0 ) {
+      
+      processingLevels = distinct( collections.flatMap( (collection) => collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL] ) );
 
-      processingLevels = distinct( collections.flatMap( (collection) => collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL]) );
+      if( processingLevels.length === 0 || processingLevels.length === 1 && processingLevels[0] === "null" ) {
+        processingLevels = ["UNKNOWN"]
+      }
 
     }
 
@@ -599,30 +603,36 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                               </OldTypography>
                               {
                                 collections.map( (collection, index) => {
-                                  return <React.Fragment key={"collection_" + index}>
-                                      <FeaturedLink
-                                        description={collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] !== "null" ? collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] : "No Description Provided."}
-                                        title={collection[PDS4_INFO_MODEL.TITLE]}
-                                        primaryLink={"https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])}
-                                      >
-                                        <FeaturedLinkDetails 
-                                          doi={{value: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] !== "null" ? collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] : "-", link: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] !== "null" ? `https://doi.org/${collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI]}` : undefined}}
-                                          investigation={{
-                                            value: !investigationIsEmpty ? investigation[PDS4_INFO_MODEL.TITLE] : "Not available at this time",
-                                            link: !investigationIsEmpty ? getInvestigationPath(investigation[PDS4_INFO_MODEL.LID]) : undefined
-                                          }}
-                                          disciplineName={collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME][0] !== "null" ? collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME] : []}
-                                          processingLevel={collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL]}
-                                          lid={{
-                                              value: collection[PDS4_INFO_MODEL.LID],
-                                              link: "https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])
-                                          }}
-                                          startDate={{value: collection[PDS4_INFO_MODEL.TIME_COORDINATES.START_DATE_TIME]}}
-                                          stopDate={{value: collection[PDS4_INFO_MODEL.TIME_COORDINATES.STOP_DATE_TIME]}}
-                                          variant={FeaturedLinkDetailsVariant.DATA_COLLECTION}
-                                        />
-                                      </FeaturedLink>  
-                                    </React.Fragment>
+                                  
+                                  return collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].includes(processingLevel) || collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].includes("null") ?
+                                      <React.Fragment key={"collection_" + index}>
+                                        <FeaturedLink
+                                          description={collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] !== "null" ? collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] : "No Description Provided."}
+                                          title={collection[PDS4_INFO_MODEL.TITLE]}
+                                          primaryLink={"https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])}
+                                        >
+                                          <FeaturedLinkDetails 
+                                            doi={{value: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] !== "null" ? collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] : "-", link: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] !== "null" ? `https://doi.org/${collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI]}` : undefined}}
+                                            investigation={{
+                                              value: !investigationIsEmpty ? investigation[PDS4_INFO_MODEL.TITLE] : "Not available at this time",
+                                              link: !investigationIsEmpty ? getInvestigationPath(investigation[PDS4_INFO_MODEL.LID]) : undefined
+                                            }}
+                                            disciplineName={collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME][0] !== "null" ? collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME] : []}
+                                            processingLevel={collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].filter( (processingLevel) => {
+                                              return processingLevel !== "null"
+                                            })}
+                                            lid={{
+                                                value: collection[PDS4_INFO_MODEL.LID],
+                                                link: "https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])
+                                            }}
+                                            startDate={{value: collection[PDS4_INFO_MODEL.TIME_COORDINATES.START_DATE_TIME] !== "null" ? collection[PDS4_INFO_MODEL.TIME_COORDINATES.START_DATE_TIME] : ""}}
+                                            stopDate={{value: collection[PDS4_INFO_MODEL.TIME_COORDINATES.STOP_DATE_TIME] !== "null" ? collection[PDS4_INFO_MODEL.TIME_COORDINATES.STOP_DATE_TIME] : ""}}
+                                            variant={FeaturedLinkDetailsVariant.DATA_COLLECTION}
+                                          />
+                                        </FeaturedLink>  
+                                      </React.Fragment>
+                                      :
+                                      <></>
                                   
                                 })
                               }

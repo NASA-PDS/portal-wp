@@ -237,7 +237,6 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
 
   const getRelatedInstrumentCollections = (lid:string):Array<DataCollectionGroup> => {
 
-
     if( collections.current[selectedInstrumentHost] !== undefined && collections.current[selectedInstrumentHost].length > 0 ) {
 
       // Get the list of collections that match the supplied instrument LID
