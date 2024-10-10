@@ -248,7 +248,11 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
     }
 
     setProcessingLevels(processingLevels);
-    setCollectionsReady(true);
+
+    setTimeout(
+      () => {setCollectionsReady(true);},
+      2000
+    )
 
   }, [collections]);
 
