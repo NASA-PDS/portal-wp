@@ -578,70 +578,79 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                     </Box>
                   </Grid>
                   <Grid item xs={12} lg={8}>
+
                     <Typography variant="body3" weight="regular">Raw Data is original data from an instrument. If compression, reformatting, packetization, or other translation has been applied to facilitate data transmission or storage, those processes will be reversed so that the archived data are in a PDS approved archive format. Derived Data are results that have been distilled from one or more calibrated data products (for example, maps, gravity or magnetic fields, or ring particle size distributions). Supplementary data, such as calibration tables or tables of viewing geometry, used to interpret observational data should also be classified as ‘derived’ data if not easily matched to one of the other categories.</Typography>
-                    <Box style={{marginTop: "50px", display: collections.length === 0 ? "block" : "none"}} >
-                      <Typography variant="h4" weight="semibold" component={"span"}>No data collections available at this time. Please check back later or contact the <Link to="mailto:pds-operator@jpl.nasa.gov" style={{color: "#1C67E3"}}>PDS Help Desk</Link> for assistance.</Typography>
-                    </Box>
-                    
+
                     <Stack sx={{marginTop: "32px"}}>
-                      {
-                        processingLevels.map( (processingLevel, index) => {
-                          return (
-                            <>
-                              <OldTypography sx={{
-                                textTransform: "capitalize",
-                                fontFamily: "Inter",
-                                fontSize: "1.375em",
-                                fontWeight: 700,
-                                lineHeight: "26px",
-                                wordWrap: "break-word",
-                                paddingBottom: "10px",
-                                ":not(:first-of-type)": {
-                                  paddingTop: "50px"
+                      { collections.length > 0 && <>
+                        {
+                          processingLevels.map( (processingLevel, index) => {
+                            return (
+                              <>
+                                <OldTypography sx={{
+                                  textTransform: "capitalize",
+                                  fontFamily: "Inter",
+                                  fontSize: "1.375em",
+                                  fontWeight: 700,
+                                  lineHeight: "26px",
+                                  wordWrap: "break-word",
+                                  paddingBottom: "10px",
+                                  ":not(:first-of-type)": {
+                                    paddingTop: "50px"
+                                  }
+                                }} key={"instrumentType_" + index}>
+                                  <a id={"title_" + processingLevel.toLowerCase()}>{getFriendlyProcessingLevelTitle(processingLevel)}</a>
+                                </OldTypography>
+                                {
+                                  collections.map( (collection, index) => {
+                                    
+                                    return collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].includes(processingLevel) || collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].includes("null") ?
+                                        <React.Fragment key={"collection_" + index}>
+                                          <FeaturedLink
+                                            description={collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] !== "null" ? collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] : "No Description Provided."}
+                                            title={collection[PDS4_INFO_MODEL.TITLE]}
+                                            primaryLink={"https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])}
+                                          >
+                                            <FeaturedLinkDetails 
+                                              doi={{value: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] !== "null" ? collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] : "-", link: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] !== "null" ? `https://doi.org/${collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI]}` : undefined}}
+                                              investigation={{
+                                                value: !investigationIsEmpty() ? investigation[PDS4_INFO_MODEL.TITLE] : "Not available at this time",
+                                                link: !investigationIsEmpty() ? getInvestigationPath(investigation[PDS4_INFO_MODEL.LID]) : undefined
+                                              }}
+                                              disciplineName={collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME][0] !== "null" ? collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME] : []}
+                                              processingLevel={collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].filter( (processingLevel) => {
+                                                return processingLevel !== "null"
+                                              })}
+                                              lid={{
+                                                  value: collection[PDS4_INFO_MODEL.LID],
+                                                  link: "https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])
+                                              }}
+                                              startDate={{value: collection[PDS4_INFO_MODEL.TIME_COORDINATES.START_DATE_TIME] !== "null" ? collection[PDS4_INFO_MODEL.TIME_COORDINATES.START_DATE_TIME] : ""}}
+                                              stopDate={{value: collection[PDS4_INFO_MODEL.TIME_COORDINATES.STOP_DATE_TIME] !== "null" ? collection[PDS4_INFO_MODEL.TIME_COORDINATES.STOP_DATE_TIME] : ""}}
+                                              variant={FeaturedLinkDetailsVariant.DATA_COLLECTION}
+                                            />
+                                          </FeaturedLink>  
+                                        </React.Fragment>
+                                        :
+                                        <></>
+                                    
+                                  })
                                 }
-                              }} key={"instrumentType_" + index}>
-                                <a id={"title_" + processingLevel.toLowerCase()}>{getFriendlyProcessingLevelTitle(processingLevel)}</a>
-                              </OldTypography>
-                              {
-                                collections.map( (collection, index) => {
-                                  
-                                  return collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].includes(processingLevel) || collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].includes("null") ?
-                                      <React.Fragment key={"collection_" + index}>
-                                        <FeaturedLink
-                                          description={collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] !== "null" ? collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] : "No Description Provided."}
-                                          title={collection[PDS4_INFO_MODEL.TITLE]}
-                                          primaryLink={"https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])}
-                                        >
-                                          <FeaturedLinkDetails 
-                                            doi={{value: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] !== "null" ? collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] : "-", link: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] !== "null" ? `https://doi.org/${collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI]}` : undefined}}
-                                            investigation={{
-                                              value: !investigationIsEmpty() ? investigation[PDS4_INFO_MODEL.TITLE] : "Not available at this time",
-                                              link: !investigationIsEmpty() ? getInvestigationPath(investigation[PDS4_INFO_MODEL.LID]) : undefined
-                                            }}
-                                            disciplineName={collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME][0] !== "null" ? collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME] : []}
-                                            processingLevel={collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].filter( (processingLevel) => {
-                                              return processingLevel !== "null"
-                                            })}
-                                            lid={{
-                                                value: collection[PDS4_INFO_MODEL.LID],
-                                                link: "https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])
-                                            }}
-                                            startDate={{value: collection[PDS4_INFO_MODEL.TIME_COORDINATES.START_DATE_TIME] !== "null" ? collection[PDS4_INFO_MODEL.TIME_COORDINATES.START_DATE_TIME] : ""}}
-                                            stopDate={{value: collection[PDS4_INFO_MODEL.TIME_COORDINATES.STOP_DATE_TIME] !== "null" ? collection[PDS4_INFO_MODEL.TIME_COORDINATES.STOP_DATE_TIME] : ""}}
-                                            variant={FeaturedLinkDetailsVariant.DATA_COLLECTION}
-                                          />
-                                        </FeaturedLink>  
-                                      </React.Fragment>
-                                      :
-                                      <></>
-                                  
-                                })
-                              }
-                            </>
-                            )
-                          })
+                              </>
+                              )
+                            })
+                          }
+                          <Box style={{marginTop: "36px"}} >
+                            <Typography variant="h5" weight="semibold" component={"span"}>We are working to provide additional metadata when possible. Please contact <Link to="mailto:pds-operator@jpl.nasa.gov" style={{color: "#1C67E3"}}>PDS Help Desk</Link> for assistance.</Typography>
+                          </Box>
+                        </>
                       }
                     </Stack>
+
+                    <Box style={{marginTop: "24px", display: collections.length === 0 ? "block" : "none"}}>
+                      <Typography variant="h4" weight="semibold" component={"span"}>No data collections available at this time. Please check back later or contact the <Link to="mailto:pds-operator@jpl.nasa.gov" style={{color: "#1C67E3"}}>PDS Help Desk</Link> for assistance.</Typography>
+                    </Box>
+
                   </Grid>
                   <Grid item lg={1} display={{ xs: "none", sm: "none", lg: "block"}}>
                     { /* Column Gutter */ } 
