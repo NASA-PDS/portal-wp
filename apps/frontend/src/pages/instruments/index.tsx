@@ -5,7 +5,6 @@ import {
   Container,
   Grid,
   InputAdornment,
-  Link,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -30,6 +29,7 @@ import InstrumentsIndexedListComponent from "src/components/IndexedListComponent
 import { ExpandMore } from "@mui/icons-material";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
 import { useDebouncedCallback } from "use-debounce";
+import { Link } from "react-router-dom";
 
 type InstrumentsDirectoryPageComponentProps = {
   dataFetched: boolean;
@@ -135,7 +135,7 @@ export const InstrumentsDirectoryPageComponent = (props:InstrumentsDirectoryPage
                 width: "fit-content"
               }}
             >
-              <Link underline="hover" color="inherit" href="/" style={linkStyles}>
+              <Link to="/" style={linkStyles}>
                 Home
               </Link>
               <Typography variant="h6" weight="regular" component={"span"} style={{ color: "white" }}>Instruments</Typography>
