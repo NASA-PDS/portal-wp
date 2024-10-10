@@ -78,9 +78,6 @@ const fetchBundles = async (instrumentLid:string, abortController:AbortControlle
   const response = await fetch(query, config);
   const temp = (await response.json());
 
-  console.log(`Data Rows fetched for ${instrumentLid}`, temp.data.length);
-  console.log(`Raw data fetched for ${instrumentLid}`, temp.data);
-
   let collectionData = [];
   collectionData = temp.data.map( (sourceData:{"summary":object, "properties":Collection}) => {
     const source = sourceData["properties"];
@@ -614,8 +611,8 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                                           <FeaturedLinkDetails 
                                             doi={{value: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] !== "null" ? collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] : "-", link: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] !== "null" ? `https://doi.org/${collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI]}` : undefined}}
                                             investigation={{
-                                              value: !investigationIsEmpty ? investigation[PDS4_INFO_MODEL.TITLE] : "Not available at this time",
-                                              link: !investigationIsEmpty ? getInvestigationPath(investigation[PDS4_INFO_MODEL.LID]) : undefined
+                                              value: !investigationIsEmpty() ? investigation[PDS4_INFO_MODEL.TITLE] : "Not available at this time",
+                                              link: !investigationIsEmpty() ? getInvestigationPath(investigation[PDS4_INFO_MODEL.LID]) : undefined
                                             }}
                                             disciplineName={collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME][0] !== "null" ? collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME] : []}
                                             processingLevel={collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].filter( (processingLevel) => {
