@@ -66,6 +66,9 @@ const Filters = ({
                 onDelete={() =>
                   handleFilterChipDelete(option.value, option.parentValue)
                 }
+                sx={{
+                  textTransform: "uppercase",
+                }}
               />
             </Box>
           ))}
