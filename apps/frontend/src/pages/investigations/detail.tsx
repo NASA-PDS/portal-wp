@@ -15,7 +15,7 @@ import {
   selectLatestTargetsForInstrumentHost,
 } from "src/state/selectors";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
-import { Box, Breadcrumbs, Button, Container, Divider, Grid, Link as AnchorLink, Stack, Tab, Tabs, Typography as OldTypography, IconButton } from "@mui/material";
+import { Box, Breadcrumbs, Button, Container, Divider, Grid, Link as AnchorLink, Stack, Tab, Tabs, Typography as OldTypography } from "@mui/material";
 import InvestigationStatus from "src/components/InvestigationStatus/InvestigationStatus";
 import StatsList from "src/components/StatsList/StatsList";
 
@@ -24,7 +24,6 @@ import FeaturedToolLinkListItem from "src/components/FeaturedListItems/FeaturedT
 import FeaturedResourceLinkListItem from "src/components/FeaturedListItems/FeaturedResourcesLinkListItem"; */
 import { DATA_COLLECTION_GROUP_TITLE, DataCollectionGroup, FeaturedLink, FeaturedLinkDetails, FeaturedLinkDetailsVariant, Loader, PrimaryButton, Typography } from "@nasapds/wds-react";
 import { Collection } from "src/types/collection";
-import { ArrowForward } from "@mui/icons-material";
 import { distinct } from "src/utils/arrays";
 
 const InvestigationDetailPage = () => {
