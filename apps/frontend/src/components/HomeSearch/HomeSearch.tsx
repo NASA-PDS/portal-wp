@@ -39,9 +39,9 @@ const ITEM_PADDING_TOP = 8;
 const MenuProps = {
   autoFocus: false,
   PaperProps: {
-    style: {
+    sx: {
       paddingTop: 0,
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      maxHeight: ITEM_HEIGHT * 8.5 + ITEM_PADDING_TOP,
       width: 250,
     },
   },
@@ -702,7 +702,10 @@ export const HomeSearch = () => {
               {selectedFilters.map((filter) =>
                 filter.value !== "all" ? (
                   <Chip
-                    sx={{ backgroundColor: "white" }}
+                    sx={{
+                      backgroundColor: "white",
+                      textTransform: "uppercase",
+                    }}
                     key={filter.value}
                     label={getFilterName(filter.value, filter.parentFilterName)}
                     onDelete={() =>
@@ -794,7 +797,10 @@ export const HomeSearch = () => {
                           selectedTargetFilters.includes(filter.value)
                         }
                       />
-                      <ListItemText primary={filter.name} />
+                      <ListItemText
+                        className="pds-home-page-filter-option-text"
+                        primary={filter.name}
+                      />
                     </MenuItem>
                   ))}
                 </Select>
@@ -860,7 +866,10 @@ export const HomeSearch = () => {
                           selectedInvestigationFilters.includes(filter.value)
                         }
                       />
-                      <ListItemText primary={filter.name} />
+                      <ListItemText
+                        className="pds-home-page-filter-option-text"
+                        primary={filter.name}
+                      />
                     </MenuItem>
                   ))}
                 </Select>
@@ -926,7 +935,10 @@ export const HomeSearch = () => {
                           selectedInstrumentFilters.includes(filter.value)
                         }
                       />
-                      <ListItemText primary={filter.name} />
+                      <ListItemText
+                        className="pds-home-page-filter-option-text"
+                        primary={filter.name}
+                      />
                     </MenuItem>
                   ))}
                 </Select>
@@ -990,7 +1002,10 @@ export const HomeSearch = () => {
                           selectedPageTypeFilters.includes(filter.value)
                         }
                       />
-                      <ListItemText primary={filter.name} />
+                      <ListItemText
+                        className="pds-home-page-filter-option-text"
+                        primary={filter.name}
+                      />
                     </MenuItem>
                   ))}
                 </Select>
