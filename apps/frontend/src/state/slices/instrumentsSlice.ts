@@ -6,6 +6,7 @@ import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 
 enum INSTRUMENT_ACTIONS {
   GET_INSTRUMENTS = "instruments/getInstruments",
+  SET_INSTRUMENTS_SEARCH_FILTERS = "instruments/setSearchFilters",
 }
 
 export type InstrumentItems = {
@@ -35,7 +36,7 @@ const initialState:InstrumentsState = {
 
 /**
  * Get all the instruments from the PDS Search API
- */ 
+ */
 export const getInstruments = createAsyncThunk(
   INSTRUMENT_ACTIONS.GET_INSTRUMENTS,
   async (_:void, thunkAPI) => {
@@ -79,7 +80,7 @@ export const getInstruments = createAsyncThunk(
       // Output query URL to help with debugging only in DEV mode
       console.info("Instruments API Query: ", queryUrl)
     }
-    
+
     try {
       const response = await axios.get(queryUrl, config);
       return response.data;
@@ -88,7 +89,7 @@ export const getInstruments = createAsyncThunk(
         return thunkAPI.rejectWithValue({ error: err.message });
       }
     }
-    
+
   }
 );
 
@@ -149,7 +150,7 @@ const instrumentsSlice = createSlice({
         compiledItems[lid][vid] = instrument;
 
       });
-      
+
       state.items = compiledItems;
 
     });
@@ -161,7 +162,7 @@ const instrumentsSlice = createSlice({
       // Update the error message for proper error handling
       state.error = action.error.message;
     });
-    
+
   }
 });
 

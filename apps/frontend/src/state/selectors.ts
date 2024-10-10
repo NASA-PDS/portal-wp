@@ -313,7 +313,7 @@ export const selectFilteredInstruments = createSelector(
     searchFilters
   ) => {
 
-    const searchText = searchFilters?.freeText.toLowerCase() || "";
+    const searchText = searchFilters?.freeText?.toLowerCase() || "";
     let filteredInstruments = latestInstruments;
 
     // Search Filters are undefined, so return full list of investigations

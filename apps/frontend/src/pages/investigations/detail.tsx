@@ -15,16 +15,15 @@ import {
   selectLatestTargetsForInstrumentHost,
 } from "src/state/selectors";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
-import { Box, Breadcrumbs, Button, Container, Divider, Grid, Link as AnchorLink, Stack, Tab, Tabs, Typography as OldTypography, IconButton } from "@mui/material";
+import { Box, Breadcrumbs, Button, Container, Divider, Grid, Link as AnchorLink, Stack, Tab, Tabs, Typography as OldTypography } from "@mui/material";
 import InvestigationStatus from "src/components/InvestigationStatus/InvestigationStatus";
 import StatsList from "src/components/StatsList/StatsList";
 
 /* import FeaturedTargetLinkListItem from "src/components/FeaturedListItems/FeaturedTargetLinkListItem";
 import FeaturedToolLinkListItem from "src/components/FeaturedListItems/FeaturedToolLinkListItem";
 import FeaturedResourceLinkListItem from "src/components/FeaturedListItems/FeaturedResourcesLinkListItem"; */
-import { DATA_COLLECTION_GROUP_TITLE, DataCollectionGroup, FeaturedLink, FeaturedLinkDetails, FeaturedLinkDetailsVariant, Loader, Typography } from "@nasapds/wds-react";
+import { DATA_COLLECTION_GROUP_TITLE, DataCollectionGroup, FeaturedLink, FeaturedLinkDetails, FeaturedLinkDetailsVariant, Loader, PrimaryButton, Typography } from "@nasapds/wds-react";
 import { Collection } from "src/types/collection";
-import { ArrowForward } from "@mui/icons-material";
 import { distinct } from "src/utils/arrays";
 
 const InvestigationDetailPage = () => {
@@ -236,7 +235,6 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
   }
 
   const getRelatedInstrumentCollections = (lid:string):Array<DataCollectionGroup> => {
-
 
     if( collections.current[selectedInstrumentHost] !== undefined && collections.current[selectedInstrumentHost].length > 0 ) {
 
@@ -801,39 +799,11 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                     }}>
                       Looking for Data
                     </OldTypography>
-                    <Stack direction="column" alignItems={"left"} gap={2} sx={{
-                      paddingTop: "16px"
-                    }}>
-                      <Stack direction="row" alignItems={"center"} gap={1} onClick={ () => {} }>
-                        <OldTypography sx={{
-                          color: 'black',
-                          fontSize: 16,
-                          fontFamily: 'Inter',
-                          fontWeight: '600',
-                          lineHeight: '20px',
-                          wordWrap: "break-word"
-                        }}
-                        >Instruments</OldTypography>
-                        <IconButton
-                          sx={{
-                            "&:hover": {
-                              backgroundColor: "#B60109"
-                            },
-                            backgroundColor: "#F64137",
-                            height: "20px",
-                            width: "20px",
-                            padding: "10px"
-                          }}
-                          aria-label="arrow"
-                          onClick={() => { }}>
-                            <ArrowForward sx={{
-                              color: "#FFFFFF",
-                              width: "14px"
-                            }}
-                          />
-                        </IconButton>
-                      </Stack>
-                    </Stack>
+                    <Box style={{marginTop: "16px"}}>
+                      <Link to={""} onClick={handleTabChange} data-tab-index="0">
+                        <PrimaryButton label="Instruments" />
+                      </Link>
+                    </Box>
                   </Grid>
                 </Grid>
               </CustomTabPanel>
