@@ -657,7 +657,7 @@ const SearchPage = () => {
     const params = {
       lid,
     };
-    return generatePath("/investigations/:lid/data", params);
+    return generatePath("/investigations/:lid/instruments", params);
   };
 
   const getInstrumentPath = (lid: string) => {
