@@ -17,7 +17,7 @@ import { Stats, StatsList } from "src/components/StatsList/StatsList";
 import { selectLatestInstrumentHostVersion, selectLatestInvestigationVersion } from "src/state/selectors";
 import { distinct } from "src/utils/arrays";
 import React from "react";
-
+import { APP_CONFIG } from "src/AppConfig";
 
 interface InstrumentDetailBodyProps {
   collections:Collection[];
@@ -33,7 +33,6 @@ interface TabPanelProps {
   index: number;
   value: number;
 }
-
 
 const fetchBundles = async (instrumentLid:string, abortController:AbortController) => {
 
@@ -178,6 +177,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
   const [processingLevels, setProcessingLevels] = useState<string[]>([]);
   const [collectionsReady, setCollectionsReady] = useState(false);
   const [value, setValue] = useState(TABS.findIndex( (tab) => tab == tabLabel?.toLowerCase()));
+  const PROCESSING_LEVEL_SORT_ORDER = APP_CONFIG.SETTINGS.SORT_ORDER.PROCESSING_LEVELS;
 
   const navigate = useNavigate();
 
@@ -541,38 +541,45 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                         wordWrap: 'break-word'
                       }}>Data</OldTypography>
                       {
-                        processingLevels.map(processingLevel => {
-                          return (
-                            <AnchorLink href={"#title_" + processingLevel.toLowerCase()} sx={{
-                              textDecoration: "none",
-                              "&:hover .MuiDivider-root": {
-                                backgroundColor: "#1C67E3",
-                                opacity: 1
-                              }
-                            }}>
-                              <Box sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                minHeight: '24px',
-                                marginBottom: "12px",
-                              }}>
-                                <Divider flexItem orientation="vertical" sx={{
-                                  opacity: 0,
-                                  borderRightWidth: "2px",
-                                }} />
-                                <OldTypography sx={{
-                                  marginLeft: "10px",
-                                  color: '#17171B',
-                                  fontSize: "12px",
-                                  fontFamily: 'Inter',
-                                  fontWeight: '400',
-                                  lineHeight: "12px",
-                                  letterSpacing: "0.25px",
-                                  wordWrap: 'break-word',
-                                }}>{getFriendlyProcessingLevelTitle(processingLevel)}</OldTypography>
-                              </Box>
-                            </AnchorLink>
-                          )
+                        PROCESSING_LEVEL_SORT_ORDER.map( (sortedProcessingLevel) => {
+                          return processingLevels.map( (processingLevel, processingLevelIndex) => {
+                            const processingLevelTitle = getFriendlyProcessingLevelTitle(processingLevel);
+                            return sortedProcessingLevel === processingLevelTitle && (
+                              <AnchorLink 
+                                href={"#title_" + processingLevel.toLowerCase()} 
+                                sx={{
+                                  textDecoration: "none",
+                                  "&:hover .MuiDivider-root": {
+                                    backgroundColor: "#1C67E3",
+                                    opacity: 1
+                                  }
+                                }}
+                                key={"processingLevel_" + processingLevelIndex}
+                              >
+                                <Box sx={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  minHeight: '24px',
+                                  marginBottom: "12px",
+                                }}>
+                                  <Divider flexItem orientation="vertical" sx={{
+                                    opacity: 0,
+                                    borderRightWidth: "2px",
+                                  }} />
+                                  <OldTypography sx={{
+                                    marginLeft: "10px",
+                                    color: '#17171B',
+                                    fontSize: "12px",
+                                    fontFamily: 'Inter',
+                                    fontWeight: '400',
+                                    lineHeight: "12px",
+                                    letterSpacing: "0.25px",
+                                    wordWrap: 'break-word',
+                                  }}>{processingLevelTitle}</OldTypography>
+                                </Box>
+                              </AnchorLink>
+                            )
+                          })
                         })
                       }
                     </Box>
@@ -584,62 +591,69 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                     <Stack sx={{marginTop: "32px"}}>
                       { collections.length > 0 && <>
                         {
-                          processingLevels.map( (processingLevel, index) => {
-                            return (
-                              <>
-                                <OldTypography sx={{
-                                  textTransform: "capitalize",
-                                  fontFamily: "Inter",
-                                  fontSize: "1.375em",
-                                  fontWeight: 700,
-                                  lineHeight: "26px",
-                                  wordWrap: "break-word",
-                                  paddingBottom: "10px",
-                                  ":not(:first-of-type)": {
-                                    paddingTop: "50px"
+                          PROCESSING_LEVEL_SORT_ORDER.map( (sortedProcessingLevel) => {
+
+                            return processingLevels.map( (processingLevel, processingLevelIndex) => {
+
+                              const processingLevelTitle = getFriendlyProcessingLevelTitle(processingLevel);
+
+                              return sortedProcessingLevel === processingLevelTitle && (
+                                <React.Fragment key={processingLevelIndex}>
+                                  <OldTypography sx={{
+                                    textTransform: "capitalize",
+                                    fontFamily: "Inter",
+                                    fontSize: "1.375em",
+                                    fontWeight: 700,
+                                    lineHeight: "26px",
+                                    wordWrap: "break-word",
+                                    paddingBottom: "10px",
+                                    ":not(:first-of-type)": {
+                                      paddingTop: "50px"
+                                    }
+                                  }} key={"instrumentType_" + processingLevelIndex}>
+                                    <a id={"title_" + processingLevel.toLowerCase()}>{processingLevelTitle}</a>
+                                  </OldTypography>
+                                  {
+                                    collections.map( (collection, collectionIndex) => {
+                                      return collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].includes(processingLevel) || collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].includes("null") ?
+                                          <React.Fragment key={"collection_" + collectionIndex}>
+                                            <FeaturedLink
+                                              description={collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] !== "null" ? collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] : "No Description Provided."}
+                                              title={collection[PDS4_INFO_MODEL.TITLE]}
+                                              primaryLink={"https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])}
+                                            >
+                                              <FeaturedLinkDetails 
+                                                doi={{value: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] !== "null" ? collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] : "-", link: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] !== "null" ? `https://doi.org/${collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI]}` : undefined}}
+                                                investigation={{
+                                                  value: !investigationIsEmpty() ? investigation[PDS4_INFO_MODEL.TITLE] : "Not available at this time",
+                                                  link: !investigationIsEmpty() ? getInvestigationPath(investigation[PDS4_INFO_MODEL.LID]) : undefined
+                                                }}
+                                                disciplineName={collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME][0] !== "null" ? collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME] : []}
+                                                processingLevel={collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].filter( (processingLevel) => {
+                                                  return processingLevel !== "null"
+                                                })}
+                                                lid={{
+                                                    value: collection[PDS4_INFO_MODEL.LID],
+                                                    link: "https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])
+                                                }}
+                                                startDate={{value: collection[PDS4_INFO_MODEL.TIME_COORDINATES.START_DATE_TIME] !== "null" ? collection[PDS4_INFO_MODEL.TIME_COORDINATES.START_DATE_TIME] : ""}}
+                                                stopDate={{value: collection[PDS4_INFO_MODEL.TIME_COORDINATES.STOP_DATE_TIME] !== "null" ? collection[PDS4_INFO_MODEL.TIME_COORDINATES.STOP_DATE_TIME] : ""}}
+                                                variant={FeaturedLinkDetailsVariant.DATA_COLLECTION}
+                                              />
+                                            </FeaturedLink>  
+                                          </React.Fragment>
+                                          :
+                                          <></>
+                                      
+                                    })
                                   }
-                                }} key={"instrumentType_" + index}>
-                                  <a id={"title_" + processingLevel.toLowerCase()}>{getFriendlyProcessingLevelTitle(processingLevel)}</a>
-                                </OldTypography>
-                                {
-                                  collections.map( (collection, index) => {
-                                    
-                                    return collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].includes(processingLevel) || collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].includes("null") ?
-                                        <React.Fragment key={"collection_" + index}>
-                                          <FeaturedLink
-                                            description={collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] !== "null" ? collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] : "No Description Provided."}
-                                            title={collection[PDS4_INFO_MODEL.TITLE]}
-                                            primaryLink={"https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])}
-                                          >
-                                            <FeaturedLinkDetails 
-                                              doi={{value: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] !== "null" ? collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] : "-", link: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] !== "null" ? `https://doi.org/${collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI]}` : undefined}}
-                                              investigation={{
-                                                value: !investigationIsEmpty() ? investigation[PDS4_INFO_MODEL.TITLE] : "Not available at this time",
-                                                link: !investigationIsEmpty() ? getInvestigationPath(investigation[PDS4_INFO_MODEL.LID]) : undefined
-                                              }}
-                                              disciplineName={collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME][0] !== "null" ? collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME] : []}
-                                              processingLevel={collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].filter( (processingLevel) => {
-                                                return processingLevel !== "null"
-                                              })}
-                                              lid={{
-                                                  value: collection[PDS4_INFO_MODEL.LID],
-                                                  link: "https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])
-                                              }}
-                                              startDate={{value: collection[PDS4_INFO_MODEL.TIME_COORDINATES.START_DATE_TIME] !== "null" ? collection[PDS4_INFO_MODEL.TIME_COORDINATES.START_DATE_TIME] : ""}}
-                                              stopDate={{value: collection[PDS4_INFO_MODEL.TIME_COORDINATES.STOP_DATE_TIME] !== "null" ? collection[PDS4_INFO_MODEL.TIME_COORDINATES.STOP_DATE_TIME] : ""}}
-                                              variant={FeaturedLinkDetailsVariant.DATA_COLLECTION}
-                                            />
-                                          </FeaturedLink>  
-                                        </React.Fragment>
-                                        :
-                                        <></>
-                                    
-                                  })
-                                }
-                              </>
+                                </React.Fragment>
                               )
+
                             })
-                          }
+
+                          })
+                        }
                           <Box style={{marginTop: "36px"}} >
                             <Typography variant="h5" weight="semibold" component={"span"}>We are working to provide additional metadata when possible. Please contact <Link to="mailto:pds-operator@jpl.nasa.gov" style={{color: "#1C67E3"}}>PDS Help Desk</Link> for assistance.</Typography>
                           </Box>
