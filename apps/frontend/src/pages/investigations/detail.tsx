@@ -24,7 +24,8 @@ import FeaturedToolLinkListItem from "src/components/FeaturedListItems/FeaturedT
 import FeaturedResourceLinkListItem from "src/components/FeaturedListItems/FeaturedResourcesLinkListItem"; */
 import { DATA_COLLECTION_GROUP_TITLE, DataCollectionGroup, FeaturedLink, FeaturedLinkDetails, FeaturedLinkDetailsVariant, Loader, PrimaryButton, Typography } from "@nasapds/wds-react";
 import { Collection } from "src/types/collection";
-import { distinct } from "src/utils/arrays";
+import { distinct, sortByTitle } from "src/utils/arrays";
+import { APP_CONFIG } from "src/AppConfig";
 
 const InvestigationDetailPage = () => {
 
@@ -119,6 +120,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
   const [instrumentTypes, setInstrumentTypes] = useState<string[]>([]);
   const [selectedInstrumentHost, setSelectedInstrumentHost] = useState<number>(0);
   const [value, setValue] = useState(TABS.findIndex( (tab) => tab == tabLabel?.toLowerCase()));
+  const PROCESSING_LEVEL_SORT_ORDER = APP_CONFIG.SETTINGS.SORT_ORDER.PROCESSING_LEVELS;
 
   const navigate = useNavigate();
 
@@ -234,6 +236,10 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
             investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION]
   }
 
+  const getFriendlyProcessingLevelTitle = (processingLevel:string) => {
+    return DATA_COLLECTION_GROUP_TITLE[processingLevel.toUpperCase().replace(" ", "_") as keyof typeof DATA_COLLECTION_GROUP_TITLE];
+  }
+
   const getRelatedInstrumentCollections = (lid:string):Array<DataCollectionGroup> => {
 
     if( collections.current[selectedInstrumentHost] !== undefined && collections.current[selectedInstrumentHost].length > 0 ) {
@@ -255,23 +261,27 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
         }
 
         const collectionGroups:DataCollectionGroup[] = [];
-        processingLevels.map( (processingLevel) => {
-          const collections = relatedCollections.filter( (collection) => {
-            return collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].includes(processingLevel);
+        
+        PROCESSING_LEVEL_SORT_ORDER.map( (sortedProcessingLevel) => {
+          return processingLevels.map( (processingLevel) => {
+            const processingLevelTitle = getFriendlyProcessingLevelTitle(processingLevel);
+            if( sortedProcessingLevel === processingLevelTitle ) {
+              const collections = relatedCollections.filter( (collection) => {
+                return collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].includes(processingLevel);
+              })
+              const collectionGroup:DataCollectionGroup = {
+                title: DATA_COLLECTION_GROUP_TITLE[processingLevel.toUpperCase().replace(" ", "_") as keyof typeof DATA_COLLECTION_GROUP_TITLE],
+                items: collections.map( (collection) => {
+                  return {
+                    title: collection[PDS4_INFO_MODEL.TITLE],
+                    description: collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] !== "null" ? collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] : "No Description Provided.",
+                    link: "https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])
+                  }
+                })
+              };
+              collectionGroups.push(collectionGroup);
+            }
           })
-          const collectionGroup:DataCollectionGroup = {
-            title: DATA_COLLECTION_GROUP_TITLE[processingLevel.toUpperCase().replace(" ", "_") as keyof typeof DATA_COLLECTION_GROUP_TITLE],
-            items: collections.map( (collection) => {
-
-              return {
-                title: collection[PDS4_INFO_MODEL.TITLE],
-                description: collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] !== "null" ? collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] : "No Description Provided.",
-                link: "https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])
-              }
-            })
-
-          };
-          collectionGroups.push(collectionGroup);
         })
 
         return collectionGroups;
@@ -378,7 +388,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
           return collection;
         })
         
-        collections.current[index] = collectionData;
+        collections.current[index] = collectionData.sort(sortByTitle);
         collectionsFetched.current[index] = true;
 
         // add a delay so that the page rendering doesn't try to fetch collections before they are ready.
@@ -388,7 +398,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
         );
 
         if( import.meta.env.DEV ) {
-          console.log(`Collection data for ${lid}`, collectionData);
+          console.log(`Collection data for ${lid}`, collections.current[index]);
         }
 
         return response;
