@@ -34,7 +34,7 @@ interface TabPanelProps {
   value: number;
 }
 
-const fetchBundles = async (instrumentLid:string, abortController:AbortController) => {
+const fetchCollections = async (instrumentLid:string, abortController:AbortController) => {
 
   let query = '/api/search/1/products?q=(product_class EQ "Product_Collection" AND pds:Collection.pds:collection_type EQ "Data" AND pds:Internal_Reference.pds:lid_reference EQ "' + instrumentLid + '")';
   const config = {
@@ -155,7 +155,7 @@ const InstrumentDetailPage = () => {
 
     if( status === "succeeded" ) {
       const abortController = new AbortController();
-      fetchBundles(convertedInstrumentLid, abortController).then( (response) => {
+      fetchCollections(convertedInstrumentLid, abortController).then( (response) => {
         setCollections(response);
       });
 
