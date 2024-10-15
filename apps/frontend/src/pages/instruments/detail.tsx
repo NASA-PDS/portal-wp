@@ -15,7 +15,7 @@ import InvestigationStatus from "src/components/InvestigationStatus/Investigatio
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { Stats, StatsList } from "src/components/StatsList/StatsList";
 import { selectLatestInstrumentHostVersion, selectLatestInvestigationVersion } from "src/state/selectors";
-import { distinct } from "src/utils/arrays";
+import { distinct, sortByTitle } from "src/utils/arrays";
 import React from "react";
 import { APP_CONFIG } from "src/AppConfig";
 
@@ -99,7 +99,8 @@ const fetchCollections = async (instrumentLid:string, abortController:AbortContr
     return collection;
   })
 
-  return collectionData;
+  return collectionData.sort(sortByTitle);
+
 }
 
 function CustomTabPanel(props: TabPanelProps) {
