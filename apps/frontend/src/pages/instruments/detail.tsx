@@ -10,7 +10,16 @@ import { RootState } from "src/state/store";
 import { selectLatestInstrumentVersion } from "src/state/selectors";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
 import { Box, Breadcrumbs, Container, Divider, Grid, Link as AnchorLink, Stack, Tab, Tabs, Typography as OldTypography } from "@mui/material";
-import { DATA_COLLECTION_GROUP_TITLE, FeaturedLink, FeaturedLinkDetails, FeaturedLinkDetailsVariant, Loader, Typography } from "@nasapds/wds-react";
+import { 
+  PROCESSING_LEVEL_TITLES,
+  FeaturedLink,
+  FeaturedLinkDetails,
+  FeaturedLinkDetailsVariant,
+  Loader,
+  Typography,
+  convertProcessingLevelKey,
+  PROCESSING_LEVEL_KEYS
+} from "@nasapds/wds-react";
 import InvestigationStatus from "src/components/InvestigationStatus/InvestigationStatus";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { Stats, StatsList } from "src/components/StatsList/StatsList";
@@ -243,7 +252,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
       processingLevels = distinct( collections.flatMap( (collection) => collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL] ) );
 
       if( processingLevels.length === 0 || processingLevels.length === 1 && processingLevels[0] === "null" ) {
-        processingLevels = ["UNKNOWN"]
+        processingLevels = [PROCESSING_LEVEL_KEYS.UNKNOWN]
       }
 
     }
@@ -256,10 +265,6 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
     )
 
   }, [collections]);
-
-  const getFriendlyProcessingLevelTitle = (processingLevel:string) => {
-    return DATA_COLLECTION_GROUP_TITLE[processingLevel.toUpperCase().replace(" ", "_") as keyof typeof DATA_COLLECTION_GROUP_TITLE];
-  }
 
   const getInvestigationPath = (investigationLid:string) => {
     if( investigationLid !== undefined )
@@ -543,44 +548,47 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                       }}>Data</OldTypography>
                       {
                         PROCESSING_LEVEL_SORT_ORDER.map( (sortedProcessingLevel) => {
-                          return processingLevels.map( (processingLevel, processingLevelIndex) => {
-                            const processingLevelTitle = getFriendlyProcessingLevelTitle(processingLevel);
-                            return sortedProcessingLevel === processingLevelTitle && (
-                              <AnchorLink 
-                                href={"#title_" + processingLevel.toLowerCase()} 
-                                sx={{
-                                  textDecoration: "none",
-                                  "&:hover .MuiDivider-root": {
-                                    backgroundColor: "#1C67E3",
-                                    opacity: 1
-                                  }
-                                }}
-                                key={"processingLevel_" + processingLevelIndex}
-                              >
-                                <Box sx={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  minHeight: '24px',
-                                  marginBottom: "12px",
-                                }}>
-                                  <Divider flexItem orientation="vertical" sx={{
-                                    opacity: 0,
-                                    borderRightWidth: "2px",
-                                  }} />
-                                  <OldTypography sx={{
-                                    marginLeft: "10px",
-                                    color: '#17171B',
-                                    fontSize: "12px",
-                                    fontFamily: 'Inter',
-                                    fontWeight: '400',
-                                    lineHeight: "12px",
-                                    letterSpacing: "0.25px",
-                                    wordWrap: 'break-word',
-                                  }}>{processingLevelTitle}</OldTypography>
-                                </Box>
-                              </AnchorLink>
-                            )
-                          })
+                          return (
+                            processingLevels
+                              .filter( (processingLevel) => { return processingLevel ===  sortedProcessingLevel} )
+                              .map( (processingLevel, processingLevelIndex) => {
+                                const processingLevelTitle = PROCESSING_LEVEL_TITLES[convertProcessingLevelKey(processingLevel)]
+                                return <React.Fragment key={"processingLevel_" + processingLevelIndex}>
+                                  <AnchorLink 
+                                    href={"#title_" + processingLevel.toLowerCase()} 
+                                    sx={{
+                                      textDecoration: "none",
+                                      "&:hover .MuiDivider-root": {
+                                        backgroundColor: "#1C67E3",
+                                        opacity: 1
+                                      }
+                                    }}
+                                  >
+                                    <Box sx={{
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      minHeight: '24px',
+                                      marginBottom: "12px",
+                                    }}>
+                                      <Divider flexItem orientation="vertical" sx={{
+                                        opacity: 0,
+                                        borderRightWidth: "2px",
+                                      }} />
+                                      <OldTypography sx={{
+                                        marginLeft: "10px",
+                                        color: '#17171B',
+                                        fontSize: "12px",
+                                        fontFamily: 'Inter',
+                                        fontWeight: '400',
+                                        lineHeight: "12px",
+                                        letterSpacing: "0.25px",
+                                        wordWrap: 'break-word',
+                                      }}>{processingLevelTitle}</OldTypography>
+                                    </Box>
+                                  </AnchorLink>
+                                </React.Fragment>
+                              })
+                          )
                         })
                       }
                     </Box>
@@ -591,15 +599,24 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
 
                     <Stack sx={{marginTop: "32px"}}>
                       { collections.length > 0 && <>
-                        {
-                          PROCESSING_LEVEL_SORT_ORDER.map( (sortedProcessingLevel) => {
+                          {
+                            PROCESSING_LEVEL_SORT_ORDER.map( (sortedProcessingLevel, sortedProcessingLevelIndex) => {
 
-                            return processingLevels.map( (processingLevel, processingLevelIndex) => {
-
-                              const processingLevelTitle = getFriendlyProcessingLevelTitle(processingLevel);
-
-                              return sortedProcessingLevel === processingLevelTitle && (
-                                <React.Fragment key={processingLevelIndex}>
+                              const foundCollections = collections.filter( (collection:Collection) => {
+                                return (
+                                  collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].includes(sortedProcessingLevel)
+                                  || (
+                                    sortedProcessingLevel === PROCESSING_LEVEL_KEYS.UNKNOWN
+                                    && (
+                                      collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].length === 0
+                                      ||
+                                      collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL][0] === "null"
+                                    )
+                                  )
+                                )
+                              })
+                              return ( <>
+                                { foundCollections.length > 0 && <React.Fragment key={sortedProcessingLevelIndex}>
                                   <OldTypography sx={{
                                     textTransform: "capitalize",
                                     fontFamily: "Inter",
@@ -611,50 +628,47 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                                     ":not(:first-of-type)": {
                                       paddingTop: "50px"
                                     }
-                                  }} key={"instrumentType_" + processingLevelIndex}>
-                                    <a id={"title_" + processingLevel.toLowerCase()}>{processingLevelTitle}</a>
+                                  }} key={"instrumentType_" + sortedProcessingLevelIndex}>
+                                    <a id={"title_" + sortedProcessingLevel.toLowerCase()}>{PROCESSING_LEVEL_TITLES[convertProcessingLevelKey(sortedProcessingLevel)]}</a>
                                   </OldTypography>
                                   {
-                                    collections.map( (collection, collectionIndex) => {
-                                      return collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].includes(processingLevel) || collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].includes("null") ?
-                                          <React.Fragment key={"collection_" + collectionIndex}>
-                                            <FeaturedLink
-                                              description={collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] !== "null" ? collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] : "No Description Provided."}
-                                              title={collection[PDS4_INFO_MODEL.TITLE]}
-                                              primaryLink={"https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])}
-                                            >
-                                              <FeaturedLinkDetails 
-                                                doi={{value: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] !== "null" ? collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] : "-", link: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] !== "null" ? `https://doi.org/${collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI]}` : undefined}}
-                                                investigation={{
-                                                  value: !investigationIsEmpty() ? investigation[PDS4_INFO_MODEL.TITLE] : "Not available at this time",
-                                                  link: !investigationIsEmpty() ? getInvestigationPath(investigation[PDS4_INFO_MODEL.LID]) : undefined
-                                                }}
-                                                disciplineName={collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME][0] !== "null" ? collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME] : []}
-                                                processingLevel={collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].filter( (processingLevel) => {
-                                                  return processingLevel !== "null"
-                                                })}
-                                                lid={{
-                                                    value: collection[PDS4_INFO_MODEL.LID],
-                                                    link: "https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])
-                                                }}
-                                                startDate={{value: collection[PDS4_INFO_MODEL.TIME_COORDINATES.START_DATE_TIME] !== "null" ? collection[PDS4_INFO_MODEL.TIME_COORDINATES.START_DATE_TIME] : ""}}
-                                                stopDate={{value: collection[PDS4_INFO_MODEL.TIME_COORDINATES.STOP_DATE_TIME] !== "null" ? collection[PDS4_INFO_MODEL.TIME_COORDINATES.STOP_DATE_TIME] : ""}}
-                                                variant={FeaturedLinkDetailsVariant.DATA_COLLECTION}
-                                              />
-                                            </FeaturedLink>  
-                                          </React.Fragment>
-                                          :
-                                          <></>
-                                      
+                                    foundCollections.map( (collection:Collection, collectionIndex) => {
+                                      return (
+                                        <React.Fragment key={"collection_" + collectionIndex}>
+                                          <FeaturedLink
+                                            description={collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] !== "null" ? collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] : "No Description Provided."}
+                                            title={collection[PDS4_INFO_MODEL.TITLE]}
+                                            primaryLink={"https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])}
+                                          >
+                                            <FeaturedLinkDetails 
+                                              doi={{value: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] !== "null" ? collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] : "-", link: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI] !== "null" ? `https://doi.org/${collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI]}` : undefined}}
+                                              investigation={{
+                                                value: !investigationIsEmpty() ? investigation[PDS4_INFO_MODEL.TITLE] : "Not available at this time",
+                                                link: !investigationIsEmpty() ? getInvestigationPath(investigation[PDS4_INFO_MODEL.LID]) : undefined
+                                              }}
+                                              disciplineName={collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME][0] !== "null" ? collection[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME] : []}
+                                              processingLevel={collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].filter( (processingLevel) => {
+                                                return processingLevel !== "null"
+                                              })}
+                                              lid={{
+                                                  value: collection[PDS4_INFO_MODEL.LID],
+                                                  link: "https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])
+                                              }}
+                                              startDate={{value: collection[PDS4_INFO_MODEL.TIME_COORDINATES.START_DATE_TIME] !== "null" ? collection[PDS4_INFO_MODEL.TIME_COORDINATES.START_DATE_TIME] : ""}}
+                                              stopDate={{value: collection[PDS4_INFO_MODEL.TIME_COORDINATES.STOP_DATE_TIME] !== "null" ? collection[PDS4_INFO_MODEL.TIME_COORDINATES.STOP_DATE_TIME] : ""}}
+                                              variant={FeaturedLinkDetailsVariant.DATA_COLLECTION}
+                                            />
+                                          </FeaturedLink>  
+                                        </React.Fragment>
+                                      )
                                     })
                                   }
                                 </React.Fragment>
-                              )
-
+                                }
+                              </>)
                             })
 
-                          })
-                        }
+                          }
                           <Box style={{marginTop: "36px"}} >
                             <Typography variant="h5" weight="semibold" component={"span"}>We are working to provide additional metadata when possible. Please contact <Link to="mailto:pds-operator@jpl.nasa.gov" style={{color: "#1C67E3"}}>PDS Help Desk</Link> for assistance.</Typography>
                           </Box>
