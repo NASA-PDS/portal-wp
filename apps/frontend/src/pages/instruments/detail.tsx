@@ -17,7 +17,7 @@ import {
   FeaturedLinkDetailsVariant,
   Loader,
   Typography,
-  convertProcessingLevelKey,
+  convertProcessingLevelToKey,
   PROCESSING_LEVEL_KEYS
 } from "@nasapds/wds-react";
 import InvestigationStatus from "src/components/InvestigationStatus/InvestigationStatus";
@@ -552,7 +552,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                             processingLevels
                               .filter( (processingLevel) => { return processingLevel ===  sortedProcessingLevel} )
                               .map( (processingLevel, processingLevelIndex) => {
-                                const processingLevelTitle = PROCESSING_LEVEL_TITLES[convertProcessingLevelKey(processingLevel)]
+                                const processingLevelTitle = PROCESSING_LEVEL_TITLES[convertProcessingLevelToKey(processingLevel)]
                                 return <React.Fragment key={"processingLevel_" + processingLevelIndex}>
                                   <AnchorLink 
                                     href={"#title_" + processingLevel.toLowerCase()} 
@@ -629,7 +629,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                                       paddingTop: "50px"
                                     }
                                   }} key={"instrumentType_" + sortedProcessingLevelIndex}>
-                                    <a id={"title_" + sortedProcessingLevel.toLowerCase()}>{PROCESSING_LEVEL_TITLES[convertProcessingLevelKey(sortedProcessingLevel)]}</a>
+                                    <a id={"title_" + sortedProcessingLevel.toLowerCase()}>{PROCESSING_LEVEL_TITLES[convertProcessingLevelToKey(sortedProcessingLevel)]}</a>
                                   </OldTypography>
                                   {
                                     foundCollections.map( (collection:Collection, collectionIndex) => {

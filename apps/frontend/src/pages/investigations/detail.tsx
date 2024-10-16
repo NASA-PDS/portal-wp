@@ -32,7 +32,7 @@ import {
   Loader,
   PrimaryButton,
   Typography,
-  convertProcessingLevelKey
+  convertProcessingLevelToKey
 } from "@nasapds/wds-react";
 import { Collection } from "src/types/collection";
 import { distinct, sortByTitle } from "src/utils/arrays";
@@ -286,7 +286,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
 
           if( collections.length > 0 ) {
             const collectionGroup:DataCollectionGroup = {
-              title: PROCESSING_LEVEL_TITLES[convertProcessingLevelKey(processingLevel)],
+              title: PROCESSING_LEVEL_TITLES[convertProcessingLevelToKey(processingLevel)],
               items: collections.map( (collection) => {
                 return {
                   title: collection[PDS4_INFO_MODEL.TITLE],
