@@ -290,7 +290,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
               items: collections.map( (collection) => {
                 return {
                   title: collection[PDS4_INFO_MODEL.TITLE],
-                  description: collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] !== "null" ? collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] : "No Description Provided.",
+                  description: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DESCRIPTION] ? collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DESCRIPTION] : collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION],
                   link: "https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])
                 }
               })
@@ -351,6 +351,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
         };
 
         const fields = [
+          PDS4_INFO_MODEL.CITATION_INFORMATION.DESCRIPTION,
           PDS4_INFO_MODEL.CITATION_INFORMATION.DOI,
           PDS4_INFO_MODEL.COLLECTION.DESCRIPTION,
           PDS4_INFO_MODEL.COLLECTION.TYPE,
@@ -386,8 +387,9 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
         collectionData = temp.data.map( (sourceData:{"summary":object, "properties":Collection}) => {
           const source = sourceData["properties"];
           const collection:Collection = {
+            [PDS4_INFO_MODEL.CITATION_INFORMATION.DESCRIPTION]: source[PDS4_INFO_MODEL.CITATION_INFORMATION.DESCRIPTION] && source[PDS4_INFO_MODEL.CITATION_INFORMATION.DESCRIPTION][0] != "null" ? source[PDS4_INFO_MODEL.CITATION_INFORMATION.DESCRIPTION] : "",
             [PDS4_INFO_MODEL.CITATION_INFORMATION.DOI]: source[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI][0],
-            [PDS4_INFO_MODEL.COLLECTION.DESCRIPTION]: source[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION][0],
+            [PDS4_INFO_MODEL.COLLECTION.DESCRIPTION]: source[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] && source[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION][0] != "null" ? source[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION][0] : "",
             [PDS4_INFO_MODEL.COLLECTION.TYPE]: source[PDS4_INFO_MODEL.COLLECTION.TYPE][0],
             [PDS4_INFO_MODEL.LID]: source[PDS4_INFO_MODEL.LID][0],
             [PDS4_INFO_MODEL.REF_LID_INSTRUMENT]: source[PDS4_INFO_MODEL.REF_LID_INSTRUMENT],

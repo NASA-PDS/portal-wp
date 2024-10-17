@@ -80,6 +80,11 @@ export const PDS4_INFO_MODEL = {
   CITATION_INFORMATION: {
 
     /**
+     * The description attribute provides a short (5KB or less) description of the product as a whole.
+     */
+    DESCRIPTION: "pds:Citation_Information.pds:description",
+
+    /**
      * The doi attribute provides the Digital Object Identifier for an object, 
      * assigned by the appropriate DOI System Registration Agency. 
      */
