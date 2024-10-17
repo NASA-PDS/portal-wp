@@ -10,14 +10,23 @@ import { RootState } from "src/state/store";
 import { selectLatestInstrumentVersion } from "src/state/selectors";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
 import { Box, Breadcrumbs, Container, Divider, Grid, Link as AnchorLink, Stack, Tab, Tabs, Typography as OldTypography } from "@mui/material";
-import { DATA_COLLECTION_GROUP_TITLE, FeaturedLink, FeaturedLinkDetails, FeaturedLinkDetailsVariant, Loader, Typography } from "@nasapds/wds-react";
+import { 
+  PROCESSING_LEVEL_TITLES,
+  FeaturedLink,
+  FeaturedLinkDetails,
+  FeaturedLinkDetailsVariant,
+  Loader,
+  Typography,
+  convertProcessingLevelToKey,
+  PROCESSING_LEVEL_KEYS
+} from "@nasapds/wds-react";
 import InvestigationStatus from "src/components/InvestigationStatus/InvestigationStatus";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { Stats, StatsList } from "src/components/StatsList/StatsList";
 import { selectLatestInstrumentHostVersion, selectLatestInvestigationVersion } from "src/state/selectors";
-import { distinct } from "src/utils/arrays";
+import { distinct, sortByTitle } from "src/utils/arrays";
 import React from "react";
-
+import { APP_CONFIG } from "src/AppConfig";
 
 interface InstrumentDetailBodyProps {
   collections:Collection[];
@@ -34,8 +43,7 @@ interface TabPanelProps {
   value: number;
 }
 
-
-const fetchBundles = async (instrumentLid:string, abortController:AbortController) => {
+const fetchCollections = async (instrumentLid:string, abortController:AbortController) => {
 
   let query = '/api/search/1/products?q=(product_class EQ "Product_Collection" AND pds:Collection.pds:collection_type EQ "Data" AND pds:Internal_Reference.pds:lid_reference EQ "' + instrumentLid + '")';
   const config = {
@@ -100,7 +108,8 @@ const fetchBundles = async (instrumentLid:string, abortController:AbortControlle
     return collection;
   })
 
-  return collectionData;
+  return collectionData.sort(sortByTitle);
+
 }
 
 function CustomTabPanel(props: TabPanelProps) {
@@ -156,7 +165,7 @@ const InstrumentDetailPage = () => {
 
     if( status === "succeeded" ) {
       const abortController = new AbortController();
-      fetchBundles(convertedInstrumentLid, abortController).then( (response) => {
+      fetchCollections(convertedInstrumentLid, abortController).then( (response) => {
         setCollections(response);
       });
 
@@ -178,6 +187,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
   const [processingLevels, setProcessingLevels] = useState<string[]>([]);
   const [collectionsReady, setCollectionsReady] = useState(false);
   const [value, setValue] = useState(TABS.findIndex( (tab) => tab == tabLabel?.toLowerCase()));
+  const PROCESSING_LEVEL_SORT_ORDER = APP_CONFIG.SETTINGS.SORT_ORDER.PROCESSING_LEVELS;
 
   const navigate = useNavigate();
 
@@ -242,7 +252,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
       processingLevels = distinct( collections.flatMap( (collection) => collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL] ) );
 
       if( processingLevels.length === 0 || processingLevels.length === 1 && processingLevels[0] === "null" ) {
-        processingLevels = ["UNKNOWN"]
+        processingLevels = [PROCESSING_LEVEL_KEYS.UNKNOWN]
       }
 
     }
@@ -255,10 +265,6 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
     )
 
   }, [collections]);
-
-  const getFriendlyProcessingLevelTitle = (processingLevel:string) => {
-    return DATA_COLLECTION_GROUP_TITLE[processingLevel.toUpperCase().replace(" ", "_") as keyof typeof DATA_COLLECTION_GROUP_TITLE];
-  }
 
   const getInvestigationPath = (investigationLid:string) => {
     if( investigationLid !== undefined )
@@ -541,37 +547,47 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                         wordWrap: 'break-word'
                       }}>Data</OldTypography>
                       {
-                        processingLevels.map(processingLevel => {
+                        PROCESSING_LEVEL_SORT_ORDER.map( (sortedProcessingLevel) => {
                           return (
-                            <AnchorLink href={"#title_" + processingLevel.toLowerCase()} sx={{
-                              textDecoration: "none",
-                              "&:hover .MuiDivider-root": {
-                                backgroundColor: "#1C67E3",
-                                opacity: 1
-                              }
-                            }}>
-                              <Box sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                minHeight: '24px',
-                                marginBottom: "12px",
-                              }}>
-                                <Divider flexItem orientation="vertical" sx={{
-                                  opacity: 0,
-                                  borderRightWidth: "2px",
-                                }} />
-                                <OldTypography sx={{
-                                  marginLeft: "10px",
-                                  color: '#17171B',
-                                  fontSize: "12px",
-                                  fontFamily: 'Inter',
-                                  fontWeight: '400',
-                                  lineHeight: "12px",
-                                  letterSpacing: "0.25px",
-                                  wordWrap: 'break-word',
-                                }}>{getFriendlyProcessingLevelTitle(processingLevel)}</OldTypography>
-                              </Box>
-                            </AnchorLink>
+                            processingLevels
+                              .filter( (processingLevel) => { return processingLevel ===  sortedProcessingLevel} )
+                              .map( (processingLevel, processingLevelIndex) => {
+                                const processingLevelTitle = PROCESSING_LEVEL_TITLES[convertProcessingLevelToKey(processingLevel)]
+                                return <React.Fragment key={"processingLevel_" + processingLevelIndex}>
+                                  <AnchorLink 
+                                    href={"#title_" + processingLevel.toLowerCase()} 
+                                    sx={{
+                                      textDecoration: "none",
+                                      "&:hover .MuiDivider-root": {
+                                        backgroundColor: "#1C67E3",
+                                        opacity: 1
+                                      }
+                                    }}
+                                  >
+                                    <Box sx={{
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      minHeight: '24px',
+                                      marginBottom: "12px",
+                                    }}>
+                                      <Divider flexItem orientation="vertical" sx={{
+                                        opacity: 0,
+                                        borderRightWidth: "2px",
+                                      }} />
+                                      <OldTypography sx={{
+                                        marginLeft: "10px",
+                                        color: '#17171B',
+                                        fontSize: "12px",
+                                        fontFamily: 'Inter',
+                                        fontWeight: '400',
+                                        lineHeight: "12px",
+                                        letterSpacing: "0.25px",
+                                        wordWrap: 'break-word',
+                                      }}>{processingLevelTitle}</OldTypography>
+                                    </Box>
+                                  </AnchorLink>
+                                </React.Fragment>
+                              })
                           )
                         })
                       }
@@ -583,29 +599,42 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
 
                     <Stack sx={{marginTop: "32px"}}>
                       { collections.length > 0 && <>
-                        {
-                          processingLevels.map( (processingLevel, index) => {
-                            return (
-                              <>
-                                <OldTypography sx={{
-                                  textTransform: "capitalize",
-                                  fontFamily: "Inter",
-                                  fontSize: "1.375em",
-                                  fontWeight: 700,
-                                  lineHeight: "26px",
-                                  wordWrap: "break-word",
-                                  paddingBottom: "10px",
-                                  ":not(:first-of-type)": {
-                                    paddingTop: "50px"
-                                  }
-                                }} key={"instrumentType_" + index}>
-                                  <a id={"title_" + processingLevel.toLowerCase()}>{getFriendlyProcessingLevelTitle(processingLevel)}</a>
-                                </OldTypography>
-                                {
-                                  collections.map( (collection, index) => {
-                                    
-                                    return collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].includes(processingLevel) || collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].includes("null") ?
-                                        <React.Fragment key={"collection_" + index}>
+                          {
+                            PROCESSING_LEVEL_SORT_ORDER.map( (sortedProcessingLevel, sortedProcessingLevelIndex) => {
+
+                              const foundCollections = collections.filter( (collection:Collection) => {
+                                return (
+                                  collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].includes(sortedProcessingLevel)
+                                  || (
+                                    sortedProcessingLevel === PROCESSING_LEVEL_KEYS.UNKNOWN
+                                    && (
+                                      collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].length === 0
+                                      ||
+                                      collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL][0] === "null"
+                                    )
+                                  )
+                                )
+                              })
+                              return ( <>
+                                { foundCollections.length > 0 && <React.Fragment key={sortedProcessingLevelIndex}>
+                                  <OldTypography sx={{
+                                    textTransform: "capitalize",
+                                    fontFamily: "Inter",
+                                    fontSize: "1.375em",
+                                    fontWeight: 700,
+                                    lineHeight: "26px",
+                                    wordWrap: "break-word",
+                                    paddingBottom: "10px",
+                                    ":not(:first-of-type)": {
+                                      paddingTop: "50px"
+                                    }
+                                  }} key={"instrumentType_" + sortedProcessingLevelIndex}>
+                                    <a id={"title_" + sortedProcessingLevel.toLowerCase()}>{PROCESSING_LEVEL_TITLES[convertProcessingLevelToKey(sortedProcessingLevel)]}</a>
+                                  </OldTypography>
+                                  {
+                                    foundCollections.map( (collection:Collection, collectionIndex) => {
+                                      return (
+                                        <React.Fragment key={"collection_" + collectionIndex}>
                                           <FeaturedLink
                                             description={collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] !== "null" ? collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] : "No Description Provided."}
                                             title={collection[PDS4_INFO_MODEL.TITLE]}
@@ -631,14 +660,14 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
                                             />
                                           </FeaturedLink>  
                                         </React.Fragment>
-                                        :
-                                        <></>
-                                    
-                                  })
+                                      )
+                                    })
+                                  }
+                                </React.Fragment>
                                 }
-                              </>
-                              )
+                              </>)
                             })
+
                           }
                           <Box style={{marginTop: "36px"}} >
                             <Typography variant="h5" weight="semibold" component={"span"}>We are working to provide additional metadata when possible. Please contact <Link to="mailto:pds-operator@jpl.nasa.gov" style={{color: "#1C67E3"}}>PDS Help Desk</Link> for assistance.</Typography>

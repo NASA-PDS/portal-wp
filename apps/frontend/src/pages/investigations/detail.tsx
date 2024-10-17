@@ -22,9 +22,21 @@ import StatsList from "src/components/StatsList/StatsList";
 /* import FeaturedTargetLinkListItem from "src/components/FeaturedListItems/FeaturedTargetLinkListItem";
 import FeaturedToolLinkListItem from "src/components/FeaturedListItems/FeaturedToolLinkListItem";
 import FeaturedResourceLinkListItem from "src/components/FeaturedListItems/FeaturedResourcesLinkListItem"; */
-import { DATA_COLLECTION_GROUP_TITLE, DataCollectionGroup, FeaturedLink, FeaturedLinkDetails, FeaturedLinkDetailsVariant, Loader, PrimaryButton, Typography } from "@nasapds/wds-react";
+import { 
+  PROCESSING_LEVEL_TITLES,
+  PROCESSING_LEVEL_KEYS,
+  DataCollectionGroup,
+  FeaturedLink,
+  FeaturedLinkDetails,
+  FeaturedLinkDetailsVariant,
+  Loader,
+  PrimaryButton,
+  Typography,
+  convertProcessingLevelToKey
+} from "@nasapds/wds-react";
 import { Collection } from "src/types/collection";
-import { distinct } from "src/utils/arrays";
+import { distinct, sortByTitle } from "src/utils/arrays";
+import { APP_CONFIG } from "src/AppConfig";
 
 const InvestigationDetailPage = () => {
 
@@ -119,6 +131,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
   const [instrumentTypes, setInstrumentTypes] = useState<string[]>([]);
   const [selectedInstrumentHost, setSelectedInstrumentHost] = useState<number>(0);
   const [value, setValue] = useState(TABS.findIndex( (tab) => tab == tabLabel?.toLowerCase()));
+  const PROCESSING_LEVEL_SORT_ORDER = APP_CONFIG.SETTINGS.SORT_ORDER.PROCESSING_LEVELS;
 
   const navigate = useNavigate();
 
@@ -248,31 +261,44 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
       if( relatedCollections.length > 0 ) {
 
         processingLevels = distinct( relatedCollections.flatMap( (collection) => collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL]) );
-        //.map( (processingLevel) => processingLevel.toUpperCase().replace(" ", "_")).sort();
 
         if( processingLevels.length === 0 ) {
-          processingLevels = ["UNKNOWN"]
+          processingLevels = ["Unknown"]
         }
 
         const collectionGroups:DataCollectionGroup[] = [];
-        processingLevels.map( (processingLevel) => {
+
+        PROCESSING_LEVEL_SORT_ORDER.forEach( (processingLevel:string) => {
+
           const collections = relatedCollections.filter( (collection) => {
-            return collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].includes(processingLevel);
+            return (
+              collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].includes(processingLevel) 
+              || (
+                processingLevel === PROCESSING_LEVEL_KEYS.UNKNOWN
+                && (
+                  collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].length === 0
+                  ||
+                  collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL][0] === "null"
+                )
+              )
+            )
           })
-          const collectionGroup:DataCollectionGroup = {
-            title: DATA_COLLECTION_GROUP_TITLE[processingLevel.toUpperCase().replace(" ", "_") as keyof typeof DATA_COLLECTION_GROUP_TITLE],
-            items: collections.map( (collection) => {
 
-              return {
-                title: collection[PDS4_INFO_MODEL.TITLE],
-                description: collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] !== "null" ? collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] : "No Description Provided.",
-                link: "https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])
-              }
-            })
-
-          };
-          collectionGroups.push(collectionGroup);
-        })
+          if( collections.length > 0 ) {
+            const collectionGroup:DataCollectionGroup = {
+              title: PROCESSING_LEVEL_TITLES[convertProcessingLevelToKey(processingLevel)],
+              items: collections.map( (collection) => {
+                return {
+                  title: collection[PDS4_INFO_MODEL.TITLE],
+                  description: collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] !== "null" ? collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] : "No Description Provided.",
+                  link: "https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])
+                }
+              })
+            };
+            collectionGroups.push(collectionGroup);
+          }
+          
+        });
 
         return collectionGroups;
 
@@ -378,7 +404,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
           return collection;
         })
         
-        collections.current[index] = collectionData;
+        collections.current[index] = collectionData.sort(sortByTitle);
         collectionsFetched.current[index] = true;
 
         // add a delay so that the page rendering doesn't try to fetch collections before they are ready.
@@ -388,7 +414,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
         );
 
         if( import.meta.env.DEV ) {
-          console.log(`Collection data for ${lid}`, collectionData);
+          console.log(`Collection data for ${lid}`, collections.current[index]);
         }
 
         return response;
