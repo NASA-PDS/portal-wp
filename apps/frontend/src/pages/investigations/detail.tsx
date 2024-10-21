@@ -1,29 +1,42 @@
-import { SyntheticEvent, useCallback, useEffect, useRef, useState } from "react";
+import React, { SyntheticEvent, useCallback, useEffect, useRef, useState } from "react";
 
 import { generatePath, Link, useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "src/state/hooks";
-import { convertLogicalIdentifier, LID_FORMAT } from "src/utils/strings";
+import { convertLogicalIdentifier, ellipsisText, LID_FORMAT } from "src/utils/strings";
 import { getData } from "src/state/slices/dataManagerSlice";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { RootState } from "src/state/store";
-import { selectLatestInvestigationVersion } from "src/state/selectors/investigations";
+import { selectLatestInvestigationVersion } from "src/state/selectors";
 import { connect } from "react-redux";
 import { Instrument, InstrumentHost, Investigation, Target } from "src/types";
-import { selectLatestInstrumentHostsForInvestigation } from "src/state/selectors/instrumentHost";
-import { selectLatestInstrumentsForInstrumentHost } from "src/state/selectors/instruments";
-import { selectLatestTargetsForInstrumentHost } from "src/state/selectors/targets";
+import { 
+  selectLatestInstrumentHostsForInvestigation,
+  selectLatestInstrumentsForInstrumentHost, 
+  selectLatestTargetsForInstrumentHost,
+} from "src/state/selectors";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
-import { Box, Breadcrumbs, Button, Container, Divider, Grid, Link as AnchorLink, Stack, Tab, Tabs, Typography, IconButton } from "@mui/material";
+import { Box, Breadcrumbs, Button, Container, Divider, Grid, Link as AnchorLink, Stack, Tab, Tabs, Typography as OldTypography } from "@mui/material";
 import InvestigationStatus from "src/components/InvestigationStatus/InvestigationStatus";
 import StatsList from "src/components/StatsList/StatsList";
 
-import FeaturedInstrumentLinkListItem from "src/components/FeaturedListItems/FeaturedInstrumentLinkListItem";
-import FeaturedTargetLinkListItem from "src/components/FeaturedListItems/FeaturedTargetLinkListItem";
+/* import FeaturedTargetLinkListItem from "src/components/FeaturedListItems/FeaturedTargetLinkListItem";
 import FeaturedToolLinkListItem from "src/components/FeaturedListItems/FeaturedToolLinkListItem";
-import FeaturedResourceLinkListItem from "src/components/FeaturedListItems/FeaturedResourcesLinkListItem";
-import { Loader } from "@nasapds/wds-react";
-import { Bundle } from "src/types/bundle";
-import { ArrowForward } from "@mui/icons-material";
+import FeaturedResourceLinkListItem from "src/components/FeaturedListItems/FeaturedResourcesLinkListItem"; */
+import { 
+  PROCESSING_LEVEL_TITLES,
+  PROCESSING_LEVEL_KEYS,
+  DataCollectionGroup,
+  FeaturedLink,
+  FeaturedLinkDetails,
+  FeaturedLinkDetailsVariant,
+  Loader,
+  PrimaryButton,
+  Typography,
+  convertProcessingLevelToKey
+} from "@nasapds/wds-react";
+import { Collection } from "src/types/collection";
+import { distinct, sortByTitle } from "src/utils/arrays";
+import { APP_CONFIG } from "src/AppConfig";
 
 const InvestigationDetailPage = () => {
 
@@ -87,7 +100,7 @@ function CustomTabPanel(props: TabPanelProps) {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          {children}
         </Box>
       )}
     </div>
@@ -111,11 +124,14 @@ const TABS = [
 
 const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
 
-  const {instrumentHosts, instruments, investigation, status, tabLabel, targets } = props;
-  const bundles = useRef<Array<Array<Bundle>>>([]);
+  const {instrumentHosts, instruments, investigation, status, tabLabel } = props;
+  const collections = useRef<Array<Array<Collection>>>([]);
+  const collectionsFetched = useRef<Array<boolean>>([]);
+  const [collectionsReady, setCollectionsReady] = useState(false);
   const [instrumentTypes, setInstrumentTypes] = useState<string[]>([]);
   const [selectedInstrumentHost, setSelectedInstrumentHost] = useState<number>(0);
   const [value, setValue] = useState(TABS.findIndex( (tab) => tab == tabLabel?.toLowerCase()));
+  const PROCESSING_LEVEL_SORT_ORDER = APP_CONFIG.SETTINGS.SORT_ORDER.PROCESSING_LEVELS;
 
   const navigate = useNavigate();
 
@@ -125,14 +141,6 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
       value: investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE]
     },
     {
-      label: "Mission Phase",
-      value: "Lorem Ipsum"
-    },
-    {
-      label: "Version",
-      value: investigation.vid
-    },
-    {
       label: "Logical Identifier",
       value: investigation.lid,
       enableCopy: true
@@ -140,17 +148,6 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
   ];
 
   const styles = {
-    breadcrumbs:{
-      links: {
-        color: "#FFFFFF",
-        fontFamily: "Inter",
-        fontSize: "14px",
-        fontWeight: "300",
-        lineHeight: "19px",
-        paddingY: "4px",
-        textDecoration: "none",
-      }
-    },
     button: {
       color: "#288BFF",
       backgroundColor: "#FFFFFF",
@@ -208,7 +205,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
 
     instruments[selectedInstrumentHost].forEach( (instrument:Instrument) => {
 
-      if( instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE] !== undefined && instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE].length !== 0 ) {
+      if( instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE].length !== 0 ) {
 
         instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE].forEach( (instrumentType:string) => {
           if( !instrumentTypesArr.includes(instrumentType) ) {
@@ -216,10 +213,18 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
           }
         });
 
-      } else {
-        instrumentTypesArr.push("other");
       }
-        
+
+      if( instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE].length !== 0 ) {
+
+        instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE].forEach( (instrumentType:string) => {
+          if( !instrumentTypesArr.includes(instrumentType) ) {
+            instrumentTypesArr.push(instrumentType);
+          }
+        });
+
+      }
+
       instrumentTypesArr.sort( (a:string, b:string) => {
         if( a.toLowerCase() < b.toLowerCase() ) {
           return -1
@@ -228,10 +233,9 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
         }
         return 0;
       });
-    
       
     });
-
+    
     setInstrumentTypes(instrumentTypesArr);
     
   }, [instrumentHosts.length, instruments, selectedInstrumentHost]);
@@ -243,11 +247,67 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
             investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION]
   }
 
-  const getRelatedInstrumentBundles = (lid:string) => {
-    return bundles.current[selectedInstrumentHost].filter( (bundle) => {
-      const foundInstrument = bundle[PDS4_INFO_MODEL.OBSERVING_SYSTEM_COMPONENTS].some( (component) => component.id === lid);
-      return foundInstrument
-    });
+  const getRelatedInstrumentCollections = (lid:string):Array<DataCollectionGroup> => {
+
+    if( collections.current[selectedInstrumentHost] !== undefined && collections.current[selectedInstrumentHost].length > 0 ) {
+
+      // Get the list of collections that match the supplied instrument LID
+      const relatedCollections:Collection[] = collections.current[selectedInstrumentHost].filter( (collection:Collection) => {
+        return collection[PDS4_INFO_MODEL.REF_LID_INSTRUMENT].some( (ref_lid) => ref_lid === lid);
+      });
+
+      // Using the list of related collections, generate a distinct list of their processing levels
+      let processingLevels:string[] = [];
+      if( relatedCollections.length > 0 ) {
+
+        processingLevels = distinct( relatedCollections.flatMap( (collection) => collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL]) );
+
+        if( processingLevels.length === 0 ) {
+          processingLevels = ["Unknown"]
+        }
+
+        const collectionGroups:DataCollectionGroup[] = [];
+
+        PROCESSING_LEVEL_SORT_ORDER.forEach( (processingLevel:string) => {
+
+          const collections = relatedCollections.filter( (collection) => {
+            return (
+              collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].includes(processingLevel) 
+              || (
+                processingLevel === PROCESSING_LEVEL_KEYS.UNKNOWN
+                && (
+                  collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL].length === 0
+                  ||
+                  collection[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL][0] === "null"
+                )
+              )
+            )
+          })
+
+          if( collections.length > 0 ) {
+            const collectionGroup:DataCollectionGroup = {
+              title: PROCESSING_LEVEL_TITLES[convertProcessingLevelToKey(processingLevel)],
+              items: collections.map( (collection) => {
+                return {
+                  title: collection[PDS4_INFO_MODEL.TITLE],
+                  description: collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DESCRIPTION] ? collection[PDS4_INFO_MODEL.CITATION_INFORMATION.DESCRIPTION] : collection[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION],
+                  link: "https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=" + encodeURIComponent(collection[PDS4_INFO_MODEL.LID])
+                }
+              })
+            };
+            collectionGroups.push(collectionGroup);
+          }
+          
+        });
+
+        return collectionGroups;
+
+      }
+
+    }
+
+    return []
+
   };
 
   const handleTabChange = (event: SyntheticEvent) => {
@@ -267,19 +327,21 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
     }
   };
 
-  const instrumentListItemPrimaryAction = (params:InstrumentDetailPathParams) => {
+  const getInstrumentDetailPagePath = (params:InstrumentDetailPathParams) => {
     params.lid = convertLogicalIdentifier(params.lid,LID_FORMAT.URL_FRIENDLY);
-    navigate( generatePath("/instruments/:lid/data", params) );
+    return generatePath("/instruments/:lid/data", params);
   };
 
-  const fetchBundles = useCallback( async (abortController:AbortController) => {
+  const fetchCollections = useCallback( async (abortController:AbortController) => {
 
-    bundles.current = new Array( instrumentHosts.length ).fill([]);
+    collections.current = new Array( instrumentHosts.length ).fill([]);
+    collectionsFetched.current = new Array( instrumentHosts.length ).fill(false);
 
     return Promise.all(
+
       instrumentHosts.map( async (instrumentHost:InstrumentHost, index:number) => {
         const lid = instrumentHost[PDS4_INFO_MODEL.LID];
-        let query = '/api/search/1/products?q=(pds:Internal_Reference.pds:lid_reference eq "' + lid + '" and product_class eq "Product_Bundle")';
+        let query = '/api/search/1/products?q=(product_class EQ "Product_Collection" AND pds:Collection.pds:collection_type EQ "Data" AND pds:Internal_Reference.pds:lid_reference EQ "' + lid + '")';
         const config = {
           headers: {
             "Accept": "application/json",
@@ -289,11 +351,21 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
         };
 
         const fields = [
+          PDS4_INFO_MODEL.CITATION_INFORMATION.DESCRIPTION,
+          PDS4_INFO_MODEL.CITATION_INFORMATION.DOI,
+          PDS4_INFO_MODEL.COLLECTION.DESCRIPTION,
+          PDS4_INFO_MODEL.COLLECTION.TYPE,
           PDS4_INFO_MODEL.LID,
-          PDS4_INFO_MODEL.OBSERVING_SYSTEM_COMPONENTS,
+          PDS4_INFO_MODEL.REF_LID_INSTRUMENT,
+          PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST,
+          PDS4_INFO_MODEL.REF_LID_INVESTIGATION,
+          PDS4_INFO_MODEL.REF_LID_TARGET,
+          PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL,
+          PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME,
+          PDS4_INFO_MODEL.SOURCE_PRODUCT_EXTERNAL.DOI,
+          PDS4_INFO_MODEL.TIME_COORDINATES.START_DATE_TIME,
+          PDS4_INFO_MODEL.TIME_COORDINATES.STOP_DATE_TIME,
           PDS4_INFO_MODEL.TITLE,
-          PDS4_INFO_MODEL.BUNDLE.DESCRIPTION,
-          PDS4_INFO_MODEL.BUNDLE.TYPE
         ];
     
         // Add the specific fields that should be returned
@@ -305,28 +377,67 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
 
         if( import.meta.env.DEV ) {
           // Output query URL to help with debugging only in DEV mode
-          console.info("Bundle Query: ", query)
+          console.info("Collection Query: ", query)
         }
 
         const response = await fetch(query, config);
         const temp = (await response.json());
 
-        bundles.current[index] = temp.data;
+        let collectionData = [];
+        collectionData = temp.data.map( (sourceData:{"summary":object, "properties":Collection}) => {
+          const source = sourceData["properties"];
+          const collection:Collection = {
+            [PDS4_INFO_MODEL.CITATION_INFORMATION.DESCRIPTION]: source[PDS4_INFO_MODEL.CITATION_INFORMATION.DESCRIPTION] && source[PDS4_INFO_MODEL.CITATION_INFORMATION.DESCRIPTION][0] != "null" ? source[PDS4_INFO_MODEL.CITATION_INFORMATION.DESCRIPTION] : "",
+            [PDS4_INFO_MODEL.CITATION_INFORMATION.DOI]: source[PDS4_INFO_MODEL.CITATION_INFORMATION.DOI][0],
+            [PDS4_INFO_MODEL.COLLECTION.DESCRIPTION]: source[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION] && source[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION][0] != "null" ? source[PDS4_INFO_MODEL.COLLECTION.DESCRIPTION][0] : "",
+            [PDS4_INFO_MODEL.COLLECTION.TYPE]: source[PDS4_INFO_MODEL.COLLECTION.TYPE][0],
+            [PDS4_INFO_MODEL.LID]: source[PDS4_INFO_MODEL.LID][0],
+            [PDS4_INFO_MODEL.REF_LID_INSTRUMENT]: source[PDS4_INFO_MODEL.REF_LID_INSTRUMENT],
+            [PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST]: source[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST],
+            [PDS4_INFO_MODEL.REF_LID_INVESTIGATION]: source[PDS4_INFO_MODEL.REF_LID_INVESTIGATION],
+            [PDS4_INFO_MODEL.REF_LID_TARGET]: source[PDS4_INFO_MODEL.REF_LID_TARGET],
+            [PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL]: source[PDS4_INFO_MODEL.PRIMARY_RESULT_SUMMARY.PROCESSING_LEVEL],
+            [PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME]: source[PDS4_INFO_MODEL.SCIENCE_FACETS.DISCIPLINE_NAME],
+            [PDS4_INFO_MODEL.SOURCE_PRODUCT_EXTERNAL.DOI]: source[PDS4_INFO_MODEL.SOURCE_PRODUCT_EXTERNAL.DOI][0],
+            [PDS4_INFO_MODEL.TIME_COORDINATES.START_DATE_TIME]: source[PDS4_INFO_MODEL.TIME_COORDINATES.START_DATE_TIME][0],
+            [PDS4_INFO_MODEL.TIME_COORDINATES.STOP_DATE_TIME]: source[PDS4_INFO_MODEL.TIME_COORDINATES.STOP_DATE_TIME][0],
+            [PDS4_INFO_MODEL.TITLE]: source[PDS4_INFO_MODEL.TITLE][0],
+          }
+          return collection;
+        })
+        
+        collections.current[index] = collectionData.sort(sortByTitle);
+        collectionsFetched.current[index] = true;
+
+        // add a delay so that the page rendering doesn't try to fetch collections before they are ready.
+        setTimeout(
+          () => { setCollectionsReady(collectionsFetched.current.some( (collectionFetchStatus) => collectionFetchStatus )) },
+          750
+        );
+
+        if( import.meta.env.DEV ) {
+          console.log(`Collection data for ${lid}`, collections.current[index]);
+        }
 
         return response;
 
       })
     );
-  }, [bundles, instrumentHosts]);
+  }, [collections, instrumentHosts]);
 
   useEffect(() => {
 
     if (status === "succeeded") {
-      const abortController = new AbortController();
-      fetchBundles(abortController);
+      initInstrumentTypes();
+      if( investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE].toUpperCase() === "MISSION") {
+        const abortController = new AbortController();
+        fetchCollections(abortController);
+      } else {
+        setCollectionsReady(true);
+      }
     }
 
-  }, [status, fetchBundles]);
+  }, [status]);
 
   useEffect( () => {
     initInstrumentTypes();
@@ -343,14 +454,15 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
         description={ investigation.title + "Investigation Details." }
       />
       {
-        (status === 'idle' || status === 'pending' )
+        (status === 'idle' || status === 'pending' || !collectionsReady )
         &&
-        <Box sx={{ padding: "40px" }}>
+        <Stack direction={"column"} spacing={"40px"} alignContent={"center"} alignItems={"center"} sx={{margin: "50px"}}>
           <Loader />
-        </Box>
+          <Typography variant="h4" weight="semibold" component="span">Fetching Investigation Information</Typography>
+        </Stack>
       }
       {
-        status === 'succeeded'
+        status === 'succeeded' && collectionsReady
         && 
         <Container maxWidth={false} disableGutters>
           {/* Page Intro */}
@@ -379,29 +491,21 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                 maxItems={3}
                 sx={{
                   backgroundColor: "rgba(23,23,27,0.17)",
+                  color: "#FFFFFF",
                   paddingY: "3px",
                   paddingX: "5px",
                   borderRadius: "3px",
                   width: "fit-content"
                 }}
-                separator={<Typography sx={{
-                  color: 'white',
-                  fontSize: '0.875rem',
-                  fontFamily: 'Inter',
-                  fontWeight: '400',
-                  lineHeight: '19px',
-                  wordWrap: 'break-word'
-                }}>/</Typography>}
+                separator={<Typography variant="h6" weight="regular" component="span">/</Typography>}
               >
-                <Link color="inherit" to="/" style={styles.breadcrumbs.links}>
-                  Home
+                <Link color="inherit" to="/">
+                  <Typography variant="h6" weight="regular" component="span" style={{ color: "white" }}>Home</Typography>
                 </Link>
-                <Link color="inherit" to="/investigations/" style={styles.breadcrumbs.links}>
-                  Investigations
+                <Link color="inherit" to="/investigations/">
+                  <Typography variant="h6" weight="regular" component="span" style={{ color: "white" }}>Investigations</Typography>
                 </Link>
-                <Typography style={{ color: "white" }}>
-                  {investigation[PDS4_INFO_MODEL.TITLE]}
-                </Typography>
+                <Typography variant="h6" weight="regular" component="span">{investigation[PDS4_INFO_MODEL.TITLE]}</Typography>
               </Breadcrumbs>
               <Grid container alignItems={"flex-end"}>
                 <Grid item md={7} >
@@ -414,28 +518,15 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                     alt=""
                     src={"/assets/images/logos/".concat(investigation[PDS4_INFO_MODEL.LID]).concat(".png")}
                   />
-                  <Typography
-                    variant="h1"
-                    style={{
-                      color: "white",
-                      padding: "0px",
-                      paddingTop: "0px",
-                      fontSize: "72px",
-                      fontWeight: "700",
-                    }}
-                  >
-                    {investigation[PDS4_INFO_MODEL.TITLE]}
-                  </Typography>
-                  <Typography
-                    variant="subtitle1"
-                    sx={{
-                      color: "white",
-                      marginTop: "8px"
-                    }}
-                  >
-                    {investigation[PDS4_INFO_MODEL.TITLE]}
-                  </Typography>
-                  <InvestigationStatus stopDate={investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE]} />
+                  <Box style={{ color: "white", marginTop: "50px" }}>
+                    <Typography variant="display4" weight="bold" component={"h1"}>{investigation[PDS4_INFO_MODEL.TITLE]}</Typography>
+                  </Box>
+                  <Box style={{ color: "white", marginTop: "8px" }}>
+                    <Typography variant="h5" weight="regular" component="span">{investigation[PDS4_INFO_MODEL.TITLE]}</Typography>
+                  </Box>
+                  <Box>
+                    <InvestigationStatus stopDate={investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE]} />
+                  </Box>
                 </Grid>
                 <Grid item md={1}></Grid>
                 <Grid item xs={12} md={4}>
@@ -463,17 +554,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
             >
               <Box>
                 <Box sx={{paddingBottom: "8px"}}>
-                  <Typography variant="overline" style={{ 
-                    color: "#000000",
-                    fontSize: "0.875em",
-                    fontWeight: 500,
-                    lineHeight: "131%",
-                    letterSpacing: "0.265rem",
-                    textTransform: "uppercase",
-                    wordWrap: "break-word",
-                  }}>
-                    Spacecraft
-                  </Typography>
+                  <Typography variant="label1" weight="medium" component="span" style={{ textTransform: "uppercase"}}>Spacecraft</Typography>
                 </Box>
                 <Stack
                   direction={{ xs: 'column', sm: 'row' }}
@@ -532,9 +613,9 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                   <Tab label="Instruments" data-tab-index={0} {...a11yProps(0)} disableRipple disableTouchRipple />
                   <Tab label="Overview" data-tab-index={1} {...a11yProps(1)} disableRipple disableTouchRipple />
                   {/* Hidden for the time being as these aren't part of the Phase 1 MVP
-                  <Tab label="Targets" {...a11yProps(2)} disableRipple disableTouchRipple />
-                  <Tab label="Tools" {...a11yProps(3)} disableRipple disableTouchRipple />
-                  <Tab label="Resources" {...a11yProps(4)} disableRipple disableTouchRipple />
+                  <Tab label="Targets" data-tab-index={2} {...a11yProps(2)} disableRipple disableTouchRipple />
+                  <Tab label="Tools" data-tab-index={3} {...a11yProps(3)} disableRipple disableTouchRipple />
+                  <Tab label="Resources" data-tab-index={4} {...a11yProps(4)} disableRipple disableTouchRipple />
                   */}
                 </Tabs>
               </Box>
@@ -555,7 +636,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                       position: "sticky",
                       top: "24px"
                     }}>
-                      <Typography sx={{
+                      <OldTypography sx={{
                         marginLeft: "10px",
                         marginBottom: "12px",
                         color: '#17171B',
@@ -566,7 +647,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                         lineHeight: "19px",
                         letterSpacing: "0.25px",
                         wordWrap: 'break-word'
-                      }}>Instruments</Typography>
+                      }}>Instruments</OldTypography>
                       {
                         instrumentTypes.map(instrumentType => {
                           return (
@@ -587,7 +668,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                   opacity: 0,
                                   borderRightWidth: "2px",
                                 }} />
-                                <Typography sx={{
+                                <OldTypography sx={{
                                   marginLeft: "10px",
                                   color: '#17171B',
                                   fontSize: "12px",
@@ -596,7 +677,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                   lineHeight: "12px",
                                   letterSpacing: "0.25px",
                                   wordWrap: 'break-word',
-                                }}>{instrumentType}</Typography>
+                                }}>{instrumentType}</OldTypography>
                               </Box>
                             </AnchorLink>
                           )
@@ -607,10 +688,15 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                   <Grid item xs={12} md={10}>
                     <Stack>
                       {
+                        instrumentTypes.length === 0 && <>
+                          <Typography variant="h4" weight="semibold" component={"span"}>No instruments available at this time. Please check back later or contact the <Link to="mailto:pds-operator@jpl.nasa.gov" style={{color: "#1C67E3"}}>PDS Help Desk</Link> for assistance.</Typography>
+                        </>
+                      }
+                      {
                         instrumentTypes.map( (instrumentType, index) => {
                           return (
                             <>
-                              <Typography sx={{
+                              <OldTypography sx={{
                                 textTransform: "capitalize",
                                 fontFamily: "Inter",
                                 fontSize: "1.375em",
@@ -623,17 +709,24 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                 }
                               }} key={"instrumentType_" + index}>
                                 <a id={"title_" + instrumentType.toLowerCase()}>{instrumentType}</a>
-                              </Typography>
+                              </OldTypography>
                               {
                                 instruments[selectedInstrumentHost].map( (instrument:Instrument) => {
-                                  if( instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]?.includes(instrumentType) ) {
-                                    return <FeaturedInstrumentLinkListItem
-                                      key={instrument[PDS4_INFO_MODEL.LID]}
-                                      description={instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION].toString()}
-                                      primaryAction={ () => instrumentListItemPrimaryAction({ lid: instrument[PDS4_INFO_MODEL.LID] }) }
-                                      title={instrument[PDS4_INFO_MODEL.TITLE]}
-                                      bundles={getRelatedInstrumentBundles(instrument[PDS4_INFO_MODEL.LID])}
-                                    />
+                                  if( instrument[PDS4_INFO_MODEL.CTLI_TYPE_LIST.TYPE]?.includes(instrumentType) || instrument[PDS4_INFO_MODEL.INSTRUMENT.TYPE]?.includes(instrumentType) ) {
+                                    return <>
+                                      <FeaturedLink 
+                                        description={ellipsisText(instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION], 256)}
+                                        primaryLink={getInstrumentDetailPagePath({ lid: instrument[PDS4_INFO_MODEL.LID] })}
+                                        primaryLinkLabel="View Instruments and Data"
+                                        title={instrument[PDS4_INFO_MODEL.TITLE]}
+                                      >
+                                        <FeaturedLinkDetails
+                                          variant={FeaturedLinkDetailsVariant.DATA_COLLECTION_LIST}
+                                          collectionGroups={ getRelatedInstrumentCollections(instrument[PDS4_INFO_MODEL.LID]) }
+                                        >
+                                        </FeaturedLinkDetails>
+                                      </FeaturedLink>
+                                    </>
                                   }
                                 })
                               }
@@ -653,7 +746,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                       position: "sticky",
                       top: "20px"
                     }}>
-                      <Typography sx={{
+                      <OldTypography sx={{
                         marginLeft: "10px",
                         marginBottom: "12px",
                         color: '#17171B',
@@ -664,7 +757,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                         lineHeight: "19px",
                         letterSpacing: "0.25px",
                         wordWrap: 'break-word'
-                      }}>Overview</Typography>
+                      }}>Overview</OldTypography>
                       {
                         [{id:"overview-summary", label:"Summary"}].map(anchor => {
                           return (
@@ -685,7 +778,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                   opacity: 0,
                                   borderRightWidth: "2px",
                                 }} />
-                                <Typography sx={{
+                                <OldTypography sx={{
                                   marginLeft: "10px",
                                   color: '#17171B',
                                   fontSize: "12px",
@@ -694,7 +787,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                   lineHeight: "12px",
                                   letterSpacing: "0.25px",
                                   wordWrap: 'break-word',
-                                }}>{anchor.label}</Typography>
+                                }}>{anchor.label}</OldTypography>
                               </Box>
                             </AnchorLink>
                           )
@@ -704,16 +797,16 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                   </Grid>
                   <Grid item md={6}>
                     <a id="overview-summary">
-                      <Typography variant="h4" sx={{
+                      <OldTypography variant="h4" sx={{
                         color: 'black',
                         fontSize: "22px",
                         fontFamily: 'Inter',
                         fontWeight: '700',
                         lineHeight: "26px",
                         wordWrap: 'break-word'
-                      }}>Summary</Typography>
+                      }}>Summary</OldTypography>
                     </a>
-                    <Typography sx={{
+                    <OldTypography sx={{
                       color: 'black',
                       fontSize: "18px",
                       fontFamily: 'Public Sans',
@@ -721,11 +814,10 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                       lineHeight: "27px",
                       wordWrap: 'break-word'
                     }} style={{ paddingBottom: "24px" }}
-                      dangerouslySetInnerHTML={{
-                        __html: getInvestigationSummary()
-                      }}>
-                    </Typography>
-                    <Typography sx={{
+                      >
+                        {getInvestigationSummary()}
+                    </OldTypography>
+                    <OldTypography sx={{
                       color: 'black',
                       fontSize: "22px",
                       fontFamily: 'Inter',
@@ -734,44 +826,16 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                       wordWrap: 'break-word'
                     }}>
                       Looking for Data
-                    </Typography>
-                    <Stack direction="column" alignItems={"left"} gap={2} sx={{
-                      paddingTop: "16px"
-                    }}>
-                      <Stack direction="row" alignItems={"center"} gap={1} onClick={ () => {} }>
-                        <Typography sx={{
-                          color: 'black',
-                          fontSize: 16,
-                          fontFamily: 'Inter',
-                          fontWeight: '600',
-                          lineHeight: '20px',
-                          wordWrap: "break-word"
-                        }}
-                        >Instruments</Typography>
-                        <IconButton
-                          sx={{
-                            "&:hover": {
-                              backgroundColor: "#B60109"
-                            },
-                            backgroundColor: "#F64137",
-                            height: "20px",
-                            width: "20px",
-                            padding: "10px"
-                          }}
-                          aria-label="arrow"
-                          onClick={() => { }}>
-                            <ArrowForward sx={{
-                              color: "#FFFFFF",
-                              width: "14px"
-                            }}
-                          />
-                        </IconButton>
-                      </Stack>
-                    </Stack>
+                    </OldTypography>
+                    <Box style={{marginTop: "16px"}}>
+                      <Link to={""} onClick={handleTabChange} data-tab-index="0">
+                        <PrimaryButton label="Instruments" />
+                      </Link>
+                    </Box>
                   </Grid>
                 </Grid>
               </CustomTabPanel>
-              <CustomTabPanel value={value} index={2}>
+              {/* <CustomTabPanel value={value} index={2}>
                 <Grid container>
                   <Grid item md={2} display={{ xs: "none", sm: "none", md: "block"}}>
                     <Box sx={{
@@ -779,7 +843,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                         position: "sticky",
                         top: "20px"
                     }}>
-                      <Typography sx={{
+                      <OldTypography sx={{
                         marginLeft: "10px",
                         marginBottom: "12px",
                         color: '#17171B',
@@ -790,7 +854,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                         lineHeight: "19px",
                         letterSpacing: "0.25px",
                         wordWrap: 'break-word'
-                      }}>Targets</Typography>
+                      }}>Targets</OldTypography>
                       {
                         [{id:"all-targets", label:"All Targets"}].map(anchor => {
                           return (
@@ -811,7 +875,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                   opacity: 0,
                                   borderRightWidth: "2px",
                                 }} />
-                                <Typography sx={{
+                                <OldTypography sx={{
                                   marginLeft: "10px",
                                   color: '#17171B',
                                   fontSize: "12px",
@@ -820,7 +884,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                   lineHeight: "12px",
                                   letterSpacing: "0.25px",
                                   wordWrap: 'break-word',
-                                }}>{anchor.label}</Typography>
+                                }}>{anchor.label}</OldTypography>
                               </Box>
                             </AnchorLink>
                           )
@@ -830,14 +894,14 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                   </Grid>
                   <Grid item md={10}>
                     <a id="all-targets">
-                      <Typography variant="h4" sx={{
+                      <OldTypography variant="h4" sx={{
                         color: 'black',
                         fontSize: "22px",
                         fontFamily: 'Inter',
                         fontWeight: '700',
                         lineHeight: "26px",
                         wordWrap: 'break-word'
-                      }}>All Targets</Typography>
+                      }}>All Targets</OldTypography>
                     </a>
                     {
                       instrumentHosts.length > 0 && targets[selectedInstrumentHost].length > 0 ? (
@@ -848,20 +912,20 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                     lid={target[PDS4_INFO_MODEL.LID]}
                                     primaryAction={ () => {} }
                                     tags={['Tag Label 1', 'Tag Label 2', 'Tag label with a very long title']}
-                                    title={target[PDS4_INFO_MODEL.TARGET.NAME]}
+                                    title={target[PDS4_INFO_MODEL.TITLE]}
                                     type={target[PDS4_INFO_MODEL.TARGET.TYPE]}
                                   />
                         })
                       ) : (
                         <Box sx={{ paddingBottom: "25px", textAlign: "center"}}>
-                          <Typography>There are no targets related to this investigation.</Typography>
+                          <OldTypography>There are no targets related to this investigation.</OldTypography>
                         </Box>
                       )
                     }
                   </Grid>
                 </Grid>
-              </CustomTabPanel>
-              <CustomTabPanel value={value} index={3}>
+              </CustomTabPanel> */}
+              {/* <CustomTabPanel value={value} index={3}>
                 <Grid container>
                   <Grid item md={2} display={{ xs: "none", sm: "none", md: "block"}}>
                     <Box sx={{
@@ -869,7 +933,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                       position: "sticky",
                       top: "20px"
                     }}>
-                      <Typography sx={{
+                      <OldTypography sx={{
                         marginLeft: "10px",
                         marginBottom: "12px",
                         color: '#17171B',
@@ -880,7 +944,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                         lineHeight: "19px",
                         letterSpacing: "0.25px",
                         wordWrap: 'break-word'
-                      }}>Tools</Typography>
+                      }}>Tools</OldTypography>
                       {
                         
                         ["Tool Title 1", "Tool Title 2", "Tool Title 3"].map(tool => {
@@ -902,7 +966,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                   opacity: 0,
                                   borderRightWidth: "2px",
                                 }} />
-                                <Typography sx={{
+                                <OldTypography sx={{
                                   marginLeft: "10px",
                                   color: '#17171B',
                                   fontSize: "12px",
@@ -911,7 +975,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                   lineHeight: "12px",
                                   letterSpacing: "0.25px",
                                   wordWrap: 'break-word',
-                                }}>{tool}</Typography>
+                                }}>{tool}</OldTypography>
                               </Box>
                             </AnchorLink>
                           )
@@ -920,7 +984,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                     </Box>
                   </Grid>
                   <Grid item md={10}>
-                    <Typography variant='body1' sx={{paddingBottom: "32px"}}>The PDS maintains many tools enabling users to work with the data in our archive. Listed below are tools that can assist you when exploring the data holding for this investigation.</Typography>
+                    <OldTypography variant='body1' sx={{paddingBottom: "32px"}}>The PDS maintains many tools enabling users to work with the data in our archive. Listed below are tools that can assist you when exploring the data holding for this investigation.</OldTypography>
                     {
                       [
                         {
@@ -962,8 +1026,8 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                     }
                   </Grid>
                 </Grid>
-              </CustomTabPanel>
-              <CustomTabPanel value={value} index={4}>
+              </CustomTabPanel> */}
+              {/* <CustomTabPanel value={value} index={4}>
                 <Container
                   maxWidth={"xl"}
                   sx={{
@@ -988,7 +1052,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                       }}
                     >
                       <Grid item xs={7}>
-                        <Typography
+                        <OldTypography
                           variant="body1"
                           display="block"
                           color="#58585B"
@@ -999,10 +1063,10 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                           }}
                         >
                           Name
-                        </Typography>
+                        </OldTypography>
                       </Grid>
                       <Grid item xs={1}>
-                        <Typography
+                        <OldTypography
                           variant="body1"
                           display="block"
                           color="#58585B"
@@ -1013,10 +1077,10 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                           }}
                         >
                           Version
-                        </Typography>
+                        </OldTypography>
                       </Grid>
                       <Grid item xs={1}>
-                        <Typography
+                        <OldTypography
                           variant="body1"
                           display="block"
                           color="#58585B"
@@ -1027,10 +1091,10 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                           }}
                         >
                           Year
-                        </Typography>
+                        </OldTypography>
                       </Grid>
                       <Grid item xs={1}>
-                        <Typography
+                        <OldTypography
                           variant="body1"
                           display="block"
                           color="#58585B"
@@ -1041,10 +1105,10 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                           }}
                         >
                           Size
-                        </Typography>
+                        </OldTypography>
                       </Grid>
                       <Grid item xs={1}>
-                        <Typography
+                        <OldTypography
                           variant="body1"
                           display="block"
                           color="#58585B"
@@ -1055,7 +1119,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                           }}
                         >
                           Format
-                        </Typography>
+                        </OldTypography>
                       </Grid>
                     </Grid>
                   </Box>
@@ -1114,7 +1178,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                     }
                   </Stack>
                 </Container>
-              </CustomTabPanel>
+              </CustomTabPanel> */}
             </Container>
           </Container>
         </Container>
@@ -1154,9 +1218,9 @@ const mapStateToProps = (state:RootState, ownProps:{investigationLid:string, tab
         // Get related targets
         targets[index] = selectLatestTargetsForInstrumentHost(state, instrumentHost[PDS4_INFO_MODEL.REF_LID_TARGET])
                           .sort( (a:Target, b:Target) => {
-                            if( a[PDS4_INFO_MODEL.TARGET.NAME].toLowerCase() < b[PDS4_INFO_MODEL.TARGET.NAME].toLowerCase() ) {
+                            if( a[PDS4_INFO_MODEL.TITLE].toLowerCase() < b[PDS4_INFO_MODEL.TITLE].toLowerCase() ) {
                               return -1
-                            } else if( a[PDS4_INFO_MODEL.TARGET.NAME].toLowerCase() > b[PDS4_INFO_MODEL.TARGET.NAME].toLowerCase() ) {
+                            } else if( a[PDS4_INFO_MODEL.TITLE].toLowerCase() > b[PDS4_INFO_MODEL.TITLE].toLowerCase() ) {
                               return 1
                             }
                             return 0;

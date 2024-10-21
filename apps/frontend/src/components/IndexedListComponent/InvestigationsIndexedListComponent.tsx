@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import {Box, Container, Divider, Grid, Link, MenuItem, Select, Typography } from "@mui/material";
+import {Box, Container, Divider, Link, MenuItem, Select } from "@mui/material";
+import Grid from '@mui/material/Unstable_Grid2';
 import { generatePath, useLocation, useNavigate } from "react-router-dom";
-import { Investigation } from "src/types/investigation.d";
+import { Investigation } from "src/types/investigation";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
-import FeaturedInvestigationLinkListItem from "src/components/FeaturedListItems/FeaturedInvestigationLinkListItem";
-import { selectLatestInstrumentHostsForInvestigation } from "src/state/selectors/instrumentHost";
+import { selectLatestInstrumentHostsForInvestigation } from "src/state/selectors";
 import { RootState, store } from "src/state/store";
-import { InstrumentHost } from "src/types/instrumentHost";
 import { convertLogicalIdentifier, LID_FORMAT } from "src/utils/strings";
 import { ExpandMore } from "@mui/icons-material";
+import { FeaturedLink, FeaturedLinkDetails, FeaturedLinkDetailsVariant, Typography } from "@nasapds/wds-react";
 
 type InvestigationsIndexedListComponentProps = {
   investigations: Investigation[];
@@ -33,9 +33,10 @@ const getItemsByIndex = (
 };
 
 function getAffiliatedSpacecraft(state:RootState, investigation:Investigation) {
-  return selectLatestInstrumentHostsForInvestigation(state, investigation[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST])?.reduce(
-    (accumulator, item:InstrumentHost) => { return accumulator === "" ? accumulator += item[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME] : accumulator += ", ".concat(item[PDS4_INFO_MODEL.INSTRUMENT_HOST.NAME]) }, ''
+  const instrumentHostTitles = selectLatestInstrumentHostsForInvestigation(state, investigation[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST])?.map(
+    (instrumentHost) => instrumentHost[PDS4_INFO_MODEL.TITLE]
   )
+  return instrumentHostTitles;
 }
 
 function InvestigationsIndexedListComponent(props:InvestigationsIndexedListComponentProps) {
@@ -47,14 +48,18 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
 
   const [indexValue, setIndexValue] = useState(location.hash.replace("#",""));
 
-  const investigationListItemPrimaryAction = (params:InvestigationDetailPathParams) => {
+  const investigationListItemPrimaryPath = (params:InvestigationDetailPathParams) => {
     params.lid = convertLogicalIdentifier(params.lid,LID_FORMAT.URL_FRIENDLY);
-    navigate( generatePath("/investigations/:lid/instruments", params) );
+    return generateLinkPath("/investigations/:lid/instruments", params);
   };
 
   const scrollToIndex = (id:string) => {
     console.log("Set scroll to: ", id)
     setIndexValue(id);
+  }
+
+  const generateLinkPath = (template:string, params:{[key:string]:string}) => {
+    return generatePath(template, params)
   }
 
   useEffect( () => {
@@ -75,49 +80,6 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
     <>
       <Box sx={{textAlign:"center"}} display={{ xs: "none", md: "block"}}>
         {
-          (
-            investigations.some((investigation) => {
-              return "0123456789".includes(investigation[PDS4_INFO_MODEL.TITLE].substring(0,1))
-            }) && (
-              <Link
-                sx={{
-                  fontFamily: "Inter",
-                  fontSize: "29px",
-                  fontWeight: "700",
-                  lineHeight: "29px",
-                  paddingRight: "10px",
-                  color: "#1976d2",
-                }}
-                href={"#hash"}
-                key={"letter_hash"}
-                underline="none"
-              >
-                #
-              </Link>
-            )
-          ) || (
-            investigations.some((investigation) => {
-              return !"0123456789".includes(investigation[PDS4_INFO_MODEL.TITLE].substring(0,1))
-            }) && (
-              <Link
-                sx={{
-                  fontFamily: "Inter",
-                  fontSize: "29px",
-                  fontWeight: "700",
-                  lineHeight: "29px",
-                  paddingRight: "10px",
-                  color: "#959599",
-                }}
-                href={"#hash"}
-                key={"letter_hash"}
-                underline="none"
-              >
-                #
-              </Link>
-            )
-          )
-        }
-        {
           investigations.length > 0 && ALPHABET.map((letter) => {
 
             const indexedInvestigations = getItemsByIndex(investigations, letter);
@@ -128,28 +90,26 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
             return indexedInvestigationsCount >= 0 ? (
               <Link
                 sx={{
-                  fontFamily: "Inter",
-                  fontSize: "29px",
-                  fontWeight: "700",
-                  lineHeight: "29px",
-                  paddingRight: "10px",
                   color: anchorColor,
                 }}
                 href={anchorName}
                 key={"letter_" + letter}
                 underline="none"
               >
+                <Typography variant="h2" weight="bold" component={"span"}
+                  style={{
+                    paddingRight: "10px",
+                  }}
+                >
                 {letter}
+                </Typography>
               </Link>
             ) : (
-              <Typography
-                sx={{
-                  fontFamily: "Inter",
-                  fontSize: "29px",
-                  fontWeight: "700",
-                  lineHeight: "29px",
+              <Typography variant="h2" weight="bold" component={"span"}
+                style={{
                   paddingRight: "10px",
                 }}
+                key={"letter_" + letter}
               >
                 {letter}
               </Typography>
@@ -159,17 +119,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
       </Box>
       <Box display={{ xs:"block", md:"none"}}>
         <Divider sx={{marginBottom:"16px"}}/>
-        <Typography
-          sx={{
-            color: "black",
-            fontSize: "14px",
-            fontFamily: "Inter",
-            fontWeight: "600",
-            lineHeight: "19px",
-            wordWrap: "break-word",
-            mb: "4px"
-          }}
-        >
+        <Typography variant="h6" weight="semibold" sx={{ color: "#17171B" }} component="span">
           Scroll to
         </Typography>
         <Select
@@ -199,32 +149,13 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
             Select an index
           </MenuItem>
           {
-            (
-              investigations.some((investigation) => {
-                return "0123456789".includes(investigation[PDS4_INFO_MODEL.TITLE].substring(0,1))
-              }) && (
-                <MenuItem value={"hash"}>
-                  {"#"}
-                </MenuItem>
-              )
-            ) || (
-              investigations.some((investigation) => {
-                return !"0123456789".includes(investigation[PDS4_INFO_MODEL.TITLE].substring(0,1))
-              }) && (
-                <MenuItem value={"hash"} disabled={true}>
-                  {"#"}
-                </MenuItem>
-              )
-            )
-          }
-          {
             investigations.length > 0 && ALPHABET.map((letter) => {
   
               const indexedInvestigations = getItemsByIndex(investigations, letter);
               const indexedInvestigationsCount = Object.keys(indexedInvestigations).length;
 
               return (
-                <MenuItem value={letter} disabled={indexedInvestigationsCount === 0}>
+                <MenuItem value={letter} disabled={indexedInvestigationsCount === 0} key={"menu_letter_" + letter}>
                   {letter}
                 </MenuItem>
               )
@@ -239,111 +170,60 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
           textAlign: "left",
         }}
       >
-        <Box display={{xs: "none", md: "flex"}}>
-          <Grid
-            container
-            spacing={2}
-            alignItems="left"
-            sx={{
-              paddingY: "10px",
-              paddingLeft: "10px",
-              backgroundColor: "#F6F6F6",
-              '& .MuiGrid-item': {
-                paddingTop: "0px",
-              }
-            }}
-          >
-            <Grid item xs={7}>
-              <Typography
-                variant="body1"
-                display="block"
-                color="#58585B"
-                style={{
-                  fontSize: "11px",
-                  textTransform: "uppercase",
-                  fontWeight: "bold",
-                }}
-              >
-                Name
-              </Typography>
-            </Grid>
-            <Grid item xs={2}>
-              <Typography
-                variant="body1"
-                display="block"
-                color="#58585B"
-                style={{
-                  fontSize: "11px",
-                  textTransform: "uppercase",
-                  fontWeight: "bold",
-                  textAlign: "center",
-                }}
-              >
-                Type
-              </Typography>
-            </Grid>
-            <Grid item xs={2}>
-              <Typography
-                variant="body1"
-                display="block"
-                color="#58585B"
-                style={{
-                  fontSize: "11px",
-                  textTransform: "uppercase",
-                  fontWeight: "bold",
-                  textAlign: "center",
-                }}
-              >
-                Spacecraft
-              </Typography>
-            </Grid>
+        <Grid container spacing={2} display={{xs: "none", md:"flex"}}>
+          <Grid xs>
+            <Typography variant="h5" weight="semibold">Name</Typography>
           </Grid>
-        </Box>
+          <Grid lgOffset={1} />
+          <Grid xs={1} display={"flex"} justifyContent={"center"}>
+            <Typography variant="h5" weight="semibold">Type</Typography>
+          </Grid>
+          <Grid lgOffset={1} />
+          <Grid xs={2} display={"flex"} justifyContent={"center"}>
+            <Typography variant="h5" weight="semibold">Spacecraft</Typography>
+          </Grid>
+          <Grid xs={2} />
+        </Grid>
         <Box>
           {
             investigations.length > 0 && OTHER_CHARS.map((character, index) => {
 
               const indexedInvestigations = getItemsByIndex(investigations, character);
-              const indexedInvestigationsCount = Object.keys(indexedInvestigations).length;
 
               return (
                 <React.Fragment key={"investigations_hash" + index}>
-                  { indexedInvestigationsCount > 0 ? 
-                    <>
-                      <Typography
-                        variant="h3"
-                        sx={{
-                          fontFamily: "Inter",
-                          fontSize: "29px",
-                          fontWeight: "700",
-                          lineHeight: "29px",
-                          paddingRight: "10px",
-                          paddingTop: "15px",
-                          color: indexedInvestigationsCount
-                            ? "#000000"
-                            : "#959599",
-                        }}
-                      >
-                        <a id={"hash"}>#</a>
-                      </Typography>
-                      <br />
-                    </> : <></>
-                  }
                   {indexedInvestigations.map(
-                    (investigation: Investigation) => {
+                    (investigation: Investigation, investigationIndex) => {
                       return (
-                        <FeaturedInvestigationLinkListItem
-                          description={ investigation[PDS4_INFO_MODEL.INVESTIGATION.TERSE_DESCRIPTION] ? investigation[PDS4_INFO_MODEL.INVESTIGATION.TERSE_DESCRIPTION] : investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION] }
-                          instrumentHosts={ getAffiliatedSpacecraft(state, investigation) }
-                          key={investigation[PDS4_INFO_MODEL.LID]}
-                          lid={ investigation[PDS4_INFO_MODEL.LID] }
-                          primaryAction={ () => investigationListItemPrimaryAction({ lid: investigation.lid }) }
-                          startDate={ investigation[PDS4_INFO_MODEL.INVESTIGATION.START_DATE] }
-                          stopDate={ investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE] }
-                          tags={ [] }
+                         <FeaturedLink
+                          description={investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION]}
                           title={ investigation[PDS4_INFO_MODEL.TITLE] }
-                          type={ investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE]}
-                        />
+                          primaryLink={ investigationListItemPrimaryPath({ lid: investigation.lid }) }
+                          columns={[
+                            {
+                              horizontalAlign: "center",
+                              data: investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE],
+                              verticalAlign: "center",
+                              width: 1
+                            },
+                            {
+                              horizontalAlign: "center",
+                              data: getAffiliatedSpacecraft(state, investigation).join(", "),
+                              verticalAlign: "center",
+                              width: 2
+                            }
+                          ]}
+                          key={"investigation_" + investigationIndex}
+                        >
+                          <FeaturedLinkDetails 
+                            instrumentHostTitles={getAffiliatedSpacecraft(state, investigation)}
+                            lid={{value: investigation[PDS4_INFO_MODEL.LID], link: investigationListItemPrimaryPath({ lid: investigation.lid })}}
+                            startDate={{value:investigation[PDS4_INFO_MODEL.INVESTIGATION.START_DATE]}}
+                            stopDate={{value:investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE]}}
+                            variant={FeaturedLinkDetailsVariant.INVESTIGATION}
+                            investigationType={[investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE]]}
+                          />
+                        </FeaturedLink>
                       );
                     }
                   )}
@@ -359,15 +239,10 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
 
               return (
                 <React.Fragment key={"investigations_" + letter}>
-                  { <Typography
-                        variant="h3"
+                  { <Typography variant="h2" weight="bold"
                         sx={{
-                          fontFamily: "Inter",
-                          fontSize: "29px",
-                          fontWeight: "700",
-                          lineHeight: "29px",
                           paddingRight: "10px",
-                          paddingY: "15px",
+                          paddingTop: "15px",
                           color: indexedInvestigationsCount
                             ? "#000000"
                             : "#959599",
@@ -377,20 +252,37 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                       </Typography>
                   }
                   { indexedInvestigations.map(
-                    (investigation: Investigation) => {
+                    (investigation: Investigation, investigationIndex) => {
                       return (
-                        <FeaturedInvestigationLinkListItem
-                          description={ investigation[PDS4_INFO_MODEL.INVESTIGATION.TERSE_DESCRIPTION] ? investigation[PDS4_INFO_MODEL.INVESTIGATION.TERSE_DESCRIPTION] : investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION] }
-                          instrumentHosts={ getAffiliatedSpacecraft(state, investigation) }
-                          key={investigation[PDS4_INFO_MODEL.LID]}
-                          lid={ investigation[PDS4_INFO_MODEL.LID] }
-                          primaryAction={ () => investigationListItemPrimaryAction({ lid: investigation.lid }) }
-                          tags={ [] }
-                          startDate={ investigation[PDS4_INFO_MODEL.INVESTIGATION.START_DATE] }
-                          stopDate={ investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE] }
+                        <FeaturedLink
+                          description={investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION]}
                           title={ investigation[PDS4_INFO_MODEL.TITLE] }
-                          type={ investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE]}
-                        />
+                          primaryLink={ investigationListItemPrimaryPath({ lid: investigation.lid }) }
+                          columns={[
+                            {
+                              horizontalAlign: "center",
+                              data: investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE],
+                              verticalAlign: "center",
+                              width: 1
+                            },
+                            {
+                              horizontalAlign: "center",
+                              data: getAffiliatedSpacecraft(state, investigation).join(", "),
+                              verticalAlign: "center",
+                              width: 2
+                            }
+                          ]}
+                          key={"investigation_" + investigationIndex}
+                        >
+                          <FeaturedLinkDetails 
+                            instrumentHostTitles={getAffiliatedSpacecraft(state,investigation)}
+                            lid={{value: investigation[PDS4_INFO_MODEL.LID], link: investigationListItemPrimaryPath({ lid: investigation.lid })}}
+                            startDate={{value: investigation[PDS4_INFO_MODEL.INVESTIGATION.START_DATE]}}
+                            stopDate={{value:investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE]}}
+                            variant={FeaturedLinkDetailsVariant.INVESTIGATION}
+                            investigationType={[investigation[PDS4_INFO_MODEL.INVESTIGATION.TYPE]]}
+                          />
+                        </FeaturedLink>
                       );
                     }
                   )}

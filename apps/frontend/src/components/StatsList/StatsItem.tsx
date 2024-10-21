@@ -43,7 +43,6 @@ export const StatsItem = ({
         wordWrap: 'break-word',
         marginTop: "4px"
       }}>{value}</Typography>
-      {enableCopy}
       {
         enableCopy && <Typography sx={{
             color: 'white',

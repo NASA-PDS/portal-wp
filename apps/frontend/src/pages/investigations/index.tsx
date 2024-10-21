@@ -5,31 +5,31 @@ import {
   Container,
   Grid,
   InputAdornment,
-  Link,
   MenuItem,
   Select,
   SelectChangeEvent,
   Stack,
-  Typography,
 } from "@mui/material";
 import {
   InvestigationDirectorySearchFilterState,
   setFreeTextSearchFilter,
   setInvestigationTypeSearchFilter
 } from "src/state/slices/investigationsSlice";
-import { selectFilteredInvestigations } from "src/state/selectors/investigations";
+import { selectFilteredInvestigations } from "src/state/selectors";
 import { getData, dataRequiresFetchOrUpdate, dataReady } from "src/state/slices/dataManagerSlice";
 import { useAppDispatch, useAppSelector } from "src/state/hooks";
 import { connect } from "react-redux";
 import { RootState } from "src/state/store";
-import { Loader } from "@nasapds/wds-react";
+import { Loader, Typography } from "@nasapds/wds-react";
 import { TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import CloseIcon from "@mui/icons-material/Close";
-import { Investigation, INVESTIGATION_TYPE } from "src/types/investigation.d";
+//import CloseIcon from "@mui/icons-material/Close";
+import { Investigation, INVESTIGATION_TYPE } from "src/types/investigation";
 import InvestigationsIndexedListComponent from "src/components/IndexedListComponent/InvestigationsIndexedListComponent";
 import { ExpandMore } from "@mui/icons-material";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
+import { useDebouncedCallback } from "use-debounce";
+import { Link } from "react-router-dom";
 
 type InvestigationsDirectoryPageComponentProps = {
   dataFetched: boolean;
@@ -65,7 +65,7 @@ export const InvestigationsDirectoryPageComponent = (props:InvestigationsDirecto
     // Cleanup function
     return () => {};
 
-  }, [status, dispatch, dataManagerState, error]);
+  }, []);
 
   const linkStyles = {
     color: "white",
@@ -76,13 +76,22 @@ export const InvestigationsDirectoryPageComponent = (props:InvestigationsDirecto
     paddingY: "4px",
   };
 
+  const debouncedFreeTextFilter = useDebouncedCallback(
+    // function
+    (value:string) => {
+      dispatch(setFreeTextSearchFilter(value))
+    },
+    // delay in ms
+    250
+  );
+
   const handleFreeTextSearchFilterChange = (event:React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(setFreeTextSearchFilter(event.target.value))
+    debouncedFreeTextFilter(event.target.value);
   };
 
-  const handleFreeTextSearchFilterReset = () => {
+  /* const handleFreeTextSearchFilterReset = () => {
     dispatch(setFreeTextSearchFilter(""));
-  }
+  } */
 
   const handleInvestigationTypeFilterChange = (event:SelectChangeEvent) => {
     dispatch(setInvestigationTypeSearchFilter(event.target.value as INVESTIGATION_TYPE));
@@ -125,23 +134,14 @@ export const InvestigationsDirectoryPageComponent = (props:InvestigationsDirecto
                 width: "fit-content"
               }}
             >
-              <Link underline="hover" color="inherit" href="/" style={linkStyles}>
+              <Link to="/" style={linkStyles}>
                 Home
               </Link>
-              <Typography style={{ color: "white" }}>Investigations</Typography>
+              <Typography variant="h6" weight="regular" component={"span"} style={{ color: "white" }}>Investigations</Typography>
             </Breadcrumbs>
-            <Typography
-              variant="h1"
-              style={{
-                color: "white",
-                padding: "0px",
-                paddingTop: "30px",
-                fontSize: "72px",
-                fontWeight: "700",
-              }}
-            >
-              Investigations
-            </Typography>
+            <Box style={{ color: "white", padding: "50px 0px 0px 0px" }}>
+              <Typography variant="display4" weight="bold" component={"h1"}>Investigations</Typography>
+            </Box>
           </Container>
         </Container>
         {/* Main Content */}
@@ -155,26 +155,18 @@ export const InvestigationsDirectoryPageComponent = (props:InvestigationsDirecto
             }}
           >
             <Box sx={{ paddingBottom: "25px" }}>
-              <Grid container spacing={4} sx={{ height: "100%" }} alignItems="center" direction="row">
+              <Grid container spacing={4} sx={{ height: "100%" }} alignItems="flex-start" direction="row">
                 <Grid item md={1} />
                 <Grid item xs={12} md={7}>
-                  <Stack direction={"column"} spacing={0.5}>
-                    <Typography
-                      sx={{
-                        fontFamily: "Inter",
-                        fontSize: "14px",
-                        fontWeight: "600",
-                        color: "#17171B",
-                      }}
-                    >
+                  <Stack direction={"column"} spacing={"4px"}>
+                    <Typography variant="h6" weight="semibold" sx={{ color: "#17171B" }} component="span">
                       Search for Investigations
                     </Typography>
                     <TextField
-                      id="outlined-basic"
+                      id="freeTextSearchFilterTextField"
                       placeholder="Search based on Name, Instruments, or Targets"
                       variant="outlined"
                       type="search"
-                      value={searchFilters?.freeText || ""}
                       InputProps={{
                         sx: {
                           borderRadius: "2px",
@@ -184,7 +176,7 @@ export const InvestigationsDirectoryPageComponent = (props:InvestigationsDirecto
                             <SearchIcon />
                           </InputAdornment>
                         ),
-                        endAdornment: searchFilters?.freeText && (
+                        /* endAdornment: searchFilters?.freeText && (
                           <InputAdornment
                             position="end"
                             onClick={handleFreeTextSearchFilterReset}
@@ -194,7 +186,7 @@ export const InvestigationsDirectoryPageComponent = (props:InvestigationsDirecto
                           >
                             <CloseIcon />
                           </InputAdornment>
-                        ),
+                        ), */
                       }}
                       fullWidth
                       onChange={handleFreeTextSearchFilterChange}
@@ -202,19 +194,10 @@ export const InvestigationsDirectoryPageComponent = (props:InvestigationsDirecto
                   </Stack>
                 </Grid>
                 <Grid item xs={12} md={2}>
-                  <Typography
-                    sx={{
-                      color: "black",
-                      fontSize: "14px",
-                      fontFamily: "Inter",
-                      fontWeight: "600",
-                      lineHeight: "19px",
-                      wordWrap: "break-word",
-                      mb: "4px"
-                    }}
-                  >
-                    Investigation Type
-                  </Typography>
+                  <Stack direction={"column"} spacing={"4px"}>
+                    <Typography variant="h6" weight="semibold" sx={{ color: "#17171B" }} component={"span"}>
+                      Investigation Type
+                    </Typography>
                   <Select
                     value={searchFilters?.type || INVESTIGATION_TYPE.ALL}
                     onChange={handleInvestigationTypeFilterChange}
@@ -238,52 +221,30 @@ export const InvestigationsDirectoryPageComponent = (props:InvestigationsDirecto
                       },
                     }}
                   >
-                    <MenuItem value={"ALL"}>All</MenuItem>
-                    <MenuItem value={INVESTIGATION_TYPE.FIELD_CAMPAIGN}>
-                      {INVESTIGATION_TYPE.FIELD_CAMPAIGN}
-                    </MenuItem>
-                    <MenuItem value={INVESTIGATION_TYPE.INDIVIDUAL_INVESTIGATION}>
-                      {INVESTIGATION_TYPE.INDIVIDUAL_INVESTIGATION}
-                    </MenuItem>
-                    <MenuItem value={INVESTIGATION_TYPE.MISSION}>
-                      {INVESTIGATION_TYPE.MISSION}
-                    </MenuItem>
-                    <MenuItem value={INVESTIGATION_TYPE.OBSERVING_CAMPAIGN}>
-                      {INVESTIGATION_TYPE.OBSERVING_CAMPAIGN}
-                    </MenuItem>
-                    <MenuItem value={INVESTIGATION_TYPE.OTHER_INVESTIGATION}>
-                      {INVESTIGATION_TYPE.OTHER_INVESTIGATION}
-                    </MenuItem>
+                      {
+                        Object.entries(INVESTIGATION_TYPE).map( (entry, index) => {
+                          return <MenuItem value={entry[1]} key={index}>{entry[1]}</MenuItem>
+                        })
+                      }
                   </Select>
+                  </Stack>
                 </Grid>
-                {/*<Grid item xs={2} md={1}>
-                  <Typography
-                    sx={{
-                      color: 'black',
-                      fontSize: '14px',
-                      fontFamily: 'Inter',
-                      fontWeight: '600',
-                      lineHeight: '19px',
-                      wordWrap: 'break-word',
-                      mb: '4px'
-                    }}>View</Typography>
-                  </Grid>*/}
               </Grid>
             </Box>
             {
               latestInvestigations.length > 0 ? (
-                <InvestigationsIndexedListComponent
-                  investigations={latestInvestigations}
-                />
+                <InvestigationsIndexedListComponent investigations={latestInvestigations} />
               ) : (
                 <>
                   {searchFilters === undefined ? (
                     <Box sx={{ paddingBottom: "25px", textAlign: "center" }}>
-                      <Typography>No investigations found.</Typography>
+                      <Typography variant="body2" weight="regular">
+                        No investigations found.
+                      </Typography>
                     </Box>
                   ) : (
                     <Box sx={{ paddingBottom: "25px", textAlign: "center" }}>
-                      <Typography>
+                      <Typography variant="body2" weight="regular">
                         No investigations found based on the provided search filters.
                       </Typography>
                     </Box>
@@ -293,9 +254,10 @@ export const InvestigationsDirectoryPageComponent = (props:InvestigationsDirecto
             }
           </Container>
         ) : (
-          <Box sx={{ padding: "40px" }}>
+          <Stack direction={"column"} spacing={"40px"} alignContent={"center"} alignItems={"center"} sx={{margin: "50px"}}>
             <Loader />
-          </Box>
+            <Typography variant="h4" weight="semibold" component="span">Fetching Investigation Information</Typography>
+          </Stack>
         )}
       </Container>
     </>

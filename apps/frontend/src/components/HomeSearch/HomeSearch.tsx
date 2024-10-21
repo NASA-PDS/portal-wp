@@ -23,7 +23,10 @@ import {
   generatePath,
   useNavigate,
 } from "react-router-dom";
-import { mapFilterIdsToName } from "../../pages/search/searchUtils";
+import {
+  mapFilterIdsToName,
+  mapPageType,
+} from "../../pages/search/searchUtils";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import ListItemText from "@mui/material/ListItemText";
@@ -36,9 +39,9 @@ const ITEM_PADDING_TOP = 8;
 const MenuProps = {
   autoFocus: false,
   PaperProps: {
-    style: {
+    sx: {
       paddingTop: 0,
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      maxHeight: ITEM_HEIGHT * 8.5 + ITEM_PADDING_TOP,
       width: 250,
     },
   },
@@ -54,16 +57,16 @@ const MenuProps = {
 const solrEndpoint = "https://pds.nasa.gov/services/search/search";
 const getFiltersQuery =
   solrEndpoint +
-  "?q=*&rows=0&facet=on&facet.field=investigation_ref&facet.field=instrument_ref&facet.field=target_ref&wt=json&facet.limit=-1";
+  "?q=*&qt=keyword&rows=0&facet=on&facet.field=investigation_ref&facet.field=instrument_ref&facet.field=target_ref&facet.field=page_type&wt=json&facet.limit=-1";
 const investigationNamesEndpoint =
   solrEndpoint +
-  "?wt=json&q=data_class:Investigation&fl=investigation_name,identifier&rows=10000";
+  "?wt=json&qt=keyword&q=data_class:Investigation&fl=investigation_name,identifier&rows=10000";
 const instrumentNamesEndpoint =
   solrEndpoint +
-  "?wt=json&q=data_class:Instrument&fl=instrument_name,identifier&rows=10000";
+  "?wt=json&qt=keyword&q=data_class:Instrument&fl=instrument_name,identifier&rows=10000";
 const targetNamesEndpoint =
   solrEndpoint +
-  "?wt=json&q=data_class:Target&fl=target_name,identifier&rows=10000";
+  "?wt=json&qt=keyword&q=data_class:Target&fl=target_name,identifier&rows=10000";
 
 type Filter = {
   name: string;
@@ -87,12 +90,14 @@ export const HomeSearch = () => {
   const [allInstrumentFilters, setAllInstrumentFilters] = useState<Filter[]>(
     []
   );
+  const [allPageTypeFilters, setAllPageTypeFilters] = useState<Filter[]>([]);
 
   const [targetFilters, setTargetFilters] = useState<Filter[]>([]);
   const [investigationFilters, setInvestigationFilters] = useState<Filter[]>(
     []
   );
   const [instrumentFilters, setInstrumentFilters] = useState<Filter[]>([]);
+  const [pageTypeFilters, setPageTypeFilters] = useState<Filter[]>([]);
 
   const [selectedFilters, setSelectedFilters] = useState<SelectedFilter[]>([]);
 
@@ -104,10 +109,14 @@ export const HomeSearch = () => {
   const [selectedInstrumentFilters, setSelectedInstrumentFilters] = useState<
     string[]
   >(["all"]);
+  const [selectedPageTypeFilters, setSelectedPageTypeFilters] = useState<
+    string[]
+  >(["all"]);
 
   const [targetSubFilter, setTargetSubFilter] = useState("");
   const [investigationSubFilter, setInvestigationSubFilter] = useState("");
   const [instrumentSubFilter, setInstrumentSubFilter] = useState("");
+  const [pageTypeSubFilter, setPageTypeSubFilter] = useState("");
 
   const getFilterName = (identifier: string, parentName: string) => {
     let filterName = "";
@@ -124,6 +133,11 @@ export const HomeSearch = () => {
     }
     if (parentName === "investigations") {
       filterName = allInvestigationFilters.filter((filter) =>
+        filter.value.toLowerCase().includes(identifier)
+      )[0].name;
+    }
+    if (parentName === "page_type") {
+      filterName = allPageTypeFilters.filter((filter) =>
         filter.value.toLowerCase().includes(identifier)
       )[0].name;
     }
@@ -150,6 +164,11 @@ export const HomeSearch = () => {
         filter.name.toLowerCase().includes(matchString)
       );
     }
+    if (filterName === "page_type") {
+      updatedFilters = allPageTypeFilters.filter((filter) =>
+        filter.name.toLowerCase().includes(matchString)
+      );
+    }
 
     return updatedFilters;
   };
@@ -164,6 +183,10 @@ export const HomeSearch = () => {
 
   const resetInstrumentFilters = () => {
     setInstrumentFilters(allInstrumentFilters);
+  };
+
+  const resetPageTypeFilters = () => {
+    setPageTypeFilters(allPageTypeFilters);
   };
 
   const onTargetSubFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -209,6 +232,19 @@ export const HomeSearch = () => {
     }
   };
 
+  const onPageTypeSubFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setPageTypeSubFilter(value);
+
+    if (value.length > 1) {
+      const updatedFilters = getUpdatedFilters("page_type", value);
+      setPageTypeFilters(updatedFilters);
+    }
+    if (value.length === 0) {
+      resetPageTypeFilters();
+    }
+  };
+
   const handleFilterChange = (value: string[], parentFilterName: string) => {
     if (value.includes("all")) {
       if (value[value.length - 1] === "all") {
@@ -233,6 +269,9 @@ export const HomeSearch = () => {
     }
     if (parentFilterName === "instruments") {
       setSelectedInstrumentFilters(value);
+    }
+    if (parentFilterName === "page_type") {
+      setSelectedPageTypeFilters(value);
     }
 
     const filtersToAdd: SelectedFilter[] = [];
@@ -315,6 +354,19 @@ export const HomeSearch = () => {
     handleFilterChange(value, name);
   };
 
+  const handlePageTypeFilterChange = (
+    event: SelectChangeEvent<typeof selectedPageTypeFilters>
+  ) => {
+    let value = event.target.value;
+    const name = event.target.name;
+
+    if (typeof value === "string") {
+      value = value.split(",");
+    }
+
+    handleFilterChange(value, name);
+  };
+
   const handleSearchInputValueChange = (
     event: ChangeEvent<HTMLInputElement>
   ) => {
@@ -335,6 +387,9 @@ export const HomeSearch = () => {
         }
         if (filter.parentFilterName === "targets") {
           key = "target_ref";
+        }
+        if (filter.parentFilterName === "page_type") {
+          key = "page_type";
         }
 
         if (index === 0) {
@@ -394,6 +449,9 @@ export const HomeSearch = () => {
     if (parentName === "instruments") {
       newFilters = selectedInstrumentFilters.filter(() => true);
     }
+    if (parentName === "page_type") {
+      newFilters = selectedPageTypeFilters.filter(() => true);
+    }
 
     const index = newFilters.indexOf(identifier);
     if (index > -1) {
@@ -408,6 +466,9 @@ export const HomeSearch = () => {
     }
     if (parentName === "instruments") {
       setSelectedInstrumentFilters(newFilters);
+    }
+    if (parentName === "page_type") {
+      setSelectedPageTypeFilters(newFilters);
     }
 
     const newSelectedFilters = selectedFilters.filter(() => true);
@@ -440,15 +501,12 @@ export const HomeSearch = () => {
     fetch(investigationsUrl)
       .then((investigationsResponse) => investigationsResponse.json())
       .then((investigationsData) => {
-
         fetch(instrumentsUrl)
           .then((instrumentsResponse) => instrumentsResponse.json())
           .then((instrumentsData) => {
-
             fetch(targetsUrl)
               .then((targetsResponse) => targetsResponse.json())
               .then((targetsData) => {
-
                 fetch(filtersUrl)
                   .then((filterResponse) => filterResponse.json())
                   .then((filtersData) => {
@@ -458,6 +516,7 @@ export const HomeSearch = () => {
                     let investigationFilterIds: string[] = [];
                     let instrumentFilterIds: string[] = [];
                     let targetFilterIds: string[] = [];
+                    let pageTypeFilterIds: string[] = [];
 
                     if (
                       formattedFiltersData.facet_counts.facet_fields
@@ -489,6 +548,16 @@ export const HomeSearch = () => {
                         formattedFiltersData.facet_counts.facet_fields
                           .target_ref;
                     }
+                    if (
+                      formattedFiltersData.facet_counts.facet_fields
+                        .page_type &&
+                      formattedFiltersData.facet_counts.facet_fields.page_type
+                        .length > 0
+                    ) {
+                      pageTypeFilterIds =
+                        formattedFiltersData.facet_counts.facet_fields
+                          .page_type;
+                    }
 
                     const investigationNames: IdentifierNameDoc[] =
                       investigationsData.response.docs;
@@ -509,6 +578,8 @@ export const HomeSearch = () => {
                       targetFilterIds,
                       targetNames
                     );
+                    const pageTypeFilterOptions =
+                      mapPageType(pageTypeFilterIds);
 
                     const investigationFilters = investigationFilterOptions.map(
                       (filter) => ({
@@ -538,6 +609,14 @@ export const HomeSearch = () => {
                     }));
                     targetFilters.splice(0, 0, { name: "All", value: "all" });
 
+                    const pageTypeFilters = pageTypeFilterOptions.map(
+                      (filter) => ({
+                        name: filter.name,
+                        value: filter.identifier,
+                      })
+                    );
+                    pageTypeFilters.splice(0, 0, { name: "All", value: "all" });
+
                     console.log(
                       "investigationFilterOptions",
                       investigationFilterOptions
@@ -547,14 +626,17 @@ export const HomeSearch = () => {
                       instrumentFilterOptions
                     );
                     console.log("targetFilterOptions", targetFilterOptions);
+                    console.log("pageTypeFilterOptions", pageTypeFilterOptions);
 
                     setAllInvestigationFilters(investigationFilters);
                     setAllInstrumentFilters(instrumentFilters);
                     setAllTargetFilters(targetFilters);
+                    setAllPageTypeFilters(pageTypeFilters);
 
                     setTargetFilters(targetFilters);
                     setInvestigationFilters(investigationFilters);
                     setInstrumentFilters(instrumentFilters);
+                    setPageTypeFilters(pageTypeFilters);
                   });
               });
           });
@@ -620,7 +702,10 @@ export const HomeSearch = () => {
               {selectedFilters.map((filter) =>
                 filter.value !== "all" ? (
                   <Chip
-                    sx={{ backgroundColor: "white" }}
+                    sx={{
+                      backgroundColor: "white",
+                      textTransform: "uppercase",
+                    }}
                     key={filter.value}
                     label={getFilterName(filter.value, filter.parentFilterName)}
                     onDelete={() =>
@@ -652,10 +737,10 @@ export const HomeSearch = () => {
             md={0}
             lg={2}
             sx={{
-              display: { xs: "none", lg: "block" },
+              display: { xs: "none", sm: "none", md: "none", lg: "block" },
             }}
           ></Grid>
-          <Grid item xs={4} sm={4} md={4} lg={2}>
+          <Grid item xs={4} sm={4} md={3} lg={2}>
             <Box className="pds-home-page-filter-container">
               <Typography variant="h6" weight="semibold">
                 Planetary Bodies & Systems
@@ -712,14 +797,17 @@ export const HomeSearch = () => {
                           selectedTargetFilters.includes(filter.value)
                         }
                       />
-                      <ListItemText primary={filter.name} />
+                      <ListItemText
+                        className="pds-home-page-filter-option-text"
+                        primary={filter.name}
+                      />
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
             </Box>
           </Grid>
-          <Grid item xs={4} sm={4} md={4} lg={2}>
+          <Grid item xs={4} sm={4} md={3} lg={2}>
             <Box className="pds-home-page-filter-container">
               <Typography variant="h6" weight="semibold">
                 Investigations
@@ -778,14 +866,17 @@ export const HomeSearch = () => {
                           selectedInvestigationFilters.includes(filter.value)
                         }
                       />
-                      <ListItemText primary={filter.name} />
+                      <ListItemText
+                        className="pds-home-page-filter-option-text"
+                        primary={filter.name}
+                      />
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
             </Box>
           </Grid>
-          <Grid item xs={4} sm={4} md={4} lg={2}>
+          <Grid item xs={4} sm={4} md={3} lg={2}>
             <Box className="pds-home-page-filter-container">
               <Typography variant="h6" weight="semibold">
                 Instruments
@@ -844,7 +935,77 @@ export const HomeSearch = () => {
                           selectedInstrumentFilters.includes(filter.value)
                         }
                       />
-                      <ListItemText primary={filter.name} />
+                      <ListItemText
+                        className="pds-home-page-filter-option-text"
+                        primary={filter.name}
+                      />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+          </Grid>
+          <Grid item xs={4} sm={4} md={3} lg={2}>
+            <Box className="pds-home-page-filter-container">
+              <Typography variant="h6" weight="semibold">
+                Page Type
+              </Typography>
+
+              <FormControl className="pds-home-page-search-form-control">
+                <Select
+                  className="pds-home-page-select"
+                  name="page_type"
+                  size="small"
+                  multiple
+                  value={selectedPageTypeFilters}
+                  onChange={handlePageTypeFilterChange}
+                  renderValue={(selected) =>
+                    selected.includes("all")
+                      ? "All"
+                      : selected.length + " Selected"
+                  }
+                  MenuProps={MenuProps}
+                  displayEmpty
+                  inputProps={{ "aria-label": "Without label" }}
+                  IconComponent={IconChevronDown}
+                >
+                  <ListSubheader className="pds-home-page-filter-container">
+                    <TextField
+                      className="pds-home-page-filter-textfield"
+                      autoFocus
+                      placeholder="Type to search..."
+                      fullWidth
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <IconSearch />
+                          </InputAdornment>
+                        ),
+                      }}
+                      onChange={onPageTypeSubFilterChange}
+                      onKeyDown={(e) => {
+                        if (e.key !== "Escape") {
+                          e.stopPropagation();
+                        }
+                      }}
+                      value={pageTypeSubFilter}
+                      variant="standard"
+                    />
+                  </ListSubheader>
+
+                  {pageTypeFilters.map((filter) => (
+                    <MenuItem key={filter.value} value={filter.value}>
+                      <Checkbox
+                        checked={selectedPageTypeFilters.includes(filter.value)}
+                        disabled={
+                          filter.value === "all" &&
+                          selectedPageTypeFilters.includes(filter.value)
+                        }
+                      />
+                      <ListItemText
+                        className="pds-home-page-filter-option-text"
+                        primary={filter.name}
+                      />
                     </MenuItem>
                   ))}
                 </Select>
@@ -858,7 +1019,7 @@ export const HomeSearch = () => {
             md={0}
             lg={2}
             sx={{
-              display: { xs: "none", lg: "block" },
+              display: { xs: "none", sm: "none", md: "none", lg: "block" },
             }}
           ></Grid>
         </Grid>

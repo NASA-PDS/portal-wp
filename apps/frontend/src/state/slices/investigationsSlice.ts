@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
-import { Investigation, INVESTIGATION_TYPE } from "src/types/investigation.d";
+import { Investigation, INVESTIGATION_TYPE } from "src/types/investigation";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 
 enum INVESTIGATION_ACTIONS {
@@ -41,7 +41,15 @@ export const getInvestigations = createAsyncThunk(
   INVESTIGATION_ACTIONS.GET_INVESTIGATIONS,
   async (_:void, thunkAPI) => {
 
-    let queryUrl = '/api/search/1/products?q=(lid like "urn:nasa:pds:context:investigation:*")&limit=9999'
+    let queryUrl = '/api/search/1/products?q=(';
+    queryUrl    += 'product_class eq "Product_Context" AND ('
+    queryUrl    += 'lid LIKE "urn:nasa:pds:context:investigation:*" ';
+    queryUrl    += 'OR lid LIKE "urn:esa:psa:context:investigation:*" ';
+    queryUrl    += 'OR lid LIKE "urn:jaxa:darts:context:investigation:*" ';
+    queryUrl    += 'OR lid LIKE "urn:isro:isda:context:investigation:*" ';
+    queryUrl    += 'OR lid LIKE "urn:kari:kpds:context:investigation:*")';
+    queryUrl    += ')&limit=9999';
+
     const config = {
       headers: {
         "Accept": "application/json",
