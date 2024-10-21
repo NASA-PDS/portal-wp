@@ -20,3 +20,10 @@ apps/frontend/.vite
 *.tfstate.backup
 .terraform.*
 .terraform/
+
+# other stuff
+*.xpr
+*.swp
+.*.swp
+*.sublime-*
+*.DS_Store
