@@ -73,13 +73,13 @@ const getFiltersQuery =
   "&qt=keyword&rows=0&facet=on&facet.field=investigation_ref&facet.field=instrument_ref&facet.field=target_ref&facet.field=page_type&wt=json&facet.limit=-1";
 const investigationNamesEndpoint =
   solrEndpoint +
-  "?wt=json&qt=keyword&q=data_class:Investigation&fl=investigation_name,identifier&rows=10000";
+  "?wt=json&qt=keyword&q=data_class:Investigation&fl=title,identifier&rows=10000";
 const instrumentNamesEndpoint =
   solrEndpoint +
-  "?wt=json&qt=keyword&q=data_class:Instrument&fl=instrument_name,identifier&rows=10000";
+  "?wt=json&qt=keyword&q=data_class:Instrument&fl=title,identifier&rows=10000";
 const targetNamesEndpoint =
   solrEndpoint +
-  "?wt=json&qt=keyword&q=data_class:Target&fl=target_name,identifier&rows=10000";
+  "?wt=json&qt=keyword&q=data_class:Target&fl=title,identifier&rows=10000";
 
 const linkStyles = {
   fontFamily: "Inter",
