@@ -118,6 +118,7 @@ type IdentifierNameDoc = {
     investigation_name: string[];
     instrument_name: string[];
     target_name: string[];
+    title: string[];
 }
 
 type ResponseHeader = {

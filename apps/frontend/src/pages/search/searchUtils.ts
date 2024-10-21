@@ -252,14 +252,8 @@ export const mapFilterIdsToName = (ids: string[], names: IdentifierNameDoc[]) =>
         if (nameDoc) {
           let name: string = "";
 
-          if (nameDoc.investigation_name) {
-            name = nameDoc.investigation_name[0];
-          }
-          if (nameDoc.instrument_name) {
-            name = nameDoc.instrument_name[0];
-          }
-          if (nameDoc.target_name) {
-            name = nameDoc.target_name[0];
+          if (nameDoc.title) {
+            name = nameDoc.title[0];
           }
 
           filtersMap.push({
