@@ -10,14 +10,14 @@ export type SolrIdentifierNameResponse = {
     facet_counts: Facetcounts;
 }
 
-type Facetcounts = {
+export type Facetcounts = {
     facet_queries: Facetqueries;
     facet_fields: Facetfields;
     facet_dates: Facetqueries;
     facet_ranges: Facetqueries;
 }
 
-type Facetfields = {
+export type Facetfields = {
     facet_pds_model_version: (number | string)[];
     facet_agency: (number | string)[];
     facet_type: (number | string)[];

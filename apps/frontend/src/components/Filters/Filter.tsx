@@ -144,6 +144,10 @@ const Filter = ({
                 />
                 <Typography variant="h6" weight="regular">
                   {option.title.toUpperCase()}
+
+                  {option.title === "all"
+                    ? ""
+                    : "(" + option.resultsFound + ")"}
                 </Typography>
               </Box>
             ) : (

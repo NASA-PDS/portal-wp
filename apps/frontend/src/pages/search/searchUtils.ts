@@ -1,4 +1,5 @@
 import {
+    Facetfields,
     IdentifierNameDoc,
     SolrSearchResponse,
     SolrIdentifierNameResponse,
@@ -241,13 +242,24 @@ export const isOptionChecked = (
     return isOptionChecked;
 };
 
-export const mapFilterIdsToName = (ids: string[], names: IdentifierNameDoc[]) => {
-    const filtersMap: { name: string; identifier: string }[] = [];
+export const mapFilterIdsToName = (ids: string[], names: IdentifierNameDoc[], searchResultFacets?: (number | string)[]) => {
+    const filtersMap: { name: string; identifier: string, count: string }[] = [];
 
     ids.forEach((id, index) => {
       if (index % 2 == 0) {
         const urnSplit = id.split("::")[0];
         const nameDoc = names.find((name) => name.identifier[0] === urnSplit);
+        let count = ids[index + 1];
+
+        if(searchResultFacets){
+            const searchResultFacetIndex = searchResultFacets.indexOf(urnSplit);
+            if(searchResultFacetIndex === -1){
+                count = "0";
+            }
+            else{
+                count = String(searchResultFacets[searchResultFacetIndex + 1]);
+            }
+        }
 
         if (nameDoc) {
           let name: string = "";
@@ -259,6 +271,7 @@ export const mapFilterIdsToName = (ids: string[], names: IdentifierNameDoc[]) =>
           filtersMap.push({
             name,
             identifier: id,
+            count
           });
         }
       }
@@ -267,13 +280,29 @@ export const mapFilterIdsToName = (ids: string[], names: IdentifierNameDoc[]) =>
     return filtersMap;
 };
 
-export const mapPageType = (ids: string[]) => {
-    const filtersMap: { name: string; identifier: string }[] = [];
+export const mapPageType = (ids: string[], searchResultFacets?: (number | string)[]) => {
+    const filtersMap: { name: string; identifier: string, count: string }[] = [];
         ids.forEach((id, index) => {
             if (index % 2 == 0) {
+                let count = ids[index + 1];
+
+                if(searchResultFacets){
+                    const searchResultFacetIndex = searchResultFacets.indexOf(id);
+                    if(searchResultFacetIndex === -1){
+                        count = "0";
+                    }
+                    else{
+                        count = String(searchResultFacets[searchResultFacetIndex + 1]);
+                    }
+                    
+        
+                    //count = searchResultFacets.find((facet) => facet.identifier[0] === urnSplit)
+                }
+
                 filtersMap.push({
                     name: id,
                     identifier: id,
+                    count
                 });
             }
     });
