@@ -1,5 +1,6 @@
 import { ChangeEvent, KeyboardEvent, useEffect, useState, useRef } from "react";
 import {
+  Facetcounts,
   IdentifierNameDoc,
   SolrSearchResponse,
   SolrIdentifierNameResponse,
@@ -118,7 +119,8 @@ const SearchPage = () => {
     investigationsData: SolrIdentifierNameResponse,
     instrumentsData: SolrIdentifierNameResponse,
     targetsData: SolrIdentifierNameResponse,
-    originalFilters: string
+    originalFilters: string,
+    searchResults?: SolrSearchResponse
   ) => {
     let investigationFilterIds: string[] = [];
     let instrumentFilterIds: string[] = [];
@@ -157,19 +159,55 @@ const SearchPage = () => {
     const instrumentNames: IdentifierNameDoc[] = instrumentsData.response.docs;
     const targetNames: IdentifierNameDoc[] = targetsData.response.docs;
 
-    const investigationFilterOptions = mapFilterIdsToName(
-      investigationFilterIds,
-      investigationNames
-    );
-    const instrumentFilterOptions = mapFilterIdsToName(
-      instrumentFilterIds,
-      instrumentNames
-    );
-    const targetFilterOptions = mapFilterIdsToName(
-      targetFilterIds,
-      targetNames
-    );
-    const pageTypeFilterOptions = mapPageType(pageTypeFilterIds);
+    let hasSearchFacets = false;
+    let facetCounts: Facetcounts | null = null;
+
+    if (searchResults) {
+      if (searchResults.facet_counts) {
+        if (searchResults.facet_counts.facet_fields) {
+          facetCounts = searchResults.facet_counts;
+          hasSearchFacets = true;
+        }
+      }
+    }
+
+    let investigationFilterOptions;
+    let instrumentFilterOptions;
+    let targetFilterOptions;
+    let pageTypeFilterOptions;
+
+    if (hasSearchFacets && facetCounts) {
+      investigationFilterOptions = mapFilterIdsToName(
+        investigationFilterIds,
+        investigationNames,
+        facetCounts.facet_fields.investigation_ref
+      );
+      instrumentFilterOptions = mapFilterIdsToName(
+        instrumentFilterIds,
+        instrumentNames,
+        facetCounts.facet_fields.instrument_ref
+      );
+      targetFilterOptions = mapFilterIdsToName(
+        targetFilterIds,
+        targetNames,
+        facetCounts.facet_fields.target_ref
+      );
+      pageTypeFilterOptions = mapPageType(
+        pageTypeFilterIds,
+        facetCounts.facet_fields.page_type
+      );
+    } else {
+      investigationFilterOptions = mapFilterIdsToName(
+        investigationFilterIds,
+        investigationNames
+      );
+      instrumentFilterOptions = mapFilterIdsToName(
+        instrumentFilterIds,
+        instrumentNames
+      );
+      targetFilterOptions = mapFilterIdsToName(targetFilterIds, targetNames);
+      pageTypeFilterOptions = mapPageType(pageTypeFilterIds);
+    }
 
     if (originalFilters.length > 0) {
       const unmatchedFilters = getUnmatchedFilters(
@@ -194,10 +232,22 @@ const SearchPage = () => {
   };
 
   const setPropsForFilter = (
-    investigationFilterOptions: { name: string; identifier: string }[],
-    instrumentFilterOptions: { name: string; identifier: string }[],
-    targetFilterOptions: { name: string; identifier: string }[],
-    pageTypeFilterOptions: { name: string; identifier: string }[],
+    investigationFilterOptions: {
+      name: string;
+      identifier: string;
+      count: string;
+    }[],
+    instrumentFilterOptions: {
+      name: string;
+      identifier: string;
+      count: string;
+    }[],
+    targetFilterOptions: { name: string; identifier: string; count: string }[],
+    pageTypeFilterOptions: {
+      name: string;
+      identifier: string;
+      count: string;
+    }[],
     originalFilters: string
   ) => {
     const filters: FilterProps[] = [];
@@ -260,11 +310,18 @@ const SearchPage = () => {
   };
 
   const parseFilterOptions = (
-    options: { name: string; identifier: string }[],
+    options: { name: string; identifier: string; count: string }[],
     filters: string,
     parentValue: string
   ) => {
     const parsedOptions: FilterOptionProps[] = [];
+
+    /*
+    let allCount = 0;
+    options.forEach((option) => {
+      allCount = allCount + Number(option.count);
+    });
+    */
 
     parsedOptions.push({
       title: "all",
@@ -278,7 +335,7 @@ const SearchPage = () => {
         title: option.name,
         value: option.identifier,
         isChecked: isOptionChecked(option.identifier, parentValue, filters),
-        resultsFound: 0,
+        resultsFound: Number(option.count),
       });
     });
 
@@ -323,7 +380,7 @@ const SearchPage = () => {
       setSearchResults(formattedResults);
       setPaginationCount(calculatePaginationCount(formattedResults));
 
-      parseFilters(searchText, filters);
+      parseFilters(searchText, filters, formattedResults);
     } else {
       setIsLoading(true);
       setIsEmptyState(true);
@@ -525,7 +582,11 @@ const SearchPage = () => {
     );
   };
 
-  const parseFilters = (originalSearchText: string, filters: string) => {
+  const parseFilters = (
+    originalSearchText: string,
+    filters: string,
+    searchResults?: SolrSearchResponse
+  ) => {
     const filterIdsUrl =
       solrEndpoint + "?q=" + originalSearchText + getFiltersQuery;
     const investigationsUrl = investigationNamesEndpoint;
@@ -561,7 +622,8 @@ const SearchPage = () => {
                       formattedInvestigationData,
                       formattedInstrumentsData,
                       formattedTargetsData,
-                      filters
+                      filters,
+                      searchResults
                     );
                   });
               });

@@ -144,6 +144,12 @@ const Filter = ({
                 />
                 <Typography variant="h6" weight="regular">
                   {option.title.toUpperCase()}
+
+                  <span className="pds-search-filter-count-span ">
+                    {option.title === "all"
+                      ? ""
+                      : " (" + option.resultsFound + ")"}
+                  </span>
                 </Typography>
               </Box>
             ) : (
