@@ -35,7 +35,7 @@ import {
   convertProcessingLevelToKey
 } from "@nasapds/wds-react";
 import { Collection } from "src/types/collection";
-import { distinct, sortByTitle } from "src/utils/arrays";
+import { distinct, sortCollectionsByTitle, sortInstrumentHostsByTitle } from "src/utils/arrays";
 import { APP_CONFIG } from "src/AppConfig";
 
 const InvestigationDetailPage = () => {
@@ -406,7 +406,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
           return collection;
         })
         
-        collections.current[index] = collectionData.sort(sortByTitle);
+        collections.current[index] = collectionData.sort(sortCollectionsByTitle);
         collectionsFetched.current[index] = true;
 
         // add a delay so that the page rendering doesn't try to fetch collections before they are ready.
@@ -1205,7 +1205,8 @@ const mapStateToProps = (state:RootState, ownProps:{investigationLid:string, tab
 
     if( state.instrumentHosts.status === 'succeeded' ) {
 
-      instrumentHosts = selectLatestInstrumentHostsForInvestigation(state, investigation[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST]);
+      instrumentHosts = selectLatestInstrumentHostsForInvestigation(state, investigation[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST]).sort(sortInstrumentHostsByTitle);
+      console.log("instrumentHosts", instrumentHosts)
       instruments = new Array( instrumentHosts.length );
       targets = new Array( instrumentHosts.length );
 
