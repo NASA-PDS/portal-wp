@@ -1,5 +1,4 @@
 import {
-    Facetfields,
     IdentifierNameDoc,
     SolrSearchResponse,
     SolrIdentifierNameResponse,
