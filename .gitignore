@@ -1,0 +1,29 @@
+# db ignore settings
+apps/db/data
+apps/db/secrets/*
+!apps/db/secrets/.gitkeep
+!apps/db/secrets/*.example
+apps/db/init/*
+!apps/db/init/.gitkeep
+
+# www ignore settings
+apps/backend/nasa-pds-wp/data
+apps/backend/nasa-pds-wp/secrets/*
+!apps/backend/nasa-pds-wp/secrets/.gitkeep
+!apps/backend/nasa-pds-wp/secrets/*.example
+
+# frontend ignore settings
+apps/frontend/.vite
+
+# Terraform
+*.tfstate
+*.tfstate.backup
+.terraform.*
+.terraform/
+
+# other stuff
+*.xpr
+*.swp
+.*.swp
+*.sublime-*
+*.DS_Store
