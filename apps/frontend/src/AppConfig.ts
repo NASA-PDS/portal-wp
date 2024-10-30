@@ -1,9 +1,23 @@
 import { PROCESSING_LEVEL_KEYS } from "@nasapds/wds-react";
+import { BannerProps } from "@nasapds/wds-react";
 
-export const APP_CONFIG = {
+type AppConfig = {
+  GENERAL: {
+    VERSION:string
+    BANNER_MESSAGES:Array<BannerProps>
+  }
+  SETTINGS: {
+    SORT_ORDER: {
+      PROCESSING_LEVELS:Array<PROCESSING_LEVEL_KEYS>
+    }
+  }
+}
+
+export const APP_CONFIG:AppConfig = {
 
   GENERAL: {
-     VERSION: import.meta.env.VITE_APP_VERSION,
+    VERSION: import.meta.env.VITE_APP_VERSION,
+    BANNER_MESSAGES: []
   },
 
   SETTINGS: {
