@@ -9,6 +9,7 @@ import { RootState, store } from "src/state/store";
 import { convertLogicalIdentifier, LID_FORMAT } from "src/utils/strings";
 import { ExpandMore } from "@mui/icons-material";
 import { FeaturedLink, FeaturedLinkDetails, FeaturedLinkDetailsVariant, Typography } from "@nasapds/wds-react";
+import { sortInstrumentHostsByTitle } from "src/utils/arrays";
 
 type InvestigationsIndexedListComponentProps = {
   investigations: Investigation[];
@@ -33,7 +34,7 @@ const getItemsByIndex = (
 };
 
 function getAffiliatedSpacecraft(state:RootState, investigation:Investigation) {
-  const instrumentHostTitles = selectLatestInstrumentHostsForInvestigation(state, investigation[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST])?.map(
+  const instrumentHostTitles = selectLatestInstrumentHostsForInvestigation(state, investigation[PDS4_INFO_MODEL.REF_LID_INSTRUMENT_HOST])?.sort(sortInstrumentHostsByTitle)?.map(
     (instrumentHost) => instrumentHost[PDS4_INFO_MODEL.TITLE]
   )
   return instrumentHostTitles;
