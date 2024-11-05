@@ -45,6 +45,7 @@ export const SolrWarningBanner = (props: SolrWarningBannerProps) => {
         })
         .catch((error) => {
           setIsErrorDetected(true);
+          console.log(error);
         });
     }
   };
