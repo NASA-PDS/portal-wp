@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import {Box, Container, Divider, Link, MenuItem, Select } from "@mui/material";
 import Grid from '@mui/material/Unstable_Grid2';
-import { generatePath, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Investigation } from "src/types/investigation";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { selectLatestInstrumentHostsForInvestigation } from "src/state/selectors";
 import { RootState, store } from "src/state/store";
-import { convertLogicalIdentifier, LID_FORMAT } from "src/utils/strings";
 import { ExpandMore } from "@mui/icons-material";
 import { FeaturedLink, FeaturedLinkDetails, FeaturedLinkDetailsVariant, Typography } from "@nasapds/wds-react";
 import { sortInstrumentHostsByTitle } from "src/utils/arrays";
+import { getLinkToInvestigationDetailPage } from "src/utils/links";
 
 type InvestigationsIndexedListComponentProps = {
   investigations: Investigation[];
@@ -17,10 +17,6 @@ type InvestigationsIndexedListComponentProps = {
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 const OTHER_CHARS = "0123456789".split("");
-
-type InvestigationDetailPathParams = {
-  lid:string;
-}
 
 const getItemsByIndex = (
   arr: Investigation[],
@@ -49,18 +45,9 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
 
   const [indexValue, setIndexValue] = useState(location.hash.replace("#",""));
 
-  const investigationListItemPrimaryPath = (params:InvestigationDetailPathParams) => {
-    params.lid = convertLogicalIdentifier(params.lid,LID_FORMAT.URL_FRIENDLY);
-    return generateLinkPath("/investigations/:lid/instruments", params);
-  };
-
   const scrollToIndex = (id:string) => {
     console.log("Set scroll to: ", id)
     setIndexValue(id);
-  }
-
-  const generateLinkPath = (template:string, params:{[key:string]:string}) => {
-    return generatePath(template, params)
   }
 
   useEffect( () => {
@@ -199,7 +186,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                          <FeaturedLink
                           description={investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION]}
                           title={ investigation[PDS4_INFO_MODEL.TITLE] }
-                          primaryLink={ investigationListItemPrimaryPath({ lid: investigation.lid }) }
+                          primaryLink={ getLinkToInvestigationDetailPage({ lid: investigation.lid }) }
                           columns={[
                             {
                               horizontalAlign: "center",
@@ -218,7 +205,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                         >
                           <FeaturedLinkDetails 
                             instrumentHostTitles={getAffiliatedSpacecraft(state, investigation)}
-                            lid={{value: investigation[PDS4_INFO_MODEL.LID], link: investigationListItemPrimaryPath({ lid: investigation.lid })}}
+                            lid={{value: investigation[PDS4_INFO_MODEL.LID], link: getLinkToInvestigationDetailPage({ lid: investigation.lid })}}
                             startDate={{value:investigation[PDS4_INFO_MODEL.INVESTIGATION.START_DATE]}}
                             stopDate={{value:investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE]}}
                             variant={FeaturedLinkDetailsVariant.INVESTIGATION}
@@ -258,7 +245,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                         <FeaturedLink
                           description={investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION]}
                           title={ investigation[PDS4_INFO_MODEL.TITLE] }
-                          primaryLink={ investigationListItemPrimaryPath({ lid: investigation.lid }) }
+                          primaryLink={ getLinkToInvestigationDetailPage({ lid: investigation.lid }) }
                           columns={[
                             {
                               horizontalAlign: "center",
@@ -277,7 +264,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                         >
                           <FeaturedLinkDetails 
                             instrumentHostTitles={getAffiliatedSpacecraft(state,investigation)}
-                            lid={{value: investigation[PDS4_INFO_MODEL.LID], link: investigationListItemPrimaryPath({ lid: investigation.lid })}}
+                            lid={{value: investigation[PDS4_INFO_MODEL.LID], link: getLinkToInvestigationDetailPage({ lid: investigation.lid })}}
                             startDate={{value: investigation[PDS4_INFO_MODEL.INVESTIGATION.START_DATE]}}
                             stopDate={{value:investigation[PDS4_INFO_MODEL.INVESTIGATION.STOP_DATE]}}
                             variant={FeaturedLinkDetailsVariant.INVESTIGATION}
