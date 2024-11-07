@@ -717,7 +717,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                                       <FeaturedLink 
                                         description={ellipsisText(instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION], 256)}
                                         primaryLink={getInstrumentDetailPagePath({ lid: instrument[PDS4_INFO_MODEL.LID] })}
-                                        primaryLinkLabel="View Instruments and Data"
+                                        primaryLinkLabel="View Instrument and Data"
                                         title={instrument[PDS4_INFO_MODEL.TITLE]}
                                       >
                                         <FeaturedLinkDetails
