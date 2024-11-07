@@ -27,6 +27,7 @@ import { selectLatestInstrumentHostVersion, selectLatestInvestigationVersion } f
 import { distinct, sortCollectionsByTitle } from "src/utils/arrays";
 import React from "react";
 import { APP_CONFIG } from "src/AppConfig";
+import { getLinkToInvestigation } from "src/utils/links";
 
 interface InstrumentDetailBodyProps {
   collections:Collection[];
@@ -200,6 +201,7 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
   const stats:Stats[] = [
     {
       label: "Investigation",
+      link: getLinkToInvestigation({'lid': investigation[PDS4_INFO_MODEL.LID]}),
       value: investigation[PDS4_INFO_MODEL.TITLE] ? investigation[PDS4_INFO_MODEL.TITLE] : "Not available at this time"
     },
     {

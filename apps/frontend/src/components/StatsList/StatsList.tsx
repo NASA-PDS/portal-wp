@@ -4,9 +4,10 @@ import StatsItem from './StatsItem';
 import React from 'react';
 
 export type Stats = {
-  label: string;
-  value: string;
   enableCopy?: boolean
+  label: string;
+  link?: string;
+  value: string;
 }
 
 type StatProps = {
@@ -25,7 +26,7 @@ export const StatsList = ({
               <Grid item xs={6} md={6} sx={{
                 marginTop: "24px"
               }}>
-                <StatsItem label={item.label} value={item.value} index={index} enableCopy={item.enableCopy || false} />
+                <StatsItem label={item.label} link={item.link} value={item.value} index={index} enableCopy={item.enableCopy || false} />
               </Grid>
             </React.Fragment>
         })
