@@ -825,6 +825,7 @@ export const HomeSearch = () => {
                 filter.value !== "all" ? (
                   <Chip
                     sx={{
+                      marginRight: "15px",
                       backgroundColor: "white",
                       textTransform: "uppercase",
                     }}
