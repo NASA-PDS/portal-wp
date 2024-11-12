@@ -15,6 +15,10 @@ import {
 } from "../../components/Filters/Filter";
 import { ellipsisText } from "../../utils/strings";
 import {
+  getLinkToInstrumentDetailPage,
+  getLinkToInvestigationDetailPage,
+} from "../../utils/links";
+import {
   Button as MuiButton,
   Box,
   Breadcrumbs,
@@ -62,7 +66,6 @@ import "./search.css";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
-import { convertLogicalIdentifier, LID_FORMAT } from "src/utils/strings";
 
 const pdsSite = "https://pds.nasa.gov";
 const pdsIdViewer =
@@ -715,19 +718,11 @@ const SearchPage = () => {
   }, [params.searchText, searchParams]);
 
   const getInvestigationPath = (lid: string) => {
-    lid = convertLogicalIdentifier(lid, LID_FORMAT.URL_FRIENDLY);
-    const params = {
-      lid,
-    };
-    return generatePath("/investigations/:lid/instruments", params);
+    return getLinkToInvestigationDetailPage({ lid: lid });
   };
 
   const getInstrumentPath = (lid: string) => {
-    lid = convertLogicalIdentifier(lid, LID_FORMAT.URL_FRIENDLY);
-    const params = {
-      lid,
-    };
-    return generatePath("/instruments/:lid/data", params);
+    return getLinkToInstrumentDetailPage({ lid: lid });
   };
 
   const getDataBundlePath = (location: string) => {
