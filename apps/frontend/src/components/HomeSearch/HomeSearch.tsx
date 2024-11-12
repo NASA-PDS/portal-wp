@@ -824,8 +824,8 @@ export const HomeSearch = () => {
               {selectedFilters.map((filter) =>
                 filter.value !== "all" ? (
                   <Chip
+                    className="pds-home-search-chip"
                     sx={{
-                      marginRight: "15px",
                       backgroundColor: "white",
                       textTransform: "uppercase",
                     }}
