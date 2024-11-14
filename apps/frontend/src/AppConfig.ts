@@ -19,7 +19,7 @@ export const APP_CONFIG:AppConfig = {
     VERSION: import.meta.env.VITE_APP_VERSION,
     BANNER_MESSAGES: [
       {
-        title: "PDS is in Beta",
+        title: "This site is in BETA",
         message: "As we work on improving the site, please keep in mind that it is still under development and may have limitations.",
         link:{
           title: "Give Feedback",
