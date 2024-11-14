@@ -28,7 +28,7 @@ const HomePage = () => {
               image: "/assets/images/cards/missions/urn--nasa--pds--context--investigation--mission---lunar----reconnaissance----orbiter.jpg",
               imageDescription: "Lunar reconnaissance orbiter orbiting the moon",
               lid: "urn--nasa--pds--context--investigation--mission---lunar----reconnaissance----orbiter",
-              title: "LRO",
+              title: "Lunar Reconnaissance Orbiter",
               url: "/investigations/urn--nasa--pds--context--investigation--mission---lunar----reconnaissance----orbiter/instruments"
             },
             {
@@ -49,7 +49,7 @@ const HomePage = () => {
               image: "/assets/images/cards/missions/urn--nasa--pds--context--investigation--mission---mars----reconnaissance----orbiter.jpg",
               imageDescription: "Mars reconnaissance orbiter over mars.",
               lid: "urn--nasa--pds--context--investigation--mission---mars----reconnaissance----orbiter",
-              title: "MRO",
+              title: "Mars Reconnaissance Orbiter",
               url: "/investigations/urn--nasa--pds--context--investigation--mission---mars----reconnaissance----orbiter/instruments"
             },
           ]
