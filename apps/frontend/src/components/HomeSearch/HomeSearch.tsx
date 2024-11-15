@@ -22,6 +22,7 @@ import {
   createSearchParams,
   generatePath,
   useNavigate,
+  useSearchParams,
 } from "react-router-dom";
 import {
   mapFilterIdsToName,
@@ -82,6 +83,8 @@ type SelectedFilter = {
 export const HomeSearch = () => {
   const searchInputRef = useRef("");
   const navigate = useNavigate();
+
+  const [searchParams] = useSearchParams();
 
   const [allTargetFilters, setAllTargetFilters] = useState<Filter[]>([]);
   const [allInvestigationFilters, setAllInvestigationFilters] = useState<
@@ -313,6 +316,27 @@ export const HomeSearch = () => {
     });
 
     setSelectedFilters(newSelectedFilters);
+
+    updateNavigate(searchInputRef.current, newSelectedFilters);
+  };
+
+  const updateNavigate = (searchText: string, filters: SelectedFilter[]) => {
+    const filtersString = filters.map((filter) => filter.value);
+
+    const queryParams = {
+      searchText,
+      filters: filtersString,
+    };
+
+    if (queryParams) {
+      navigate(
+        {
+          pathname: generatePath("/"),
+          search: createSearchParams(queryParams).toString(),
+        },
+        { replace: true }
+      );
+    }
   };
 
   const handleTargetFilterChange = (
@@ -371,6 +395,8 @@ export const HomeSearch = () => {
     event: ChangeEvent<HTMLInputElement>
   ) => {
     searchInputRef.current = event.target.value;
+
+    updateNavigate(searchInputRef.current, selectedFilters);
   };
 
   const formatSelectedFiltersForSearchPage = (filters: SelectedFilter[]) => {
@@ -484,6 +510,8 @@ export const HomeSearch = () => {
     }
 
     setSelectedFilters(newSelectedFilters);
+
+    updateNavigate(searchInputRef.current, newSelectedFilters);
   };
 
   const formatFilterDataResults = (data: SolrIdentifierNameResponse) => {
@@ -617,17 +645,6 @@ export const HomeSearch = () => {
                     );
                     pageTypeFilters.splice(0, 0, { name: "All", value: "all" });
 
-                    console.log(
-                      "investigationFilterOptions",
-                      investigationFilterOptions
-                    );
-                    console.log(
-                      "instrumentFilterOptions",
-                      instrumentFilterOptions
-                    );
-                    console.log("targetFilterOptions", targetFilterOptions);
-                    console.log("pageTypeFilterOptions", pageTypeFilterOptions);
-
                     setAllInvestigationFilters(investigationFilters);
                     setAllInstrumentFilters(instrumentFilters);
                     setAllTargetFilters(targetFilters);
@@ -637,6 +654,111 @@ export const HomeSearch = () => {
                     setInvestigationFilters(investigationFilters);
                     setInstrumentFilters(instrumentFilters);
                     setPageTypeFilters(pageTypeFilters);
+
+                    const filters = searchParams.getAll("filters");
+
+                    let preInvestigationFilters: {
+                      name: string;
+                      value: string;
+                    }[] = [];
+
+                    let preInstrumentFilters: {
+                      name: string;
+                      value: string;
+                    }[] = [];
+
+                    let preTargetFilters: {
+                      name: string;
+                      value: string;
+                    }[] = [];
+
+                    let preTypeFilters: {
+                      name: string;
+                      value: string;
+                    }[] = [];
+
+                    filters.forEach((filterId) => {
+                      preInvestigationFilters = preInvestigationFilters.concat(
+                        investigationFilters.filter(
+                          (investigation) => investigation.value === filterId
+                        )
+                      );
+                      preInstrumentFilters = preInstrumentFilters.concat(
+                        instrumentFilters.filter(
+                          (instrument) => instrument.value === filterId
+                        )
+                      );
+                      preTargetFilters = preTargetFilters.concat(
+                        targetFilters.filter(
+                          (target) => target.value === filterId
+                        )
+                      );
+                      preTypeFilters = preTypeFilters.concat(
+                        pageTypeFilters.filter(
+                          (pageType) => pageType.value === filterId
+                        )
+                      );
+                    });
+
+                    const mergedFilters: SelectedFilter[] = [];
+                    if (preInvestigationFilters.length > 0) {
+                      setSelectedInvestigationFilters(
+                        preInvestigationFilters.map((filter) => filter.value)
+                      );
+
+                      preInvestigationFilters.forEach((filter) => {
+                        const newFilter: SelectedFilter = {
+                          name: filter.name,
+                          value: filter.value,
+                          parentFilterName: "investigations",
+                        };
+                        mergedFilters.push(newFilter);
+                      });
+                    }
+                    if (preInstrumentFilters.length > 0) {
+                      setSelectedInstrumentFilters(
+                        preInstrumentFilters.map((filter) => filter.value)
+                      );
+
+                      preInstrumentFilters.forEach((filter) => {
+                        const newFilter: SelectedFilter = {
+                          name: filter.name,
+                          value: filter.value,
+                          parentFilterName: "instruments",
+                        };
+                        mergedFilters.push(newFilter);
+                      });
+                    }
+                    if (preTargetFilters.length > 0) {
+                      setSelectedTargetFilters(
+                        preTargetFilters.map((filter) => filter.value)
+                      );
+
+                      preTargetFilters.forEach((filter) => {
+                        const newFilter: SelectedFilter = {
+                          name: filter.name,
+                          value: filter.value,
+                          parentFilterName: "targets",
+                        };
+                        mergedFilters.push(newFilter);
+                      });
+                    }
+                    if (preTypeFilters.length > 0) {
+                      setSelectedPageTypeFilters(
+                        preTypeFilters.map((filter) => filter.value)
+                      );
+
+                      preTypeFilters.forEach((filter) => {
+                        const newFilter: SelectedFilter = {
+                          name: filter.name,
+                          value: filter.value,
+                          parentFilterName: "page_type",
+                        };
+                        mergedFilters.push(newFilter);
+                      });
+                    }
+
+                    setSelectedFilters(mergedFilters);
                   });
               });
           });
@@ -687,7 +809,7 @@ export const HomeSearch = () => {
                 onChange={handleSearchInputValueChange}
                 onKeyDown={handleKeyDown}
                 inputRef={searchInputRef}
-                defaultValue=""
+                defaultValue={searchParams.get("searchText")}
               />
               <Button
                 variant={"cta"}
@@ -702,6 +824,7 @@ export const HomeSearch = () => {
               {selectedFilters.map((filter) =>
                 filter.value !== "all" ? (
                   <Chip
+                    className="pds-home-search-chip"
                     sx={{
                       backgroundColor: "white",
                       textTransform: "uppercase",

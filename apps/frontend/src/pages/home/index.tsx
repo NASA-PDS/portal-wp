@@ -25,11 +25,18 @@ const HomePage = () => {
               url: "/investigations/urn--nasa--pds--context--investigation--mission---mars2020/instruments"
             },
             {
-              image: "/assets/images/cards/missions/urn--nasa--pds--context--investigation--mission---insight.jpg",
-              imageDescription: "Artist's rendering of the Insight Lander on the Mars surface.",
-              lid: "urn--nasa--pds--context--investigation--mission---insight",
-              title: "Insight",
-              url: "/investigations/urn--nasa--pds--context--investigation--mission---insight/instruments"
+              image: "/assets/images/cards/missions/urn--nasa--pds--context--investigation--mission---lunar----reconnaissance----orbiter.jpg",
+              imageDescription: "Lunar reconnaissance orbiter orbiting the moon",
+              lid: "urn--nasa--pds--context--investigation--mission---lunar----reconnaissance----orbiter",
+              title: "Lunar Reconnaissance Orbiter",
+              url: "/investigations/urn--nasa--pds--context--investigation--mission---lunar----reconnaissance----orbiter/instruments"
+            },
+            {
+              image: "/assets/images/cards/missions/urn--nasa--pds--context--investigation--mission---new----horizons----kem2.jpg",
+              imageDescription: "Artist's rendering of the new horizons spacecraft with Jupiter in the background.",
+              lid: "urn--nasa--pds--context--investigation--mission---new----horizons----kem2",
+              title: "New Horizons",
+              url: "/investigations/urn--nasa--pds--context--investigation--mission---new----horizons----kem2/instruments"
             },
             {
               image: "/assets/images/cards/missions/urn--nasa--pds--context--investigation--mission---cassini-huygens.jpg",
@@ -37,20 +44,13 @@ const HomePage = () => {
               lid: "urn--nasa--pds--context--investigation--mission---cassini-huygens",
               title: "Cassini",
               url: "/investigations/urn--nasa--pds--context--investigation--mission---cassini-huygens/instruments"
-            },
+            }, 
             {
-              image: "/assets/images/cards/missions/urn--nasa--pds--context--investigation--mission---juno.jpg",
-              imageDescription: "Artist's rendering of the Juno spacecraft with Jupiter in the background.",
-              lid: "urn--nasa--pds--context--investigation--mission---juno",
-              title: "Juno",
-              url: "/investigations/urn--nasa--pds--context--investigation--mission---juno/instruments"
-            },
-            {
-              image: "/assets/images/cards/missions/urn--nasa--pds--context--investigation--mission---mars----science----laboratory.jpg",
-              imageDescription: "Artist's rendering of the Curiosity rover on the Mars surface.",
-              lid: "urn--nasa--pds--context--investigation--mission---mars----science----laboratory",
-              title: "Mars Science Laboratory",
-              url: "/investigations/urn--nasa--pds--context--investigation--mission---mars----science----laboratory/instruments"
+              image: "/assets/images/cards/missions/urn--nasa--pds--context--investigation--mission---mars----reconnaissance----orbiter.jpg",
+              imageDescription: "Mars reconnaissance orbiter over mars.",
+              lid: "urn--nasa--pds--context--investigation--mission---mars----reconnaissance----orbiter",
+              title: "Mars Reconnaissance Orbiter",
+              url: "/investigations/urn--nasa--pds--context--investigation--mission---mars----reconnaissance----orbiter/instruments"
             },
           ]
         }

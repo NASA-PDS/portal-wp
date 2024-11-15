@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import {Box, Container, Divider, Link, MenuItem, Select } from "@mui/material";
 import Grid from '@mui/material/Unstable_Grid2';
-import { generatePath, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Instrument } from "src/types/instrument";
 import { PDS4_INFO_MODEL } from "src/types/pds4-info-model";
 import { selectLatestInstrumentHostsForInstrument, selectLatestInstrumentHostVersion, selectLatestInvestigationVersion } from "src/state/selectors";
 import { RootState, store } from "src/state/store";
 import { InstrumentHost } from "src/types/instrumentHost";
-import { convertLogicalIdentifier, LID_FORMAT } from "src/utils/strings";
 import { ExpandMore } from "@mui/icons-material";
 import { FeaturedLink, FeaturedLinkDetails, FeaturedLinkDetailsVariant, Typography } from "@nasapds/wds-react";
+import { getLinkToInstrumentDetailPage } from "src/utils/links";
 
 type InstrumentsIndexedListComponentProps = {
   instruments: Instrument[];
@@ -18,9 +18,7 @@ type InstrumentsIndexedListComponentProps = {
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 const OTHER_CHARS = "0123456789".split("");
 
-type InstrumentDetailPathParams = {
-  lid:string;
-}
+
 
 const getItemsByIndex = (
   arr: Instrument[],
@@ -55,18 +53,9 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
 
   const [indexValue, setIndexValue] = useState(location.hash.replace("#",""));
 
-  const instrumentListItemPrimaryPath = (params:InstrumentDetailPathParams) => {
-    params.lid = convertLogicalIdentifier(params.lid,LID_FORMAT.URL_FRIENDLY);
-    return generateLinkPath("/instruments/:lid/data", params);
-  };
-
   const scrollToIndex = (id:string) => {
     console.log("Set scroll to: ", id)
     setIndexValue(id);
-  }
-
-  const generateLinkPath = (template:string, params:{[key:string]:string}) => {
-    return generatePath(template, params)
   }
 
   const getInvestigationName = (instrument:Instrument):string => {
@@ -226,7 +215,7 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
                          <FeaturedLink
                           description={instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION]}
                           title={ instrument[PDS4_INFO_MODEL.TITLE] }
-                          primaryLink={ instrumentListItemPrimaryPath({ lid: instrument.lid }) }
+                          primaryLink={ getLinkToInstrumentDetailPage({ lid: instrument.lid }) }
                           columns={[
                             {
                               horizontalAlign: "center",
@@ -245,7 +234,7 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
                         >
                           <FeaturedLinkDetails 
                             investigation={{value:getInvestigationName(instrument)}}
-                            lid={{value: instrument[PDS4_INFO_MODEL.LID], link: instrumentListItemPrimaryPath({ lid: instrument.lid })}}
+                            lid={{value: instrument[PDS4_INFO_MODEL.LID], link: getLinkToInstrumentDetailPage({ lid: instrument.lid })}}
                             variant={FeaturedLinkDetailsVariant.INSTRUMENT}
                           />
                         </FeaturedLink>
@@ -282,7 +271,7 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
                         <FeaturedLink
                           description={instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION]}
                           title={ instrument[PDS4_INFO_MODEL.TITLE] }
-                          primaryLink={ instrumentListItemPrimaryPath({ lid: instrument.lid }) }
+                          primaryLink={ getLinkToInstrumentDetailPage({ lid: instrument.lid }) }
                           columns={[
                             {
                               horizontalAlign: "center",
@@ -301,7 +290,7 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
                         >
                           <FeaturedLinkDetails 
                             investigation={{value:getInvestigationName(instrument)}}
-                            lid={{value: instrument[PDS4_INFO_MODEL.LID], link: instrumentListItemPrimaryPath({ lid: instrument.lid })}}
+                            lid={{value: instrument[PDS4_INFO_MODEL.LID], link: getLinkToInstrumentDetailPage({ lid: instrument.lid })}}
                             variant={FeaturedLinkDetailsVariant.INSTRUMENT}
                           />
                         </FeaturedLink>

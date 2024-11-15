@@ -1,20 +1,37 @@
 import { Box, Divider, Typography } from "@mui/material"
 import { copyToClipboard } from "src/utils/strings";
+import { Link } from "react-router-dom";
 
 export type StatsItemProps = {
-  label:string,
-  value:string,
-  index:number,
   enableCopy:boolean
+  index:number,
+  label:string,
+  link?:string,
+  value:string,
 }
 
 export const StatsItem = ({
-  label,
-  value,
+  enableCopy = false,
   index,
-  enableCopy = false
+  label,
+  link,
+  value,
 }: StatsItemProps) => {
-  
+
+  let valueElement = <Typography id={'stat_'+index} sx={{
+    color: 'white',
+    fontSize: "14px",
+    fontFamily: 'Inter',
+    fontWeight: '600',
+    lineHeight: "19px",
+    wordWrap: 'break-word',
+    marginTop: "4px"
+  }}>{value}</Typography>;
+
+  if( link ) {
+    valueElement = <Link to={link}>{valueElement}</Link>;
+  }
+
   return (
     <Box sx={{
       minHeight: { md: "77px" },
@@ -34,15 +51,7 @@ export const StatsItem = ({
         wordWrap: 'break-word',
         marginTop: "8px"
       }}>{label}</Typography>
-      <Typography id={'stat_'+index} sx={{
-        color: 'white',
-        fontSize: "14px",
-        fontFamily: 'Inter',
-        fontWeight: '600',
-        lineHeight: "19px",
-        wordWrap: 'break-word',
-        marginTop: "4px"
-      }}>{value}</Typography>
+      {valueElement}
       {
         enableCopy && <Typography sx={{
             color: 'white',
