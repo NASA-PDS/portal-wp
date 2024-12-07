@@ -7,6 +7,7 @@ import { Chip, Typography } from "@nasapds/wds-react";
 export type FiltersProps = {
   filters: FilterProps[];
   onChecked: (event: ChangeEvent<HTMLInputElement>) => void;
+  onCheckedRadio: (event: ChangeEvent<HTMLInputElement>) => void;
   onFilterChipDelete: (value: string, parentValue: string) => void;
   onFilterClear: () => void;
   collapseAll?: boolean;
@@ -17,6 +18,7 @@ type Option = FilterOptionProps & { parentValue: string };
 const Filters = ({
   filters,
   onChecked,
+  onCheckedRadio,
   onFilterChipDelete,
   onFilterClear,
   collapseAll = false,
@@ -102,6 +104,8 @@ const Filters = ({
           options={filter.options}
           onChecked={onChecked}
           collapseAll={collapseAll}
+          onCheckedRadio={onCheckedRadio}
+          variant={filter.value === "page_type" ? "single" : "multi"}
         />
       ))}
     </>

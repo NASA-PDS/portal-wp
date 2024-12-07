@@ -18,6 +18,7 @@
 .pds-search-filter-checkbox-container {
    max-height: 400px;
    overflow-y: scroll;
+   overflow-wrap: anywhere;
 }
 
 .pds-search-filter-checkbox-container::-webkit-scrollbar {
