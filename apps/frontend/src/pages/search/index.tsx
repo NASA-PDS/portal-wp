@@ -12,6 +12,7 @@ import Filters from "../../components/Filters/Filters";
 import {
   FilterOptionProps,
   FilterProps,
+  FilterVariant,
 } from "../../components/Filters/Filter";
 import { ellipsisText } from "../../utils/strings";
 import {
@@ -60,6 +61,7 @@ import {
   isOptionChecked,
   mapFilterIdsToName,
   mapPageType,
+  organizeFilters,
 } from "./searchUtils";
 import "./search.css";
 
@@ -117,44 +119,111 @@ const SearchPage = () => {
     { name: string; identifier: string; parentName: string }[] | null
   >(null);
 
-  const doFilterMap = (
+  const organizeIdsByRefName = (
+    ids: SolrIdentifierNameResponse,
+    refName: "investigation_ref" | "instrument_ref" | "target_ref" | "page_type"
+  ) => {
+    if (
+      ids.facet_counts.facet_fields[refName] &&
+      ids.facet_counts.facet_fields[refName].length > 0
+    ) {
+      return ids.facet_counts.facet_fields[refName];
+    }
+
+    return [];
+  };
+
+  const generateFilterMap = (
     filterIdsData: SolrIdentifierNameResponse,
     investigationsData: SolrIdentifierNameResponse,
     instrumentsData: SolrIdentifierNameResponse,
     targetsData: SolrIdentifierNameResponse,
     originalFilters: string,
+    selectedFilters: {
+      name: string;
+      options: SolrIdentifierNameResponse;
+      checked: string[];
+    }[],
+    lastSelectedFilter: SolrIdentifierNameResponse,
     searchResults?: SolrSearchResponse
   ) => {
-    let investigationFilterIds: string[] = [];
-    let instrumentFilterIds: string[] = [];
-    let targetFilterIds: string[] = [];
-    let pageTypeFilterIds: string[] = [];
+    let investigationFilterIds: string[] = organizeIdsByRefName(
+      filterIdsData,
+      "investigation_ref"
+    );
+    let instrumentFilterIds: string[] = organizeIdsByRefName(
+      filterIdsData,
+      "instrument_ref"
+    );
+    let targetFilterIds: string[] = organizeIdsByRefName(
+      filterIdsData,
+      "target_ref"
+    );
+    let pageTypeFilterIds: string[] = organizeIdsByRefName(
+      filterIdsData,
+      "page_type"
+    );
 
-    if (
-      filterIdsData.facet_counts.facet_fields.investigation_ref &&
-      filterIdsData.facet_counts.facet_fields.investigation_ref.length > 0
-    ) {
-      investigationFilterIds =
-        filterIdsData.facet_counts.facet_fields.investigation_ref;
-    }
-    if (
-      filterIdsData.facet_counts.facet_fields.instrument_ref &&
-      filterIdsData.facet_counts.facet_fields.instrument_ref.length > 0
-    ) {
-      instrumentFilterIds =
-        filterIdsData.facet_counts.facet_fields.instrument_ref;
-    }
-    if (
-      filterIdsData.facet_counts.facet_fields.target_ref &&
-      filterIdsData.facet_counts.facet_fields.target_ref.length > 0
-    ) {
-      targetFilterIds = filterIdsData.facet_counts.facet_fields.target_ref;
-    }
-    if (
-      filterIdsData.facet_counts.facet_fields.page_type &&
-      filterIdsData.facet_counts.facet_fields.page_type.length > 0
-    ) {
-      pageTypeFilterIds = filterIdsData.facet_counts.facet_fields.page_type;
+    if (selectedFilters && selectedFilters.length > 0) {
+      const selectedInvestigationIds = selectedFilters.find(
+        (selectedFilter) => selectedFilter.name === "investigation_ref"
+      );
+      if (selectedInvestigationIds) {
+        investigationFilterIds = organizeIdsByRefName(
+          selectedInvestigationIds.options,
+          "investigation_ref"
+        );
+      } else {
+        investigationFilterIds = organizeIdsByRefName(
+          lastSelectedFilter,
+          "investigation_ref"
+        );
+      }
+
+      const selectedInstrumentIds = selectedFilters.find(
+        (selectedFilter) => selectedFilter.name === "instrument_ref"
+      );
+      if (selectedInstrumentIds) {
+        instrumentFilterIds = organizeIdsByRefName(
+          selectedInstrumentIds.options,
+          "instrument_ref"
+        );
+      } else {
+        instrumentFilterIds = organizeIdsByRefName(
+          lastSelectedFilter,
+          "instrument_ref"
+        );
+      }
+
+      const selectedTargetIds = selectedFilters.find(
+        (selectedFilter) => selectedFilter.name === "target_ref"
+      );
+      if (selectedTargetIds) {
+        targetFilterIds = organizeIdsByRefName(
+          selectedTargetIds.options,
+          "target_ref"
+        );
+      } else {
+        targetFilterIds = organizeIdsByRefName(
+          lastSelectedFilter,
+          "target_ref"
+        );
+      }
+
+      const selectedPageTypeIds = selectedFilters.find(
+        (selectedFilter) => selectedFilter.name === "page_type"
+      );
+      if (selectedPageTypeIds) {
+        pageTypeFilterIds = organizeIdsByRefName(
+          selectedPageTypeIds.options,
+          "page_type"
+        );
+      } else {
+        pageTypeFilterIds = organizeIdsByRefName(
+          lastSelectedFilter,
+          "page_type"
+        );
+      }
     }
 
     const investigationNames: IdentifierNameDoc[] =
@@ -255,6 +324,9 @@ const SearchPage = () => {
   ) => {
     const filters: FilterProps[] = [];
 
+    const singleVariant: FilterVariant = "single";
+    const multiVariant: FilterVariant = "multi";
+
     const pageTypeFilter = {
       displayTitle: "Page Type",
       title: "facet_page_type",
@@ -265,6 +337,8 @@ const SearchPage = () => {
         "page_type"
       ),
       onChecked: handleFilterChecked,
+      onCheckedRadio: handleFilterCheckedRadio,
+      variant: singleVariant,
     };
     filters.push(pageTypeFilter);
 
@@ -278,6 +352,8 @@ const SearchPage = () => {
         "investigation_ref"
       ),
       onChecked: handleFilterChecked,
+      onCheckedRadio: handleFilterCheckedRadio,
+      variant: multiVariant,
     };
     filters.push(investigationFilter);
 
@@ -291,6 +367,8 @@ const SearchPage = () => {
         "instrument_ref"
       ),
       onChecked: handleFilterChecked,
+      onCheckedRadio: handleFilterCheckedRadio,
+      variant: multiVariant,
     };
     filters.push(instrumentsFilter);
 
@@ -304,6 +382,8 @@ const SearchPage = () => {
         "target_ref"
       ),
       onChecked: handleFilterChecked,
+      onCheckedRadio: handleFilterCheckedRadio,
+      variant: multiVariant,
     };
     filters.push(targetsFilter);
 
@@ -318,13 +398,6 @@ const SearchPage = () => {
     parentValue: string
   ) => {
     const parsedOptions: FilterOptionProps[] = [];
-
-    /*
-    let allCount = 0;
-    options.forEach((option) => {
-      allCount = allCount + Number(option.count);
-    });
-    */
 
     parsedOptions.push({
       title: "all",
@@ -383,11 +456,12 @@ const SearchPage = () => {
       setSearchResults(formattedResults);
       setPaginationCount(calculatePaginationCount(formattedResults));
 
-      parseFilters(searchText, filters, formattedResults);
+      setAndRequestUrls(searchText, filters, formattedResults);
     } else {
       setIsLoading(true);
       setIsEmptyState(true);
-      parseFilters(searchText, filters);
+
+      setAndRequestUrls(searchText, filters);
     }
   };
 
@@ -424,6 +498,7 @@ const SearchPage = () => {
     value: number
   ) => {
     console.log("event", event);
+
     doNavigate(
       searchInputRef.current,
       resultRows.toString(),
@@ -585,53 +660,180 @@ const SearchPage = () => {
     );
   };
 
-  const parseFilters = (
+  const handleFilterCheckedRadio = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, checked, value } = e.target;
+    let filters = "";
+
+    if (name === "all") {
+      if (checked) {
+        const filtersToDelete: { value: string; name: string }[] = [];
+
+        const fqs = resultFilters.split("+");
+        fqs.forEach((fq, index) => {
+          if (index % 2 === 0) {
+            if (fq === value) {
+              filtersToDelete.push({
+                value: fq,
+                name: fqs[index + 1],
+              });
+            }
+          }
+        });
+
+        filters = removeFilters(filtersToDelete, resultFilters);
+      }
+    } else {
+      if (checked) {
+        const filtersToDelete: { value: string; name: string }[] = [];
+
+        const fqs = resultFilters.split("+");
+        fqs.forEach((fq, index) => {
+          if (index % 2 === 0) {
+            if (fq === value) {
+              filtersToDelete.push({
+                value: fq,
+                name: fqs[index + 1],
+              });
+            }
+          }
+        });
+
+        filters = removeFilters(filtersToDelete, resultFilters);
+
+        const newFilter = value + "+" + name;
+        if (filters.length <= 0) {
+          filters = filters + newFilter;
+        } else {
+          filters = filters + "+" + newFilter;
+        }
+      }
+    }
+
+    doNavigate(
+      searchInputRef.current,
+      resultRows.toString(),
+      resultSort,
+      "1",
+      filters
+    );
+  };
+
+  const setAndRequestUrls = (
     originalSearchText: string,
     filters: string,
     searchResults?: SolrSearchResponse
   ) => {
-    const filterIdsUrl =
-      solrEndpoint + "?q=" + originalSearchText + getFiltersQuery;
-    const investigationsUrl = investigationNamesEndpoint;
-    const instrumentsUrl = instrumentNamesEndpoint;
-    const targetsUrl = targetNamesEndpoint;
+    const solrUrls: string[] = [];
 
-    fetch(filterIdsUrl) // api for the get request
-      .then((filtersResponse) => filtersResponse.json())
-      .then((filterIdsData) => {
-        const formattedFilterIdData =
-          formatIdentifierNameResults(filterIdsData);
+    let startUrl = solrEndpoint + "?q=" + getFiltersQuery;
 
-        fetch(investigationsUrl) // api for the get request
-          .then((investigationsResponse) => investigationsResponse.json())
-          .then((investigationsData) => {
-            const formattedInvestigationData =
-              formatIdentifierNameResults(investigationsData);
+    if (searchResults) {
+      startUrl =
+        solrEndpoint +
+        "?wt=json&qt=keyword&q=" +
+        encodeURIComponent(originalSearchText) +
+        getFiltersQuery;
+    }
+    solrUrls.push(startUrl);
 
-            fetch(instrumentsUrl) // api for the get request
-              .then((instrumentsResponse) => instrumentsResponse.json())
-              .then((instrumentsData) => {
-                const formattedInstrumentsData =
-                  formatIdentifierNameResults(instrumentsData);
+    let organizedFilters: {
+      name: string;
+      values: string[];
+    }[] = [];
 
-                fetch(targetsUrl) // api for the get request
-                  .then((targetsResponse) => targetsResponse.json())
-                  .then((targetsData) => {
-                    const formattedTargetsData =
-                      formatIdentifierNameResults(targetsData);
+    if (filters.length > 0) {
+      organizedFilters = organizeFilters(filters);
 
-                    doFilterMap(
-                      formattedFilterIdData,
-                      formattedInvestigationData,
-                      formattedInstrumentsData,
-                      formattedTargetsData,
-                      filters,
-                      searchResults
-                    );
-                  });
-              });
-          });
+      let filtersString = "";
+      organizedFilters.forEach((filterObj, filtersObjIndex) => {
+        filterObj.values.forEach((value, index) => {
+          if (filtersObjIndex === 0 && index === 0) {
+            filtersString = filtersString + filterObj.name + "+" + value;
+          } else {
+            filtersString = filtersString + "+" + filterObj.name + "+" + value;
+          }
+        });
+
+        const formattedFilters = formatFilterQueries(filtersString);
+
+        const nextUrl =
+          solrEndpoint + "?q=" + getFiltersQuery + formattedFilters;
+        solrUrls.push(nextUrl);
       });
+    }
+
+    const titleUrls = [
+      solrEndpoint +
+        "?q=" +
+        encodeURIComponent(originalSearchText) +
+        getFiltersQuery,
+      investigationNamesEndpoint,
+      instrumentNamesEndpoint,
+      targetNamesEndpoint,
+    ];
+    const titlePromises = titleUrls.map((url) =>
+      fetch(url).then((response) => response.json())
+    );
+
+    Promise.all(titlePromises)
+      .then((titleResponses) => {
+        const titleResponseData = titleResponses.map(
+          (titleResponse) => titleResponse
+        );
+
+        const fetchPromises = solrUrls.map((url) =>
+          fetch(url).then((response) => response.json())
+        );
+
+        Promise.all(fetchPromises)
+          .then((responses) => {
+            const responseData = responses.map((response) => response);
+
+            const formattedFilterIdData = formatIdentifierNameResults(
+              titleResponseData[0]
+            );
+            const formattedInvestigationData = formatIdentifierNameResults(
+              titleResponseData[1]
+            );
+            const formattedInstrumentsData = formatIdentifierNameResults(
+              titleResponseData[2]
+            );
+            const formattedTargetsData = formatIdentifierNameResults(
+              titleResponseData[3]
+            );
+
+            const filterSelections: {
+              name: string;
+              options: SolrIdentifierNameResponse;
+              checked: string[];
+            }[] = [];
+
+            organizedFilters.forEach((orgFilter, index) => {
+              const options = {
+                name: orgFilter.name,
+                options: formatIdentifierNameResults(responseData[index]),
+                checked: orgFilter.values,
+              };
+
+              filterSelections.push(options);
+            });
+
+            generateFilterMap(
+              formattedFilterIdData,
+              formattedInvestigationData,
+              formattedInstrumentsData,
+              formattedTargetsData,
+              filters,
+              filterSelections,
+              formatIdentifierNameResults(
+                responseData[responseData.length - 1]
+              ),
+              searchResults
+            );
+          })
+          .catch((error) => console.error("Error fetching data:", error));
+      })
+      .catch((error) => console.error("Error fetching data:", error));
   };
 
   const doNavigate = (
@@ -709,7 +911,6 @@ const SearchPage = () => {
       setResultFilters(filters);
     }
 
-    console.log("do search");
     doSearch(searchText, start, rows, sort, filters);
 
     if (!params.searchText) {
@@ -1034,6 +1235,7 @@ const SearchPage = () => {
                             onFilterChipDelete={handleFilterChipDelete}
                             onFilterClear={handleFilterClear}
                             collapseAll={isSmallScreen}
+                            onCheckedRadio={handleFilterCheckedRadio}
                           ></Filters>
                         </Typography>
                       </Grid>
@@ -1044,7 +1246,7 @@ const SearchPage = () => {
                             <Box>
                               {getDocType(doc) === "databundle" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title[0] : "-"}
+                                  title={doc.title ? doc.title : "-"}
                                   description={
                                     doc.description ? doc.description[0] : "-"
                                   }
@@ -1130,7 +1332,7 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "datacollection" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title[0] : "-"}
+                                  title={doc.title ? doc.title : "-"}
                                   description={
                                     doc.description ? doc.description[0] : "-"
                                   }
@@ -1218,7 +1420,7 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "dataset" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title[0] : "-"}
+                                  title={doc.title ? doc.title : "-"}
                                   description={
                                     doc.description ? doc.description[0] : "-"
                                   }
@@ -1290,7 +1492,7 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "facility" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title[0] : "-"}
+                                  title={doc.title ? doc.title : "-"}
                                   description={
                                     doc.facility_description
                                       ? doc.facility_description[0]
@@ -1340,7 +1542,7 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "instrument" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title[0] : "-"}
+                                  title={doc.title ? doc.title : "-"}
                                   description={
                                     doc.instrument_description
                                       ? doc.instrument_description[0]
@@ -1389,7 +1591,7 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "instrument_host" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title[0] : "-"}
+                                  title={doc.title ? doc.title : "-"}
                                   description={
                                     doc.instrument_host_description
                                       ? doc.instrument_host_description[0]
@@ -1457,7 +1659,7 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "investigation" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title[0] : "-"}
+                                  title={doc.title ? doc.title : "-"}
                                   description={
                                     doc.investigation_description
                                       ? doc.investigation_description[0]
@@ -1528,7 +1730,7 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "resource" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title[0] : "-"}
+                                  title={doc.title ? doc.title : "-"}
                                   description={
                                     doc.description ? doc.description[0] : "-"
                                   }
@@ -1565,7 +1767,7 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "target" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title[0] : "-"}
+                                  title={doc.title ? doc.title : "-"}
                                   description={
                                     doc.description ? doc.description[0] : "-"
                                   }
@@ -1603,7 +1805,7 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "telescope" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title[0] : "-"}
+                                  title={doc.title ? doc.title : "-"}
                                   description={
                                     doc.telescope_description
                                       ? doc.telescope_description[0]
@@ -1648,7 +1850,7 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "tool" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title[0] : "-"}
+                                  title={doc.title ? doc.title : "-"}
                                   description={
                                     doc.description ? doc.description[0] : "-"
                                   }
@@ -1700,7 +1902,7 @@ const SearchPage = () => {
                                 <Box>
                                   <p>
                                     This doc type is not supported:{" "}
-                                    {doc.title ? doc.title[0] : "-"}.
+                                    {doc.title ? doc.title : "-"}.
                                     product_class: {doc.product_class}.
                                     data_class: {doc.data_class}.{" "}
                                   </p>
