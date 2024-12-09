@@ -17,23 +17,66 @@ export const calculateStartValue = (page: number, rows: number) => {
     return (page - 1) * rows;
 };
 
-export const formatFilterQueries = (filters: string) => {
+export const organizeFilters = (filters: string) => {
     const filterArray = filters.split("+");
-    let formattedFilterQueryString = "";
+    const filterObjs: {
+        name: string,
+        values: string[]
+    }[] = [];
 
     filterArray.forEach((filterName, index) => {
         if (index % 2 == 0) {
             const filterValue = filterArray[index + 1];
-            formattedFilterQueryString =
-                formattedFilterQueryString +
-                "&fq=" +
-                filterName +
-                ':"' +
-                filterValue +
-                '" OR identifier:"' + 
-                filterValue +
-                '"';
+
+            const filterObj = filterObjs.find((filter) => filter.name === filterName);
+            if(filterObj){
+                filterObj.values.push(filterValue);
+            }
+            else{
+                filterObjs.push({
+                    name: filterName,
+                    values: [filterValue]
+                });
+            }
+            
         }
+    });
+
+    return filterObjs;
+}
+
+export const formatFilterQueries = (filters: string) => {
+    const filterObjs = organizeFilters(filters);
+
+    let formattedFilterQueryString = "";
+    filterObjs.forEach((filterObj) => {
+        formattedFilterQueryString =
+            formattedFilterQueryString +
+            "&fq=";
+        
+        filterObj.values.forEach((value, index) => {
+            if(index === 0){ 
+                formattedFilterQueryString = 
+                formattedFilterQueryString +
+                filterObj.name +
+                ':"' +
+                value +
+                '" OR identifier:"' + 
+                value +
+                '"';
+            }
+            else{
+                formattedFilterQueryString = 
+                formattedFilterQueryString + " OR " +
+                filterObj.name +
+                ':"' +
+                value +
+                '" OR identifier:"' + 
+                value +
+                '"';
+            }
+           
+        });
     });
 
     return formattedFilterQueryString;
@@ -170,10 +213,9 @@ const getUnmatchedFilterName = (
     instruments: IdentifierNameDoc[], 
     targets: IdentifierNameDoc[]
 ) => {
-    let originals: IdentifierNameDoc[] = []
+    let originals: IdentifierNameDoc[] = [];
     identifier = identifier.split("::")[0];
 
-    console.log('getUnmatchedFilterName')
     if(parentName === "target_ref"){
         originals = targets;
     }
@@ -264,7 +306,7 @@ export const mapFilterIdsToName = (ids: string[], names: IdentifierNameDoc[], se
           let name: string = "";
 
           if (nameDoc.title) {
-            name = nameDoc.title[0];
+            name = nameDoc.title;
           }
 
           filtersMap.push({
@@ -276,8 +318,14 @@ export const mapFilterIdsToName = (ids: string[], names: IdentifierNameDoc[], se
       }
     });
 
+    orderFiltersByName(filtersMap);
+
     return filtersMap;
 };
+
+const orderFiltersByName = (filtersMap: { name: string; identifier: string, count: string }[]) => {
+    filtersMap.sort((a, b) => a.name.localeCompare(b.name));
+}
 
 export const mapPageType = (ids: string[], searchResultFacets?: (number | string)[]) => {
     const filtersMap: { name: string; identifier: string, count: string }[] = [];
@@ -293,9 +341,6 @@ export const mapPageType = (ids: string[], searchResultFacets?: (number | string
                     else{
                         count = String(searchResultFacets[searchResultFacetIndex + 1]);
                     }
-                    
-        
-                    //count = searchResultFacets.find((facet) => facet.identifier[0] === urnSplit)
                 }
 
                 filtersMap.push({
@@ -308,6 +353,3 @@ export const mapPageType = (ids: string[], searchResultFacets?: (number | string
 
     return filtersMap;
 };
-
-  
-

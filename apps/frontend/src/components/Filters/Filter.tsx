@@ -22,13 +22,17 @@ export type FilterOptionProps = {
   isChecked: boolean;
 };
 
+export type FilterVariant = "single" | "multi";
+
 export type FilterProps = {
   displayTitle: string;
   value: string;
   title: string;
   options: FilterOptionProps[];
   onChecked: (event: ChangeEvent<HTMLInputElement>) => void;
+  onCheckedRadio: (event: ChangeEvent<HTMLInputElement>) => void;
   collapseAll?: boolean;
+  variant: FilterVariant;
 };
 
 import "./filter.scss";
@@ -39,6 +43,8 @@ const Filter = ({
   options,
   onChecked,
   collapseAll = false,
+  onCheckedRadio,
+  variant = "multi",
 }: FilterProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [subFilter, setSubFilter] = useState("");
@@ -134,7 +140,7 @@ const Filter = ({
               >
                 <Checkbox
                   sx={{ padding: 0 }}
-                  onChange={onChecked}
+                  onChange={variant === "single" ? onCheckedRadio : onChecked}
                   name={option.value}
                   value={value}
                   checked={option.isChecked}
