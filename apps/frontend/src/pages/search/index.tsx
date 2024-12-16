@@ -1259,7 +1259,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: "Data Bundle",
+                                      data: doc.page_type,
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1347,7 +1347,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: "Data Collection",
+                                      data: doc.page_type,
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1433,7 +1433,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: "Data Set",
+                                      data: doc.page_type,
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1507,7 +1507,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: "Facility",
+                                      data: doc.page_type,
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1559,7 +1559,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: "Instrument",
+                                      data: doc.page_type,
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1612,7 +1612,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: "Instrument Host",
+                                      data: doc.page_type,
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1678,7 +1678,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: "Investigation",
+                                      data: doc.page_type,
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1743,7 +1743,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: "Resource",
+                                      data: doc.page_type,
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1780,7 +1780,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: "Target",
+                                      data: doc.page_type,
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1820,7 +1820,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: "Telescope",
+                                      data: doc.page_type,
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1861,7 +1861,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: "Tool",
+                                      data: doc.page_type,
                                       verticalAlign: "center",
                                       width: 1,
                                     },
