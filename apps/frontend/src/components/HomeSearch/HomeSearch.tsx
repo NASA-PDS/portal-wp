@@ -27,6 +27,7 @@ import {
 import {
   mapFilterIdsToName,
   mapPageType,
+  formatIdentifierNameResults,
 } from "../../pages/search/searchUtils";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -588,11 +589,13 @@ export const HomeSearch = () => {
                     }
 
                     const investigationNames: IdentifierNameDoc[] =
-                      investigationsData.response.docs;
+                      formatIdentifierNameResults(investigationsData).response
+                        .docs;
                     const instrumentNames: IdentifierNameDoc[] =
-                      instrumentsData.response.docs;
+                      formatIdentifierNameResults(instrumentsData).response
+                        .docs;
                     const targetNames: IdentifierNameDoc[] =
-                      targetsData.response.docs;
+                      formatIdentifierNameResults(targetsData).response.docs;
 
                     const investigationFilterOptions = mapFilterIdsToName(
                       investigationFilterIds,

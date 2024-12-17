@@ -26,7 +26,6 @@ export type Facetfields = {
     facet_instrument: (number | string)[];
     facet_primary_result_purpose: (number | string)[];
     facet_primary_result_processing_level: string[];
-
     page_type: string[];
     investigation_ref: string[];
     target_ref: string[];
@@ -35,7 +34,7 @@ export type Facetfields = {
 
 type Facetqueries = object;
 
-type Response = {
+export type Response = {
     numFound: number;
     start: number;
     maxScore: number;
@@ -54,26 +53,26 @@ type SearchResultDoc = {
     data_class: string[];
     description: string[];
     file_ref_url: string[];
-    title: string;
-    resLocation: string;
-    objectType: string;
+    title: string[];
+    resLocation: string[];
+    objectType: string[];
     product_class: string[];
     data_product_type: string[];
     file_ref_size: string[];
     modification_date: string[];
     file_ref_name: string[];
-    identifier: string;
+    identifier: string[];
     resource_url: string[];
     agency_name: string[];
     'form-agency': string[];
     modification_description: string[];
     resource_type: string[];
     version_id: string[];
-    search_id: string;
-    pds_model_version: string;
+    search_id: string[];
+    pds_model_version: string[];
     resource_description: string[];
     resource_name: string[];
-    timestamp: string;
+    timestamp: string[];
     score: number;
     collection_type?: string[];
     investigation_description?: string[];
@@ -114,11 +113,11 @@ type SearchResultDoc = {
 }
 
 type IdentifierNameDoc = {
-    identifier: string;
+    identifier: string[];
     investigation_name: string[];
     instrument_name: string[];
     target_name: string[];
-    title: string;
+    title: string[];
 }
 
 type ResponseHeader = {
