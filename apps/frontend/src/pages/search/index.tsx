@@ -1576,10 +1576,9 @@ const SearchPage = () => {
                                         : "/",
                                     }}
                                     investigation={
-                                      doc["form-instrument-host"]
+                                      doc.instrument_host_name
                                         ? {
-                                            value:
-                                              doc["form-instrument-host"][0],
+                                            value: doc.instrument_host_name[0],
                                           }
                                         : { value: "-" }
                                     }
