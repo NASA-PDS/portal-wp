@@ -10,6 +10,7 @@ import { InstrumentHost } from "src/types/instrumentHost";
 import { ExpandMore } from "@mui/icons-material";
 import { FeaturedLink, FeaturedLinkDetails, FeaturedLinkDetailsVariant, Typography } from "@nasapds/wds-react";
 import { getLinkToInstrumentDetailPage } from "src/utils/links";
+import { getInstrumentDescription } from "src/utils/strings";
 
 type InstrumentsIndexedListComponentProps = {
   instruments: Instrument[];
@@ -213,7 +214,7 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
                     (instrument: Instrument, instrumentIndex) => {
                       return (
                          <FeaturedLink
-                          description={instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION]}
+                          description={getInstrumentDescription(instrument[PDS4_INFO_MODEL.TITLE], instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION])}
                           title={ instrument[PDS4_INFO_MODEL.TITLE] }
                           primaryLink={ getLinkToInstrumentDetailPage({ lid: instrument.lid }) }
                           columns={[
@@ -269,7 +270,7 @@ function InstrumentsIndexedListComponent(props:InstrumentsIndexedListComponentPr
                     (instrument: Instrument, instrumentIndex) => {
                       return (
                         <FeaturedLink
-                          description={instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION]}
+                          description={getInstrumentDescription(instrument[PDS4_INFO_MODEL.TITLE], instrument[PDS4_INFO_MODEL.INSTRUMENT.DESCRIPTION])}
                           title={ instrument[PDS4_INFO_MODEL.TITLE] }
                           primaryLink={ getLinkToInstrumentDetailPage({ lid: instrument.lid }) }
                           columns={[

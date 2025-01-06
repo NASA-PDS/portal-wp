@@ -14,7 +14,7 @@ import {
   FilterProps,
   FilterVariant,
 } from "../../components/Filters/Filter";
-import { ellipsisText } from "../../utils/strings";
+import { ellipsisText, getFacilityDescription, getInstrumentDescription, getInstrumentHostDescription, getInvestigationDescription, getTargetDescription, getTelescopeDescription } from "../../utils/strings";
 import {
   getLinkToInstrumentDetailPage,
   getLinkToInvestigationDetailPage,
@@ -1495,8 +1495,8 @@ const SearchPage = () => {
                                   title={doc.title ? doc.title : "-"}
                                   description={
                                     doc.facility_description
-                                      ? doc.facility_description[0]
-                                      : "-"
+                                      ? getFacilityDescription(doc.title, doc.facility_description[0])
+                                      : getFacilityDescription(doc.title, "")
                                   }
                                   primaryLink={
                                     doc.identifier
@@ -1545,10 +1545,10 @@ const SearchPage = () => {
                                   title={doc.title ? doc.title : "-"}
                                   description={
                                     doc.instrument_description
-                                      ? doc.instrument_description[0]
+                                      ? getInstrumentDescription(doc.title, doc.instrument_description[0])
                                       : doc.description
-                                      ? doc.description[0]
-                                      : "-"
+                                      ? getInstrumentDescription(doc.title, doc.description[0])
+                                      : getInstrumentDescription(doc.title, "")
                                   }
                                   primaryLink={
                                     doc.identifier
@@ -1594,10 +1594,10 @@ const SearchPage = () => {
                                   title={doc.title ? doc.title : "-"}
                                   description={
                                     doc.instrument_host_description
-                                      ? doc.instrument_host_description[0]
+                                      ? getInstrumentHostDescription(doc.title, doc.instrument_host_description[0])
                                       : doc.description
-                                      ? doc.description[0]
-                                      : "-"
+                                      ? getInstrumentHostDescription(doc.title, doc.description[0])
+                                      : getInstrumentHostDescription(doc.title, "")
                                   }
                                   primaryLink={
                                     doc.identifier && doc.investigation_ref
@@ -1662,12 +1662,12 @@ const SearchPage = () => {
                                   title={doc.title ? doc.title : "-"}
                                   description={
                                     doc.investigation_description
-                                      ? doc.investigation_description[0]
+                                      ? getInvestigationDescription(doc.title, doc.investigation_description[0])
                                       : doc.instrument_host_description
                                       ? doc.instrument_host_description[0]
                                       : doc.description
-                                      ? doc.description[0]
-                                      : "-"
+                                      ? getInvestigationDescription(doc.title, doc.description[0])
+                                      : getInvestigationDescription(doc.title, "")
                                   }
                                   primaryLink={
                                     doc.identifier
@@ -1769,7 +1769,7 @@ const SearchPage = () => {
                                 <FeaturedLink
                                   title={doc.title ? doc.title : "-"}
                                   description={
-                                    doc.description ? doc.description[0] : "-"
+                                    doc.description ? getTargetDescription(doc.title, doc.description[0]) : "-"
                                   }
                                   primaryLink={
                                     doc.identifier
@@ -1808,8 +1808,8 @@ const SearchPage = () => {
                                   title={doc.title ? doc.title : "-"}
                                   description={
                                     doc.telescope_description
-                                      ? doc.telescope_description[0]
-                                      : "-"
+                                      ? getTelescopeDescription(doc.title, doc.telescope_description[0])
+                                      : getTelescopeDescription(doc.title, "")
                                   }
                                   primaryLink={
                                     doc.identifier
