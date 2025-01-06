@@ -50,6 +50,7 @@ type IdentifierNameResponse = {
 }
 
 type SearchResultDoc = {
+    page_type: string;
     file_ref_location: string[];
     data_class: string[];
     description: string[];
