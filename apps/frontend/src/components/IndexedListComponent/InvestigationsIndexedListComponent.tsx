@@ -10,6 +10,7 @@ import { ExpandMore } from "@mui/icons-material";
 import { FeaturedLink, FeaturedLinkDetails, FeaturedLinkDetailsVariant, Typography } from "@nasapds/wds-react";
 import { sortInstrumentHostsByTitle } from "src/utils/arrays";
 import { getLinkToInvestigationDetailPage } from "src/utils/links";
+import { getInvestigationDescription } from "src/utils/strings";
 
 type InvestigationsIndexedListComponentProps = {
   investigations: Investigation[];
@@ -184,7 +185,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                     (investigation: Investigation, investigationIndex) => {
                       return (
                          <FeaturedLink
-                          description={investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION]}
+                          description={getInvestigationDescription(investigation[PDS4_INFO_MODEL.TITLE], investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION])}
                           title={ investigation[PDS4_INFO_MODEL.TITLE] }
                           primaryLink={ getLinkToInvestigationDetailPage({ lid: investigation.lid }) }
                           columns={[
@@ -243,7 +244,7 @@ function InvestigationsIndexedListComponent(props:InvestigationsIndexedListCompo
                     (investigation: Investigation, investigationIndex) => {
                       return (
                         <FeaturedLink
-                          description={investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION]}
+                          description={getInvestigationDescription(investigation[PDS4_INFO_MODEL.TITLE], investigation[PDS4_INFO_MODEL.INVESTIGATION.DESCRIPTION])}
                           title={ investigation[PDS4_INFO_MODEL.TITLE] }
                           primaryLink={ getLinkToInvestigationDetailPage({ lid: investigation.lid }) }
                           columns={[

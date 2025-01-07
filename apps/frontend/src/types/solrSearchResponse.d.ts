@@ -79,6 +79,7 @@ type SearchResultDoc = {
     collection_type?: string[];
     investigation_description?: string[];
     instrument_host_name?: string[];
+    instrument_host_type?: string[];
     investigation_start_date?: string[];
     investigation_stop_date?: string[];
     instrument_description?: string[];
@@ -90,6 +91,7 @@ type SearchResultDoc = {
     observation_start_date_time?: string[];
     observation_stop_date_time?: string[];
     investigation_name?: string[];
+    investigation_type?: string[];
     primary_result_discipline_name?: string[];
     target_type?: string[];
     service_url?: string[];
