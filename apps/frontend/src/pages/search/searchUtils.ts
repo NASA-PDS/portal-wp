@@ -447,14 +447,8 @@ const transformDocs = (data: SearchResultDocExpected[]) => {
         if(docExpected.instrument_description){
             doc.instrument_description = convertToStringArray(docExpected.instrument_description);
         }
-        if(docExpected['form-instrument-type']){
-            doc['form-instrument-type'] = convertToStringArray(docExpected['form-instrument-type']);
-        }
         if(docExpected['form-instrument-host']){
             doc['form-instrument-host'] = convertToStringArray(docExpected['form-instrument-host']);
-        }
-        if(docExpected['form-investigation']){
-            doc['form-investigation'] = convertToStringArray(docExpected['form-investigation']);
         }
         if(docExpected.citation_doi){
             doc.citation_doi = convertToStringArray(docExpected.citation_doi);

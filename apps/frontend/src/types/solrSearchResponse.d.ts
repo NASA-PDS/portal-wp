@@ -80,9 +80,7 @@ type SearchResultDoc = {
     investigation_start_date?: string[];
     investigation_stop_date?: string[];
     instrument_description?: string[];
-    'form-instrument-type'?: string[];
     'form-instrument-host'?: string[];
-    'form-investigation'?: string[];
     citation_doi?: string[];
     primary_result_processing_level?: string[];
     observation_start_date_time?: string[];

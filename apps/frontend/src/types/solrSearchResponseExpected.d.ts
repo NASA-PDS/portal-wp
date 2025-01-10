@@ -79,9 +79,7 @@ export type SearchResultDoc = {
     investigation_start_date?: string | string[];
     investigation_stop_date?: string | string[];
     instrument_description?: string | string[];
-    'form-instrument-type'?: string | string[];
     'form-instrument-host'?: string | string[];
-    'form-investigation'?: string | string[];
     citation_doi?: string | string[];
     primary_result_processing_level?: string | string[];
     observation_start_date_time?: string | string[];
