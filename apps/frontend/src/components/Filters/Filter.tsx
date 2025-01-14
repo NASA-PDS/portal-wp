@@ -170,11 +170,7 @@ const Filter = ({
                           name={option.value}
                           value={value}
                           checked={option.isChecked}
-                          disabled={
-                            option.isChecked && option.title === "all"
-                              ? true
-                              : false
-                          }
+                          disabled={option.isChecked && option.title === "all"}
                         />
                         <Typography variant="h6" weight="regular">
                           {option.title.toUpperCase()}
