@@ -49,6 +49,7 @@ type IdentifierNameResponse = {
 }
 
 export type SearchResultDoc = {
+    page_type: string | string[];
     file_ref_location: string | string[];
     data_class: string | string[];
     description: string | string[];
