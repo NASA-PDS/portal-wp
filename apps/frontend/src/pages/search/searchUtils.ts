@@ -391,6 +391,7 @@ const transformDocs = (data: SearchResultDocExpected[]) => {
 
     data.forEach((docExpected) => {
         const doc: SearchResultDoc = {
+            page_type: convertToStringArray(docExpected.page_type),
             file_ref_location: convertToStringArray(docExpected.file_ref_location),
             data_class:convertToStringArray(docExpected.data_class),
             description: convertToStringArray(docExpected.description),
@@ -426,7 +427,7 @@ const transformDocs = (data: SearchResultDocExpected[]) => {
             telescope_aperture: convertToStringArray(docExpected.telescope_aperture),
             instrument_name: convertToStringArray(docExpected.instrument_name),
             investigation_ref: convertToStringArray(docExpected.investigation_ref),
-            citation_publication_year: convertToStringArray(docExpected.citation_publication_year) 
+            citation_publication_year: convertToStringArray(docExpected.citation_publication_year),
         }
 
         if(docExpected.collection_type){

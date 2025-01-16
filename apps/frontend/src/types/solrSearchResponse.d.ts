@@ -49,7 +49,7 @@ type IdentifierNameResponse = {
 }
 
 type SearchResultDoc = {
-    page_type: string;
+    page_type: string[];
     file_ref_location: string[];
     data_class: string[];
     description: string[];
@@ -109,8 +109,6 @@ type SearchResultDoc = {
     instrument_name: string[];
     investigation_ref: string[];
     citation_publication_year: string[];
-
-
 }
 
 type IdentifierNameDoc = {

@@ -1270,7 +1270,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: doc.page_type,
+                                      data: doc.page_type[0],
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1358,7 +1358,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: doc.page_type,
+                                      data: doc.page_type[0],
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1444,7 +1444,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: doc.page_type,
+                                      data: doc.page_type[0],
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1507,10 +1507,10 @@ const SearchPage = () => {
                                   description={
                                     doc.facility_description
                                       ? getFacilityDescription(
-                                          doc.title,
+                                          doc.title[0],
                                           doc.facility_description[0]
                                         )
-                                      : getFacilityDescription(doc.title, "")
+                                      : getFacilityDescription(doc.title[0], "")
                                   }
                                   primaryLink={
                                     doc.identifier
@@ -1521,7 +1521,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: doc.page_type,
+                                      data: doc.page_type[0],
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1560,15 +1560,18 @@ const SearchPage = () => {
                                   description={
                                     doc.instrument_description
                                       ? getInstrumentDescription(
-                                          doc.title,
+                                          doc.title[0],
                                           doc.instrument_description[0]
                                         )
                                       : doc.description
                                       ? getInstrumentDescription(
-                                          doc.title,
+                                          doc.title[0],
                                           doc.description[0]
                                         )
-                                      : getInstrumentDescription(doc.title, "")
+                                      : getInstrumentDescription(
+                                          doc.title[0],
+                                          ""
+                                        )
                                   }
                                   primaryLink={
                                     doc.identifier
@@ -1579,7 +1582,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: doc.page_type,
+                                      data: doc.page_type[0],
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1614,16 +1617,16 @@ const SearchPage = () => {
                                   description={
                                     doc.instrument_host_description
                                       ? getInstrumentHostDescription(
-                                          doc.title,
+                                          doc.title[0],
                                           doc.instrument_host_description[0]
                                         )
                                       : doc.description
                                       ? getInstrumentHostDescription(
-                                          doc.title,
+                                          doc.title[0],
                                           doc.description[0]
                                         )
                                       : getInstrumentHostDescription(
-                                          doc.title,
+                                          doc.title[0],
                                           ""
                                         )
                                   }
@@ -1640,7 +1643,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: doc.page_type,
+                                      data: doc.page_type[0],
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1691,18 +1694,18 @@ const SearchPage = () => {
                                   description={
                                     doc.investigation_description
                                       ? getInvestigationDescription(
-                                          doc.title,
+                                          doc.title[0],
                                           doc.investigation_description[0]
                                         )
                                       : doc.instrument_host_description
                                       ? doc.instrument_host_description[0]
                                       : doc.description
                                       ? getInvestigationDescription(
-                                          doc.title,
+                                          doc.title[0],
                                           doc.description[0]
                                         )
                                       : getInvestigationDescription(
-                                          doc.title,
+                                          doc.title[0],
                                           ""
                                         )
                                   }
@@ -1715,7 +1718,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: doc.page_type,
+                                      data: doc.page_type[0],
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1780,7 +1783,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: doc.page_type,
+                                      data: doc.page_type[0],
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1808,7 +1811,7 @@ const SearchPage = () => {
                                   description={
                                     doc.description
                                       ? getTargetDescription(
-                                          doc.title,
+                                          doc.title[0],
                                           doc.description[0]
                                         )
                                       : "-"
@@ -1822,7 +1825,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: doc.page_type,
+                                      data: doc.page_type[0],
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1851,10 +1854,13 @@ const SearchPage = () => {
                                   description={
                                     doc.telescope_description
                                       ? getTelescopeDescription(
-                                          doc.title,
+                                          doc.title[0],
                                           doc.telescope_description[0]
                                         )
-                                      : getTelescopeDescription(doc.title, "")
+                                      : getTelescopeDescription(
+                                          doc.title[0],
+                                          ""
+                                        )
                                   }
                                   primaryLink={
                                     doc.identifier
@@ -1865,7 +1871,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: doc.page_type,
+                                      data: doc.page_type[0],
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1906,7 +1912,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: doc.page_type,
+                                      data: doc.page_type[0],
                                       verticalAlign: "center",
                                       width: 1,
                                     },
