@@ -1257,7 +1257,7 @@ const SearchPage = () => {
                             <Box>
                               {getDocType(doc) === "databundle" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title : "-"}
+                                  title={doc.title ? doc.title[0] : "-"}
                                   description={
                                     doc.description ? doc.description[0] : "-"
                                   }
@@ -1343,7 +1343,7 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "datacollection" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title : "-"}
+                                  title={doc.title ? doc.title[0] : "-"}
                                   description={
                                     doc.description ? doc.description[0] : "-"
                                   }
@@ -1431,7 +1431,7 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "dataset" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title : "-"}
+                                  title={doc.title ? doc.title[0] : "-"}
                                   description={
                                     doc.description ? doc.description[0] : "-"
                                   }
@@ -1503,7 +1503,7 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "facility" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title : "-"}
+                                  title={doc.title ? doc.title[0] : "-"}
                                   description={
                                     doc.facility_description
                                       ? getFacilityDescription(
@@ -1556,7 +1556,7 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "instrument" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title : "-"}
+                                  title={doc.title ? doc.title[0] : "-"}
                                   description={
                                     doc.instrument_description
                                       ? getInstrumentDescription(
@@ -1596,10 +1596,9 @@ const SearchPage = () => {
                                         : "/",
                                     }}
                                     investigation={
-                                      doc["form-instrument-host"]
+                                      doc.instrument_host_name
                                         ? {
-                                            value:
-                                              doc["form-instrument-host"][0],
+                                            value: doc.instrument_host_name[0],
                                           }
                                         : { value: "-" }
                                     }
@@ -1611,7 +1610,7 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "instrument_host" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title : "-"}
+                                  title={doc.title ? doc.title[0] : "-"}
                                   description={
                                     doc.instrument_host_description
                                       ? getInstrumentHostDescription(
@@ -1688,7 +1687,7 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "investigation" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title : "-"}
+                                  title={doc.title ? doc.title[0] : "-"}
                                   description={
                                     doc.investigation_description
                                       ? getInvestigationDescription(
@@ -1768,7 +1767,7 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "resource" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title : "-"}
+                                  title={doc.title ? doc.title[0] : "-"}
                                   description={
                                     doc.description ? doc.description[0] : "-"
                                   }
@@ -1805,7 +1804,7 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "target" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title : "-"}
+                                  title={doc.title ? doc.title[0] : "-"}
                                   description={
                                     doc.description
                                       ? getTargetDescription(
@@ -1848,7 +1847,7 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "telescope" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title : "-"}
+                                  title={doc.title ? doc.title[0] : "-"}
                                   description={
                                     doc.telescope_description
                                       ? getTelescopeDescription(
@@ -1896,7 +1895,7 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "tool" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title : "-"}
+                                  title={doc.title ? doc.title[0] : "-"}
                                   description={
                                     doc.description ? doc.description[0] : "-"
                                   }
@@ -1916,7 +1915,7 @@ const SearchPage = () => {
                                   <FeaturedLinkDetails
                                     support={
                                       doc.pds_model_version
-                                        ? { value: doc.pds_model_version }
+                                        ? { value: doc.pds_model_version[0] }
                                         : { value: "-" }
                                     }
                                     url={
