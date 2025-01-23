@@ -26,7 +26,6 @@ export type Facetfields = {
     facet_instrument: (number | string)[];
     facet_primary_result_purpose: (number | string)[];
     facet_primary_result_processing_level: string[];
-
     page_type: string[];
     investigation_ref: string[];
     target_ref: string[];
@@ -35,7 +34,7 @@ export type Facetfields = {
 
 type Facetqueries = object;
 
-type Response = {
+export type Response = {
     numFound: number;
     start: number;
     maxScore: number;
@@ -50,45 +49,46 @@ type IdentifierNameResponse = {
 }
 
 type SearchResultDoc = {
+    page_type: string[];
     file_ref_location: string[];
     data_class: string[];
     description: string[];
     file_ref_url: string[];
-    title: string;
-    resLocation: string;
-    objectType: string;
+    title: string[];
+    resLocation: string[];
+    objectType: string[];
     product_class: string[];
     data_product_type: string[];
     file_ref_size: string[];
     modification_date: string[];
     file_ref_name: string[];
-    identifier: string;
+    identifier: string[];
     resource_url: string[];
     agency_name: string[];
     'form-agency': string[];
     modification_description: string[];
     resource_type: string[];
     version_id: string[];
-    search_id: string;
-    pds_model_version: string;
+    search_id: string[];
+    pds_model_version: string[];
     resource_description: string[];
     resource_name: string[];
-    timestamp: string;
+    timestamp: string[];
     score: number;
     collection_type?: string[];
     investigation_description?: string[];
     instrument_host_name?: string[];
+    instrument_host_type?: string[];
     investigation_start_date?: string[];
     investigation_stop_date?: string[];
     instrument_description?: string[];
-    'form-instrument-type'?: string[];
     'form-instrument-host'?: string[];
-    'form-investigation'?: string[];
     citation_doi?: string[];
     primary_result_processing_level?: string[];
     observation_start_date_time?: string[];
     observation_stop_date_time?: string[];
     investigation_name?: string[];
+    investigation_type?: string[];
     primary_result_discipline_name?: string[];
     target_type?: string[];
     service_url?: string[];
@@ -109,16 +109,14 @@ type SearchResultDoc = {
     instrument_name: string[];
     investigation_ref: string[];
     citation_publication_year: string[];
-
-
 }
 
 type IdentifierNameDoc = {
-    identifier: string;
+    identifier: string[];
     investigation_name: string[];
     instrument_name: string[];
     target_name: string[];
-    title: string;
+    title: string[];
 }
 
 type ResponseHeader = {

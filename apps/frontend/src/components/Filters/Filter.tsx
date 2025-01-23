@@ -30,7 +30,7 @@ export type FilterProps = {
   title: string;
   options: FilterOptionProps[];
   onChecked: (event: ChangeEvent<HTMLInputElement>) => void;
-  onCheckedRadio: (event: ChangeEvent<HTMLInputElement>) => void;
+  onCheckedRadio: (name: string, checked: boolean, value: string) => void;
   collapseAll?: boolean;
   variant: FilterVariant;
 };
@@ -72,102 +72,154 @@ const Filter = ({
     return isIncluded;
   };
 
+  const isASingleSelected = (
+    possibleOptions: FilterOptionProps[],
+    filterVariant: FilterVariant
+  ) => {
+    let isSingleAndSelected = false;
+    if (filterVariant === "single") {
+      possibleOptions.forEach((option) => {
+        if (option.value !== "all" && option.isChecked === true) {
+          isSingleAndSelected = true;
+        }
+      });
+    }
+
+    return isSingleAndSelected;
+  };
+
   useEffect(() => {
     setIsCollapsed(collapseAll);
   }, [collapseAll]);
 
   return (
-    <div>
-      <Box>
-        <Grid
-          container
-          spacing={2}
-          alignItems="center"
-          sx={{ paddingBottom: 0 }}
-        >
-          <Grid item xs={10}>
-            <Typography variant="h8" weight="semibold">
-              {displayTitle.toUpperCase()}
-            </Typography>
-          </Grid>
-          <Grid item xs={2} className="pds-search-filter-dropdown-button-grid">
-            <IconButton aria-label="star" onClick={handleCollapseClick}>
-              {isCollapsed ? <IconArrowCircleDown /> : <IconArrowCircleUp />}
-            </IconButton>
-          </Grid>
-        </Grid>
-      </Box>
+    <>
+      {!isASingleSelected(options, variant) ? (
+        <div>
+          <Box>
+            <Grid
+              container
+              spacing={2}
+              alignItems="center"
+              sx={{ paddingBottom: 0 }}
+            >
+              <Grid item xs={10}>
+                <Typography variant="h8" weight="semibold">
+                  {displayTitle.toUpperCase()}
+                </Typography>
+              </Grid>
+              <Grid
+                item
+                xs={2}
+                className="pds-search-filter-dropdown-button-grid"
+              >
+                <IconButton aria-label="star" onClick={handleCollapseClick}>
+                  {isCollapsed ? (
+                    <IconArrowCircleDown />
+                  ) : (
+                    <IconArrowCircleUp />
+                  )}
+                </IconButton>
+              </Grid>
+            </Grid>
+          </Box>
+          {!isCollapsed ? (
+            <Grid
+              container
+              spacing={2}
+              alignItems="center"
+              sx={{ paddingBottom: 0 }}
+            >
+              <Grid item xs={12}>
+                <TextField
+                  className="pds-filter-textfield"
+                  id="subfilter"
+                  value={subFilter}
+                  variant="standard"
+                  onChange={onSubFilterChange}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <IconSearch />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Grid>
+            </Grid>
+          ) : (
+            <></>
+          )}
+          {!isCollapsed ? (
+            <Box className="pds-search-filter-checkbox-container">
+              {options.map((option) =>
+                titleIncludesSubFilter(option.title, subFilter) ? (
+                  <Box
+                    className="pds-search-filter-checkbox-box"
+                    sx={{
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "start",
+                    }}
+                  >
+                    {variant !== "single" ? (
+                      <>
+                        <Checkbox
+                          sx={{ padding: 0 }}
+                          onChange={onChecked}
+                          name={option.value}
+                          value={value}
+                          checked={option.isChecked}
+                          disabled={option.isChecked && option.title === "all"}
+                        />
+                        <Typography variant="h6" weight="regular">
+                          {option.title.toUpperCase()}
 
-      {!isCollapsed ? (
-        <Grid
-          container
-          spacing={2}
-          alignItems="center"
-          sx={{ paddingBottom: 0 }}
-        >
-          <Grid item xs={12}>
-            <TextField
-              className="pds-filter-textfield"
-              id="subfilter"
-              value={subFilter}
-              variant="standard"
-              onChange={onSubFilterChange}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <IconSearch />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-        </Grid>
+                          <span className="pds-search-filter-count-span">
+                            {option.title === "all"
+                              ? ""
+                              : " (" + option.resultsFound + ")"}
+                          </span>
+                        </Typography>
+                      </>
+                    ) : (
+                      <div>
+                        <Typography
+                          variant="h6"
+                          weight="regular"
+                          onClick={() =>
+                            onCheckedRadio(
+                              option.value,
+                              !option.isChecked,
+                              value
+                            )
+                          }
+                        >
+                          {option.title.toUpperCase()}
+
+                          <span className="pds-search-filter-count-span">
+                            {option.title === "all"
+                              ? ""
+                              : " (" + option.resultsFound + ")"}
+                          </span>
+                        </Typography>
+                      </div>
+                    )}
+                  </Box>
+                ) : (
+                  <></>
+                )
+              )}
+            </Box>
+          ) : (
+            ""
+          )}
+          <Divider />
+        </div>
       ) : (
         <></>
       )}
-
-      {!isCollapsed ? (
-        <Box className="pds-search-filter-checkbox-container">
-          {options.map((option) =>
-            titleIncludesSubFilter(option.title, subFilter) ? (
-              <Box
-                className="pds-search-filter-checkbox-box"
-                sx={{
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "start",
-                }}
-              >
-                <Checkbox
-                  sx={{ padding: 0 }}
-                  onChange={variant === "single" ? onCheckedRadio : onChecked}
-                  name={option.value}
-                  value={value}
-                  checked={option.isChecked}
-                  disabled={
-                    option.isChecked && option.title === "all" ? true : false
-                  }
-                />
-                <Typography variant="h6" weight="regular">
-                  {option.title.toUpperCase()}
-
-                  <span className="pds-search-filter-count-span">
-                    {option.title === "all"
-                      ? ""
-                      : " (" + option.resultsFound + ")"}
-                  </span>
-                </Typography>
-              </Box>
-            ) : (
-              <></>
-            )
-          )}
-        </Box>
-      ) : (
-        ""
-      )}
-      <Divider />
-    </div>
+    </>
   );
 };
 

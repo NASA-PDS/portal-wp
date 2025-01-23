@@ -38,3 +38,27 @@ export const copyToClipboard = async (element:string) => {
     console.error('Failed to copy: ', err);
   }
 }
+
+export const getFacilityDescription = (title:string, description:string) => {
+  return `Portal for ${title}, providing data, telescopes, and other resources. ${description}`;
+}
+
+export const getInstrumentDescription = (title:string, description:string) => {
+  return `Portal for the ${title} instrument, providing data, tools, and other resources. ${description}`;
+}
+
+export const getInstrumentHostDescription = (title:string, description:string) => {
+  return `Portal for the ${title} instrument host, providing data, instruments, and other resources. ${description}`;
+}
+
+export const getInvestigationDescription = (title:string, description:string) => {
+  return `Portal for the ${title} investigation, providing data, instrument hosts, instruments, and other resources. ${description}`;
+}
+
+export const getTargetDescription = (title:string, description:string) => {
+  return `Portal for the target ${title}, providing data, investigations, and other resources. ${description}`;
+}
+
+export const getTelescopeDescription = (title:string, description:string) => {
+  return `Portal for ${title}, providing data, instruments, and other resources. ${description}`;
+}

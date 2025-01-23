@@ -14,7 +14,15 @@ import {
   FilterProps,
   FilterVariant,
 } from "../../components/Filters/Filter";
-import { ellipsisText } from "../../utils/strings";
+import {
+  ellipsisText,
+  getFacilityDescription,
+  getInstrumentDescription,
+  getInstrumentHostDescription,
+  getInvestigationDescription,
+  getTargetDescription,
+  getTelescopeDescription,
+} from "../../utils/strings";
 import {
   getLinkToInstrumentDetailPage,
   getLinkToInvestigationDetailPage,
@@ -660,8 +668,11 @@ const SearchPage = () => {
     );
   };
 
-  const handleFilterCheckedRadio = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, checked, value } = e.target;
+  const handleFilterCheckedRadio = (
+    name: string,
+    checked: boolean,
+    value: string
+  ) => {
     let filters = "";
 
     if (name === "all") {
@@ -1246,7 +1257,7 @@ const SearchPage = () => {
                             <Box>
                               {getDocType(doc) === "databundle" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title : "-"}
+                                  title={doc.title ? doc.title[0] : "-"}
                                   description={
                                     doc.description ? doc.description[0] : "-"
                                   }
@@ -1259,7 +1270,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: "Data Bundle",
+                                      data: doc.page_type[0],
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1332,7 +1343,7 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "datacollection" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title : "-"}
+                                  title={doc.title ? doc.title[0] : "-"}
                                   description={
                                     doc.description ? doc.description[0] : "-"
                                   }
@@ -1347,7 +1358,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: "Data Collection",
+                                      data: doc.page_type[0],
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1420,7 +1431,7 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "dataset" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title : "-"}
+                                  title={doc.title ? doc.title[0] : "-"}
                                   description={
                                     doc.description ? doc.description[0] : "-"
                                   }
@@ -1433,7 +1444,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: "Data Set",
+                                      data: doc.page_type[0],
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1492,11 +1503,14 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "facility" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title : "-"}
+                                  title={doc.title ? doc.title[0] : "-"}
                                   description={
                                     doc.facility_description
-                                      ? doc.facility_description[0]
-                                      : "-"
+                                      ? getFacilityDescription(
+                                          doc.title[0],
+                                          doc.facility_description[0]
+                                        )
+                                      : getFacilityDescription(doc.title[0], "")
                                   }
                                   primaryLink={
                                     doc.identifier
@@ -1507,7 +1521,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: "Facility",
+                                      data: doc.page_type[0],
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1542,13 +1556,22 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "instrument" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title : "-"}
+                                  title={doc.title ? doc.title[0] : "-"}
                                   description={
                                     doc.instrument_description
-                                      ? doc.instrument_description[0]
+                                      ? getInstrumentDescription(
+                                          doc.title[0],
+                                          doc.instrument_description[0]
+                                        )
                                       : doc.description
-                                      ? doc.description[0]
-                                      : "-"
+                                      ? getInstrumentDescription(
+                                          doc.title[0],
+                                          doc.description[0]
+                                        )
+                                      : getInstrumentDescription(
+                                          doc.title[0],
+                                          ""
+                                        )
                                   }
                                   primaryLink={
                                     doc.identifier
@@ -1559,7 +1582,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: "Instrument",
+                                      data: doc.page_type[0],
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1576,10 +1599,9 @@ const SearchPage = () => {
                                         : "/",
                                     }}
                                     investigation={
-                                      doc["form-instrument-host"]
+                                      doc.instrument_host_name
                                         ? {
-                                            value:
-                                              doc["form-instrument-host"][0],
+                                            value: doc.instrument_host_name[0],
                                           }
                                         : { value: "-" }
                                     }
@@ -1591,13 +1613,22 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "instrument_host" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title : "-"}
+                                  title={doc.title ? doc.title[0] : "-"}
                                   description={
                                     doc.instrument_host_description
-                                      ? doc.instrument_host_description[0]
+                                      ? getInstrumentHostDescription(
+                                          doc.title[0],
+                                          doc.instrument_host_description[0]
+                                        )
                                       : doc.description
-                                      ? doc.description[0]
-                                      : "-"
+                                      ? getInstrumentHostDescription(
+                                          doc.title[0],
+                                          doc.description[0]
+                                        )
+                                      : getInstrumentHostDescription(
+                                          doc.title[0],
+                                          ""
+                                        )
                                   }
                                   primaryLink={
                                     doc.identifier && doc.investigation_ref
@@ -1612,7 +1643,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: "Instrument Host",
+                                      data: doc.page_type[0],
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1659,15 +1690,24 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "investigation" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title : "-"}
+                                  title={doc.title ? doc.title[0] : "-"}
                                   description={
                                     doc.investigation_description
-                                      ? doc.investigation_description[0]
+                                      ? getInvestigationDescription(
+                                          doc.title[0],
+                                          doc.investigation_description[0]
+                                        )
                                       : doc.instrument_host_description
                                       ? doc.instrument_host_description[0]
                                       : doc.description
-                                      ? doc.description[0]
-                                      : "-"
+                                      ? getInvestigationDescription(
+                                          doc.title[0],
+                                          doc.description[0]
+                                        )
+                                      : getInvestigationDescription(
+                                          doc.title[0],
+                                          ""
+                                        )
                                   }
                                   primaryLink={
                                     doc.identifier
@@ -1678,7 +1718,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: "Investigation",
+                                      data: doc.page_type[0],
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1730,7 +1770,7 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "resource" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title : "-"}
+                                  title={doc.title ? doc.title[0] : "-"}
                                   description={
                                     doc.description ? doc.description[0] : "-"
                                   }
@@ -1743,7 +1783,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: "Resource",
+                                      data: doc.page_type[0],
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1767,9 +1807,14 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "target" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title : "-"}
+                                  title={doc.title ? doc.title[0] : "-"}
                                   description={
-                                    doc.description ? doc.description[0] : "-"
+                                    doc.description
+                                      ? getTargetDescription(
+                                          doc.title[0],
+                                          doc.description[0]
+                                        )
+                                      : "-"
                                   }
                                   primaryLink={
                                     doc.identifier
@@ -1780,7 +1825,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: "Target",
+                                      data: doc.page_type[0],
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1805,11 +1850,17 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "telescope" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title : "-"}
+                                  title={doc.title ? doc.title[0] : "-"}
                                   description={
                                     doc.telescope_description
-                                      ? doc.telescope_description[0]
-                                      : "-"
+                                      ? getTelescopeDescription(
+                                          doc.title[0],
+                                          doc.telescope_description[0]
+                                        )
+                                      : getTelescopeDescription(
+                                          doc.title[0],
+                                          ""
+                                        )
                                   }
                                   primaryLink={
                                     doc.identifier
@@ -1820,7 +1871,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: "Telescope",
+                                      data: doc.page_type[0],
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1850,7 +1901,7 @@ const SearchPage = () => {
 
                               {getDocType(doc) === "tool" ? (
                                 <FeaturedLink
-                                  title={doc.title ? doc.title : "-"}
+                                  title={doc.title ? doc.title[0] : "-"}
                                   description={
                                     doc.description ? doc.description[0] : "-"
                                   }
@@ -1861,7 +1912,7 @@ const SearchPage = () => {
                                   columns={[
                                     {
                                       horizontalAlign: "center",
-                                      data: "Tool",
+                                      data: doc.page_type[0],
                                       verticalAlign: "center",
                                       width: 1,
                                     },
@@ -1870,7 +1921,7 @@ const SearchPage = () => {
                                   <FeaturedLinkDetails
                                     support={
                                       doc.pds_model_version
-                                        ? { value: doc.pds_model_version }
+                                        ? { value: doc.pds_model_version[0] }
                                         : { value: "-" }
                                     }
                                     url={
