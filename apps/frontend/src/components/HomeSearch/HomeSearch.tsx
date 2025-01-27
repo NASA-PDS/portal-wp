@@ -485,6 +485,10 @@ export const HomeSearch = () => {
       newFilters.splice(index, 1);
     }
 
+    if (newFilters.length === 0) {
+      newFilters = ["all"];
+    }
+
     if (parentName === "targets") {
       setSelectedTargetFilters(newFilters);
     }
