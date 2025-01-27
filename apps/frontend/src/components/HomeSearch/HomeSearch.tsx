@@ -485,6 +485,10 @@ export const HomeSearch = () => {
       newFilters.splice(index, 1);
     }
 
+    if (newFilters.length === 0) {
+      newFilters = ["all"];
+    }
+
     if (parentName === "targets") {
       setSelectedTargetFilters(newFilters);
     }
@@ -520,7 +524,12 @@ export const HomeSearch = () => {
   };
 
   useEffect(() => {
-    searchInputRef.current = "";
+    const searchText = searchParams.get("searchText");
+    if (!searchText) {
+      searchInputRef.current = "";
+    } else {
+      searchInputRef.current = searchText;
+    }
 
     const investigationsUrl = investigationNamesEndpoint;
     const instrumentsUrl = instrumentNamesEndpoint;

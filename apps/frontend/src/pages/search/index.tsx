@@ -887,6 +887,13 @@ const SearchPage = () => {
     }
     searchInputRef.current = searchText;
 
+    const inputElement = document.getElementById(
+      "pds-search-bar"
+    ) as HTMLInputElement;
+    if (inputElement) {
+      inputElement.value = searchText;
+    }
+
     let page = 1;
     let start = 0;
     let rows = 20;
@@ -1291,11 +1298,16 @@ const SearchPage = () => {
                                       doc.investigation_name
                                         ? {
                                             value: doc.investigation_name[0],
-                                            link: doc.investigation_ref
-                                              ? getInvestigationPath(
-                                                  doc.investigation_ref[0]
-                                                )
-                                              : "/",
+                                            link:
+                                              doc.investigation_ref &&
+                                              doc.investigation_ref.length >
+                                                0 &&
+                                              doc.investigation_ref[0] !==
+                                                undefined
+                                                ? getInvestigationPath(
+                                                    doc.investigation_ref[0]
+                                                  )
+                                                : "/",
                                           }
                                         : { value: "-" }
                                     }
@@ -1379,11 +1391,16 @@ const SearchPage = () => {
                                       doc.investigation_name
                                         ? {
                                             value: doc.investigation_name[0],
-                                            link: doc.investigation_ref
-                                              ? getInvestigationPath(
-                                                  doc.investigation_ref[0]
-                                                )
-                                              : "/",
+                                            link:
+                                              doc.investigation_ref &&
+                                              doc.investigation_ref.length >
+                                                0 &&
+                                              doc.investigation_ref[0] !==
+                                                undefined
+                                                ? getInvestigationPath(
+                                                    doc.investigation_ref[0]
+                                                  )
+                                                : "/",
                                           }
                                         : { value: "-" }
                                     }
@@ -1468,14 +1485,21 @@ const SearchPage = () => {
                                     }
                                     investigation={
                                       doc.investigation_name &&
-                                      doc.investigation_ref
+                                      doc.investigation_ref &&
+                                      doc.investigation_ref.length > 0 &&
+                                      doc.investigation_ref[0] !== undefined
                                         ? {
                                             value: doc.investigation_name[0],
-                                            link: doc.investigation_ref
-                                              ? getInvestigationPath(
-                                                  doc.investigation_ref[0]
-                                                )
-                                              : "/",
+                                            link:
+                                              doc.investigation_ref &&
+                                              doc.investigation_ref.length >
+                                                0 &&
+                                              doc.investigation_ref[0] !==
+                                                undefined
+                                                ? getInvestigationPath(
+                                                    doc.investigation_ref[0]
+                                                  )
+                                                : "/",
                                           }
                                         : doc.investigation_name &&
                                           !doc.investigation_ref
@@ -1631,7 +1655,10 @@ const SearchPage = () => {
                                         )
                                   }
                                   primaryLink={
-                                    doc.identifier && doc.investigation_ref
+                                    doc.identifier &&
+                                    doc.investigation_ref &&
+                                    doc.investigation_ref.length > 0 &&
+                                    doc.investigation_ref[0] !== undefined
                                       ? getInvestigationPath(
                                           doc.investigation_ref[0]
                                         )
@@ -1656,7 +1683,10 @@ const SearchPage = () => {
                                     lid={{
                                       value: doc.identifier[0],
                                       link:
-                                        doc.identifier && doc.investigation_ref
+                                        doc.identifier &&
+                                        doc.investigation_ref &&
+                                        doc.investigation_ref.length > 0 &&
+                                        doc.investigation_ref[0] !== undefined
                                           ? getInvestigationPath(
                                               doc.investigation_ref[0]
                                             )
@@ -1669,11 +1699,16 @@ const SearchPage = () => {
                                       doc.investigation_name
                                         ? {
                                             value: doc.investigation_name[0],
-                                            link: doc.investigation_ref
-                                              ? getInvestigationPath(
-                                                  doc.investigation_ref[0]
-                                                )
-                                              : "/",
+                                            link:
+                                              doc.investigation_ref &&
+                                              doc.investigation_ref.length >
+                                                0 &&
+                                              doc.investigation_ref[0] !==
+                                                undefined
+                                                ? getInvestigationPath(
+                                                    doc.investigation_ref[0]
+                                                  )
+                                                : "/",
                                           }
                                         : { value: "-" }
                                     }

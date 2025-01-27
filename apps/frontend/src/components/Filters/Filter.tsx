@@ -182,6 +182,8 @@ const Filter = ({
                           </span>
                         </Typography>
                       </>
+                    ) : option.title === "all" ? (
+                      <></>
                     ) : (
                       <div>
                         <Typography

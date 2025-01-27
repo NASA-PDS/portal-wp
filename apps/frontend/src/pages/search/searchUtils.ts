@@ -231,15 +231,7 @@ const getUnmatchedFilterName = (
 
     for(let i = 0; i < originals.length; i++){
         if(originals[i].identifier[0] === identifier){
-            if(parentName === "target_ref"){
-                return originals[i].target_name[0];
-            }
-            if(parentName === "investigation_ref"){
-                return originals[i].investigation_name[0];
-            }
-            if(parentName === "instrument_ref"){
-                return originals[i].instrument_name[0];
-            }
+            return originals[i].title[0];
         }
     }
 
