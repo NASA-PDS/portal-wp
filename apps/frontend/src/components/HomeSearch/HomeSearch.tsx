@@ -520,7 +520,12 @@ export const HomeSearch = () => {
   };
 
   useEffect(() => {
-    searchInputRef.current = "";
+    const searchText = searchParams.get("searchText");
+    if (!searchText) {
+      searchInputRef.current = "";
+    } else {
+      searchInputRef.current = searchText;
+    }
 
     const investigationsUrl = investigationNamesEndpoint;
     const instrumentsUrl = instrumentNamesEndpoint;
