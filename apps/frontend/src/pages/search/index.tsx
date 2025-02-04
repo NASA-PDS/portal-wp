@@ -459,14 +459,23 @@ const SearchPage = () => {
 
       setIsLoading(true);
 
-      const response = await fetch(url);
-      const data = await response.json();
-      const formattedResults = formatSearchResults(data);
+      let data;
+      setSearchError(false);
+      try {
+        const response = await fetch(url);
+        data = await response.json();
+      } catch (error) {
+        setSearchError(true);
+      }
 
-      setSearchResults(formattedResults);
-      setPaginationCount(calculatePaginationCount(formattedResults));
+      if (data) {
+        const formattedResults = formatSearchResults(data);
 
-      setAndRequestUrls(searchText, filters, formattedResults);
+        setSearchResults(formattedResults);
+        setPaginationCount(calculatePaginationCount(formattedResults));
+
+        setAndRequestUrls(searchText, filters, formattedResults);
+      }
     } else {
       setIsLoading(true);
       setIsEmptyState(true);
