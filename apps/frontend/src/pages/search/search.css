@@ -118,3 +118,7 @@
     padding-left: 16px;
 }
 
+.pds-search-feedback-link{
+    color: var(--pds-secondary-blue-t1);
+}
+
