@@ -57,6 +57,7 @@ import {
   TextField,
   Typography,
 } from "@nasapds/wds-react";
+import ErrorIcon from "@mui/icons-material/Error";
 import {
   calculatePaginationCount,
   calculateStartValue,
@@ -126,6 +127,7 @@ const SearchPage = () => {
   const [unmatchedFilters, setUnmatchedFilters] = useState<
     { name: string; identifier: string; parentName: string }[] | null
   >(null);
+  const [searchError, setSearchError] = useState(false);
 
   const organizeIdsByRefName = (
     ids: SolrIdentifierNameResponse,
@@ -457,14 +459,23 @@ const SearchPage = () => {
 
       setIsLoading(true);
 
-      const response = await fetch(url);
-      const data = await response.json();
-      const formattedResults = formatSearchResults(data);
+      let data;
+      setSearchError(false);
+      try {
+        const response = await fetch(url);
+        data = await response.json();
+      } catch (error) {
+        setSearchError(true);
+      }
 
-      setSearchResults(formattedResults);
-      setPaginationCount(calculatePaginationCount(formattedResults));
+      if (data) {
+        const formattedResults = formatSearchResults(data);
 
-      setAndRequestUrls(searchText, filters, formattedResults);
+        setSearchResults(formattedResults);
+        setPaginationCount(calculatePaginationCount(formattedResults));
+
+        setAndRequestUrls(searchText, filters, formattedResults);
+      }
     } else {
       setIsLoading(true);
       setIsEmptyState(true);
@@ -783,7 +794,11 @@ const SearchPage = () => {
       targetNamesEndpoint,
     ];
     const titlePromises = titleUrls.map((url) =>
-      fetch(url).then((response) => response.json())
+      fetch(url)
+        .then((response) => response.json())
+        .catch(() => {
+          setSearchError(true);
+        })
     );
 
     Promise.all(titlePromises)
@@ -842,9 +857,9 @@ const SearchPage = () => {
               searchResults
             );
           })
-          .catch((error) => console.error("Error fetching data:", error));
+          .catch(() => console.error("Error fetching data:"));
       })
-      .catch((error) => console.error("Error fetching data:", error));
+      .catch(() => console.error("Error fetching data:"));
   };
 
   const doNavigate = (
@@ -1089,9 +1104,39 @@ const SearchPage = () => {
           </Container>
 
           {isLoading ? (
-            <Box className="pds-search-loader-container">
-              <Loader />
-            </Box>
+            searchError ? (
+              <Box className="pds-search-empty-container">
+                <br />
+
+                <Typography
+                  variant="h3"
+                  weight="bold"
+                  className="pds-search-empty-icon-div"
+                >
+                  <ErrorIcon />
+                  &nbsp;An Error Has Been Encountered.
+                </Typography>
+                <br />
+
+                <Typography variant="h4" weight="regular">
+                  Please try again later. If this issue persists you can let us
+                  know{" "}
+                  <a
+                    href={feedbackEmail}
+                    target="_top"
+                    className="pds-search-feedback-link"
+                  >
+                    here
+                  </a>
+                  .
+                </Typography>
+                <br />
+              </Box>
+            ) : (
+              <Box className="pds-search-loader-container">
+                <Loader />
+              </Box>
+            )
           ) : (
             <>
               {/*Search Options*/}
@@ -2004,7 +2049,11 @@ const SearchPage = () => {
                             <br />
                             <Typography variant="h4" weight="regular">
                               Not the results you expected?{" "}
-                              <a href={feedbackEmail} target="_top">
+                              <a
+                                href={feedbackEmail}
+                                target="_top"
+                                className="pds-search-feedback-link"
+                              >
                                 Give feedback
                               </a>
                             </Typography>
@@ -2027,7 +2076,11 @@ const SearchPage = () => {
                             <br />
                             <Typography variant="h4" weight="regular">
                               How can we improve your search experience?{" "}
-                              <a href={feedbackEmail} target="_top">
+                              <a
+                                href={feedbackEmail}
+                                target="_top"
+                                className="pds-search-feedback-link"
+                              >
                                 Give feedback
                               </a>
                             </Typography>
@@ -2068,7 +2121,11 @@ const SearchPage = () => {
                     <br />
                     <Typography variant="h4" weight="regular">
                       Not the results you expected?{" "}
-                      <a href={feedbackEmail} target="_top">
+                      <a
+                        href={feedbackEmail}
+                        target="_top"
+                        className="pds-search-feedback-link"
+                      >
                         Give feedback
                       </a>
                     </Typography>
