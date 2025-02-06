@@ -79,8 +79,6 @@ import { useTheme } from "@mui/material/styles";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
 
 const pdsSite = "https://pds.nasa.gov";
-const pdsIdViewer =
-  "https://pds.nasa.gov/ds-view/pds/viewCollection.jsp?identifier=";
 const doiSite = "https://doi.org";
 const feedbackEmail = "mailto:example@example.com";
 const solrEndpoint = "https://pds.nasa.gov/services/search/search";
@@ -971,24 +969,24 @@ const SearchPage = () => {
     return pdsSite + location;
   };
 
-  const getTargetPath = (identifier: string) => {
-    return pdsIdViewer + identifier;
+  const getTargetPath = (location: string) => {
+    return pdsSite + location;
   };
 
-  const getResourcePath = (identifier: string) => {
-    return pdsIdViewer + identifier;
+  const getResourcePath = (location: string) => {
+    return pdsSite + location;
   };
 
-  const getDataSetPath = (identifier: string) => {
-    return pdsIdViewer + identifier;
+  const getDataSetPath = (location: string) => {
+    return pdsSite + location;
   };
 
-  const getFacilityPath = (identifier: string) => {
-    return pdsIdViewer + identifier;
+  const getFacilityPath = (location: string) => {
+    return pdsSite + location;
   };
 
-  const getTelescopePath = (identifier: string) => {
-    return pdsIdViewer + identifier;
+  const getTelescopePath = (location: string) => {
+    return pdsSite + location;
   };
 
   return (
@@ -1498,8 +1496,8 @@ const SearchPage = () => {
                                     doc.description ? doc.description[0] : "-"
                                   }
                                   primaryLink={
-                                    doc.identifier
-                                      ? getDataSetPath(doc.identifier[0])
+                                    doc.resLocation
+                                      ? getDataSetPath(doc.resLocation[0])
                                       : "/"
                                   }
                                   startExpanded={areResultsExpanded}
@@ -1582,8 +1580,8 @@ const SearchPage = () => {
                                       : getFacilityDescription(doc.title[0], "")
                                   }
                                   primaryLink={
-                                    doc.identifier
-                                      ? getFacilityPath(doc.identifier[0])
+                                    doc.resLocation
+                                      ? getFacilityPath(doc.resLocation[0])
                                       : "/"
                                   }
                                   startExpanded={areResultsExpanded}
@@ -1607,8 +1605,8 @@ const SearchPage = () => {
                                     }
                                     lid={{
                                       value: doc.identifier[0],
-                                      link: doc.identifier
-                                        ? getFacilityPath(doc.identifier[0])
+                                      link: doc.resLocation
+                                        ? getFacilityPath(doc.resLocation[0])
                                         : "/",
                                     }}
                                     telescopes={["-"]}
@@ -1855,8 +1853,8 @@ const SearchPage = () => {
                                     doc.description ? doc.description[0] : "-"
                                   }
                                   primaryLink={
-                                    doc.identifier
-                                      ? getResourcePath(doc.identifier[0])
+                                    doc.resLocation
+                                      ? getResourcePath(doc.resLocation[0])
                                       : "/"
                                   }
                                   startExpanded={areResultsExpanded}
@@ -1897,8 +1895,8 @@ const SearchPage = () => {
                                       : "-"
                                   }
                                   primaryLink={
-                                    doc.identifier
-                                      ? getTargetPath(doc.identifier[0])
+                                    doc.resLocation
+                                      ? getTargetPath(doc.resLocation[0])
                                       : "/"
                                   }
                                   startExpanded={areResultsExpanded}
@@ -1914,8 +1912,8 @@ const SearchPage = () => {
                                   <FeaturedLinkDetails
                                     lid={{
                                       value: doc.identifier[0],
-                                      link: doc.identifier
-                                        ? getTargetPath(doc.identifier[0])
+                                      link: doc.resLocation
+                                        ? getTargetPath(doc.resLocation[0])
                                         : "/",
                                     }}
                                     targetType={
@@ -1943,8 +1941,8 @@ const SearchPage = () => {
                                         )
                                   }
                                   primaryLink={
-                                    doc.identifier
-                                      ? getTelescopePath(doc.identifier[0])
+                                    doc.resLocation
+                                      ? getTelescopePath(doc.resLocation[0])
                                       : "/"
                                   }
                                   startExpanded={areResultsExpanded}
@@ -1960,8 +1958,8 @@ const SearchPage = () => {
                                   <FeaturedLinkDetails
                                     lid={{
                                       value: doc.identifier[0],
-                                      link: doc.identifier
-                                        ? getTelescopePath(doc.identifier[0])
+                                      link: doc.resLocation
+                                        ? getTelescopePath(doc.resLocation[0])
                                         : "/",
                                     }}
                                     instruments={
