@@ -3,8 +3,9 @@ import { BannerProps } from "@nasapds/wds-react";
 
 type AppConfig = {
   GENERAL: {
-    VERSION:string
+    APP_VERSION:string
     BANNER_MESSAGES:Array<BannerProps>
+    SUPPORT_EMAIL:string
   }
   SETTINGS: {
     SORT_ORDER: {
@@ -16,19 +17,20 @@ type AppConfig = {
 export const APP_CONFIG:AppConfig = {
 
   GENERAL: {
-    VERSION: import.meta.env.VITE_APP_VERSION,
+    APP_VERSION: import.meta.env.VITE_APP_VERSION,
     BANNER_MESSAGES: [
       {
         title: "This site is in BETA",
         message: "As we work on improving the site, please keep in mind that it is still under development and may have limitations.",
         link:{
           title: "Give Feedback",
-          href: "mailto:pds-operator@jpl.nasa.gov",
+          href: `mailto:${import.meta.env.VITE_SUPPORT_EMAIL}`,
           type: "internal"
         },
         variant: "info"
       }
-    ]
+    ],
+    SUPPORT_EMAIL: import.meta.env.VITE_SUPPORT_EMAIL
   },
 
   SETTINGS: {
