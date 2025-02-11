@@ -689,7 +689,7 @@ const InvestigationDetailBody = (props:InvestigationDetailBodyProps) => {
                     <Stack>
                       {
                         instrumentTypes.length === 0 && <>
-                          <Typography variant="h4" weight="semibold" component={"span"}>No instruments available at this time. Please check back later or contact the <Link to="mailto:pds-operator@jpl.nasa.gov" style={{color: "#1C67E3"}}>PDS Help Desk</Link> for assistance.</Typography>
+                          <Typography variant="h4" weight="semibold" component={"span"}>No instruments available at this time. Please check back later or contact the <Link to={`mailto:${APP_CONFIG.GENERAL.SUPPORT_EMAIL}`} style={{color: "#1C67E3"}}>PDS Help Desk</Link> for assistance.</Typography>
                         </>
                       }
                       {

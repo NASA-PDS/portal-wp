@@ -1,3 +1,4 @@
+import { APP_CONFIG } from "src/AppConfig";
 import { FooterLink, Footer } from "@nasapds/wds-react";
 
 function PortalFooter() {
@@ -63,7 +64,7 @@ function PortalFooter() {
     {
       id: "",
       label: "Give Feedback",
-      href: "mailto:pds-operator@jpl.nasa.gov"
+      href: `mailto:${APP_CONFIG.GENERAL.SUPPORT_EMAIL}`
     },
   ];
 
