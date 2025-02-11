@@ -197,11 +197,10 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
   const investigationIsEmpty = () => {
     return Object.keys(investigation).length === 0;
   }
-
   const stats:Stats[] = [
     {
       label: "Investigation",
-      link: getLinkToInvestigationDetailPage({'lid': investigation[PDS4_INFO_MODEL.LID]}),
+      link: !investigationIsEmpty() ? getLinkToInvestigationDetailPage({'lid': investigation[PDS4_INFO_MODEL.LID]}) : "/",
       value: investigation[PDS4_INFO_MODEL.TITLE] ? investigation[PDS4_INFO_MODEL.TITLE] : "Not available at this time"
     },
     {

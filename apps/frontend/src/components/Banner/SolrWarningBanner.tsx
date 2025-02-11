@@ -51,6 +51,7 @@ export const SolrWarningBanner = (props: SolrWarningBannerProps) => {
   };
 
   useEffect(() => {
+    setIsErrorDetected(false);
     checkPageService();
   }, [location]);
 
