@@ -1,3 +1,4 @@
+import { APP_CONFIG } from "src/AppConfig";
 import { Header } from "@nasapds/wds-react";
 import { NavItems } from "@nasapds/wds-react";
 
@@ -91,7 +92,7 @@ const navItems: NavItems[] = [
   {
     id: "give-feedback",
     label: "Give Feedback",
-    href: "mailto:pds-operator@jpl.nasa.gov",
+    href: `mailto:${APP_CONFIG.GENERAL.SUPPORT_EMAIL}`,
   },
 ];
 
