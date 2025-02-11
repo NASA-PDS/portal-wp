@@ -432,7 +432,7 @@ export const HomeSearch = () => {
 
   const doNavigate = (searchText: string) => {
     const pathParams = {
-      searchText,
+      searchText: encodeURIComponent(searchText),
     };
 
     if (selectedFilters.length > 0) {
