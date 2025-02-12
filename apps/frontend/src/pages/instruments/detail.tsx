@@ -673,14 +673,14 @@ const InstrumentDetailBody = (props:InstrumentDetailBodyProps) => {
 
                           }
                           <Box style={{marginTop: "36px"}} >
-                            <Typography variant="h5" weight="semibold" component={"span"}>We are working to provide additional metadata when possible. Please contact <Link to="mailto:pds-operator@jpl.nasa.gov" style={{color: "#1C67E3"}}>PDS Help Desk</Link> for assistance.</Typography>
+                            <Typography variant="h5" weight="semibold" component={"span"}>We are working to provide additional metadata when possible. Please contact <Link to={`mailto:${APP_CONFIG.GENERAL.SUPPORT_EMAIL}`} style={{color: "#1C67E3"}}>PDS Help Desk</Link> for assistance.</Typography>
                           </Box>
                         </>
                       }
                     </Stack>
 
                     <Box style={{marginTop: "24px", display: collections.length === 0 ? "block" : "none"}}>
-                      <Typography variant="h4" weight="semibold" component={"span"}>No data collections available at this time. Please check back later or contact the <Link to="mailto:pds-operator@jpl.nasa.gov" style={{color: "#1C67E3"}}>PDS Help Desk</Link> for assistance.</Typography>
+                      <Typography variant="h4" weight="semibold" component={"span"}>No data collections available at this time. Please check back later or contact the <Link to={`mailto:${APP_CONFIG.GENERAL.SUPPORT_EMAIL}`} style={{color: "#1C67E3"}}>PDS Help Desk</Link> for assistance.</Typography>
                     </Box>
 
                   </Grid>

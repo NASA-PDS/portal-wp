@@ -1,3 +1,4 @@
+import { APP_CONFIG } from "src/AppConfig";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
 import { ExploreTopicsSixUp, ExploreTopicsSixUpProps } from "src/components/ExploreTopicsSixUp";
 import { SubmitDataQuickLinks } from "src/components/SubmitDataQuickLinks";
@@ -152,7 +153,7 @@ const HomePage = () => {
           "We are thrilled to announce the beta release of our newly redesigned NASA Planetary Data System (PDS) website! Please give us feedback to improve your experience"
         }
         imageSrc={"/assets/images/homepage-hero.jpg"}
-        buttonLink={"mailto:pds-operator@jpl.nasa.gov"}
+        buttonLink={`mailto:${APP_CONFIG.GENERAL.SUPPORT_EMAIL}`}
         buttonText={"Give Feedback"}
       />
     <HomeSearch />

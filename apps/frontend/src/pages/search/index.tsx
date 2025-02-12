@@ -77,10 +77,11 @@ import "./search.css";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { DocumentMeta } from "src/components/DocumentMeta/DocumentMeta";
+import { APP_CONFIG } from "src/AppConfig";
 
 const pdsSite = "https://pds.nasa.gov";
 const doiSite = "https://doi.org";
-const feedbackEmail = "mailto:example@example.com";
+const feedbackEmail = `mailto:${APP_CONFIG.GENERAL.SUPPORT_EMAIL}`;
 const solrEndpoint = "https://pds.nasa.gov/services/search/search";
 const getFiltersQuery =
   "&qt=keyword&rows=0&facet=on&facet.field=investigation_ref&facet.field=instrument_ref&facet.field=target_ref&facet.field=page_type&wt=json&facet.limit=-1";
