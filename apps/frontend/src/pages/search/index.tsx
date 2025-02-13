@@ -869,7 +869,7 @@ const SearchPage = () => {
     filters: string
   ) => {
     const pathParams = {
-      searchText,
+      searchText: encodeURIComponent(searchText),
     };
 
     let queryParams;
