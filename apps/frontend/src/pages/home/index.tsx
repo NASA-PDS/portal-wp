@@ -152,7 +152,7 @@ const HomePage = () => {
         text={
           "We are thrilled to announce the beta release of our newly redesigned NASA Planetary Data System (PDS) website! Please give us feedback to improve your experience"
         }
-        imageSrc={"/assets/images/homepage-hero.jpg"}
+        imageSrc={"/assets/images/545_solarsystem_0_2560.jpg"}
         buttonLink={`mailto:${APP_CONFIG.GENERAL.SUPPORT_EMAIL}`}
         buttonText={"Give Feedback"}
       />
