@@ -1,7 +1,7 @@
 {
   "name": "pds-portal-frontend",
   "private": true,
-  "version": "0.0.6",
+  "version": "0.0.7",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -18,7 +18,7 @@
     "@fontsource/public-sans": "^5.0.18",
     "@mui/icons-material": "^5.15.11",
     "@mui/material": "^5.15.11",
-    "@nasapds/wds-react": "^0.0.5",
+    "@nasapds/wds-react": "^0.0.6",
     "@reduxjs/toolkit": "^2.2.1",
     "axios": "^1.6.7",
     "classnames": "^2.5.1",
